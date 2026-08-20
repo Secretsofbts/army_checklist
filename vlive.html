@@ -61,9 +61,10 @@
       Всеми известное приложение Vlive, в котором ребята выходят к нам в прямой эфир и делают нашу жизнь чуточку лучше 😌
     </p>
     <div class="list">
-      <a class="card" href="jungkook.html">
+        <a class="card" href="jungkook.html">
         <div class="icon">💜</div>
         <div class="name">Чонгук</div>
+        <span class="badge" id="badge-jungkook" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
       <a class="card" href="#" onclick="alert('Скоро здесь будет список'); return false;">
         <div class="icon">💚</div>
@@ -113,5 +114,27 @@
     Telegram.WebApp.ready();
     Telegram.WebApp.expand();
   }
+    function renderBadgeTotal(elId, keys) {
+      const el = document.getElementById(elId);
+      let checked = 0, total = 0;
+      keys.forEach(key => {
+        const raw = localStorage.getItem('progress:' + key);
+        if (raw) {
+          const data = JSON.parse(raw);
+          checked += data.checked;
+          total += data.total;
+        }
+      });
+      if (total === 0) return;
+      if (checked === total) {
+        el.textContent = '✅';
+        el.style.color = '#2e9e5b';
+      } else {
+        const percentLeft = Math.round(((total - checked) / total) * 100);
+        el.textContent = percentLeft + '%';
+      }
+    }
+    renderBadgeTotal('badge-jungkook', ['jungkook-2016-2022', 'jungkook-2023-2024', 'jungkook-2025-2026']);
+  </script>
 </script>
 </html>
