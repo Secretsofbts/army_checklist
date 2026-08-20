@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Трансляции</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 20px; margin: 0 0 12px; }
+    .intro {
+      font-size: 14px;
+      color: #555;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .card {
+      background: #f7f7fa;
+      border-radius: 12px;
+      padding: 14px;
+      text-decoration: none;
+      color: inherit;
+      display: block;
+    }
+    .name { font-size: 15px; font-weight: 600; }
+    .desc { font-size: 12px; color: #999; margin-top: 2px; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="index.html">← Назад</a>
+    <h1>ТРАНСЛЯЦИИ 🖥</h1>
+    <p class="intro">
+      Ребята никогда про нас не забывают и приходят к нам, чтобы приготовить, потанцевать, поесть, посмеяться и просто поговорить вместе с Арми)) Трансляций оооочень много, поэтому, чтобы посмотреть всё, нужно очень много попкорна и времени🥰
+    </p>
+    <div class="list">
+      <a class="card" href="vlive.html">
+        <div class="name">📽 Трансляции с Vlive</div>
+        <div class="desc">+ Weverse, + in, + tiktok</div>
+      </a>
+      <a class="card" href="#" onclick="alert('Скоро здесь будет список'); return false;">
+        <div class="name">📽 Трансляции с YouTube</div>
+        <div class="desc"></div>
+      </a>
+    </div>
+  </div>
+</body>
+<script>
+  if (window.Telegram && window.Telegram.WebApp) {
+    Telegram.WebApp.ready();
+    Telegram.WebApp.expand();
+  }
+</script>
+</html>

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Трансляции с Vlive</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 10px; }
+    .intro {
+      font-size: 13px;
+      color: #555;
+      line-height: 1.5;
+      margin-bottom: 18px;
+    }
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .card {
+      background: #f7f7fa;
+      border-radius: 12px;
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: inherit;
+    }
+    .icon { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
+    .name { font-size: 14px; font-weight: 500; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="translations.html">← Назад</a>
+    <h1>Трансляции с Vlive/Weverse ✌️🖥️</h1>
+    <p class="intro">
+      Всеми известное приложение Vlive, в котором ребята выходят к нам в прямой эфир и делают нашу жизнь чуточку лучше 😌
+    </p>
+    <div class="list">
+      <a class="card" href="jungkook.html">
+        <div class="icon">💜</div>
+        <div class="name">Чонгук</div>
+      </a>
+      <a class="card" href="#" onclick="alert('Скоро здесь будет список'); return false;">
+        <div class="icon">💚</div>
+        <div class="name">Тэхён</div>
+      </a>
+      <a class="card" href="#" onclick="alert('Скоро здесь будет список'); return false;">
+        <div class="icon">💕</div>
+        <div class="name">Джин</div>
+      </a>
+      <a class="card" href="#" onclick="alert('Скоро здесь будет список'); return false;">
+        <div class="icon">💙</div>
+        <div class="name">Намджун</div>
+      </a>
+      <a class="card" href="#" onclick="alert('Скоро здесь будет список'); return false;">
+        <div class="icon">🤍</div>
+        <div class="name">Хосок</div>
+      </a>
+      <a class="card" href="#" onclick="alert('Скоро здесь будет список'); return false;">
+        <div class="icon">💛</div>
+        <div class="name">Чимин</div>
+      </a>
+      <a class="card" href="#" onclick="alert('Скоро здесь будет список'); return false;">
+        <div class="icon">🖤</div>
+        <div class="name">Юнги</div>
+      </a>
+      <a class="card" href="#" onclick="alert('Скоро здесь будет список'); return false;">
+        <div class="icon">🧑‍🤝‍🧑</div>
+        <div class="name">Несколько человек</div>
+      </a>
+      <a class="card" href="#" onclick="alert('Скоро здесь будет список'); return false;">
+        <div class="icon">💫</div>
+        <div class="name">ОТ7 (все вместе)</div>
+      </a>
+      <a class="card" href="#" onclick="alert('Скоро здесь будет список'); return false;">
+        <div class="icon">🎙️</div>
+        <div class="name">Радио</div>
+      </a>
+      <a class="card" href="#" onclick="alert('Скоро здесь будет список'); return false;">
+        <div class="icon">🎉</div>
+        <div class="name">Comeback</div>
+      </a>
+    </div>
+  </div>
+</body>
+<script>
+  if (window.Telegram && window.Telegram.WebApp) {
+    Telegram.WebApp.ready();
+    Telegram.WebApp.expand();
+  }
+</script>
+</html>
