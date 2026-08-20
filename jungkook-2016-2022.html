@@ -151,5 +151,19 @@
     Telegram.WebApp.ready();
     Telegram.WebApp.expand();
   }
+      function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:jungkook-2016-2022', JSON.stringify({checked, total}));
+    }
+
+    document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+      cb.addEventListener('change', updateProgress);
+    });
+    updateProgress();
 </script>
 </html>
