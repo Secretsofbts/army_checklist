@@ -2,8 +2,8 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <title>Трансляции Чонгука</title>
   <style>
     body {
@@ -42,6 +42,17 @@
       color: inherit;
       font-size: 14px;
       font-weight: 500;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .badge {
+      font-size: 12px;
+      font-weight: 500;
+      color: #999;
+    }
+    .badge.done {
+      color: #2e9e5b;
     }
   </style>
 </head>
@@ -51,16 +62,51 @@
     <h1>Трансляции Чонгука 💜</h1>
     <hr>
     <div class="list">
-      <a class="card" href="jungkook-2016-2022.html">🔶 2016 – 2022 год</a>
-      <a class="card" href="jungkook-2023-2024.html">🔶 2023 – 2024 год</a>
-      <a class="card" href="jungkook-2025-2026.html">🔶 2025 – 2026 год</a>
+      <a class="card" href="jungkook-2016-2022.html">
+        <span>🔶 2016 – 2022 год</span>
+        <span class="badge" id="badge-2016-2022"></span>
+      </a>
+      <a class="card" href="jungkook-2023-2024.html">
+        <span>🔶 2023 – 2024 год</span>
+        <span class="badge" id="badge-2023-2024"></span>
+      </a>
+      <a class="card" href="jungkook-2025-2026.html">
+        <span>🔶 2025 – 2026 год</span>
+        <span class="badge" id="badge-2025-2026"></span>
+      </a>
     </div>
   </div>
+
+  <script>
+    function renderBadge(elId, key) {
+      var el = document.getElementById(elId);
+      var raw = localStorage.getItem('progress:' + key);
+      if (!raw) {
+        el.textContent = '';
+        return;
+      }
+      var data = JSON.parse(raw);
+      var checked = data.checked;
+      var total = data.total;
+      if (total === 0) {
+        el.textContent = '';
+        return;
+      }
+      if (checked === total) {
+        el.textContent = '✅ всё';
+        el.classList.add('done');
+      } else {
+        el.textContent = checked + '/' + total;
+      }
+    }
+    renderBadge('badge-2016-2022', 'jungkook-2016-2022');
+    renderBadge('badge-2023-2024', 'jungkook-2023-2024');
+    renderBadge('badge-2025-2026', 'jungkook-2025-2026');
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
 </body>
-<script>
-  if (window.Telegram && window.Telegram.WebApp) {
-    Telegram.WebApp.ready();
-    Telegram.WebApp.expand();
-  }
-</script>
 </html>

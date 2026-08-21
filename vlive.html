@@ -110,31 +110,34 @@
   </div>
 </body>
 <script>
+  function renderBadgeTotal(elId, keys) {
+    var el = document.getElementById(elId);
+    var checked = 0, total = 0;
+    keys.forEach(function(key) {
+      var raw = localStorage.getItem('progress:' + key);
+      if (raw) {
+        var data = JSON.parse(raw);
+        checked += data.checked;
+        total += data.total;
+      }
+    });
+    if (total === 0) {
+      el.textContent = '';
+      return;
+    }
+    if (checked === total) {
+      el.textContent = '✅';
+      el.style.color = '#2e9e5b';
+    } else {
+      el.textContent = checked + '/' + total;
+    }
+  }
+  renderBadgeTotal('badge-jungkook', ['jungkook-2016-2022', 'jungkook-2023-2024', 'jungkook-2025-2026']);
+
   if (window.Telegram && window.Telegram.WebApp) {
     Telegram.WebApp.ready();
     Telegram.WebApp.expand();
   }
-    function renderBadgeTotal(elId, keys) {
-      const el = document.getElementById(elId);
-      let checked = 0, total = 0;
-      keys.forEach(key => {
-        const raw = localStorage.getItem('progress:' + key);
-        if (raw) {
-          const data = JSON.parse(raw);
-          checked += data.checked;
-          total += data.total;
-        }
-      });
-      if (total === 0) return;
-      if (checked === total) {
-        el.textContent = '✅';
-        el.style.color = '#2e9e5b';
-      } else {
-        const percentLeft = Math.round(((total - checked) / total) * 100);
-        el.textContent = percentLeft + '%';
-      }
-    }
-    renderBadgeTotal('badge-jungkook', ['jungkook-2016-2022', 'jungkook-2023-2024', 'jungkook-2025-2026']);
-  </script>
 </script>
+</body>
 </html>
