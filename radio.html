@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>DJ Suga's Honey FM 06.13</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 16px; }
+    hr { border: none; border-top: 1px solid #eee; margin: 16px 0; }
+    .note { font-size: 13px; color: #555; margin: 0 0 10px; }
+    .section-title { font-size: 14px; font-weight: 600; margin: 0 0 10px; }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .done { color: #bbb; text-decoration: line-through; }
+    .text { flex: 1; cursor: pointer; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+    .navcard {
+      background: #f7f7fa;
+      border-radius: 12px;
+      padding: 12px 14px;
+      text-decoration: none;
+      color: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="vlive.html">← Назад</a>
+    <h1>DJ Suga's Honey FM 06.13</h1>
+    <p class="intro">Радио с Юнги, где он выходил к нам просто поболтать, без видео. Все в 2020 году</p>
+    <div id="list"></div>
+
+    <hr>
+    <p class="note">В 2023 был радио-эфир в Weverse в честь выхода песни People pt.2:</p>
+    <div id="list2"></div>
+
+    <hr>
+    <p class="section-title">Другие FM:</p>
+    <a class="navcard" href="fm-0613.html">▪️ BTS FM 06.13</a>
+  </div>
+
+  <script>
+    const items1 = [
+      { text: "от 25.04 \"DJ Suga's Honey FM 06.13\"", link: "https://t.me/violent_arhive/641" },
+      { text: "от 02.05 \"DJ Suga's Honey FM 06.13 with RM\"", link: "https://t.me/violent_arhive/639" },
+      { text: "от 09.05 \"DJ Suga's Honey FM 06.13 and Jin 0613FM\"", link: "https://t.me/violent_arhive/633" },
+      { text: "от 23.05 \"DJ Suga Dj's Honey FM 06.13 c J-HOPE\"", link: "https://t.me/violent_arhive/626" },
+      { text: "от 15.05 \"DJ Suga's Honey FM 06.13 c V & 0613FM\"", link: "https://t.me/violent_arhive/631" },
+      { text: "от 30.05 \"DJ Suga's Honey FM 06.13 c JIMIN\"", link: "https://t.me/violent_arhive/625" },
+      { text: "от 06.06 \"DJ Suga's Honey FM 06.13 c JK\"", link: "https://t.me/violent_arhive/624" },
+      { text: "от 13.06 \"DJ Suga's Honey FM 06.13\"", link: "https://t.me/violent_arhive/621" },
+      { text: "от 27.07 \"FM & Jijinjung's R.A.D.I.O_FM 06.13\" 🎙🎧", link: "https://t.me/violent_arhive/616" },
+      { text: "от 28.12 \"SUGA LIVE\"", link: "https://t.me/violent_arhive/262" }
+    ];
+
+    const items2 = [
+      { text: "от 07.04 \"Радиошоу Юнги\" 🎙", link: "https://t.me/violent_arhive/3943" }
+    ];
+
+    function renderItems(containerId, items) {
+      const listEl = document.getElementById(containerId);
+      items.forEach((item) => {
+        const id = 'video-' + item.link.split('/').pop();
+        const row = document.createElement('div');
+        row.className = 'row';
+
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+
+        const span = document.createElement('span');
+        span.className = 'text';
+        span.textContent = item.text;
+
+        if (localStorage.getItem(id) === 'true') {
+          box.checked = true;
+          span.classList.add('done');
+        }
+        box.addEventListener('change', () => {
+          localStorage.setItem(id, box.checked);
+          span.classList.toggle('done', box.checked);
+          updateProgress();
+        });
+        span.addEventListener('click', () => {
+          box.checked = !box.checked;
+          box.dispatchEvent(new Event('change'));
+        });
+
+        const link = document.createElement('a');
+        link.className = 'link';
+        link.href = item.link;
+        link.target = '_blank';
+        link.textContent = '🔗';
+
+        row.appendChild(box);
+        row.appendChild(span);
+        row.appendChild(link);
+        listEl.appendChild(row);
+      });
+    }
+
+    renderItems('list', items1);
+    renderItems('list2', items2);
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:radio', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
