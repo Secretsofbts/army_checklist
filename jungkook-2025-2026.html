@@ -173,8 +173,8 @@
       });
     });
 
-    function updateProgress() {
-      const all = document.querySelectorAll('input[type="checkbox"]');
+        function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]:not(:disabled)');
       let total = 0, checked = 0;
       all.forEach(cb => {
         total++;
