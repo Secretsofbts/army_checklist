@@ -42,7 +42,24 @@
       border-bottom: 1px solid #f0f0f0;
       font-size: 14px;
     }
-    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+        input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; margin: 0; }
+    input[type="checkbox"].crossed {
+      appearance: none;
+      -webkit-appearance: none;
+      border: 2px solid #333;
+      border-radius: 3px;
+      position: relative;
+      cursor: default;
+    }
+    input[type="checkbox"].crossed::after {
+      content: '✕';
+      position: absolute;
+      top: -3px;
+      left: 1px;
+      font-size: 13px;
+      font-weight: bold;
+      color: #333;
+    }
     .done { color: #bbb; text-decoration: line-through; }
     .text { flex: 1; cursor: pointer; }
     .text.plain { cursor: default; color: #aaa; font-style: italic; }
@@ -103,15 +120,10 @@
         row.className = 'row';
 
                        if (item.link === null) {
-          const box = document.createElement('span');
-          box.textContent = '✕';
-          box.style.width = '18px';
-          box.style.height = '18px';
-          box.style.textAlign = 'center';
-          box.style.flexShrink = '0';
-          box.style.color = '#333';
-          box.style.fontWeight = 'bold';
-          box.style.fontSize = '16px';
+          const box = document.createElement('input');
+          box.type = 'checkbox';
+          box.disabled = true;
+          box.className = 'crossed';
 
           const span = document.createElement('span');
           span.className = 'text';
