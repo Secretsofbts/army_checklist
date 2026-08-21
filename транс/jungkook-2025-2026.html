@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Чонгук 2025-2026</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 12px; }
+    .year {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      margin: 16px 0 6px;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .done { color: #bbb; text-decoration: line-through; }
+    .text { flex: 1; cursor: pointer; }
+    .text.plain { cursor: default; color: #aaa; font-style: italic; }
+    .link { color: #9b7fd4; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="jungkook.html">← Назад</a>
+    <h1>Чонгук: 2025 – 2026</h1>
+    <div id="list"></div>
+  </div>
+
+  <script>
+    const data = [
+      { year: "2025", items: [
+        { text: "от 14.07 \"•\"", link: "https://t.me/violent_arhive/5206" },
+        { text: "от 20.07 \"Тест\"", link: "https://t.me/violent_arhive/5218" },
+        { text: "от 31.08 \"День, когда выросли ушки 🎂\"", link: "https://t.me/violent_arhive/5262" },
+        { text: "от 22.09 \"Послушаем музыку перед сном\" 🔈", link: "https://t.me/violent_arhive/5257" },
+        { text: "от 28.09 \"Я просто проголодался\"", link: "https://t.me/violent_arhive/5270" },
+        { text: "от 28.10 \"🎮\"", link: "https://t.me/violent_arhive/5284" },
+        { text: "от 28.10 \"🎮🎮\" (упоминание у Джина)", link: "https://t.me/violent_arhive/5286" },
+        { text: "от 29.10 \"В поисках Иана\"", link: "https://t.me/violent_arhive/5283" },
+        { text: "от 30.10 \"Опять ищем имя Иан\"", link: "https://t.me/violent_arhive/5285" },
+        { text: "от 30.10 \"А теперь у нас мукбанг\"", link: "https://t.me/violent_arhive/5287" },
+        { text: "от 01.11 \"Печеньки + проверка\"", link: "https://t.me/violent_arhive/5308" },
+        { text: "от 02.11 \"Оканкан + хоррор-игра\"", link: "https://t.me/violent_arhive/5310" },
+        { text: "от 03.11 \"Здравствуйте, я Иан\"", link: "https://t.me/violent_arhive/5312" },
+        { text: "от 04.11 \"Апдейт\"", link: "https://t.me/violent_arhive/5305" },
+        { text: "от 04.11 \"Так, беру перерыв на пару дней\"", link: "https://t.me/violent_arhive/5306" },
+        { text: "от 16.11 \"Держимся\"", link: "https://t.me/violent_arhive/5324" },
+        { text: "от 21.11 \"Гвамеги вкусненький\"", link: "https://t.me/violent_arhive/5345" },
+        { text: "от 24.11 \"?? чего не фурычит\"", link: "https://t.me/violent_arhive/5343" },
+        { text: "от 03.12 \"Карри\"", link: "https://t.me/violent_arhive/5340" },
+        { text: "от 15.12 \"Хочу камбэк\"", link: "https://t.me/violent_arhive/5336" }
+      ]},
+      { year: "2026", items: [
+        { text: "от 25.02 \"Не знаю\" (удалённая)", link: null },
+        { text: "от 07.04 \"Волнуюсь\"", link: "https://t.me/violent_arhive/5464" },
+        { text: "от 29.05 \"Лёг спать, а тут вдруг вот\"", link: "https://t.me/violent_arhive/5533" },
+        { text: "от 28.06 \"3 эфира: 'Weverse обновили?', 'Неполадки с аккумулятором?' и 'Вылетело?'\"", link: "https://t.me/violent_arhive/5559" },
+        { text: "от 10.07 \"Чуть-чуть посижу и пойду есть\"", link: "https://t.me/violent_arhive/5567" },
+        { text: "от 27.07 \"Совсем забыл затестить\"", link: "https://t.me/violent_arhive/5557" },
+        { text: "от 28.07 \"Мэтча\"", link: "https://t.me/violent_arhive/5573" }
+      ]}
+    ];
+
+    const listEl = document.getElementById('list');
+    data.forEach((block) => {
+      const yearTitle = document.createElement('div');
+      yearTitle.className = 'year';
+      yearTitle.textContent = block.year + ' год';
+      listEl.appendChild(yearTitle);
+
+      block.items.forEach((item, ii) => {
+        const row = document.createElement('div');
+        row.className = 'row';
+
+        if (item.link === null) {
+          const span = document.createElement('span');
+          span.className = 'text plain';
+          span.textContent = item.text;
+          row.appendChild(span);
+          listEl.appendChild(row);
+          return;
+        }
+
+        const id = 'jk25-' + block.year + '-' + ii;
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+
+        const span = document.createElement('span');
+        span.className = 'text';
+        span.textContent = item.text;
+
+        if (localStorage.getItem(id) === 'true') {
+          box.checked = true;
+          span.classList.add('done');
+        }
+        box.addEventListener('change', () => {
+          localStorage.setItem(id, box.checked);
+          span.classList.toggle('done', box.checked);
+          updateProgress();
+        });
+        span.addEventListener('click', () => {
+          box.checked = !box.checked;
+          box.dispatchEvent(new Event('change'));
+        });
+
+        const link = document.createElement('a');
+        link.className = 'link';
+        link.href = item.link;
+        link.target = '_blank';
+        link.textContent = '🔗';
+
+        row.appendChild(box);
+        row.appendChild(span);
+        row.appendChild(link);
+        listEl.appendChild(row);
+      });
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:jungkook-2025-2026', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
