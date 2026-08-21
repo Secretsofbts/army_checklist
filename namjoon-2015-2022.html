@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Намджун 2015-2022</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 12px; }
+    .year {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      margin: 16px 0 6px;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .done { color: #bbb; text-decoration: line-through; }
+    .text { flex: 1; cursor: pointer; }
+    .link { color: #7fa8d4; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="namjoon.html">← Назад</a>
+    <h1>Намджун: 2015 – 2022</h1>
+    <div id="list"></div>
+  </div>
+
+  <script>
+    const data = [
+      { year: "2015", items: [
+        { text: "от 28.11 \"HYYH on stage\"", link: "https://t.me/violent_arhive/1077" }
+      ]},
+      { year: "2016", items: [
+        { text: "от 27.08 \"Vlive в Токио\"", link: "https://t.me/violent_arhive/893" },
+        { text: "от 20.10 \"WINGS Behind story\"", link: "https://t.me/violent_arhive/888" },
+        { text: "от 29.11 \"RM\"", link: "https://t.me/violent_arhive/882" },
+        { text: "от 15.12 \"RM\"", link: "https://t.me/violent_arhive/852" }
+      ]},
+      { year: "2017", items: [
+        { text: "от 03.01 \"Привет 2017!\"", link: "https://t.me/violent_arhive/850" },
+        { text: "от 17.03 \"RM\"", link: "https://t.me/violent_arhive/844" },
+        { text: "от 21.05 \"Лас-Вегас\"", link: "https://t.me/violent_arhive/829" },
+        { text: "от 25.06 \"RM\"", link: "https://t.me/violent_arhive/812" },
+        { text: "от 20.07 \"Новая студия Мона\"", link: "https://t.me/violent_arhive/810" },
+        { text: "от 07.10 \"Love YOURSELF \\\"Her\\\"\"", link: "https://t.me/violent_arhive/805" },
+        { text: "от 09.11 \"RM Live!\"", link: "https://t.me/violent_arhive/802" }
+      ]},
+      { year: "2018", items: [
+        { text: "от 03.01 \"Здравствуй 2018!\"", link: "https://t.me/violent_arhive/796" },
+        { text: "от 28.05 \"LOVE YOURSELF \\\"Tear\\\"\"", link: "https://t.me/violent_arhive/784" },
+        { text: "от 02.09 \"Об альбоме \\\"Love Yourself\\\"\"", link: "https://t.me/violent_arhive/777" },
+        { text: "от 12.09 \"Happy RM Day! 🎂\"", link: "https://t.me/violent_arhive/757" },
+        { text: "от 01.11 \"RM MONO\"", link: "https://t.me/violent_arhive/750" }
+      ]},
+      { year: "2019", items: [
+        { text: "от 20.02 \"Экскурсия по студии Мона 2 ч.\" (1 ч. в Трансляции Vlive - Несколько человек)", link: "https://t.me/violent_arhive/742" },
+        { text: "от 24.04 \"Map of the Soul: PERSONA\"", link: "https://t.me/violent_arhive/727" },
+        { text: "от 14.12 \"Прошло много времени\"", link: "https://t.me/violent_arhive/692" }
+      ]},
+      { year: "2020", items: [
+        { text: "от 10.03 \"7 позади\"", link: "https://t.me/violent_arhive/676" },
+        { text: "от 12.09 \"С днем рождения, Намджун 🎂\"", link: "https://t.me/violent_arhive/613" }
+      ]},
+      { year: "2021", items: [
+        { text: "от 19.01 \"Я немного опоздал, да?\"", link: "https://t.me/violent_arhive/291" },
+        { text: "от 13.07 \"Трансляция Намджуна Sudden Live~~\"", link: "https://t.me/violent_arhive/1041" },
+        { text: "от 13.09 \"Немного запоздалый День Рождения 🎂\"", link: "https://t.me/violent_arhive/1261" }
+      ]},
+      { year: "2022", items: [
+        { text: "от 09.04 \"Мистер Намджун...\"", link: "https://t.me/violent_arhive/2587" },
+        { text: "от 21.07 \"Всем привет\"", link: "https://t.me/violent_arhive/2983" },
+        { text: "от 12.09 \"День рождения 🎂\"", link: "https://t.me/violent_arhive/3127" },
+        { text: "от 02.12 \"RM Indigo Live\"", link: "https://t.me/violent_arhive/3363" },
+        { text: "от 05.12 \"Indigo Short Behind\"", link: "https://t.me/violent_arhive/3367" }
+      ]}
+    ];
+
+    const listEl = document.getElementById('list');
+    data.forEach((block) => {
+      const yearTitle = document.createElement('div');
+      yearTitle.className = 'year';
+      yearTitle.textContent = block.year + ' год';
+      listEl.appendChild(yearTitle);
+
+      block.items.forEach((item) => {
+        const id = 'video-' + item.link.split('/').pop();
+        const row = document.createElement('div');
+        row.className = 'row';
+
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+
+        const span = document.createElement('span');
+        span.className = 'text';
+        span.textContent = item.text;
+
+        if (localStorage.getItem(id) === 'true') {
+          box.checked = true;
+          span.classList.add('done');
+        }
+        box.addEventListener('change', () => {
+          localStorage.setItem(id, box.checked);
+          span.classList.toggle('done', box.checked);
+          updateProgress();
+        });
+        span.addEventListener('click', () => {
+          box.checked = !box.checked;
+          box.dispatchEvent(new Event('change'));
+        });
+
+        const link = document.createElement('a');
+        link.className = 'link';
+        link.href = item.link;
+        link.target = '_blank';
+        link.textContent = '🔗';
+
+        row.appendChild(box);
+        row.appendChild(span);
+        row.appendChild(link);
+        listEl.appendChild(row);
+      });
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:namjoon-2015-2022', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
