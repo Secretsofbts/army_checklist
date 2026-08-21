@@ -45,6 +45,9 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+          .card.row-done {
+      background: #e3f7e9;
+    }
     }
     .badge {
       font-size: 12px;
@@ -92,9 +95,10 @@
         el.textContent = '';
         return;
       }
-      if (checked === total) {
+            if (checked === total) {
         el.textContent = '✅ всё';
         el.classList.add('done');
+        el.closest('.card').classList.add('row-done');
       } else {
         el.textContent = checked + '/' + total;
       }

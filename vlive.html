@@ -39,7 +39,7 @@
       flex-direction: column;
       gap: 8px;
     }
-    .card {
+        .card {
       background: #f7f7fa;
       border-radius: 12px;
       padding: 12px 14px;
@@ -48,6 +48,9 @@
       gap: 10px;
       text-decoration: none;
       color: inherit;
+    }
+    .card.row-done {
+      background: #e3f7e9;
     }
     .icon { font-size: 18px; width: 24px; text-align: center; flex-shrink: 0; }
     .name { font-size: 14px; font-weight: 500; }
@@ -125,9 +128,10 @@
       el.textContent = '';
       return;
     }
-    if (checked === total) {
+        if (checked === total) {
       el.textContent = '✅';
       el.style.color = '#2e9e5b';
+      el.closest('.card').classList.add('row-done');
     } else {
       el.textContent = checked + '/' + total;
     }
