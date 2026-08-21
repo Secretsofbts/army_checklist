@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Трансляции Чимина</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    hr { border: none; border-top: 1px solid #eee; margin: 12px 0 16px; }
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .card {
+      background: #f7f7fa;
+      border-radius: 12px;
+      padding: 14px;
+      text-decoration: none;
+      color: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card.row-done {
+      background: #e3f7e9;
+    }
+    .badge {
+      font-size: 12px;
+      font-weight: 500;
+      color: #999;
+    }
+    .badge.done {
+      color: #2e9e5b;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="vlive.html">← Назад</a>
+    <h1>Трансляции Чимина 💛</h1>
+    <hr>
+    <div class="list">
+      <a class="card" href="jimin-2015-2022.html">
+        <span>🟡 2015 – 2022 год</span>
+        <span class="badge" id="badge-2015-2022"></span>
+      </a>
+      <a class="card" href="jimin-2023-2025.html">
+        <span>🟡 2023 – 2026 год</span>
+        <span class="badge" id="badge-2023-2026"></span>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    function renderBadge(elId, key) {
+      var el = document.getElementById(elId);
+      var raw = localStorage.getItem('progress:' + key);
+      if (!raw) { el.textContent = ''; return; }
+      var data = JSON.parse(raw);
+      var checked = data.checked, total = data.total;
+      if (total === 0) { el.textContent = ''; return; }
+      if (checked === total) {
+        el.textContent = '✅';
+        el.classList.add('done');
+        el.closest('.card').classList.add('row-done');
+      } else {
+        el.textContent = checked + '/' + total;
+      }
+    }
+    renderBadge('badge-2015-2022', 'jimin-2015-2022');
+    renderBadge('badge-2023-2026', 'jimin-2023-2026');
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
