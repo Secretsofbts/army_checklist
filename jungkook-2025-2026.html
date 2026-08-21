@@ -62,7 +62,7 @@
         { text: "от 14.07 \"•\"", link: "https://t.me/violent_arhive/5206" },
         { text: "от 20.07 \"Тест\"", link: "https://t.me/violent_arhive/5218" },
         { text: "от 31.08 \"День, когда выросли ушки 🎂\"", link: "https://t.me/violent_arhive/5262" },
-        { text: "от 22.09 \"Послушаем музыку перед сном\" 🔈", link: "https://t.me/violent_arhive/5257" },
+        { text: "от 22.09 \"Послушаем музыку перед сном\"", link: "https://t.me/violent_arhive/5257" },
         { text: "от 28.09 \"Я просто проголодался\"", link: "https://t.me/violent_arhive/5270" },
         { text: "от 28.10 \"🎮\"", link: "https://t.me/violent_arhive/5284" },
         { text: "от 28.10 \"🎮🎮\" (упоминание у Джина)", link: "https://t.me/violent_arhive/5286" },
@@ -73,7 +73,7 @@
         { text: "от 02.11 \"Оканкан + хоррор-игра\"", link: "https://t.me/violent_arhive/5310" },
         { text: "от 03.11 \"Здравствуйте, я Иан\"", link: "https://t.me/violent_arhive/5312" },
         { text: "от 04.11 \"Апдейт\"", link: "https://t.me/violent_arhive/5305" },
-        { text: "от 04.11 \"Так, беру перерыв на пару дней\"", link: "https://t.me/violent_arhive/5306" },
+        { text: "от 04.11 \"Беру перерыв на пару дней\"", link: "https://t.me/violent_arhive/5306" },
         { text: "от 16.11 \"Держимся\"", link: "https://t.me/violent_arhive/5324" },
         { text: "от 21.11 \"Гвамеги вкусненький\"", link: "https://t.me/violent_arhive/5345" },
         { text: "от 24.11 \"?? чего не фурычит\"", link: "https://t.me/violent_arhive/5343" },
@@ -84,7 +84,7 @@
         { text: "от 25.02 \"Не знаю\" (удалённая)", link: null },
         { text: "от 07.04 \"Волнуюсь\"", link: "https://t.me/violent_arhive/5464" },
         { text: "от 29.05 \"Лёг спать, а тут вдруг вот\"", link: "https://t.me/violent_arhive/5533" },
-        { text: "от 28.06 \"3 эфира: 'Weverse обновили?', 'Неполадки с аккумулятором?' и 'Вылетело?'\"", link: "https://t.me/violent_arhive/5559" },
+        { text: "от 28.06 \"'Weverse обновили?', 'Неполадки с аккумулятором?' и 'Вылетело?'\"", link: "https://t.me/violent_arhive/5559" },
         { text: "от 10.07 \"Чуть-чуть посижу и пойду есть\"", link: "https://t.me/violent_arhive/5567" },
         { text: "от 27.07 \"Совсем забыл затестить\"", link: "https://t.me/violent_arhive/5557" },
         { text: "от 28.07 \"Мэтча\"", link: "https://t.me/violent_arhive/5573" }
@@ -102,10 +102,20 @@
         const row = document.createElement('div');
         row.className = 'row';
 
-        if (item.link === null) {
+                if (item.link === null) {
+          const box = document.createElement('span');
+          box.textContent = '❌';
+          box.style.width = '18px';
+          box.style.textAlign = 'center';
+          box.style.flexShrink = '0';
+
           const span = document.createElement('span');
-          span.className = 'text plain';
+          span.className = 'text';
+          span.style.cursor = 'default';
+          span.style.color = '#aaa';
           span.textContent = item.text;
+
+          row.appendChild(box);
           row.appendChild(span);
           listEl.appendChild(row);
           return;
