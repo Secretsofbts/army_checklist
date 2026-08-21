@@ -68,11 +68,11 @@
         <div class="icon">💜</div>
         <div class="name">Чонгук</div>
         <span class="badge" id="badge-jungkook" style="margin-left:auto; font-size:12px; color:#999;"></span>
+            <a class="card" href="taehyung.html">
+        <div class="icon">💚</div>
+        <div class="name">Тэхён</div>
+        <span class="badge" id="badge-taehyung" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
-      <a class="card" href="taehyung.html">
-  <div class="icon">💚</div>
-  <div class="name">Тэхён</div>
-</a>
       <a class="card" href="#" onclick="alert('Скоро здесь будет список'); return false;">
         <div class="icon">💕</div>
         <div class="name">Джин</div>
@@ -137,6 +137,7 @@
     }
   }
   renderBadgeTotal('badge-jungkook', ['jungkook-2016-2022', 'jungkook-2023-2024', 'jungkook-2025-2026']);
+  renderBadgeTotal('badge-taehyung', ['taehyung-2015-2022', 'taehyung-2023-2024', 'taehyung-2025', 'taehyung-2026']);
 
   if (window.Telegram && window.Telegram.WebApp) {
     Telegram.WebApp.ready();
