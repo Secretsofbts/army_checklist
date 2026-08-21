@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Чимин 2015-2022</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 12px; }
+    .year {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      margin: 16px 0 6px;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .done { color: #bbb; text-decoration: line-through; }
+    .text { flex: 1; cursor: pointer; }
+    .link { color: #d4b03a; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="jimin.html">← Назад</a>
+    <h1>Чимин: 2015 – 2022</h1>
+    <div id="list"></div>
+  </div>
+
+  <script>
+    const data = [
+      { year: "2015", items: [
+        { text: "от 27.11 \"HYYH on stage\"", link: "https://t.me/violent_arhive/1079" }
+      ]},
+      { year: "2016", items: [
+        { text: "от 26.11 \"Книжка-раскраска Чимина 🖌\"", link: "https://t.me/violent_arhive/883" }
+      ]},
+      { year: "2017", items: [
+        { text: "от 14.10 \"Happy Birthday! 🎂\"", link: "https://t.me/violent_arhive/144" }
+      ]},
+      { year: "2018", items: [
+        { text: "от 24.04 \"Давно не виделись\"", link: "https://t.me/violent_arhive/790" },
+        { text: "от 20.05 \"Привет!\"", link: "https://t.me/violent_arhive/788" },
+        { text: "от 07.09 \"Прошло много времени, не так ли? 😗\"", link: "https://t.me/violent_arhive/773" },
+        { text: "от 14.10 \"Мой день рождения\"", link: "https://t.me/violent_arhive/754" }
+      ]},
+      { year: "2019", items: [
+        { text: "от 20.01 \"Я вернулся\"", link: "https://t.me/violent_arhive/746" },
+        { text: "от 16.06 \"Фиолетовый Пусан\"", link: "https://t.me/violent_arhive/708" },
+        { text: "от 10.08 \"Поздоровайся со мной\"", link: "https://t.me/violent_arhive/705" },
+        { text: "от 12.08 \"Улыбнись\"", link: "https://t.me/violent_arhive/704" },
+        { text: "от 14.08 \"Я здесь 😗\"", link: "https://t.me/violent_arhive/702" },
+        { text: "от 12.10 \"Встреча с Арми за день до моего дня рождения\"", link: "https://t.me/violent_arhive/697" },
+        { text: "от 20.10 \"Вот и я\"", link: "https://t.me/violent_arhive/696" }
+      ]},
+      { year: "2020", items: [
+        { text: "от 26.03 \"Я здесь / Привет, я здесь\"", link: "https://t.me/violent_arhive/661" },
+        { text: "от 30.03 \"Моя блестящая внешность\"", link: "https://t.me/violent_arhive/659" },
+        { text: "от 20.10 \"I'm here\"", link: "https://t.me/violent_arhive/586" }
+      ]},
+      { year: "2021", items: [
+        { text: "от 10.08 \"Вы, наверное, не знали, что я приду\"", link: "https://t.me/violent_arhive/1137" },
+        { text: "от 30.08 \"Ppyong\"", link: "https://t.me/violent_arhive/1172" },
+        { text: "от 13.10 \"Появляется Чимин 🎂\"", link: "https://t.me/violent_arhive/1574" }
+      ]},
+      { year: "2022", items: [
+        { text: "от 18.09 \"Я здесь 😊\"", link: "https://t.me/violent_arhive/3142" },
+        { text: "от 27.09 \"Мне жаль, что я опоздал\"", link: "https://t.me/violent_arhive/3143" },
+        { text: "от 12.10 \"Вы готовы? 🎂\"", link: "https://t.me/violent_arhive/3210" }
+      ]}
+    ];
+
+    const listEl = document.getElementById('list');
+    data.forEach((block) => {
+      const yearTitle = document.createElement('div');
+      yearTitle.className = 'year';
+      yearTitle.textContent = block.year + ' год';
+      listEl.appendChild(yearTitle);
+
+      block.items.forEach((item) => {
+        const id = 'video-' + item.link.split('/').pop();
+        const row = document.createElement('div');
+        row.className = 'row';
+
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+
+        const span = document.createElement('span');
+        span.className = 'text';
+        span.textContent = item.text;
+
+        if (localStorage.getItem(id) === 'true') {
+          box.checked = true;
+          span.classList.add('done');
+        }
+        box.addEventListener('change', () => {
+          localStorage.setItem(id, box.checked);
+          span.classList.toggle('done', box.checked);
+          updateProgress();
+        });
+        span.addEventListener('click', () => {
+          box.checked = !box.checked;
+          box.dispatchEvent(new Event('change'));
+        });
+
+        const link = document.createElement('a');
+        link.className = 'link';
+        link.href = item.link;
+        link.target = '_blank';
+        link.textContent = '🔗';
+
+        row.appendChild(box);
+        row.appendChild(span);
+        row.appendChild(link);
+        listEl.appendChild(row);
+      });
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:jimin-2015-2022', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
