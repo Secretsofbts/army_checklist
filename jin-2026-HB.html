@@ -50,10 +50,11 @@
   </div>
 
   <script>
-    const items = [
+    const data = [
+        { year: "2026", items: [  
       { text: "от 11.08 \"Приветики\"", link: "https://t.me/violent_arhive/5577" }
-    ];
-
+    ]},
+];
     const listEl = document.getElementById('list');
     items.forEach((item) => {
       const id = 'video-' + item.link.split('/').pop();
