@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Чонгук 2023-2024</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 12px; }
+    .year {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      margin: 16px 0 6px;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .done { color: #bbb; text-decoration: line-through; }
+    .text { flex: 1; cursor: pointer; }
+    .link { color: #9b7fd4; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="jungkook.html">← Назад</a>
+    <h1>Чонгук: 2023 – 2024 💜</h1>
+    <div id="list"></div>
+  </div>
+
+  <script>
+    const data = [
+      { year: "2023", items: [
+        { text: "от 01.02 \"Чонгук, пиво и песни\"", link: "https://t.me/violent_arhive/3673" },
+        { text: "от 03.02 \"В ожидании курочки\"", link: "https://t.me/violent_arhive/3662" },
+        { text: "от 03.02 \"Мокпан с курочкой\"", link: "https://t.me/violent_arhive/3667" },
+        { text: "от 11.02 \"Это тяжко 🥊\"", link: "https://t.me/violent_arhive/3686" },
+        { text: "от 28.02 \"?\"", link: "https://t.me/violent_arhive/3750" },
+        { text: "от 03.03 \"На минутку\"", link: "https://t.me/violent_arhive/3755" },
+        { text: "от 14.03 \"1,2,3 и Аньён\"", link: "https://t.me/violent_arhive/3785" },
+        { text: "от 23.03 \"Я голоден... Первый прием пищи... Пятница...\"", link: "https://t.me/violent_arhive/3810" },
+        { text: "от 27.03 \"Шучвита\"", link: "https://t.me/violent_arhive/3831" },
+        { text: "от 07.04 \"Ха-ха\"", link: "https://t.me/violent_arhive/3880" },
+        { text: "от 24.04 \"Ребята, пожалуйста, не болейте и комфортного дня вам\"", link: "https://t.me/violent_arhive/3982" },
+        { text: "от 24.05 \"Тук-тук\"", link: "https://t.me/violent_arhive/4023" },
+        { text: "от 05.06 \"Хех\"", link: "https://t.me/violent_arhive/4056" },
+        { text: "от 12.06 \"Собираюсь спатки\"", link: "https://t.me/violent_arhive/4071" },
+        { text: "от 30.06 \"Хухуху\"", link: "https://t.me/violent_arhive/4093" },
+        { text: "от 04.07 \"97\"", link: "https://t.me/violent_arhive/4096" },
+        { text: "от 14.07 \"7 дней в неделю\"", link: "https://t.me/violent_arhive/4109" },
+        { text: "от 18.07 \"7Daymmmmmmn\"", link: "https://t.me/violent_arhive/4113" },
+        { text: "от 22.07 \"Гыгык\"", link: "https://t.me/violent_arhive/4123" },
+        { text: "от 26.07 \"Вы тут?\"", link: "https://t.me/violent_arhive/4137" },
+        { text: "от 28.07 \"Простите???\"", link: "https://t.me/violent_arhive/4125" },
+        { text: "от 30.07 \"Ах и правда~\"", link: "https://t.me/violent_arhive/4141" },
+        { text: "от 30.07 \"Кто это? Иди-ка сюда\"", link: "https://t.me/violent_arhive/4146" },
+        { text: "от 03.08 \"Сонный\"", link: "https://t.me/violent_arhive/4147" },
+        { text: "от 04.08 \"Ха...\"", link: "https://t.me/violent_arhive/4155" },
+        { text: "от 30.08 \"Эфир в тиктоке\"", link: "https://t.me/violent_arhive/4190" },
+        { text: "от 31.08 \"Хих 🎂\"", link: "https://t.me/violent_arhive/4188" },
+        { text: "от 24.09 \"3D\"", link: "https://t.me/violent_arhive/4247" },
+        { text: "от 04.10 \"Приветики\"", link: "https://t.me/violent_arhive/4253" },
+        { text: "от 03.11 \"GOLDEN ✨\"", link: "https://t.me/violent_arhive/4308" },
+        { text: "от 16.11 \"Лайв - практика\"", link: "https://t.me/violent_arhive/4369" },
+        { text: "от 08.12 \"Йо\"", link: "https://t.me/violent_arhive/4417" },
+        { text: "от 11.12 \"Благополучно отслужу и вернусь\"", link: "https://t.me/violent_arhive/4421" }
+      ]},
+      { year: "2024", items: [
+        { text: "от 18.12 \"Очень соскучился\"", link: "https://t.me/violent_arhive/4955" }
+      ]}
+    ];
+
+    const listEl = document.getElementById('list');
+    data.forEach((block) => {
+      const yearTitle = document.createElement('div');
+      yearTitle.className = 'year';
+      yearTitle.textContent = block.year + ' год';
+      listEl.appendChild(yearTitle);
+
+      block.items.forEach((item, ii) => {
+        const id = 'jk23-' + block.year + '-' + ii;
+        const row = document.createElement('div');
+        row.className = 'row';
+
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+
+        const span = document.createElement('span');
+        span.className = 'text';
+        span.textContent = item.text;
+
+        if (localStorage.getItem(id) === 'true') {
+          box.checked = true;
+          span.classList.add('done');
+        }
+        box.addEventListener('change', () => {
+          localStorage.setItem(id, box.checked);
+          span.classList.toggle('done', box.checked);
+          updateProgress();
+        });
+        span.addEventListener('click', () => {
+          box.checked = !box.checked;
+          box.dispatchEvent(new Event('change'));
+        });
+
+        const link = document.createElement('a');
+        link.className = 'link';
+        link.href = item.link;
+        link.target = '_blank';
+        link.textContent = '🔗';
+
+        row.appendChild(box);
+        row.appendChild(span);
+        row.appendChild(link);
+        listEl.appendChild(row);
+      });
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:jungkook-2023-2024', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
