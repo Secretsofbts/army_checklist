@@ -93,7 +93,7 @@
       var checked = data.checked, total = data.total;
       if (total === 0) { el.textContent = ''; return; }
       if (checked === total) {
-        el.textContent = '✅ всё';
+        el.textContent = '✅';
         el.classList.add('done');
         el.closest('.card').classList.add('row-done');
       } else {
