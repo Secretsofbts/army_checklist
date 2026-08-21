@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Хосок 2015-2022</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 12px; }
+    .year {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      margin: 16px 0 6px;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .done { color: #bbb; text-decoration: line-through; }
+    .text { flex: 1; cursor: pointer; }
+    .link { color: #aaa; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="hoseok.html">← Назад</a>
+    <h1>Хосок: 2015 – 2022 🤍</h1>
+    <div id="list"></div>
+  </div>
+
+  <script>
+    const data = [
+      { year: "2015", items: [
+        { text: "от 28.11 \"HYYH on stage\"", link: "https://t.me/violent_arhive/1073" }
+      ]},
+      { year: "2016", items: [
+        { text: "от 26.01 \"Hope On The Street\"", link: "https://t.me/violent_arhive/1055" },
+        { text: "от 18.02 \"Поиграем с Хоби 🎂\"", link: "https://t.me/violent_arhive/1030" }
+      ]},
+      { year: "2017", items: [
+        { text: "от 18.02 \"День рождения Хосока 🎂\"", link: "https://t.me/violent_arhive/847" },
+        { text: "от 17.11 \"Поговорите с Хоби!\"", link: "https://t.me/violent_arhive/801" }
+      ]},
+      { year: "2018", items: [
+        { text: "от 18.02 \"Поиграем с Хоби 🎂\"", link: "https://t.me/violent_arhive/793" },
+        { text: "от 02.03 \"Hope World & Mixtape\"", link: "https://t.me/violent_arhive/792" },
+        { text: "от 09.09 \"Трансляция Хосока\"", link: "https://t.me/violent_arhive/759" }
+      ]},
+      { year: "2019", items: [
+        { text: "от 28.01 \"HOPE WORLD\"", link: "https://t.me/violent_arhive/745" },
+        { text: "от 18.02 \"Обратный отсчёт до Дня Хосока\"", link: "https://t.me/violent_arhive/740" },
+        { text: "от 22.05 \"Хоби здесь\"", link: "https://t.me/violent_arhive/722" },
+        { text: "от 27.09 \"Chicken Noodle Soup\"", link: "https://t.me/violent_arhive/699" }
+      ]},
+      { year: "2020", items: [
+        { text: "от 18.02 \"Хоба, люблю тебя\"", link: "https://t.me/violent_arhive/681" },
+        { text: "от 14.05 \"Если вам скучно, смотрите (имейте ввиду, вы можете расстроиться, 1 часть)\"", link: "https://t.me/violent_arhive/632" },
+        { text: "от 11.06 \"Если вам скучно (остерегайтесь разочарований, часть 2)\"", link: "https://t.me/violent_arhive/623" },
+        { text: "от 24.06 \"Если вам скучно (3 часть)\"", link: "https://t.me/violent_arhive/618" }
+      ]},
+      { year: "2021", items: [
+        { text: "от 18.02 \"J-HOPE Birthday 🎂\"", link: "https://t.me/violent_arhive/322" },
+        { text: "от 25.07 \"Эфир Джей-Хоупа\"", link: "https://t.me/violent_arhive/1126" },
+        { text: "от 02.12 \"Надеюсь, вы насладитесь 😝\"", link: "https://t.me/violent_arhive/1904" }
+      ]},
+      { year: "2022", items: [
+        { text: "от 17.02 \"Happy Hobi Day 🤗🎂\"", link: "https://t.me/violent_arhive/2268" },
+        { text: "от 08.07 \"Привет\"", link: "https://t.me/violent_arhive/2824" },
+        { text: "от 15.07 \"Что есть в \\\"Jack In The Box\\\" 📦\"", link: "https://t.me/violent_arhive/2856" },
+        { text: "от 25.07 \"Привет 👋 Чикаго!\"", link: "https://t.me/violent_arhive/2903" },
+        { text: "от 30.11 \"Трансляция Хосока после премии МАМА 2022\"", link: "https://t.me/violent_arhive/3330" }
+      ]}
+    ];
+
+    const listEl = document.getElementById('list');
+    data.forEach((block) => {
+      const yearTitle = document.createElement('div');
+      yearTitle.className = 'year';
+      yearTitle.textContent = block.year + ' год';
+      listEl.appendChild(yearTitle);
+
+      block.items.forEach((item) => {
+        const id = 'video-' + item.link.split('/').pop();
+        const row = document.createElement('div');
+        row.className = 'row';
+
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+
+        const span = document.createElement('span');
+        span.className = 'text';
+        span.textContent = item.text;
+
+        if (localStorage.getItem(id) === 'true') {
+          box.checked = true;
+          span.classList.add('done');
+        }
+        box.addEventListener('change', () => {
+          localStorage.setItem(id, box.checked);
+          span.classList.toggle('done', box.checked);
+          updateProgress();
+        });
+        span.addEventListener('click', () => {
+          box.checked = !box.checked;
+          box.dispatchEvent(new Event('change'));
+        });
+
+        const link = document.createElement('a');
+        link.className = 'link';
+        link.href = item.link;
+        link.target = '_blank';
+        link.textContent = '🔗';
+
+        row.appendChild(box);
+        row.appendChild(span);
+        row.appendChild(link);
+        listEl.appendChild(row);
+      });
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:hoseok-2015-2022', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Хосок 2023-2025</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 12px; }
+    .year {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      margin: 16px 0 6px;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .done { color: #bbb; text-decoration: line-through; }
+    .text { flex: 1; cursor: pointer; }
+    .link { color: #aaa; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="hoseok.html">← Назад</a>
+    <h1>Хосок: 2023 – 2025 🤍</h1>
+    <div id="list"></div>
+  </div>
+
+  <script>
+    const data = [
+      { year: "2023", items: [
+        { text: "от 01.01 \"happy new year\"", link: "https://t.me/violent_arhive/3591" },
+        { text: "от 17.02 \"С Днем Рождения, Чвехоуп 🎂\"", link: "https://t.me/violent_arhive/3705" },
+        { text: "от 26.02 \"Заглянул ненадолго\"", link: "https://t.me/violent_arhive/3740" },
+        { text: "от 03.03 \"hope, on the street\"", link: "https://t.me/violent_arhive/3762" },
+        { text: "от 16.03 \"Подождите! Я здесь\"", link: "https://t.me/violent_arhive/3793" },
+        { text: "от 14.04 \"Эфир перед армией\"", link: "https://t.me/violent_arhive/3931" }
+      ]},
+      { year: "2024", items: [
+        { text: "от 17.10 \"j-day\"", link: "https://t.me/violent_arhive/4849" },
+        { text: "от 12.11 \"forreal\"", link: "https://t.me/violent_arhive/4884" },
+        { text: "от 20.11 \"Почему ты не можешь полюбить меня?\"", link: "https://t.me/violent_arhive/4895" }
+      ]},
+      { year: "2025", items: [
+        { text: "от 24.01 \"После\"", link: "https://t.me/violent_arhive/4986" },
+        { text: "от 18.02 \"HAPPY HOPEDAY\"", link: "https://t.me/violent_arhive/5008" },
+        { text: "от 01.03 \"Сладкий лайв\"", link: "https://t.me/violent_arhive/5030" },
+        { text: "от 06.03 12-часовой эфир перед релизом Sweet Dreams (пока нет на канале)", link: null },
+        { text: "от 08.03 \"Едуу 😶‍🌫️🚗\"", link: "https://t.me/violent_arhive/5034" },
+        { text: "от 11.03 \"J здесь! 🤗\"", link: "https://t.me/violent_arhive/5048" },
+        { text: "от 15.03 \"Бруклин - всё!!!!\"", link: "https://t.me/violent_arhive/5049" },
+        { text: "от 19.03 \"Чикаго всё!!!!!\"", link: "https://t.me/violent_arhive/5053" },
+        { text: "от 24.03 \"Мексика всё!!!!!\"", link: "https://t.me/violent_arhive/5054" },
+        { text: "от 28.03 \"Сан-Антонио всё!!!!!\"", link: "https://t.me/violent_arhive/5055" },
+        { text: "от 02.04 \"Сет в Окленде всиоо!\"", link: "https://t.me/violent_arhive/5080" },
+        { text: "от 07.04 \"ЛА — все!!!!!!\"", link: "https://t.me/violent_arhive/5227" },
+        { text: "от 09.04 \"Прибыл в Корею 🇰🇷\"", link: "https://t.me/violent_arhive/5226" },
+        { text: "от 13.04 \"Манила — всё!!!!\"", link: "https://t.me/violent_arhive/5225" },
+        { text: "от 20.04 \"Сайтама всё!!!!\"", link: "https://t.me/violent_arhive/5427" },
+        { text: "от 27.04 \"Сингапур, до свидания!!!\"", link: "https://t.me/violent_arhive/5508" },
+        { text: "от 04.05 (пока нет на канале)", link: null },
+        { text: "от 07.05 \"ФИНАЛ!! ХАХА\"", link: "https://t.me/violent_arhive/5115" },
+        { text: "от 13.05 (пока нет на канале)", link: null },
+        { text: "от 18.05 \"Макао — всё!!!!!\"", link: "https://t.me/violent_arhive/5137" },
+        { text: "от 25.05 (перевода пока нет)", link: null },
+        { text: "от 29.05 (пока нет на канале)", link: null },
+        { text: "от 01.06 (пока нет на канале)", link: null },
+        { text: "от 15.06 \"Тур HOS — всё!!!!!\"", link: "https://t.me/violent_arhive/5177" },
+        { text: "от 14.07 \"Хобипалуза — всё!!!\"", link: "https://t.me/violent_arhive/5233" },
+        { text: "от 26.07 \"Как поживаете?\"", link: "https://t.me/violent_arhive/5214" },
+        { text: "от 07.09 \"Ияп!\"", link: "https://t.me/violent_arhive/5258" },
+        { text: "от 01.10 \"Хааай!\"", link: "https://t.me/violent_arhive/5278" },
+        { text: "от 03.11 \"Забежал перед сном\"", link: "https://t.me/violent_arhive/5302" },
+        { text: "от 20.11 \"Тыдыщ\"", link: "https://t.me/violent_arhive/5314" },
+        { text: "от 29.12 \"Забежал перед Новым годом\"", link: "https://t.me/violent_arhive/5369" }
+      ]}
+    ];
+
+    const listEl = document.getElementById('list');
+    data.forEach((block) => {
+      const yearTitle = document.createElement('div');
+      yearTitle.className = 'year';
+      yearTitle.textContent = block.year + ' год';
+      listEl.appendChild(yearTitle);
+
+      block.items.forEach((item, ii) => {
+        const id = item.link ? ('video-' + item.link.split('/').pop()) : ('noline-hoseok-' + block.year + '-' + ii);
+        const row = document.createElement('div');
+        row.className = 'row';
+
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+
+        const span = document.createElement('span');
+        span.className = 'text';
+        span.textContent = item.text;
+
+        if (localStorage.getItem(id) === 'true') {
+          box.checked = true;
+          span.classList.add('done');
+        }
+        box.addEventListener('change', () => {
+          localStorage.setItem(id, box.checked);
+          span.classList.toggle('done', box.checked);
+          updateProgress();
+        });
+        span.addEventListener('click', () => {
+          box.checked = !box.checked;
+          box.dispatchEvent(new Event('change'));
+        });
+
+        row.appendChild(box);
+        row.appendChild(span);
+
+        if (item.link) {
+          const link = document.createElement('a');
+          link.className = 'link';
+          link.href = item.link;
+          link.target = '_blank';
+          link.textContent = '🔗';
+          row.appendChild(link);
+        }
+
+        listEl.appendChild(row);
+      });
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:hoseok-2023-2025', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
