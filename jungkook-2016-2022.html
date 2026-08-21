@@ -107,8 +107,9 @@
         return;
       }
 
-      block.items.forEach((item, ii) => {
-        const id = 'jk-' + block.year + '-' + ii;
+            block.items.forEach((item, ii) => {
+        const oldId = 'jk-' + block.year + '-' + ii;
+        const id = 'video-' + item.link.split('/').pop();
         const row = document.createElement('div');
         row.className = 'row';
 
@@ -119,7 +120,9 @@
         span.className = 'text';
         span.textContent = item.text;
 
-        if (localStorage.getItem(id) === 'true') {
+        let saved = localStorage.getItem(id);
+        if (saved === null) saved = localStorage.getItem(oldId);
+        if (saved === 'true') {
           box.checked = true;
           span.classList.add('done');
         }
