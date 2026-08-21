@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Тэхён 2015-2022</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 12px; }
+    .year {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      margin: 16px 0 6px;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .done { color: #bbb; text-decoration: line-through; }
+    .text { flex: 1; cursor: pointer; }
+    .link { color: #4fb36c; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="taehyung.html">← Назад</a>
+    <h1>Тэхён: 2015 – 2022</h1>
+    <div id="list"></div>
+  </div>
+
+  <script>
+    const data = [
+      { year: "2015", items: [
+        { text: "от 29.11 \"HYYH on stage (V)\"", link: "https://t.me/violent_arhive/1068" },
+        { text: "от 01.12 \"Трансляция V в Гонконге\"", link: "https://t.me/violent_arhive/1064" }
+      ]},
+      { year: "2016", items: [
+        { text: "от 22.03 \"Live in Kobe V\"", link: "https://t.me/violent_arhive/995" },
+        { text: "от 18.06 \"Vlive в Макао\"", link: "https://t.me/violent_arhive/905" },
+        { text: "от 25.11 \"V (To A.R.M.Y)\"", link: "https://t.me/violent_arhive/885" },
+        { text: "от 27.11 \"V 😬\"", link: "https://t.me/violent_arhive/884" },
+        { text: "от 27.11 \"VV\"", link: "https://t.me/violent_arhive/881" },
+        { text: "от 13.12 \"Я пришёл, потому что соскучился 🍡🎤\"", link: "https://t.me/violent_arhive/853" }
+      ]},
+      { year: "2017", items: [
+        { text: "от 25.03 \"Классика с Тэхёном\"", link: "https://t.me/violent_arhive/836" },
+        { text: "от 07.05 \"Привет, я Тэхёни\"", link: "https://t.me/violent_arhive/830" },
+        { text: "от 23.06 \"Рубашечный маньяк\"", link: "https://t.me/violent_arhive/584" }
+      ]},
+      { year: "2018", items: [
+        { text: "от 05.10 \"Прошло много времени\"", link: "https://t.me/violent_arhive/755" }
+      ]},
+      { year: "2019", items: [
+        { text: "от 08.06 \"Прошло уже много времени\"", link: "https://t.me/violent_arhive/712" },
+        { text: "от 15.12 \"Давно не виделись\"", link: "https://t.me/violent_arhive/689" },
+        { text: "от 31.12 \"День рождения 🎂 Посмотрите на 🐯\"", link: "https://t.me/violent_arhive/688" }
+      ]},
+      { year: "2020", items: [
+        { text: "от 22.01 \"Поиграйте со мной\"", link: "https://t.me/violent_arhive/683" },
+        { text: "от 29.01 \"TaeTae FM 6.13\"", link: "https://t.me/violent_arhive/682" },
+        { text: "от 23.04 \"TaeTae FM 6.13\"", link: "https://t.me/violent_arhive/642" },
+        { text: "от 07.05 \"TaeTae FM 6.13\"", link: "https://t.me/violent_arhive/634" },
+        { text: "от 30.12 \"V DAY!\"", link: "https://t.me/violent_arhive/265" }
+      ]},
+      { year: "2021", items: [
+        { text: "от 24.07 \"Мокпан с Тэхёном\"", link: "https://t.me/violent_arhive/1116" }
+      ]},
+      { year: "2022", items: [
+        { text: "от 13.06 \"Трансляция V\"", link: "https://t.me/violent_arhive/2771" },
+        { text: "от 25.09 \"?\"", link: "https://t.me/violent_arhive/3141" },
+        { text: "от 13.11 \"Здравствуйте\"", link: "https://t.me/violent_arhive/3300" },
+        { text: "от 14.11 \"v\"", link: "https://t.me/violent_arhive/3318" }
+      ]}
+    ];
+
+    const listEl = document.getElementById('list');
+    data.forEach((block) => {
+      const yearTitle = document.createElement('div');
+      yearTitle.className = 'year';
+      yearTitle.textContent = block.year + ' год';
+      listEl.appendChild(yearTitle);
+
+      block.items.forEach((item, ii) => {
+        const id = 'tae15-' + block.year + '-' + ii;
+        const row = document.createElement('div');
+        row.className = 'row';
+
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+
+        const span = document.createElement('span');
+        span.className = 'text';
+        span.textContent = item.text;
+
+        if (localStorage.getItem(id) === 'true') {
+          box.checked = true;
+          span.classList.add('done');
+        }
+        box.addEventListener('change', () => {
+          localStorage.setItem(id, box.checked);
+          span.classList.toggle('done', box.checked);
+          updateProgress();
+        });
+        span.addEventListener('click', () => {
+          box.checked = !box.checked;
+          box.dispatchEvent(new Event('change'));
+        });
+
+        const link = document.createElement('a');
+        link.className = 'link';
+        link.href = item.link;
+        link.target = '_blank';
+        link.textContent = '🔗';
+
+        row.appendChild(box);
+        row.appendChild(span);
+        row.appendChild(link);
+        listEl.appendChild(row);
+      });
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:taehyung-2015-2022', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>

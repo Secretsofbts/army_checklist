@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Тэхён 2023-2024</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 12px; }
+    .year {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      margin: 16px 0 6px;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .done { color: #bbb; text-decoration: line-through; }
+    .text { flex: 1; cursor: pointer; }
+    .link { color: #4fb36c; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+    .empty { color: #aaa; font-size: 14px; padding: 8px 4px; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="taehyung.html">← Назад</a>
+    <h1>Тэхён: 2023 – 2024</h1>
+    <div id="list"></div>
+  </div>
+
+  <script>
+    const data = [
+      { year: "2023", items: [
+        { text: "от 24.01 \"Hi, Ho\"", link: "https://t.me/violent_arhive/3643" },
+        { text: "от 07.03 \"Алло\"", link: "https://t.me/violent_arhive/3766" },
+        { text: "от 10.03 \"Йоу\"", link: "https://t.me/violent_arhive/3769" },
+        { text: "от 11.04 \"👦🏻\"", link: "https://t.me/violent_arhive/3890" },
+        { text: "от 13.04 \"👦🏻\"", link: "https://t.me/violent_arhive/3897" },
+        { text: "от 19.04 \"Пикник\"", link: "https://t.me/violent_arhive/3947" },
+        { text: "от 25.04 \"Доброе утро\"", link: "https://t.me/violent_arhive/3974" },
+        { text: "от 29.05 \"Йоу\"", link: "https://t.me/violent_arhive/4027" },
+        { text: "от 11.06 \"Хай\"", link: "https://t.me/violent_arhive/4070" },
+        { text: "от 15.06 \"Доброе утро\"", link: "https://t.me/violent_arhive/4075" },
+        { text: "от 04.07 \"Да\"", link: "https://t.me/violent_arhive/4097" },
+        { text: "от 20.07 \"Фух\"", link: "https://t.me/violent_arhive/4117" },
+        { text: "от 31.07 \":(\"", link: "https://t.me/violent_arhive/4138" },
+        { text: "от 03.08 \"🧐\"", link: "https://t.me/violent_arhive/4139" },
+        { text: "от 11.08 \"☺️\"", link: "https://t.me/violent_arhive/4157" },
+        { text: "от 13.08 \"Привет\"", link: "https://t.me/violent_arhive/4166" },
+        { text: "от 20.08 \"Хехе\"", link: "https://t.me/violent_arhive/4177" },
+        { text: "от 28.08 \"Йоу\"", link: "https://t.me/violent_arhive/4182" },
+        { text: "от 30.08 \"Давайте посмотрим😪\"", link: "https://t.me/violent_arhive/4187" },
+        { text: "от 04.09 \"Это реально? 🌅\"", link: "https://t.me/violent_arhive/4196" },
+        { text: "от 08.09 \"Йоу\"", link: "https://t.me/violent_arhive/4207" },
+        { text: "от 05.10 \"О\"", link: "https://t.me/violent_arhive/4255" },
+        { text: "от 05.10 \"Йоу\"", link: "https://t.me/violent_arhive/4256" },
+        { text: "от 05.10 \"Хай\"", link: "https://t.me/violent_arhive/4257" },
+        { text: "от 06.10 \"Йоу\"", link: "https://t.me/violent_arhive/4259" },
+        { text: "от 08.10 \"Йоу\"", link: "https://t.me/violent_arhive/4260" },
+        { text: "от 15.10 \"Хаии\"", link: "https://t.me/violent_arhive/4272" },
+        { text: "от 19.10 \"Йоу\"", link: "https://t.me/violent_arhive/4274" },
+        { text: "от 20.10 \"2 эфира Йоу\"", link: "https://t.me/violent_arhive/4278" },
+        { text: "от 23.10 \"Эфир из самолёта\"", link: "https://t.me/violent_arhive/4281" },
+        { text: "от 26.11 \"Йо\"", link: "https://t.me/violent_arhive/4387" },
+        { text: "от 01.12 \"Йо\"", link: "https://t.me/violent_arhive/4396" },
+        { text: "от 05.12 \"Йоу\"", link: "https://t.me/violent_arhive/4407" }
+      ]},
+      { year: "2024", items: [] }
+    ];
+
+    const listEl = document.getElementById('list');
+    data.forEach((block) => {
+      const yearTitle = document.createElement('div');
+      yearTitle.className = 'year';
+      yearTitle.textContent = block.year + ' год';
+      listEl.appendChild(yearTitle);
+
+      if (block.items.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'empty';
+        empty.textContent = 'Служба в армии 🎖';
+        listEl.appendChild(empty);
+        return;
+      }
+
+      block.items.forEach((item, ii) => {
+        const id = 'tae23-' + block.year + '-' + ii;
+        const row = document.createElement('div');
+        row.className = 'row';
+
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+
+        const span = document.createElement('span');
+        span.className = 'text';
+        span.textContent = item.text;
+
+        if (localStorage.getItem(id) === 'true') {
+          box.checked = true;
+          span.classList.add('done');
+        }
+        box.addEventListener('change', () => {
+          localStorage.setItem(id, box.checked);
+          span.classList.toggle('done', box.checked);
+          updateProgress();
+        });
+        span.addEventListener('click', () => {
+          box.checked = !box.checked;
+          box.dispatchEvent(new Event('change'));
+        });
+
+        const link = document.createElement('a');
+        link.className = 'link';
+        link.href = item.link;
+        link.target = '_blank';
+        link.textContent = '🔗';
+
+        row.appendChild(box);
+        row.appendChild(span);
+        row.appendChild(link);
+        listEl.appendChild(row);
+      });
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:taehyung-2023-2024', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
