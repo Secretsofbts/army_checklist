@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>ОТ7 2018-2022</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 12px; }
+    .year {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      margin: 16px 0 6px;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .done { color: #bbb; text-decoration: line-through; }
+    .text { flex: 1; cursor: pointer; }
+    .link { color: #d4485a; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="ot7.html">← Назад</a>
+    <h1>ОТ7: 2018 – 2022</h1>
+    <div id="list"></div>
+  </div>
+
+  <script>
+    const data = [
+      { year: "2018", items: [
+        { text: "от 11.01 \"Наши арми получили награду 🏆\"", link: "https://t.me/violent_arhive/795" },
+        { text: "от 12.02 \"2018 Global TOP10 🔮\"", link: "https://t.me/violent_arhive/794" },
+        { text: "от 21.05 \"Трансляция после Биллборд 🏆\"", link: "https://t.me/violent_arhive/787" },
+        { text: "от 24.05 \"Перед камбэком ❣️\"", link: "https://t.me/violent_arhive/786" },
+        { text: "от 10.06 \"После промоушена Fake Love ❣️\"", link: "https://t.me/violent_arhive/782" },
+        { text: "от 25.07 \"Пьём Макколи 🍻\"", link: "https://t.me/violent_arhive/780" },
+        { text: "от 31.08 \"Трансляция с выставки 'O, Neul!' ❣️\"", link: "https://t.me/violent_arhive/776" }
+      ]},
+      { year: "2019", items: [
+        { text: "от 11.02 \"Трансляция после Грэмми ❣️\"", link: "https://t.me/violent_arhive/744" },
+        { text: "от 27.02 \"BTS 2019 GLOBAL VLIVE TOP 10✨\"", link: "https://t.me/violent_arhive/734" },
+        { text: "от 02.05 \"Вы знаете Bts?\"", link: "https://t.me/violent_arhive/726" }
+      ]},
+      { year: "2020", items: [
+        { text: "от 01.01 \"Новогодняя трансляция на VLIVE. New Year 🎄\"", link: "https://t.me/violent_arhive/685" },
+        { text: "от 27.01 \"BTS после Грэмми 2020 ❣️\"", link: "https://t.me/violent_arhive/684" },
+        { text: "от 07.03 \"За 2 дня до дня рождения Мин Юнги ❣️\"", link: "https://t.me/violent_arhive/678" },
+        { text: "от 21.08 \"Dynamite MV Commentary ❣️\"", link: "https://t.me/violent_arhive/615" },
+        { text: "от 01.09 \"BTS 1st in BILLBOARD! Gather ARMY 🥇🎉❣️\"", link: "https://t.me/violent_arhive/614" },
+        { text: "от 25.11 \"We love you, ARMY V LIVE 💌\"", link: "https://t.me/violent_arhive/211" }
+      ]},
+      { year: "2021", items: [
+        { text: "от 19.02 \"BE.T.S ❣️\"", link: "https://t.me/violent_arhive/338" },
+        { text: "от 15.03 \"Грэмми закончилась!!! It's Over!!!\"", link: "https://t.me/violent_arhive/578" },
+        { text: "от 21.05 \"Butter Butter Bubutter\"", link: "https://t.me/violent_arhive/928" },
+        { text: "от 29.06 \"Butter 5~!!! 🧈\"", link: "https://t.me/violent_arhive/1019" },
+        { text: "от 22.09 \"Действительно последний счастливый Чусок ✌️\"", link: "https://t.me/violent_arhive/1421" },
+        { text: "от 20.10 \"Неожиданный выход перед концертом ❣️\"", link: "https://t.me/violent_arhive/1512" },
+        { text: "от 22.11 \"Сосредоточимся на...\"", link: "https://t.me/violent_arhive/1877" }
+      ]},
+      { year: "2022", items: [
+        { text: "от 19.03 \"Surprise! BTS!!\"", link: "https://t.me/violent_arhive/2577" },
+        { text: "от 04.04 \"I PURPLE YOU 💜\"", link: "https://t.me/violent_arhive/2579" },
+        { text: "от 10.06 \"Come Back ❣️\"", link: "https://t.me/violent_arhive/2756" },
+        { text: "от 08.09 \"Счастливого Чусока ❣️\"", link: "https://t.me/violent_arhive/3122" }
+      ]}
+    ];
+
+    const listEl = document.getElementById('list');
+    data.forEach((block) => {
+      const yearTitle = document.createElement('div');
+      yearTitle.className = 'year';
+      yearTitle.textContent = block.year + ' год';
+      listEl.appendChild(yearTitle);
+
+      block.items.forEach((item) => {
+        const id = 'video-' + item.link.split('/').pop();
+        const row = document.createElement('div');
+        row.className = 'row';
+
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+
+        const span = document.createElement('span');
+        span.className = 'text';
+        span.textContent = item.text;
+
+        if (localStorage.getItem(id) === 'true') {
+          box.checked = true;
+          span.classList.add('done');
+        }
+        box.addEventListener('change', () => {
+          localStorage.setItem(id, box.checked);
+          span.classList.toggle('done', box.checked);
+          updateProgress();
+        });
+        span.addEventListener('click', () => {
+          box.checked = !box.checked;
+          box.dispatchEvent(new Event('change'));
+        });
+
+        const link = document.createElement('a');
+        link.className = 'link';
+        link.href = item.link;
+        link.target = '_blank';
+        link.textContent = '🔗';
+
+        row.appendChild(box);
+        row.appendChild(span);
+        row.appendChild(link);
+        listEl.appendChild(row);
+      });
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:ot7-2018-2022', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>

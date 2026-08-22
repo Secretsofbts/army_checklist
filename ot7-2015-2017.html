@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>ОТ7 2015-2017</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 12px; }
+    .year {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      margin: 16px 0 6px;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .done { color: #bbb; text-decoration: line-through; }
+    .text { flex: 1; cursor: pointer; }
+    .link { color: #d4485a; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="ot7.html">← Назад</a>
+    <h1>ОТ7: 2015 – 2017</h1>
+    <div id="list"></div>
+  </div>
+
+  <script>
+    const data = [
+      { year: "2015", items: [
+        { text: "от 03.08 \"Live in Chile ☺️\"", link: "https://t.me/violent_arhive/119" },
+        { text: "от 07.08 \"BTS in Thailand - только прибыли!\"", link: "https://t.me/violent_arhive/1104" },
+        { text: "от 20.08 \"Live in Osaka\"", link: "https://t.me/violent_arhive/1101" },
+        { text: "от 01.09 \"JUNG KOOK BIRTHDAY!\"", link: "https://t.me/violent_arhive/1099" },
+        { text: "от 12.09 \"Rap Monster's Birthday!!\"", link: "https://t.me/violent_arhive/1096" },
+        { text: "от 27.09 \"БТС поздравляют с Чусоком 🎉\"", link: "https://t.me/violent_arhive/1088" },
+        { text: "от 12.10 \"День рождения Чимина 🎂\"", link: "https://t.me/violent_arhive/1090" },
+        { text: "от 24.11 \"Поём вместе 🎤\"", link: "https://t.me/violent_arhive/1083" },
+        { text: "от 30.11 \"BTS in MAMA BACKSTAGE ❣️\"", link: "https://t.me/violent_arhive/1066" },
+        { text: "от 04.12 \"День рождения Джина\"", link: "https://t.me/violent_arhive/1063" },
+        { text: "от 09.12 \"Празднование 1 места\"", link: "https://t.me/violent_arhive/1060" }
+      ]},
+      { year: "2016", items: [
+        { text: "от 19.01 \"Vlive in Vietnam ❣️\"", link: "https://t.me/violent_arhive/1056" },
+        { text: "от 17.02 \"День рождения J-Hope\"", link: "https://t.me/violent_arhive/1052" },
+        { text: "от 10.03 \"Нас 2 миллиона 🎉\"", link: "https://t.me/violent_arhive/996" },
+        { text: "от 17.05 \"Bts Live ❣️\"", link: "https://t.me/violent_arhive/983" },
+        { text: "от 21.05 \"BTS Vlive ❣️\"", link: "https://t.me/violent_arhive/938" },
+        { text: "от 03.06 \"Live в Париже ❣️\"", link: "https://t.me/violent_arhive/935" },
+        { text: "от 11.06 \"3 года BTS 🎉\" (festa 2016)", link: "https://t.me/violent_arhive/934" },
+        { text: "от 13.09 \"BTS ~chuseok greeting~ 🥰\"", link: "https://t.me/violent_arhive/892" },
+        { text: "от 22.09 \"Bts поздравляют с 3 миллионами подписчиков 🎉\"", link: "https://t.me/violent_arhive/891" },
+        { text: "от 13.10 \"Vlive 1st Aniversary gift\"", link: "https://t.me/violent_arhive/889" },
+        { text: "от 16.11 \"Lets share the HEART interview ❣️\"", link: "https://t.me/violent_arhive/887" },
+        { text: "от 19.11 \"Дэсан 🏆😍\"", link: "https://t.me/violent_arhive/886" },
+        { text: "от 24.12 \"Рождество Бантан. Вечеринка подарков 🎄\"", link: "https://t.me/violent_arhive/140" }
+      ]},
+      { year: "2017", items: [
+        { text: "от 25.01 \"2017 Global Vlive TOP10\"", link: "https://t.me/violent_arhive/851" },
+        { text: "от 07.02 \"Нас 4 миллиона 🎉\"", link: "https://t.me/violent_arhive/849" },
+        { text: "от 22.02 \"С выпускного Джина\"", link: "https://t.me/violent_arhive/845" },
+        { text: "от 22.05 \"На Billboard Music Awards 🏆 Спасибо Арми! ❣️\"", link: "https://t.me/violent_arhive/827" },
+        { text: "от 31.08 \"'Seotaiji 25th concert' practice 🕺\"", link: "https://t.me/violent_arhive/809" },
+        { text: "от 18.09 \"Сюрприз на Vlive 🎉\"", link: "https://t.me/violent_arhive/808" },
+        { text: "от 30.09 \"Награда Billboard, выполняя обещание 🏆\"", link: "https://t.me/violent_arhive/806" },
+        { text: "от 20.11 \"BTS in AMAs ❣️\"", link: "https://t.me/violent_arhive/800" }
+      ]}
+    ];
+
+    const listEl = document.getElementById('list');
+    data.forEach((block) => {
+      const yearTitle = document.createElement('div');
+      yearTitle.className = 'year';
+      yearTitle.textContent = block.year + ' год';
+      listEl.appendChild(yearTitle);
+
+      block.items.forEach((item) => {
+        const id = 'video-' + item.link.split('/').pop();
+        const row = document.createElement('div');
+        row.className = 'row';
+
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+
+        const span = document.createElement('span');
+        span.className = 'text';
+        span.textContent = item.text;
+
+        if (localStorage.getItem(id) === 'true') {
+          box.checked = true;
+          span.classList.add('done');
+        }
+        box.addEventListener('change', () => {
+          localStorage.setItem(id, box.checked);
+          span.classList.toggle('done', box.checked);
+          updateProgress();
+        });
+        span.addEventListener('click', () => {
+          box.checked = !box.checked;
+          box.dispatchEvent(new Event('change'));
+        });
+
+        const link = document.createElement('a');
+        link.className = 'link';
+        link.href = item.link;
+        link.target = '_blank';
+        link.textContent = '🔗';
+
+        row.appendChild(box);
+        row.appendChild(span);
+        row.appendChild(link);
+        listEl.appendChild(row);
+      });
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:ot7-2015-2017', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
