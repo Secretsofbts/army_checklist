@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>VLOGs Jungkook</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 8px; }
+    .format-hint { font-size: 12px; color: #999; margin: 0 0 16px; }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .date-chip {
+      background: #f0ebfa;
+      color: #7b5fc4;
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      font-size: 12px;
+      padding: 3px 7px;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+    .done .date-chip { background: #f0f0f0; color: #bbb; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .done .text { color: #bbb; text-decoration: line-through; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="youtube.html">← Назад</a>
+    <h1>VLOGs Jungkook 💜</h1>
+    <p class="intro">Коротенькие видео, несколько минут мыслей. Ребята выходили в YouTube ещё до создания Vlive. Тут влоги начались ещё до дебюта.</p>
+    <p class="format-hint">123456 — цифры вначале каждой трансляции: первые две (12) — год, следующие две (34) — месяц, следующие (56) — число</p>
+    <div id="list"></div>
+  </div>
+
+  <script>
+    const items = [
+      { date: "130208", link: "https://t.me/violent_arhive/1332" },
+      { date: "130306", link: "https://t.me/violent_arhive/1322" },
+      { date: "130425", link: "https://t.me/violent_arhive/1316" },
+      { date: "130718", link: "https://t.me/violent_arhive/1298" },
+      { date: "130816", link: "https://t.me/violent_arhive/1288" },
+      { date: "131020", link: "https://t.me/violent_arhive/1275" },
+      { date: "131123", link: "https://t.me/violent_arhive/1268" },
+      { date: "140405", link: "https://t.me/violent_arhive/1227" },
+      { date: "140705", link: "https://t.me/violent_arhive/1218" },
+      { date: "141021", link: "https://t.me/violent_arhive/1205" },
+      { date: "141210", link: "https://t.me/violent_arhive/1202" },
+      { date: "150403", link: "https://t.me/violent_arhive/1192" },
+      { date: "150901", link: "https://t.me/violent_arhive/1187" },
+      { date: "161206", link: "https://t.me/violent_arhive/1143" }
+    ];
+
+    const listEl = document.getElementById('list');
+    items.forEach((item) => {
+      const id = 'video-' + item.link.split('/').pop();
+      const row = document.createElement('div');
+      row.className = 'row';
+
+      const box = document.createElement('input');
+      box.type = 'checkbox';
+
+      const chip = document.createElement('span');
+      chip.className = 'date-chip';
+      chip.textContent = item.date;
+
+      const span = document.createElement('span');
+      span.className = 'text';
+      span.textContent = 'Jungkook';
+
+      if (localStorage.getItem(id) === 'true') {
+        box.checked = true;
+        row.classList.add('done');
+      }
+      function toggle() {
+        box.checked = !box.checked;
+        localStorage.setItem(id, box.checked);
+        row.classList.toggle('done', box.checked);
+      }
+      box.addEventListener('change', () => {
+        localStorage.setItem(id, box.checked);
+        row.classList.toggle('done', box.checked);
+        updateProgress();
+      });
+      span.addEventListener('click', () => { toggle(); updateProgress(); });
+      chip.addEventListener('click', () => { toggle(); updateProgress(); });
+
+      const link = document.createElement('a');
+      link.className = 'link';
+      link.href = item.link;
+      link.target = '_blank';
+      link.textContent = '🔗';
+
+      row.appendChild(box);
+      row.appendChild(chip);
+      row.appendChild(span);
+      row.appendChild(link);
+      listEl.appendChild(row);
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:vlog-jungkook', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
