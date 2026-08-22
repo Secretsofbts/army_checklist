@@ -121,16 +121,29 @@
         const row = document.createElement('div');
         row.className = 'row';
 
-                       if (item.link === null) {
+                  const id = item.link ? ('video-' + item.link.split('/').pop()) : ('noline-jungkook-' + block.year + '-' + ii);
+
+        if (item.link === null) {
           const box = document.createElement('input');
           box.type = 'checkbox';
-          box.disabled = true;
-          box.className = 'crossed';
 
           const span = document.createElement('span');
           span.className = 'text';
-          span.style.cursor = 'default';
           span.textContent = item.text;
+
+          if (localStorage.getItem(id) === 'true') {
+            box.checked = true;
+            span.classList.add('done');
+          }
+          box.addEventListener('change', () => {
+            localStorage.setItem(id, box.checked);
+            span.classList.toggle('done', box.checked);
+            updateProgress();
+          });
+          span.addEventListener('click', () => {
+            box.checked = !box.checked;
+            box.dispatchEvent(new Event('change'));
+          });
 
           row.appendChild(box);
           row.appendChild(span);
@@ -138,8 +151,7 @@
           return;
         }
 
-              const oldId = 'jk25-' + block.year + '-' + ii;
-        const id = 'video-' + item.link.split('/').pop();
+                 const oldId = 'jk25-' + block.year + '-' + ii;
         const box = document.createElement('input');
         box.type = 'checkbox';
 
@@ -176,8 +188,8 @@
       });
     });
 
-        function updateProgress() {
-      const all = document.querySelectorAll('input[type="checkbox"]:not(:disabled)');
+              function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
       let total = 0, checked = 0;
       all.forEach(cb => {
         total++;
