@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Трансляции с YouTube</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 16px; }
+    .section-title { font-size: 14px; font-weight: 600; margin: 16px 0 4px; }
+    .section-desc { font-size: 12px; color: #999; margin: 0 0 10px; }
+    hr { border: none; border-top: 1px solid #eee; margin: 16px 0; }
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .card {
+      background: #f7f7fa;
+      border-radius: 12px;
+      padding: 12px 14px;
+      text-decoration: none;
+      color: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="translations.html">← Назад</a>
+    <h1>Трансляции с YouTube ✌️🖥</h1>
+    <p class="intro">До приложения Vlive ребята вели трансляции в Ютубе, и до сих пор иногда выходят через него.</p>
+
+    <p class="section-title">📽 VlOG</p>
+    <p class="section-desc">коротенькие видео, несколько минут мыслей</p>
+    <div class="list">
+      <a class="card" href="vlog-jungkook.html">💜 Jungkook</a>
+      <a class="card" href="vlog-v.html">💚 V</a>
+      <a class="card" href="vlog-jin.html">💕 Jin</a>
+      <a class="card" href="vlog-jimin.html">💛 Jimin</a>
+      <a class="card" href="vlog-namjoon.html">💙 Namjoon</a>
+      <a class="card" href="vlog-suga.html">🖤 Suga</a>
+      <a class="card" href="vlog-jhope.html">🤍 J-Hope</a>
+      <a class="card" href="vlog-ot7.html">❣️ ОТ7</a>
+      <a class="card" href="vlog-somepeople.html">🧑‍🤝‍🧑 Несколько человек</a>
+    </div>
+
+    <hr>
+    <div class="list">
+      <a class="card" href="logon.html">🎥 Log(ON) — записанные заранее и обычные трансляции</a>
+      <a class="card" href="eatjin.html">🍴🍜 EATJIN — рубрика Джина</a>
+      <a class="card" href="vlogs-bts.html">📽 VLOGS BTS</a>
+    </div>
+  </div>
+
+  <script>
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
