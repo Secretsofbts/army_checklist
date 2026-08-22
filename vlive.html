@@ -97,6 +97,7 @@
       <a class="card" href="yoongi.html">
         <div class="icon">🖤</div>
         <div class="name">Юнги</div>
+          <span class="badge" id="badge-yoongi" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
       <a class="card" href="somepeople.html">
         <div class="icon">🧑‍🤝‍🧑</div>
@@ -151,7 +152,7 @@
   renderBadgeTotal('badge-hoseok', ['hoseok-2015-2022', 'hoseok-2023-2025', 'hoseok-2026-HB']);
   renderBadgeTotal('badge-radio', ['radio']);
   renderBadgeTotal('badge-jimin', ['jimin-2015-2022', 'jimin-2023-2026']);
-
+  renderBadgeTotal('badge-yoongi', ['yoongi-2015-2022', 'yoongi-2023-2026']);
   if (window.Telegram && window.Telegram.WebApp) {
     Telegram.WebApp.ready();
     Telegram.WebApp.expand();

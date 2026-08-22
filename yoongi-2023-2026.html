@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Юнги 2023-2026</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 12px; }
+    .year {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      margin: 16px 0 6px;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .done { color: #bbb; text-decoration: line-through; }
+    .text { flex: 1; cursor: pointer; }
+    .link { color: #666; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+    .empty { color: #333; font-size: 14px; padding: 8px 4px; font-weight: 500; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="yoongi.html">← Назад</a>
+    <h1>Юнги: 2023 – 2026</h1>
+    <div id="list"></div>
+  </div>
+
+  <script>
+    const data = [
+      { year: "2023", items: [
+        { text: "от 14.02 \"День святого Валентина\"", link: "https://t.me/violent_arhive/3694" },
+        { text: "от 09.03 \"Мой день рождения 🎂\"", link: "https://t.me/violent_arhive/3768" },
+        { text: "от 07.04 \"Радиошоу Юнги 🎙\"", link: "https://t.me/violent_arhive/3943" },
+        { text: "от 25.04 \"SUGA 'D-DAY' Live\"", link: "https://t.me/violent_arhive/3987" },
+        { text: "от 30.04 \"Первый город — завершено 💛\"", link: "https://t.me/violent_arhive/3990" },
+        { text: "от 07.05 \"Чикаго, конец!!!\"", link: "https://t.me/violent_arhive/4007" },
+        { text: "от 18.05 \"Давайте говорить друг другу не 'пока', а 'привет'\"", link: "https://t.me/violent_arhive/4018" },
+        { text: "от 11.06 \"Последняя ночь в Бангкоке\"", link: "https://t.me/violent_arhive/4074" },
+        { text: "от 18.06 \"Зарубежный тур всё!\"", link: "https://t.me/violent_arhive/4079" },
+        { text: "от 06.08 \"Всё!\"", link: "https://t.me/violent_arhive/4153" },
+        { text: "от 17.09 \"Давно не виделись\"", link: "https://t.me/violent_arhive/4240" }
+      ]},
+      { year: "2024", items: [] },
+      { year: "2025", items: [
+        { text: "от 28.12 \"Ну и холодрыга\"", link: "https://t.me/violent_arhive/5371" }
+      ]},
+      { year: "2026", items: [
+        { text: "от 09.03 \"С ДР ШУГА 🎂\"", link: "https://t.me/violent_arhive/5398" },
+        { text: "от 13.06 \"Шестьодинтри\"", link: "https://t.me/violent_arhive/5531" }
+      ]}
+    ];
+
+    const listEl = document.getElementById('list');
+    data.forEach((block) => {
+      const yearTitle = document.createElement('div');
+      yearTitle.className = 'year';
+      yearTitle.textContent = block.year + ' год';
+      listEl.appendChild(yearTitle);
+
+      if (block.items.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'empty';
+        empty.textContent = 'Служба в армии 🫡';
+        listEl.appendChild(empty);
+        return;
+      }
+
+      block.items.forEach((item) => {
+        const id = 'video-' + item.link.split('/').pop();
+        const row = document.createElement('div');
+        row.className = 'row';
+
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+
+        const span = document.createElement('span');
+        span.className = 'text';
+        span.textContent = item.text;
+
+        if (localStorage.getItem(id) === 'true') {
+          box.checked = true;
+          span.classList.add('done');
+        }
+        box.addEventListener('change', () => {
+          localStorage.setItem(id, box.checked);
+          span.classList.toggle('done', box.checked);
+          updateProgress();
+        });
+        span.addEventListener('click', () => {
+          box.checked = !box.checked;
+          box.dispatchEvent(new Event('change'));
+        });
+
+        const link = document.createElement('a');
+        link.className = 'link';
+        link.href = item.link;
+        link.target = '_blank';
+        link.textContent = '🔗';
+
+        row.appendChild(box);
+        row.appendChild(span);
+        row.appendChild(link);
+        listEl.appendChild(row);
+      });
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:yoongi-2023-2026', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
