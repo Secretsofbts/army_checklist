@@ -138,7 +138,8 @@
           return;
         }
 
-        const oldId = 'jk25-' + block.year + '-' + ii;
+              const oldId = 'jk25-' + block.year + '-' + ii;
+        const id = 'video-' + item.link.split('/').pop();
         const box = document.createElement('input');
         box.type = 'checkbox';
 
