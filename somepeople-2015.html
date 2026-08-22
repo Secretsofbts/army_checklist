@@ -27,7 +27,8 @@
       display: inline-block;
       margin-bottom: 12px;
     }
-    h1 { font-size: 18px; margin: 0 0 12px; }
+        h1 { font-size: 18px; margin: 0 0 10px; }
+    .legend { font-size: 13px; color: #555; line-height: 1.6; margin: 0 0 16px; }
     .row {
       display: flex;
       align-items: center;
@@ -45,8 +46,12 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="somepeople.html">← Назад</a>
+       <a class="back" href="somepeople.html">← Назад</a>
     <h1>Несколько человек: 2015</h1>
+    <p class="legend">Цвет сердечек говорит вам о том, кто на трансляции (это цвета старых микрофонов):<br>
+      💜 Чонгук &nbsp; 💛 Чимин &nbsp; 💕 Джин<br>
+      💚 Тэхён &nbsp; 💙 Намджун &nbsp; 🖤 Юнги &nbsp; 🤍 Хосок
+    </p>
     <div id="list"></div>
   </div>
 
