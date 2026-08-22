@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Несколько человек 2023-2025</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 10px; }
+    .legend { font-size: 13px; color: #555; line-height: 1.6; margin: 0 0 16px; }
+    .year {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      margin: 16px 0 6px;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .done { color: #bbb; text-decoration: line-through; }
+    .text { flex: 1; cursor: pointer; }
+    .hearts { font-size: 12px; flex-shrink: 0; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="somepeople.html">← Назад</a>
+    <h1>Несколько человек: 2023 – 2025</h1>
+    <p class="legend">Цвет сердечек говорит вам о том, кто на трансляции (это цвета старых микрофонов):<br>
+      💜 Чонгук &nbsp; 💛 Чимин &nbsp; 💕 Джин<br>
+      💚 Тэхён &nbsp; 💙 Намджун &nbsp; 🖤 Юнги &nbsp; 🤍 Хосок
+    </p>
+    <div id="list"></div>
+  </div>
+
+  <script>
+    const data = [
+      { year: "2023", items: [
+        { text: "от 01.02 \"Эфир Вигуков в инсте\"", hearts: "💚💜", link: "https://t.me/violent_arhive/3659" },
+        { text: "от 07.04 \"Привет\"", hearts: "💜💚🤍", link: "https://t.me/violent_arhive/3879" },
+        { text: "от 30.04 \"1 город — завершено\"", hearts: "💛🖤", link: "https://t.me/violent_arhive/3990" },
+        { text: "от 03.11 \"Йоу\"", hearts: "💛💚", link: "https://t.me/violent_arhive/4307" },
+        { text: "\"Мы уйдём и благополучно вернёмся!\"", hearts: "💙💛💚💜", link: "https://t.me/violent_arhive/4409" }
+      ]},
+      { year: "2024", items: [
+        { text: "от 23.12 \"Джин и Джей-Хоуп 🐹🐿\"", hearts: "💕🤍", link: "https://t.me/violent_arhive/4968" }
+      ]},
+      { year: "2025", items: [
+        { text: "от 31.05 \"FESTA 2025! BTS News\"", hearts: "💕🤍", link: "https://t.me/violent_arhive/5139" },
+        { text: "от 10.06 \"Мы благополучно отслужили!\"", hearts: "💙💚", link: "https://t.me/violent_arhive/5144" },
+        { text: "от 11.06 \"Мы вернулись\"", hearts: "💛💜", link: "https://t.me/violent_arhive/5148" },
+        { text: "от 11-12.06 \"TWELVE O'CLOCK\"", hearts: "💕🤍", link: "https://t.me/violent_arhive/5193" },
+        { text: "от 14.07 \"Ты уверен?\"", hearts: "💛💜", link: "https://t.me/violent_arhive/5207" },
+        { text: "от 15.07 \"Лайв Тэхена, Чонгука и Намджуна в Инсте\"", hearts: "💜💙💚", link: "https://t.me/violent_arhive/5201" },
+        { text: "от 15.07 \"хых\"", hearts: "💜💙💚💛", link: "https://t.me/violent_arhive/5202" },
+        { text: "от 15.07 \"хех\"", hearts: "💜💙💚🤍💛", link: "https://t.me/violent_arhive/5203" },
+        { text: "от 16.07 \"2 эфира в ин от Вигу\"", hearts: "💜💚", link: "https://t.me/violent_arhive/5197" },
+        { text: "от 29.08 \"Надо бы в душ сгонять\"", hearts: "💜💚", link: "https://t.me/violent_arhive/5247" },
+        { text: "от 28.10 \"Жив\"", hearts: "💕💜🤍", link: "https://t.me/violent_arhive/5281" },
+        { text: "от 01.11 \"😆\"", hearts: "💛💚", link: "https://t.me/violent_arhive/5282" },
+        { text: "от 21.11 \"🐨🐤\"", hearts: "💛💙", link: "https://t.me/violent_arhive/5313" },
+        { text: "от 19.12 \"Джин, Ви и Гук с рисом\"", hearts: "💕💜💚", link: "https://t.me/violent_arhive/5355" }
+      ]}
+    ];
+
+    const listEl = document.getElementById('list');
+    data.forEach((block) => {
+      const yearTitle = document.createElement('div');
+      yearTitle.className = 'year';
+      yearTitle.textContent = block.year + ' год';
+      listEl.appendChild(yearTitle);
+
+      block.items.forEach((item) => {
+        const id = 'video-' + item.link.split('/').pop();
+        const row = document.createElement('div');
+        row.className = 'row';
+
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+
+        const span = document.createElement('span');
+        span.className = 'text';
+        span.textContent = item.text;
+
+        if (localStorage.getItem(id) === 'true') {
+          box.checked = true;
+          span.classList.add('done');
+        }
+        box.addEventListener('change', () => {
+          localStorage.setItem(id, box.checked);
+          span.classList.toggle('done', box.checked);
+          updateProgress();
+        });
+        span.addEventListener('click', () => {
+          box.checked = !box.checked;
+          box.dispatchEvent(new Event('change'));
+        });
+
+        const hearts = document.createElement('span');
+        hearts.className = 'hearts';
+        hearts.textContent = item.hearts;
+
+        const link = document.createElement('a');
+        link.className = 'link';
+        link.href = item.link;
+        link.target = '_blank';
+        link.textContent = '🔗';
+
+        row.appendChild(box);
+        row.appendChild(span);
+        row.appendChild(hearts);
+        row.appendChild(link);
+        listEl.appendChild(row);
+      });
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:somepeople-2023-2025', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>

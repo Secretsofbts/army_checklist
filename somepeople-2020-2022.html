@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Несколько человек 2020-2022</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 10px; }
+    .legend { font-size: 13px; color: #555; line-height: 1.6; margin: 0 0 16px; }
+    .year {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      margin: 16px 0 6px;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .done { color: #bbb; text-decoration: line-through; }
+    .text { flex: 1; cursor: pointer; }
+    .hearts { font-size: 12px; flex-shrink: 0; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="somepeople.html">← Назад</a>
+    <h1>Несколько человек: 2020 – 2022</h1>
+    <p class="legend">Цвет сердечек говорит вам о том, кто на трансляции (это цвета старых микрофонов):<br>
+      💜 Чонгук &nbsp; 💛 Чимин &nbsp; 💕 Джин<br>
+      💚 Тэхён &nbsp; 💙 Намджун &nbsp; 🖤 Юнги &nbsp; 🤍 Хосок
+    </p>
+    <div id="list"></div>
+  </div>
+
+  <script>
+    const data = [
+      { year: "2020", items: [
+        { text: "от 05.03 \"АРМИ, мы очень скучаем\"", hearts: "💜💕🖤", link: "https://t.me/violent_arhive/680" },
+        { text: "от 06.03 \"R&V\"", hearts: "💙💚", link: "https://t.me/violent_arhive/679" },
+        { text: "от 08.03 \"Последние минуты на Vlive\"", hearts: "💛🤍", link: "https://t.me/violent_arhive/677" },
+        { text: "от 14.04 \"Сегодняшний гость это?\"", hearts: "💛💙", link: "https://t.me/violent_arhive/656" },
+        { text: "от 23.04 \"Мы сегодня не опоздали\"", hearts: "🤍💙", link: "https://t.me/violent_arhive/644" },
+        { text: "от 27.04 \"JinkiMin\"", hearts: "💛🖤💕", link: "https://t.me/violent_arhive/640" },
+        { text: "от 05.05 \"Тренируемся делать гвоздики для родительского дня(1) Снова(2)\"", hearts: "💜💚", link: "https://t.me/violent_arhive/638" },
+        { text: "от 24.05 \"RJRJ\"", hearts: "💙💕", link: "https://t.me/violent_arhive/628" },
+        { text: "от 21.06 \"Сегодня мы кимпаб-шефы. Мы действительно кимпаб-шефы\"", hearts: "💜💛", link: "https://t.me/violent_arhive/620" }
+      ]},
+      { year: "2021", items: [
+        { text: "от 13.03 \"Джин, Намджун и Чимин делают салат\"", hearts: "💙💛💕", link: "https://t.me/violent_arhive/569" },
+        { text: "от 05.04 \"Филиал BTS Кафе Йонсан открыт! Время чаепития С АРМИ\"", hearts: "🖤🤍💚", link: "https://t.me/violent_arhive/664" },
+        { text: "от 19.08 \"NamJin\"", hearts: "💕💙", link: "https://t.me/violent_arhive/1161" },
+        { text: "от 28.11 \"Эфир Вимингуков\"", hearts: "💜💛💚", link: "https://t.me/violent_arhive/1890" },
+        { text: "от 03.12 \"Джуни и Кукки\"", hearts: "💙💜", link: "https://t.me/violent_arhive/1903" }
+      ]},
+      { year: "2022", items: [
+        { text: "от 20.02 \"V LIVE РМ, Шуги и Чимина\"", hearts: "💙💛🖤", link: "https://t.me/violent_arhive/2271" },
+        { text: "от 06.03 \"JwiJjwanBbooKkweoh\"", hearts: "💚💜🤍💕", link: "https://t.me/violent_arhive/2317" },
+        { text: "от 16.04 \"Ppyong 😊\"", hearts: "🤍💛💚💜", link: "https://t.me/violent_arhive/2592" },
+        { text: "от 01.08 \"Хобипалуза\"", hearts: "🤍💛", link: "https://t.me/violent_arhive/2896" },
+        { text: "от 15.10 \"Привет, Пусан\"", hearts: "🤍💛💚💜", link: "https://t.me/violent_arhive/3213" }
+      ]}
+    ];
+
+    const listEl = document.getElementById('list');
+    data.forEach((block) => {
+      const yearTitle = document.createElement('div');
+      yearTitle.className = 'year';
+      yearTitle.textContent = block.year + ' год';
+      listEl.appendChild(yearTitle);
+
+      block.items.forEach((item) => {
+        const id = 'video-' + item.link.split('/').pop();
+        const row = document.createElement('div');
+        row.className = 'row';
+
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+
+        const span = document.createElement('span');
+        span.className = 'text';
+        span.textContent = item.text;
+
+        if (localStorage.getItem(id) === 'true') {
+          box.checked = true;
+          span.classList.add('done');
+        }
+        box.addEventListener('change', () => {
+          localStorage.setItem(id, box.checked);
+          span.classList.toggle('done', box.checked);
+          updateProgress();
+        });
+        span.addEventListener('click', () => {
+          box.checked = !box.checked;
+          box.dispatchEvent(new Event('change'));
+        });
+
+        const hearts = document.createElement('span');
+        hearts.className = 'hearts';
+        hearts.textContent = item.hearts;
+
+        const link = document.createElement('a');
+        link.className = 'link';
+        link.href = item.link;
+        link.target = '_blank';
+        link.textContent = '🔗';
+
+        row.appendChild(box);
+        row.appendChild(span);
+        row.appendChild(hearts);
+        row.appendChild(link);
+        listEl.appendChild(row);
+      });
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:somepeople-2020-2022', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
