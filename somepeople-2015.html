@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Несколько человек 2015</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 12px; }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .done { color: #bbb; text-decoration: line-through; }
+    .text { flex: 1; cursor: pointer; }
+    .hearts { font-size: 12px; flex-shrink: 0; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="somepeople.html">← Назад</a>
+    <h1>Несколько человек: 2015</h1>
+    <div id="list"></div>
+  </div>
+
+  <script>
+    const items = [
+      { text: "от 01.08 \"Live in Brazil\"", hearts: "💛💜💕", link: "https://t.me/violent_arhive/114" },
+      { text: "от 03.08 \"Rap Monster '1 минута английского' 1 часть\"", hearts: "💜💙", link: "https://t.me/violent_arhive/1106" },
+      { text: "от 06.08 \"Live в аэропорту 🛫\"", hearts: "💛🖤💜", link: "https://t.me/violent_arhive/1105" },
+      { text: "от 07.08 \"Live #1\"", hearts: "💜💚💙", link: "https://t.me/violent_arhive/1103" },
+      { text: "от 07.08 \"Live #2\"", hearts: "🤍💛🖤💕", link: "https://t.me/violent_arhive/4072" },
+      { text: "от 13.08 \"Live in Tokio\"", hearts: "💛💚", link: "https://t.me/violent_arhive/1102" },
+      { text: "от 30.08 \"Rap Monster '1 минута английского (2 часть)'\"", hearts: "💜💙", link: "https://t.me/violent_arhive/1100" },
+      { text: "от 03.09 \"Ви и Чимин говорят на диалекте\"", hearts: "💛💚", link: "https://t.me/violent_arhive/1098" },
+      { text: "от 10.09 \"Live on the way out\"", hearts: "💛💚🤍💙", link: "https://t.me/violent_arhive/1097" },
+      { text: "от 20.09 \"RM&SUGA&J-HOPE\"", hearts: "🖤🤍💙", link: "https://t.me/violent_arhive/1095" },
+      { text: "от 25.09 \"Ви и Чимин говорят на сатури\"", hearts: "💚💛", link: "https://t.me/violent_arhive/1089" },
+      { text: "от 18.10 \"Район Мандакко\"", hearts: "💚💛🤍💜", link: "https://t.me/violent_arhive/1086" },
+      { text: "от 23.10 \"BTS Vlive\"", hearts: "🤍💚", link: "https://t.me/violent_arhive/1085" },
+      { text: "от 25.10 \"BTS Vlive\"", hearts: "💕💜", link: "https://t.me/violent_arhive/1082" },
+      { text: "от 24.11 \"BTS Vlive\"", hearts: "💙💛", link: "https://t.me/violent_arhive/1084" },
+      { text: "от 14.12 \"Новости музыкального фестиваля KBS c BTS 🌲\"", hearts: "💜💛🤍", link: "https://t.me/violent_arhive/1057" }
+    ];
+
+    const listEl = document.getElementById('list');
+    items.forEach((item) => {
+      const id = 'video-' + item.link.split('/').pop();
+      const row = document.createElement('div');
+      row.className = 'row';
+
+      const box = document.createElement('input');
+      box.type = 'checkbox';
+
+      const span = document.createElement('span');
+      span.className = 'text';
+      span.textContent = item.text;
+
+      if (localStorage.getItem(id) === 'true') {
+        box.checked = true;
+        span.classList.add('done');
+      }
+      box.addEventListener('change', () => {
+        localStorage.setItem(id, box.checked);
+        span.classList.toggle('done', box.checked);
+        updateProgress();
+      });
+      span.addEventListener('click', () => {
+        box.checked = !box.checked;
+        box.dispatchEvent(new Event('change'));
+      });
+
+      const hearts = document.createElement('span');
+      hearts.className = 'hearts';
+      hearts.textContent = item.hearts;
+
+      const link = document.createElement('a');
+      link.className = 'link';
+      link.href = item.link;
+      link.target = '_blank';
+      link.textContent = '🔗';
+
+      row.appendChild(box);
+      row.appendChild(span);
+      row.appendChild(hearts);
+      row.appendChild(link);
+      listEl.appendChild(row);
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:somepeople-2015', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
