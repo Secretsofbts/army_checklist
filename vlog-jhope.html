@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>VLOGs J-Hope</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 8px; }
+    .format-hint { font-size: 12px; color: #999; margin: 0 0 16px; }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .date-chip {
+      background: #f5f5f5;
+      color: #777;
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      font-size: 12px;
+      padding: 3px 7px;
+      border-radius: 6px;
+      flex-shrink: 0;
+      border: 1px solid #e0e0e0;
+    }
+    .done .date-chip { background: #f0f0f0; color: #bbb; border-color: #f0f0f0; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .done .text { color: #bbb; text-decoration: line-through; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="youtube.html">← Назад</a>
+    <h1>VLOGs J-Hope 🤍</h1>
+    <p class="intro">Коротенькие видео, несколько минут мыслей. Ребята выходили в YouTube ещё до создания Vlive. Тут влоги начались ещё до дебюта.</p>
+    <p class="format-hint">123456 — цифры вначале каждой трансляции:<br>
+      первые две (12) — год,<br>
+      следующие две (34) — месяц,<br>
+      следующие (56) — число
+    </p>
+    <div id="list"></div>
+  </div>
+
+  <script>
+    const items = [
+      { date: "130214", name: "J-Hope", link: "https://t.me/violent_arhive/1330" },
+      { date: "130219", name: "J-Hope", link: "https://t.me/violent_arhive/1318" },
+      { date: "130308", name: "J-Hope", link: "https://t.me/violent_arhive/1319" },
+      { date: "130704", name: "J-Hope", link: "https://t.me/violent_arhive/1301" },
+      { date: "130728", name: "J-Hope", link: "https://t.me/violent_arhive/1290" },
+      { date: "130829", name: "J-Hope", link: "https://t.me/violent_arhive/1285" },
+      { date: "131102", name: "J-Hope", link: "https://t.me/violent_arhive/1274" },
+      { date: "140103", name: "J-Hope", link: "https://t.me/violent_arhive/1240" },
+      { date: "140219", name: "J-Hope", link: "https://t.me/violent_arhive/1234" },
+      { date: "140516", name: "J-Hope", link: "https://t.me/violent_arhive/1266" },
+      { date: "140708", name: "J-hope", link: "https://t.me/violent_arhive/1196" },
+      { date: "141219", name: "J-Hope", link: "https://t.me/violent_arhive/1201" },
+      { date: "150218", name: "J-Hope", link: "https://t.me/violent_arhive/1198" },
+      { date: "150512", name: "J-Hope", link: "https://t.me/violent_arhive/1188" },
+      { date: "160925", name: "J-Hope", link: "https://t.me/violent_arhive/1148" },
+      { date: "170416", name: "J-Hope", link: "https://t.me/violent_arhive/1141" },
+      { date: "171119", name: "J-Hope", link: "https://t.me/violent_arhive/1115" },
+      { date: "180426", name: "J-Hope", link: "https://t.me/violent_arhive/1112" }
+    ];
+
+    const listEl = document.getElementById('list');
+    items.forEach((item) => {
+      const id = 'video-' + item.link.split('/').pop();
+      const row = document.createElement('div');
+      row.className = 'row';
+
+      const box = document.createElement('input');
+      box.type = 'checkbox';
+
+      const chip = document.createElement('span');
+      chip.className = 'date-chip';
+      chip.textContent = item.date;
+
+      const span = document.createElement('span');
+      span.className = 'text';
+      span.textContent = item.name;
+
+      if (localStorage.getItem(id) === 'true') {
+        box.checked = true;
+        row.classList.add('done');
+      }
+      function toggle() {
+        box.checked = !box.checked;
+        localStorage.setItem(id, box.checked);
+        row.classList.toggle('done', box.checked);
+      }
+      box.addEventListener('change', () => {
+        localStorage.setItem(id, box.checked);
+        row.classList.toggle('done', box.checked);
+        updateProgress();
+      });
+      span.addEventListener('click', () => { toggle(); updateProgress(); });
+      chip.addEventListener('click', () => { toggle(); updateProgress(); });
+
+      const link = document.createElement('a');
+      link.className = 'link';
+      link.href = item.link;
+      link.target = '_blank';
+      link.textContent = '🔗';
+
+      row.appendChild(box);
+      row.appendChild(chip);
+      row.appendChild(span);
+      row.appendChild(link);
+      listEl.appendChild(row);
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:vlog-jhope', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
