@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>VLOGS BTS</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 16px; }
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .card {
+      background: #f7f7fa;
+      border-radius: 12px;
+      padding: 12px 14px;
+      text-decoration: none;
+      color: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="youtube.html">← Назад</a>
+    <h1>🌟 VLOGS BTS 🌟</h1>
+    <p class="intro">Сборный пост всех влогов</p>
+    <div class="list">
+      <a class="card" href="vlogsbts-jimin.html">💛 Чимин</a>
+      <a class="card" href="vlogsbts-jin.html">💕 Джин</a>
+      <a class="card" href="vlogsbts-taehyung.html">💚 Тэхён</a>
+      <a class="card" href="vlogsbts-jungkook.html">💜 Чонгук</a>
+      <a class="card" href="vlogsbts-namjoon.html">💙 Намджун</a>
+      <a class="card" href="vlogsbts-yoongi.html">🖤 Юнги</a>
+      <a class="card" href="vlogsbts-hoseok.html">🤍 Хосок</a>
+    </div>
+  </div>
+
+  <script>
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Log(ON)</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 8px; }
+    .format-hint { font-size: 12px; color: #999; margin: 0 0 16px; }
+    .row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; }
+    .date-chip {
+      background: #e6e6e6;
+      color: #555;
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      font-size: 12px;
+      padding: 3px 7px;
+      border-radius: 6px;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .done .date-chip { background: #f0f0f0; color: #bbb; }
+    .hearts { font-size: 12px; flex-shrink: 0; margin-top: 3px; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .done .text { color: #bbb; text-decoration: line-through; }
+    .sub { display: block; font-size: 11px; color: #999; margin-top: 2px; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; margin-top: 2px; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="youtube.html">← Назад</a>
+    <h1>🎥 Log(ON) 🎥</h1>
+    <p class="intro">Записанные заранее видео и обычные трансляции на YouTube</p>
+    <p class="format-hint">123456 — цифры вначале каждой трансляции:<br>
+      первые две (12) — год,<br>
+      следующие две (34) — месяц,<br>
+      следующие (56) — число
+    </p>
+    <div id="list"></div>
+  </div>
+
+  <script>
+    const items = [
+      { date: "200417", hearts: "💙", name: "RM", note: "", link: "https://t.me/violent_arhive/612" },
+      { date: "200424", hearts: "🖤", name: "SUGA", note: "рисование картины 1 часть", link: "https://t.me/violent_arhive/611" },
+      { date: "200428", hearts: "🤍", name: "J-Hope", note: "тренировка танцев", link: "https://t.me/violent_arhive/610" },
+      { date: "200501", hearts: "💛", name: "Jimin", note: "", link: "https://t.me/violent_arhive/609" },
+      { date: "200506", hearts: "🖤", name: "SUGA", note: "рисование картины 2 часть", link: "https://t.me/violent_arhive/604" },
+      { date: "200507", hearts: "💚💙🤍", name: "V RM J-hope", note: "", link: "https://t.me/violent_arhive/597" },
+      { date: "200508", hearts: "🖤", name: "SUGA", note: "рисование картины 3 часть", link: "https://t.me/violent_arhive/605" },
+      { date: "200522", hearts: "🖤", name: "SUGA", note: "рисование картины 4 часть", link: "https://t.me/violent_arhive/600" },
+      { date: "200525", hearts: "💕", name: "Jin", note: "Джин играет на пианино", link: "https://t.me/violent_arhive/599" },
+      { date: "200605", hearts: "🤍", name: "J-Hope", note: "", link: "https://t.me/violent_arhive/596" },
+      { date: "200609", hearts: "💚", name: "V", note: "", link: "https://t.me/violent_arhive/598" },
+      { date: "200616", hearts: "💛", name: "Jimin", note: "", link: "https://t.me/violent_arhive/595" },
+      { date: "200927", hearts: "💙", name: "RM", note: "", link: "https://t.me/violent_arhive/589" },
+      { date: "200928", hearts: "🤍", name: "J-Hope", note: "", link: "https://t.me/violent_arhive/587" },
+      { date: "201021", hearts: "💜", name: "Jung Kook", note: "", link: "https://t.me/violent_arhive/118" },
+      { date: "201111", hearts: "💛", name: "Jimin", note: "", link: "https://t.me/violent_arhive/107" },
+      { date: "2004**", hearts: "❣️", name: "BTS", note: "от 11.05.2020", link: "https://t.me/violent_arhive/601" },
+      { date: "2007**", hearts: "🤍💙", name: "J-HOPE & RM", note: "от 09.07.2020", link: "https://t.me/violent_arhive/594" },
+      { date: "2008**", hearts: "💜", name: "Jung Kook", note: "от 19.09.2020", link: "https://t.me/violent_arhive/592" },
+      { date: "2008**", hearts: "💜", name: "Jung Kook", note: "от 20.09.2020", link: "https://t.me/violent_arhive/593" },
+      { date: "2008**", hearts: "❣️", name: "BTS", note: "от 22.09.2020", link: "https://t.me/violent_arhive/591" },
+      { date: "2008**", hearts: "💚💜", name: "V & Jung Kook", note: "от 25.09.2020", link: "https://t.me/violent_arhive/590" },
+      { date: "2009**", hearts: "💙💜", name: "RM & Jung Kook", note: "от 05.10.2020", link: "https://t.me/violent_arhive/588" },
+      { date: "2009**", hearts: "❣️", name: "BTS", note: "от 13.11.2020", link: "https://t.me/violent_arhive/115" }
+    ];
+
+    const listEl = document.getElementById('list');
+    items.forEach((item) => {
+      const id = 'video-' + item.link.split('/').pop();
+      const row = document.createElement('div');
+      row.className = 'row';
+
+      const box = document.createElement('input');
+      box.type = 'checkbox';
+
+      const chip = document.createElement('span');
+      chip.className = 'date-chip';
+      chip.textContent = item.date;
+
+      const hearts = document.createElement('span');
+      hearts.className = 'hearts';
+      hearts.textContent = item.hearts;
+
+      const span = document.createElement('span');
+      span.className = 'text';
+      span.textContent = item.name;
+      if (item.note) {
+        const sub = document.createElement('span');
+        sub.className = 'sub';
+        sub.textContent = item.note;
+        span.appendChild(sub);
+      }
+
+      if (localStorage.getItem(id) === 'true') {
+        box.checked = true;
+        row.classList.add('done');
+      }
+      function toggle() {
+        box.checked = !box.checked;
+        localStorage.setItem(id, box.checked);
+        row.classList.toggle('done', box.checked);
+      }
+      box.addEventListener('change', () => {
+        localStorage.setItem(id, box.checked);
+        row.classList.toggle('done', box.checked);
+        updateProgress();
+      });
+      span.addEventListener('click', () => { toggle(); updateProgress(); });
+      chip.addEventListener('click', () => { toggle(); updateProgress(); });
+
+      const link = document.createElement('a');
+      link.className = 'link';
+      link.href = item.link;
+      link.target = '_blank';
+      link.textContent = '🔗';
+
+      row.appendChild(box);
+      row.appendChild(chip);
+      row.appendChild(hearts);
+      row.appendChild(span);
+      row.appendChild(link);
+      listEl.appendChild(row);
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:logon', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
