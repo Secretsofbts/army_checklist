@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Различные шоу с BTS</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 16px; }
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .card {
+      background: #f7f7fa;
+      border-radius: 12px;
+      padding: 12px 14px;
+      text-decoration: none;
+      color: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .desc { font-size: 12px; color: #999; margin-top: 2px; font-weight: 400; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="index.html">← Назад</a>
+    <h1>🎲 РАЗЛИЧНЫЕ ТЕЛЕШОУ С BTS 🎲</h1>
+    <p class="intro">Все шоу с BTS с самого дебюта. Очень советую к просмотру!</p>
+    <div class="list">
+      <a class="card" href="run-bts.html">
+        <div>🏃‍♂️ RUN BTS 🏃‍♂️<div class="desc">накачаете пресс от смеха</div></div>
+      </a>
+      <a class="card" href="bon-voyage.html">
+        <div>🍒 БОН ВОЯЖ ВСЕ СЕЗОНЫ 🍒<div class="desc">про интересные путешествия ребят по разным странам</div></div>
+      </a>
+      <a class="card" href="in-the-soop.html">
+        <div>🌳 IN THE SOOP 🌳<div class="desc">шоу, в котором BTS отдыхают в лесу + шоу Wooga</div></div>
+      </a>
+      <a class="card" href="uveren.html">
+        <div>🌟 УВЕРЕН?! 🌟<div class="desc">путешествие с Чигуками</div></div>
+      </a>
+      <a class="card" href="bts-gayo.html">
+        <div>⭐️ BTS GAYO ⭐️<div class="desc">небольшое смешное шоу с BTS</div></div>
+      </a>
+      <a class="card" href="ahl.html">
+        <div>🇺🇸 BTS AMERICAN HUSTLE LIFE 🇺🇸<div class="desc">сериал о приключениях BTS в Америке в 2014 году</div></div>
+      </a>
+      <a class="card" href="rookie-king.html">
+        <div>👑 ROOKIE KING BANGTAN BOYS 👑<div class="desc">очень смешное шоу 2013 года</div></div>
+      </a>
+      <a class="card" href="suchwita.html">
+        <div>🥃 ШУЧВИТА 🥃<div class="desc">шоу Юнги на ютубе</div></div>
+      </a>
+      <a class="card" href="universe-bt21.html">
+        <div>🔮 UNIVERSE BT21 🔮<div class="desc">сериал про создание BT21</div></div>
+      </a>
+      <a class="card" href="other-shows.html">
+        <div>📺 ДРУГИЕ ШОУ C BTS 📺<div class="desc">шоу, в которых участвовали ребята — все вместе или часть мемберов</div></div>
+      </a>
+    </div>
+  </div>
+
+  <script>
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>

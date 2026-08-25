@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Концерты 2021-2024</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 16px; }
+    .row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; }
+    .done { color: #bbb; text-decoration: line-through; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .done .text { color: #bbb; }
+    .sub { display: block; font-size: 11px; color: #999; margin-top: 2px; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; margin-top: 2px; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="concerts.html">← Назад</a>
+    <h1>🖥 КОНЦЕРТЫ 2021-2024 ГОД 🖥</h1>
+    <p class="intro">В конце 2021 года ребята провели свой первый оффлайн концерт после долгого перерыва из-за ковида, хотя они продолжали транслироваться и онлайн. Очень советую потратить своё время и посмотреть их) Приятного просмотра 💫</p>
+    <div id="list"></div>
+  </div>
+
+  <script>
+    const items = [
+      { text: "ЛЕГЕНДАРНЫЕ ВЫСТУПЛЕНИЯ", sub: "нарезка от бигхит", link: "https://t.me/violent_arhive/3192" },
+      { text: "PERMISSION TO DANCE ON STAGE LA D-2 (офф/онлайн)", sub: "от 29.11.2021 — с рус. субтитрами", link: "https://t.me/violent_arhive/3078" },
+      { text: "PERMISSION TO DANCE ON STAGE LA D-4 (офф/онлайн)", sub: "от 03.12.2021 — с англ. субтитрами", link: "https://t.me/violent_arhive/1899" },
+      { text: "PERMISSION TO DANCE ON STAGE SEOUL D-1 (офф/онлайн)", sub: "от 10.03.2022 — с англ. субтитрами", link: "https://t.me/violent_arhive/2336" },
+      { text: "PERMISSION TO DANCE ON STAGE SEOUL D-3 (офф/онлайн)", sub: "от 13.03.2022 — с англ. субтитрами", link: "https://t.me/violent_arhive/2342" },
+      { text: "PERMISSION TO DANCE ON STAGE LV D-4 (офф/онлайн)", sub: "от 17.04.2022 — с англ. субтитрами", link: "https://t.me/violent_arhive/2588" },
+      { text: "PERMISSION TO DANCE ON STAGE LV D-4 (офф/онлайн)", sub: "от 17.04.2022 — с рус. субтитрами", link: "https://t.me/violent_arhive/4608" },
+      { text: "DVD PTD ON STAGE IN THE US", sub: "от 2021-2022 — с рус. субтитрами", link: "https://t.me/violent_arhive/4994" },
+      { text: "LOLLAPALOOZA (офф/онлайн)", sub: "от 01.08.2022 (J-Hope) — без субтитров", link: "https://t.me/violent_arhive/2901" },
+      { text: "YET TO COME IN BUSAN (офф/онлайн)", sub: "от 15.10.2022 — без субтитров", link: "https://t.me/violent_arhive/3206" },
+      { text: "Мини-концерт Намджуна в Rolling Hall в Сеуле (оффлайн)", sub: "от 05.12.2022 (RM) — с рус. субтитрами", link: "https://t.me/violent_arhive/3644" },
+      { text: "D-DAY in Japan D-3 + закадровые (офф/онлайн)", sub: "от 04.06.2023 (Юнги) — без субтитров", link: "https://t.me/violent_arhive/4043" },
+      { text: "D-DAY in Seoul D-1 (офф/онлайн)", sub: "от 24.06.2023 (Юнги) — с англ. субтитрами", link: "https://t.me/violent_arhive/4088" },
+      { text: "D-DAY in Seoul D-2 (офф/онлайн)", sub: "от 25.06.2023 (Юнги) — с рус. субтитрами", link: "https://t.me/violent_arhive/4606" },
+      { text: "D-DAY in Seoul D-1 Final (офф/онлайн)", sub: "от 04.08.2023 (Юнги) — с англ. субтитрами", link: "https://t.me/violent_arhive/4145" },
+      { text: "D-DAY in Seoul D-2 Final (офф/онлайн)", sub: "от 05.08.2023 (Юнги) — с англ. субтитрами", link: "https://t.me/violent_arhive/4149" },
+      { text: "D-DAY in Seoul D-3 Final (офф/онлайн)", sub: "от 06.08.2023 (Юнги) — с англ. субтитрами", link: "https://t.me/violent_arhive/4151" },
+      { text: "DVD TOUR 'D-DAY' The Original", sub: "от 07.06.2024 (Юнги) — с рус. субтитрами", link: "https://t.me/violent_arhive/4979" },
+      { text: "GOLDEN (офф/онлайн)", sub: "от 20.11.2023 (Чонгук) — с рус. субтитрами", link: "https://t.me/violent_arhive/4372" },
+      { text: "Jin 'Happy' Special Stage - Day 1 (офф/онлайн)", sub: "от 16.11.2024 — с рус. субтитрами", link: "https://t.me/violent_arhive/4885" },
+      { text: "Jin 'Happy' Special Stage - Day 2 (офф/онлайн)", sub: "от 17.11.2024 — без субтитров", link: "https://t.me/violent_arhive/4886" }
+    ];
+
+    const listEl = document.getElementById('list');
+    items.forEach((item) => {
+      const id = 'video-' + item.link.split('/').pop();
+      const row = document.createElement('div');
+      row.className = 'row';
+
+      const box = document.createElement('input');
+      box.type = 'checkbox';
+
+      const span = document.createElement('span');
+      span.className = 'text';
+      span.textContent = item.text;
+      const sub = document.createElement('span');
+      sub.className = 'sub';
+      sub.textContent = item.sub;
+      span.appendChild(sub);
+
+      if (localStorage.getItem(id) === 'true') {
+        box.checked = true;
+        span.classList.add('done');
+      }
+      box.addEventListener('change', () => {
+        localStorage.setItem(id, box.checked);
+        span.classList.toggle('done', box.checked);
+        updateProgress();
+      });
+      span.addEventListener('click', () => {
+        box.checked = !box.checked;
+        box.dispatchEvent(new Event('change'));
+      });
+
+      const link = document.createElement('a');
+      link.className = 'link';
+      link.href = item.link;
+      link.target = '_blank';
+      link.textContent = '🔗';
+
+      row.appendChild(box);
+      row.appendChild(span);
+      row.appendChild(link);
+      listEl.appendChild(row);
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:concerts-2021-2024', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
