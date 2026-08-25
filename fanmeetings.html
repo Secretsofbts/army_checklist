@@ -35,7 +35,7 @@
       color: #888;
       margin: 16px 0 6px;
     }
-    .empty { color: #333; font-size: 14px; padding: 8px 4px; font-style: italic; }
+        .empty { color: #333; font-size: 14px; padding: 8px 4px; }
     .row {
       display: flex;
       align-items: flex-start;
@@ -59,7 +59,11 @@
       padding: 4px 4px 4px 26px;
       font-size: 12px;
       color: #666;
+    }
+    .subgroup {
       border-bottom: 1px solid #f0f0f0;
+      padding-bottom: 4px;
+      margin-bottom: 2px;
     }
     .subrow input[type="checkbox"] { width: 14px; height: 14px; }
     .subrow .text { color: #666; }
@@ -125,7 +129,17 @@
       color: #333;
       text-decoration: none;
     }
-    .navlink .arrow { margin-left: auto; color: #999; font-size: 13px; }
+        .navlink .arrow { margin-left: auto; color: #999; font-size: 13px; }
+    .footer-link {
+      display: block;
+      text-align: center;
+      font-size: 13px;
+      color: #9b7fd4;
+      text-decoration: none;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid #eee;
+    }
   </style>
 </head>
 <body>
@@ -292,12 +306,15 @@
           return;
         }
 
-               makeCheckRow(listEl, item, false, !!item.subs);
+                makeCheckRow(listEl, item, false, !!item.subs);
 
         if (item.subs) {
+          const group = document.createElement('div');
+          group.className = 'subgroup';
           item.subs.forEach((sub) => {
-            makeCheckRow(listEl, sub, true);
+            makeCheckRow(group, sub, true);
           });
+          listEl.appendChild(group);
         }
       });
     });
