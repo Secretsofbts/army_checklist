@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Фанмитинги BTS</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 16px; }
+    .year {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      margin: 16px 0 6px;
+    }
+    .empty { color: #333; font-size: 14px; padding: 8px 4px; font-style: italic; }
+    .row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; }
+    .done { color: #bbb; text-decoration: line-through; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .done .text { color: #bbb; }
+    .extra { display: block; font-size: 11px; margin-top: 3px; }
+    .extra a { color: #9b7fd4; text-decoration: none; margin-right: 8px; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; margin-top: 2px; }
+    .plain { color: #999; font-style: italic; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="concerts.html">← Назад</a>
+    <h1>🌟 ФАНМИТИНГИ BTS 🌟</h1>
+    <p class="intro">Разные встречи с фанатами в виде концертов. Существуют Muster и Japan Fanmeeting, которые включают в себя выступления, обычно со старыми песнями, которые не шли в рамках тура, и развлекательные конкурсы или сценки, чтобы повеселить фанатов</p>
+    <div id="list"></div>
+  </div>
+
+  <script>
+    const data = [
+      { year: "2014", items: [
+        { text: "Global Fan A.R.M.Y. 1st Muster", link: "https://t.me/violent_arhive/1501", extras: [
+          { label: "1st Muster MF", link: "https://t.me/violent_arhive/1502" },
+          { label: "Global Fanmeeting MF", link: "https://t.me/violent_arhive/1508" }
+        ]},
+        { text: "1st JAPAN SHOWCASE in Tokyo", link: "https://t.me/violent_arhive/4779", extras: [
+          { label: "Rehersal & Footage", link: "https://t.me/violent_arhive/4780" }
+        ]},
+        { text: "Japan Official Fanmeeting Vol.1 (не нашла, скорее всего нет офф записи этого фанмитинга)", link: null }
+      ]},
+      { year: "2015", items: [
+        { text: "Japan Official Fanmeeting Vol.2", link: "https://t.me/violent_arhive/4526", extras: [
+          { label: "MF in Tokyo", link: "https://t.me/violent_arhive/4529" },
+          { label: "MF in Osaka", link: "https://t.me/violent_arhive/4530" }
+        ]}
+      ]},
+      { year: "2016", items: [
+        { text: "2nd Muster pt.1", link: "https://t.me/violent_arhive/1542" },
+        { text: "2nd Muster pt.2", link: "https://t.me/violent_arhive/1536", extras: [
+          { label: "memories of 2016", link: "https://t.me/violent_arhive/1554" }
+        ]}
+      ]},
+      { year: "2016 (релиз 2017)", items: [
+        { text: "Japan Official Fanmeeting Vol.3", link: "https://t.me/violent_arhive/4782" },
+        { text: "BTS 3RD MUSTER", link: "https://t.me/violent_arhive/4791" }
+      ]},
+      { year: "2017", items: [] },
+      { year: "2021", items: [
+        { text: "BTS ARMY Membership Special Live Meeting Event (онлайн)", link: "https://t.me/violent_arhive/1853" }
+      ]},
+      { year: "2022", items: [
+        { text: "Мини-концерт Намджуна в Rolling Hall в Сеуле (вроде больше концерт, но было всего 200 человек, оставлю тоже тут)", link: "https://t.me/violent_arhive/3644" }
+      ]},
+      { year: "2023", items: [
+        { text: "Agust D 'D-DAY: Movie Night'", link: "https://t.me/violent_arhive/4033" },
+        { text: "SPECIAL TALK с Чимином", link: "https://t.me/violent_arhive/4326", extras: [
+          { label: "за кадром фанмитинга", link: "https://t.me/violent_arhive/4388" }
+        ]},
+        { text: "Викник", link: "https://t.me/violent_arhive/4298" },
+        { text: "Golden", link: "https://t.me/violent_arhive/4382" }
+      ]},
+      { year: "2024", items: [
+        { text: "Message from Jin: June 13 2024", link: "https://t.me/violent_arhive/4625" },
+        { text: "Jin 'Happy' Special Stage - Day 1", link: "https://t.me/violent_arhive/4885" },
+        { text: "Jin 'Happy' Special Stage - Day 2", link: "https://t.me/violent_arhive/4886" }
+      ]}
+    ];
+
+    const listEl = document.getElementById('list');
+    data.forEach((block) => {
+      const yearTitle = document.createElement('div');
+      yearTitle.className = 'year';
+      yearTitle.textContent = block.year + ' год';
+      listEl.appendChild(yearTitle);
+
+      if (block.items.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'empty';
+        empty.textContent = 'Позже загружу';
+        listEl.appendChild(empty);
+        return;
+      }
+
+      block.items.forEach((item) => {
+        const row = document.createElement('div');
+        row.className = 'row';
+
+        if (item.link === null) {
+          const span = document.createElement('span');
+          span.className = 'text plain';
+          span.textContent = item.text;
+          row.appendChild(span);
+          listEl.appendChild(row);
+          return;
+        }
+
+        const id = 'video-' + item.link.split('/').pop();
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+
+        const span = document.createElement('span');
+        span.className = 'text';
+        span.textContent = item.text;
+
+        if (item.extras) {
+          const extraEl = document.createElement('span');
+          extraEl.className = 'extra';
+          item.extras.forEach((ex) => {
+            const a = document.createElement('a');
+            a.href = ex.link;
+            a.target = '_blank';
+            a.textContent = ex.label;
+            extraEl.appendChild(a);
+          });
+          span.appendChild(extraEl);
+        }
+
+        if (localStorage.getItem(id) === 'true') {
+          box.checked = true;
+          span.classList.add('done');
+        }
+        box.addEventListener('change', () => {
+          localStorage.setItem(id, box.checked);
+          span.classList.toggle('done', box.checked);
+          updateProgress();
+        });
+        span.addEventListener('click', (e) => {
+          if (e.target.tagName === 'A') return;
+          box.checked = !box.checked;
+          box.dispatchEvent(new Event('change'));
+        });
+
+        const link = document.createElement('a');
+        link.className = 'link';
+        link.href = item.link;
+        link.target = '_blank';
+        link.textContent = '🔗';
+
+        row.appendChild(box);
+        row.appendChild(span);
+        row.appendChild(link);
+        listEl.appendChild(row);
+      });
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:fanmeetings', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
