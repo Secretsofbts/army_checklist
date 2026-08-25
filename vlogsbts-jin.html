@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>VLOGS BTS: Джин</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 16px; }
+    .row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; }
+    .icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+    .done { color: #bbb; text-decoration: line-through; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .done .text { color: #bbb; }
+    .sub { display: block; font-size: 11px; color: #999; margin-top: 2px; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; margin-top: 2px; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="vlogs-bts.html">← Назад</a>
+    <h1>🌟 VLOGS Джин 💕</h1>
+    <div id="list"></div>
+  </div>
+
+  <script>
+    const items = [
+      { icon: "🐟", name: "Рыбалка", note: "от 07.10.2019", link: "https://t.me/violent_arhive/5600" },
+      { icon: "🍜", name: "Кулинарный влог", note: "от 13.08.2022", link: "https://t.me/violent_arhive/3000" },
+      { icon: "✈️", name: "Джин в Аргентине", note: "от 08.01.2023", link: "https://t.me/violent_arhive/3608" },
+      { icon: "🐠", name: "Ловля тунца 1 часть", note: "от 28.11.2024", link: "https://t.me/violent_arhive/4900" },
+      { icon: "🐠", name: "Ловля тунца 2 часть", note: "от 05.15.2024", link: "https://t.me/violent_arhive/4921" },
+      { icon: "💜", name: "NORMAL LOG", note: "от 07.06.2026", link: "https://t.me/violent_arhive/5513" }
+    ];
+
+    const listEl = document.getElementById('list');
+    items.forEach((item) => {
+      const id = 'video-' + item.link.split('/').pop();
+      const row = document.createElement('div');
+      row.className = 'row';
+
+      const box = document.createElement('input');
+      box.type = 'checkbox';
+
+      const icon = document.createElement('span');
+      icon.className = 'icon';
+      icon.textContent = item.icon;
+
+      const span = document.createElement('span');
+      span.className = 'text';
+      span.textContent = item.name;
+      const sub = document.createElement('span');
+      sub.className = 'sub';
+      sub.textContent = item.note;
+      span.appendChild(sub);
+
+      if (localStorage.getItem(id) === 'true') {
+        box.checked = true;
+        row.classList.add('done');
+      }
+      function toggle() {
+        box.checked = !box.checked;
+        localStorage.setItem(id, box.checked);
+        row.classList.toggle('done', box.checked);
+      }
+      box.addEventListener('change', () => {
+        localStorage.setItem(id, box.checked);
+        row.classList.toggle('done', box.checked);
+        updateProgress();
+      });
+      span.addEventListener('click', () => { toggle(); updateProgress(); });
+      icon.addEventListener('click', () => { toggle(); updateProgress(); });
+
+      const link = document.createElement('a');
+      link.className = 'link';
+      link.href = item.link;
+      link.target = '_blank';
+      link.textContent = '🔗';
+
+      row.appendChild(box);
+      row.appendChild(icon);
+      row.appendChild(span);
+      row.appendChild(link);
+      listEl.appendChild(row);
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:vlogsbts-jin', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
