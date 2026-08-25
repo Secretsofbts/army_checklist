@@ -46,6 +46,9 @@
       align-items: center;
       gap: 10px;
     }
+        .card.row-done {
+      background: #e3f7e9;
+    }
   </style>
 </head>
 <body>
@@ -53,18 +56,46 @@
     <a class="back" href="youtube.html">← Назад</a>
     <h1>🌟 VLOGS BTS 🌟</h1>
     <p class="intro">Сборный пост всех влогов</p>
-    <div class="list">
-      <a class="card" href="vlogsbts-jimin.html">💛 Чимин</a>
-      <a class="card" href="vlogsbts-jin.html">💕 Джин</a>
-      <a class="card" href="vlogsbts-taehyung.html">💚 Тэхён</a>
-      <a class="card" href="vlogsbts-jungkook.html">💜 Чонгук</a>
-      <a class="card" href="vlogsbts-namjoon.html">💙 Намджун</a>
-      <a class="card" href="vlogsbts-yoongi.html">🖤 Юнги</a>
-      <a class="card" href="vlogsbts-hoseok.html">🤍 Хосок</a>
+        <div class="list">
+      <a class="card" href="vlogsbts-jimin.html">💛 Чимин <span class="badge" id="badge-vb-jimin" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
+      <a class="card" href="vlogsbts-jin.html">💕 Джин <span class="badge" id="badge-vb-jin" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
+      <a class="card" href="vlogsbts-taehyung.html">💚 Тэхён <span class="badge" id="badge-vb-taehyung" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
+      <a class="card" href="vlogsbts-jungkook.html">💜 Чонгук <span class="badge" id="badge-vb-jungkook" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
+      <a class="card" href="vlogsbts-namjoon.html">💙 Намджун <span class="badge" id="badge-vb-namjoon" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
+      <a class="card" href="vlogsbts-yoongi.html">🖤 Юнги <span class="badge" id="badge-vb-yoongi" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
+      <a class="card" href="vlogsbts-hoseok.html">🤍 Хосок <span class="badge" id="badge-vb-hoseok" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
     </div>
   </div>
 
-  <script>
+    <script>
+    function renderBadgeTotal(elId, keys) {
+      var el = document.getElementById(elId);
+      var checked = 0, total = 0;
+      keys.forEach(function(key) {
+        var raw = localStorage.getItem('progress:' + key);
+        if (raw) {
+          var data = JSON.parse(raw);
+          checked += data.checked;
+          total += data.total;
+        }
+      });
+      if (total === 0) { el.textContent = ''; return; }
+      if (checked === total) {
+        el.textContent = '✅';
+        el.style.color = '#2e9e5b';
+        el.closest('.card').classList.add('row-done');
+      } else {
+        el.textContent = checked + '/' + total;
+      }
+    }
+    renderBadgeTotal('badge-vb-jimin', ['vlogsbts-jimin']);
+    renderBadgeTotal('badge-vb-jin', ['vlogsbts-jin']);
+    renderBadgeTotal('badge-vb-taehyung', ['vlogsbts-taehyung']);
+    renderBadgeTotal('badge-vb-jungkook', ['vlogsbts-jungkook']);
+    renderBadgeTotal('badge-vb-namjoon', ['vlogsbts-namjoon']);
+    renderBadgeTotal('badge-vb-yoongi', ['vlogsbts-yoongi']);
+    renderBadgeTotal('badge-vb-hoseok', ['vlogsbts-hoseok']);
+
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
       Telegram.WebApp.expand();
