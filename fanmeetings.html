@@ -155,11 +155,11 @@
       { year: "2016", items: [
         { text: "2nd Muster pt.1", link: "https://t.me/violent_arhive/1542" },
                { text: "2nd Muster pt.2", link: "https://t.me/violent_arhive/1536" },
-        { text: "memories of 2016", link: "https://t.me/violent_arhive/1554", navlink: true }
+                { text: "memories of 2016", link: "fm-memories-2016.html", navlink: true, internal: true }
       ]},
       { year: "2016 (релиз 2017)", items: [
-        { text: "Japan Official Fanmeeting Vol.3", link: "https://t.me/violent_arhive/4782", navlink: true },
-        { text: "BTS 3RD MUSTER", link: "https://t.me/violent_arhive/4791", navlink: true }
+                { text: "Japan Official Fanmeeting Vol.3", link: "fm-jp-vol3.html", navlink: true, internal: true },
+        { text: "BTS 3RD MUSTER", link: "fm-3rd-muster.html", navlink: true, internal: true }
       ]},
       { year: "2017", items: [] },
       { year: "2018", items: [] },
@@ -186,10 +186,11 @@
       ]}
     ];
 
-    function makeCheckRow(container, item, isSub) {
+        function makeCheckRow(container, item, isSub, noBorder) {
       const id = 'video-' + item.link.split('/').pop();
       const row = document.createElement('div');
       row.className = isSub ? 'subrow' : 'row';
+      if (noBorder) row.style.borderBottom = 'none';
 
       const box = document.createElement('input');
       box.type = 'checkbox';
@@ -274,11 +275,11 @@
           return;
         }
 
-        if (item.navlink) {
+          if (item.navlink) {
           const a = document.createElement('a');
           a.className = 'navlink';
           a.href = item.link;
-          a.target = '_blank';
+          if (!item.internal) a.target = '_blank';
           a.textContent = item.text;
           const arrow = document.createElement('span');
           arrow.className = 'arrow';
@@ -288,7 +289,7 @@
           return;
         }
 
-        makeCheckRow(listEl, item, false);
+               makeCheckRow(listEl, item, false, !!item.subs);
 
         if (item.subs) {
           item.subs.forEach((sub) => {
