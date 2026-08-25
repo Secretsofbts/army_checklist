@@ -52,13 +52,14 @@
     .extra { display: block; font-size: 11px; margin-top: 3px; }
     .extra a { color: #9b7fd4; text-decoration: none; margin-right: 8px; }
     .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; margin-top: 2px; }
-    .subrow {
+        .subrow {
       display: flex;
       align-items: center;
       gap: 8px;
       padding: 4px 4px 4px 26px;
       font-size: 12px;
       color: #666;
+      border-bottom: 1px solid #f0f0f0;
     }
     .subrow input[type="checkbox"] { width: 14px; height: 14px; }
     .subrow .text { color: #666; }
@@ -85,6 +86,25 @@
       color: #333;
       text-decoration: none;
     }
+        .fake-checkbox {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+      margin-top: 2px;
+      border: 1.5px solid #ccc;
+      border-radius: 3px;
+      position: relative;
+    }
+    .fake-checkbox::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: -2px;
+      right: -2px;
+      height: 1.5px;
+      background: #bbb;
+      transform: rotate(-20deg);
+    }   
     .navlink .arrow { margin-left: auto; color: #999; font-size: 13px; }
     .footer-link {
       display: block;
@@ -127,9 +147,8 @@
       ]},
       { year: "2016", items: [
         { text: "2nd Muster pt.1", link: "https://t.me/violent_arhive/1542" },
-        { text: "2nd Muster pt.2", link: "https://t.me/violent_arhive/1536", extras: [
-          { label: "memories of 2016", link: "https://t.me/violent_arhive/1554" }
-        ]}
+               { text: "2nd Muster pt.2", link: "https://t.me/violent_arhive/1536" },
+        { text: "memories of 2016", link: "https://t.me/violent_arhive/1554", navlink: true }
       ]},
       { year: "2016 (релиз 2017)", items: [
         { text: "Japan Official Fanmeeting Vol.3", link: "https://t.me/violent_arhive/4782", navlink: true },
@@ -234,15 +253,15 @@
       }
 
       block.items.forEach((item) => {
-        if (item.crossed) {
+                if (item.crossed) {
           const row = document.createElement('div');
-          row.className = 'crossed';
-          const x = document.createElement('span');
-          x.className = 'x';
-          x.textContent = '✕';
+          row.className = 'row';
+          const fakeBox = document.createElement('span');
+          fakeBox.className = 'fake-checkbox';
           const span = document.createElement('span');
+          span.className = 'text';
           span.textContent = item.text;
-          row.appendChild(x);
+          row.appendChild(fakeBox);
           row.appendChild(span);
           listEl.appendChild(row);
           return;
