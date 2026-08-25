@@ -49,6 +49,9 @@
       display: flex;
       align-items: center;
       gap: 10px;
+          .card.row-done {
+      background: #e3f7e9;
+    }
     }
   </style>
 </head>
@@ -112,6 +115,7 @@
   if (checked === total) {
     el.textContent = '✅';
     el.style.color = '#2e9e5b';
+    el.closest('.card').classList.add('row-done');
   } else {
     el.textContent = checked + '/' + total;
   }
