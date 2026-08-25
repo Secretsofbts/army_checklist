@@ -48,9 +48,65 @@
     .text { flex: 1; cursor: pointer; color: #333; }
     .done .text { color: #bbb; }
     .sub { display: block; font-size: 11px; color: #999; margin-top: 2px; }
-    .extra { display: block; font-size: 11px; margin-top: 3px; }
-    .extra a { color: #9b7fd4; text-decoration: none; margin-right: 8px; }
     .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; margin-top: 2px; }
+    .link + .link { margin-left: 4px; }
+    .link-label { font-size: 10px; color: #999; margin-right: 2px; }
+    .subrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 4px 4px 26px;
+      font-size: 12px;
+      color: #666;
+    }
+    .subrow input[type="checkbox"] { width: 14px; height: 14px; }
+    .subrow .text { color: #666; }
+    .subrow.done .text { color: #bbb; text-decoration: line-through; }
+    .subrow .link { font-size: 11px; }
+    .subgroup {
+      border-bottom: 1px solid #f0f0f0;
+      padding-bottom: 4px;
+      margin-bottom: 2px;
+    }
+    .navlink {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f7f7fa;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      text-decoration: none;
+    }
+    .navlink .arrow { margin-left: auto; color: #999; font-size: 13px; }
+    .branch-note { font-size: 11px; color: #999; padding: 0 4px; margin-top: -4px; margin-bottom: 4px; }
+    .branch-row {
+      display: flex;
+      gap: 8px;
+      padding: 0 4px 8px;
+      border-bottom: 1px solid #f0f0f0;
+      margin-bottom: 6px;
+    }
+    .branch-pill {
+      background: #f7f7fa;
+      border-radius: 8px;
+      padding: 6px 10px;
+      font-size: 12px;
+      color: #333;
+      text-decoration: none;
+    }
+    .footer-link {
+      display: block;
+      text-align: center;
+      font-size: 13px;
+      color: #9b7fd4;
+      text-decoration: none;
+      margin-top: 16px;
+      padding-top: 12px;
+    }
   </style>
 </head>
 <body>
@@ -59,57 +115,123 @@
     <h1>🖥 КОНЦЕРТЫ 2014-2019 ГОД 🖥</h1>
     <p class="intro">Старые концерты ребят в +- хорошем качестве</p>
     <div id="list"></div>
+    <a class="footer-link" href="concerts.html">Все концерты BTS ⬅️</a>
   </div>
 
   <script>
     const data = [
       { year: "2014", items: [
-        { text: "The Red Bullet", sub: "c англ. субтитрами", link: "https://t.me/violent_arhive/2355", extras: [
-          { label: "memories 2014", link: "https://t.me/violent_arhive/1511" },
-          { label: "memories 2015", link: "https://t.me/violent_arhive/1531" }
+        { text: "The Red Bullet", sub: "c англ. субтитрами", link: "https://t.me/violent_arhive/2355", branchNote: "закадровые:", branches: [
+          { text: "memories 2014", link: "concert-memories-2014.html" },
+          { text: "memories 2015", link: "concert-memories-2015.html" }
         ]}
       ]},
       { year: "2015", items: [
         { text: "SUMMER SONIC FESTIVAL: BTS", sub: "без субтитров", link: "https://t.me/violent_arhive/2344" },
-        { text: "HYYH on stage", link: "https://t.me/violent_arhive/2345" },
-        { text: "1st Japan Tour 2015", sub: "без субтитров", link: "https://t.me/violent_arhive/1532", extras: [
-          { label: "закадровая съемка", link: "https://t.me/violent_arhive/1519" }
+        { text: "HYYH on stage", navlink: true, link: "concert-hyyh-on-stage.html" },
+        { text: "1st Japan Tour 2015", sub: "без субтитров", link: "https://t.me/violent_arhive/1532", subs: [
+          { text: "закадровая съемка", link: "https://t.me/violent_arhive/1519" }
         ]},
-        { text: "LIVE TRILOGY: BTS BEGINS", sub: "c рус. субтитрами", link: "https://t.me/violent_arhive/1514", extras: [
-          { label: "закадровая съемка", link: "https://t.me/violent_arhive/1518" }
+        { text: "LIVE TRILOGY: BTS BEGINS", sub: "c рус. субтитрами", link: "https://t.me/violent_arhive/1514", subs: [
+          { text: "закадровая съемка", link: "https://t.me/violent_arhive/1518" }
         ]}
       ]},
       { year: "2016", items: [
-        { text: "\"HYYH On Stage: Epilogue\"", link: "https://t.me/violent_arhive/2596" },
-        { text: "\"HYYH On Stage: Epilogue\" Japan", link: "https://t.me/violent_arhive/2614" }
+        { text: "\"HYYH On Stage: Epilogue\"", navlink: true, link: "concert-hyyh-epilogue.html" },
+        { text: "\"HYYH On Stage: Epilogue\" Japan", navlink: true, link: "concert-hyyh-epilogue-japan.html" }
       ]},
       { year: "2017", items: [
-        { text: "BTS Live Trilogy Episode III: The Wings Tour in Seoul", link: "https://t.me/violent_arhive/2627" },
-        { text: "BTS Live Trilogy Episode III: The Wings Tour in Japan", link: "https://t.me/violent_arhive/2639" },
-        { text: "BTS Live Trilogy Episode III: The Wings Tour The Final", link: "https://t.me/violent_arhive/2649" },
+        { text: "BTS Live Trilogy Episode III: The Wings Tour in Seoul", navlink: true, link: "concert-wings-seoul.html" },
+        { text: "BTS Live Trilogy Episode III: The Wings Tour in Japan", navlink: true, link: "concert-wings-japan.html" },
+        { text: "BTS Live Trilogy Episode III: The Wings Tour The Final", navlink: true, link: "concert-wings-final.html" },
         { text: "BTS PROM PARTY -RE;VIEW & PRE;VIEW", sub: "c рус. субтитрами", link: "https://t.me/violent_arhive/1609" }
       ]},
       { year: "2018", items: [
-        { text: "BTS World Tour Love Yourself In Seoul", link: "https://t.me/violent_arhive/2663" },
-        { text: "BTS World Tour Love Yourself In New York", link: "https://t.me/violent_arhive/2677" },
-        { text: "BTS World Tour Love Yourself Europe", link: "https://t.me/violent_arhive/2686" }
+        { text: "BTS World Tour Love Yourself In Seoul", navlink: true, link: "concert-wt-love-yourself-seoul.html" },
+        { text: "BTS World Tour Love Yourself In New York", navlink: true, link: "concert-wt-love-yourself-ny.html" },
+        { text: "BTS World Tour Love Yourself Europe", navlink: true, link: "concert-wt-love-yourself-europe.html" }
       ]},
       { year: "2019", items: [
         { text: "World Tour \"LY:SY\" in Wembley Stadium", sub: "c рус. субтитрами", link: "https://t.me/violent_arhive/2712" },
-        { text: "World Tour \"LY: SY\" London DVD", sub: "c англ. субтитрами", link: "https://t.me/violent_arhive/2716", extras: [
-          { label: "закадровая съемка", link: "https://t.me/violent_arhive/82" }
+        { text: "World Tour \"LY: SY\" London DVD", sub: "c англ. субтитрами", link: "https://t.me/violent_arhive/2716", subs: [
+          { text: "закадровая съемка", link: "https://t.me/violent_arhive/82" }
         ]},
         { text: "World Tour \"LY:SY\" in Riyadh", sub: "без субтитров", link: "https://t.me/violent_arhive/2723" },
-        { text: "World Tour \"LY:SY\" in Seoul D-1 (с англ. субтитрами)", link: "https://t.me/violent_arhive/2725" },
-        { text: "World Tour \"LY:SY\" in Seoul D-1 (с рус. субтитрами)", link: "https://t.me/violent_arhive/2767" },
-        { text: "World Tour \"LY:SY\" D-3 in Seoul the Final DVD", sub: "c рус. субтитрами", link: "https://t.me/violent_arhive/3347" },
-        { text: "World Tour \"LY:SY\" in Sao Paulo", sub: "без субтитров", link: "https://t.me/violent_arhive/2730", extras: [
-          { label: "закадровая съемка", link: "https://t.me/violent_arhive/2734" }
+        { text: "World Tour \"LY:SY\" in Seoul D-1", links: [
+          { label: "англ. суб", link: "https://t.me/violent_arhive/2725" },
+          { label: "рус. суб", link: "https://t.me/violent_arhive/2767" }
+        ]},
+        { text: "World Tour \"LY:SY\" D-3 in Seoul the Final DVD", sub: "c рус. субтитрами", navlink: true, link: "concert-lysy-seoul-final-dvd.html" },
+        { text: "World Tour \"LY:SY\" in Sao Paulo", sub: "без субтитров", link: "https://t.me/violent_arhive/2730", subs: [
+          { text: "закадровая съемка", link: "https://t.me/violent_arhive/2734" }
         ]},
         { text: "World Tour \"LY:SY\" in Japan Edition", sub: "без субтитров", link: "https://t.me/violent_arhive/2735" },
-        { text: "Закадровые моменты тура (memories 2019)", link: "https://t.me/violent_arhive/1674" }
+        { text: "Закадровые моменты тура (memories 2019)", navlink: true, link: "concert-memories-2019.html" }
       ]}
     ];
+
+    function makeCheckRow(container, item, isSub, noBorder) {
+      const id = 'video-' + (item.link ? item.link.split('/').pop() : item.links[0].link.split('/').pop());
+      const row = document.createElement('div');
+      row.className = isSub ? 'subrow' : 'row';
+      if (noBorder) row.style.borderBottom = 'none';
+
+      const box = document.createElement('input');
+      box.type = 'checkbox';
+
+      const span = document.createElement('span');
+      span.className = 'text';
+      span.textContent = item.text;
+
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.className = 'sub';
+        sub.textContent = item.sub;
+        span.appendChild(sub);
+      }
+
+      if (localStorage.getItem(id) === 'true') {
+        box.checked = true;
+        row.classList.add('done');
+      }
+      box.addEventListener('change', () => {
+        localStorage.setItem(id, box.checked);
+        row.classList.toggle('done', box.checked);
+        updateProgress();
+      });
+      span.addEventListener('click', (e) => {
+        if (e.target.tagName === 'A') return;
+        box.checked = !box.checked;
+        box.dispatchEvent(new Event('change'));
+      });
+
+      row.appendChild(box);
+      row.appendChild(span);
+
+      if (item.links) {
+        item.links.forEach((l) => {
+          const label = document.createElement('span');
+          label.className = 'link-label';
+          label.textContent = l.label;
+          const link = document.createElement('a');
+          link.className = 'link';
+          link.href = l.link;
+          link.target = '_blank';
+          link.textContent = '🔗';
+          row.appendChild(label);
+          row.appendChild(link);
+        });
+      } else {
+        const link = document.createElement('a');
+        link.className = 'link';
+        link.href = item.link;
+        link.target = '_blank';
+        link.textContent = '🔗';
+        row.appendChild(link);
+      }
+
+      container.appendChild(row);
+    }
 
     const listEl = document.getElementById('list');
     data.forEach((block) => {
@@ -119,66 +241,57 @@
       listEl.appendChild(yearTitle);
 
       block.items.forEach((item) => {
-        const id = 'video-' + item.link.split('/').pop();
-        const row = document.createElement('div');
-        row.className = 'row';
-
-        const box = document.createElement('input');
-        box.type = 'checkbox';
-
-        const span = document.createElement('span');
-        span.className = 'text';
-        span.textContent = item.text;
-
-        if (item.sub) {
-          const sub = document.createElement('span');
-          sub.className = 'sub';
-          sub.textContent = item.sub;
-          span.appendChild(sub);
+        if (item.navlink) {
+          const a = document.createElement('a');
+          a.className = 'navlink';
+          a.href = item.link;
+          a.textContent = item.text;
+          if (item.sub) {
+            const sub = document.createElement('span');
+            sub.style.cssText = 'font-size:11px; color:#999; font-weight:400; display:block; margin-top:2px;';
+            sub.textContent = item.sub;
+          }
+          const arrow = document.createElement('span');
+          arrow.className = 'arrow';
+          arrow.textContent = '↗';
+          a.appendChild(arrow);
+          listEl.appendChild(a);
+          return;
         }
-        if (item.extras) {
-          const extraEl = document.createElement('span');
-          extraEl.className = 'extra';
-          item.extras.forEach((ex) => {
-            const a = document.createElement('a');
-            a.href = ex.link;
-            a.target = '_blank';
-            a.textContent = ex.label;
-            extraEl.appendChild(a);
+
+        makeCheckRow(listEl, item, false, !!(item.subs || item.branches));
+
+        if (item.subs) {
+          const group = document.createElement('div');
+          group.className = 'subgroup';
+          item.subs.forEach((sub) => {
+            makeCheckRow(group, sub, true);
           });
-          span.appendChild(extraEl);
+          listEl.appendChild(group);
         }
 
-        if (localStorage.getItem(id) === 'true') {
-          box.checked = true;
-          span.classList.add('done');
+        if (item.branches) {
+          const note = document.createElement('div');
+          note.className = 'branch-note';
+          note.textContent = item.branchNote;
+          listEl.appendChild(note);
+
+          const branchRow = document.createElement('div');
+          branchRow.className = 'branch-row';
+          item.branches.forEach((b) => {
+            const a = document.createElement('a');
+            a.className = 'branch-pill';
+            a.href = b.link;
+            a.textContent = b.text + ' ↗';
+            branchRow.appendChild(a);
+          });
+          listEl.appendChild(branchRow);
         }
-        box.addEventListener('change', () => {
-          localStorage.setItem(id, box.checked);
-          span.classList.toggle('done', box.checked);
-          updateProgress();
-        });
-        span.addEventListener('click', (e) => {
-          if (e.target.tagName === 'A') return;
-          box.checked = !box.checked;
-          box.dispatchEvent(new Event('change'));
-        });
-
-        const link = document.createElement('a');
-        link.className = 'link';
-        link.href = item.link;
-        link.target = '_blank';
-        link.textContent = '🔗';
-
-        row.appendChild(box);
-        row.appendChild(span);
-        row.appendChild(link);
-        listEl.appendChild(row);
       });
     });
 
     function updateProgress() {
-      const all = document.querySelectorAll('input[type="checkbox"]');
+      const all = document.querySelectorAll('.row input[type="checkbox"], .subrow input[type="checkbox"]');
       let total = 0, checked = 0;
       all.forEach(cb => {
         total++;
