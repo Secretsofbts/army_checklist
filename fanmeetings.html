@@ -95,16 +95,23 @@
       border-radius: 3px;
       position: relative;
     }
+    .fake-checkbox::before,
     .fake-checkbox::after {
       content: '';
       position: absolute;
       top: 50%;
-      left: -2px;
-      right: -2px;
-      height: 1.5px;
-      background: #bbb;
-      transform: rotate(-20deg);
-    }   
+      left: 50%;
+      width: 14px;
+      height: 2px;
+      background: #333;
+      border-radius: 1px;
+    }
+    .fake-checkbox::before {
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+    .fake-checkbox::after {
+      transform: translate(-50%, -50%) rotate(-45deg);
+    }
     .navlink .arrow { margin-left: auto; color: #999; font-size: 13px; }
     .footer-link {
       display: block;
