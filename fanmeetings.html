@@ -37,13 +37,16 @@
     }
         .empty { color: #333; font-size: 14px; padding: 8px 4px; }
     .row {
-      display: flex;
-      align-items: flex-start;
-      gap: 10px;
-      padding: 8px 4px;
-      border-bottom: 1px solid #f0f0f0;
-      font-size: 14px;
-    }
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 4px;
+  border-bottom: 1px solid #f0f0f0;
+  font-size: 14px;
+}
+#list .row:last-child {
+  border-bottom: none;
+}
     input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; }
     .done { color: #bbb; text-decoration: line-through; }
     .text { flex: 1; cursor: pointer; color: #333; }
@@ -186,7 +189,7 @@
         { text: "BTS ARMY Membership Special Live Meeting Event (онлайн)", link: "https://t.me/violent_arhive/1853" }
       ]},
       { year: "2022", items: [
-        { text: "Мини-концерт Намджуна в Rolling Hall в Сеуле", sub: "вроде больше концерт, но было всего 200 человек, оставлю тоже тут", link: "https://t.me/violent_arhive/3644" }
+        { text: "Мини-концерт Намджуна в Rolling Hall в Сеуле", sub: "вроде больше концерт, но было всего 200 человек", link: "https://t.me/violent_arhive/3644" }
       ]},
       { year: "2023", items: [
         { text: "Agust D 'D-DAY: Movie Night'", link: "https://t.me/violent_arhive/4033" },
