@@ -295,8 +295,8 @@
             a.className = 'branch-pill';
             a.href = b.link;
             a.style.cssText += 'display:flex; align-items:center; gap:4px;';
-            const label = document.createElement('span');
-            label.textContent = b.text;
+                       const label = document.createElement('span');
+            label.textContent = b.label;
             a.appendChild(label);
             if (b.statKey) {
               const badge = document.createElement('span');
