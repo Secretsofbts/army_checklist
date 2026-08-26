@@ -250,7 +250,7 @@
       yearTitle.textContent = block.year + ' год';
       listEl.appendChild(yearTitle);
 
-           block.items.forEach((item) => {
+           block.items.forEach((item, idx, arr) => {
       if (item.standaloneBranch) {
   const branchRow = document.createElement('div');
   branchRow.className = 'branch-row tour-note';
@@ -312,7 +312,8 @@
         }
     
 
-        makeCheckRow(listEl, item, false, !!(item.subs || item.branches));
+        const nextItem = arr[idx + 1];
+makeCheckRow(listEl, item, false, !!(item.subs || item.branches || (nextItem && nextItem.standaloneBranch)));
 
         if (item.subs) {
           const group = document.createElement('div');
