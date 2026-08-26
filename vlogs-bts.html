@@ -102,7 +102,32 @@
     renderBadgeTotal('badge-vb-jimin', ['vlogsbts-jimin']);
     renderBadgeTotal('badge-vb-jin', ['vlogsbts-jin']);
     renderBadgeTotal('badge-vb-taehyung', ['vlogsbts-taehyung']);
-    renderBadgeTotal('badge-vb-jungkook', ['vlogsbts-jungkook']);
+    function renderBadgeJungkook() {
+  var el = document.getElementById('badge-vb-jungkook');
+  var checked = 0, total = 0;
+  ['vlogsbts-jungkook', 'gcf'].forEach(function(key) {
+    var raw = localStorage.getItem('progress:' + key);
+    if (raw) {
+      var data = JSON.parse(raw);
+      checked += data.checked;
+      total += data.total;
+    }
+  });
+  // "Тренировка ЧонТэХо" (video-5570) учтена в обоих списках — вычитаем повтор
+  total -= 1;
+  if (localStorage.getItem('video-5570') === 'true') {
+    checked -= 1;
+  }
+  if (total === 0) { el.textContent = ''; return; }
+  if (checked === total) {
+    el.textContent = '✅';
+    el.style.color = '#2e9e5b';
+    el.closest('.card').classList.add('row-done');
+  } else {
+    el.textContent = checked + '/' + total;
+  }
+}
+renderBadgeJungkook();
     renderBadgeTotal('badge-vb-namjoon', ['vlogsbts-namjoon']);
     renderBadgeTotal('badge-vb-yoongi', ['vlogsbts-yoongi']);
     renderBadgeTotal('badge-vb-hoseok', ['vlogsbts-hoseok']);
