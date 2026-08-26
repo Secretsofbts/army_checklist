@@ -119,7 +119,7 @@
     .fake-checkbox::after {
       transform: translate(-50%, -50%) rotate(-45deg);
     }
-        .navlink {
+            .navlink {
       display: flex;
       align-items: center;
       gap: 10px;
@@ -132,7 +132,9 @@
       color: #333;
       text-decoration: none;
     }
-        .navlink .arrow { margin-left: auto; color: #999; font-size: 13px; }
+    .navlink .arrow { margin-left: auto; color: #999; font-size: 13px; }
+    .navlink input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; margin-left: -10px; }
+    .navlink-label.done { color: #bbb; text-decoration: line-through; font-weight: 400; }
     .footer-link {
       display: block;
       text-align: center;
@@ -296,19 +298,28 @@
           return;
         }
 
-                 if (item.navlink) {
+                           if (item.navlink) {
           const a = document.createElement('a');
           a.className = 'navlink';
           a.href = item.link;
           if (!item.internal) a.target = '_blank';
-          a.style.justifyContent = 'space-between';
           const label = document.createElement('span');
+          label.className = 'navlink-label';
+          label.style.flex = '1';
           label.textContent = item.text;
+          if (item.statKey) {
+            const box = document.createElement('input');
+            box.type = 'checkbox';
+            box.style.pointerEvents = 'none';
+            box.id = 'checkbox-' + item.statKey;
+            box.style.display = 'none';
+            a.appendChild(box);
+          }
           a.appendChild(label);
           if (item.statKey) {
             const badge = document.createElement('span');
             badge.id = 'badge-' + item.statKey;
-            badge.style.cssText = 'font-size:12px; color:#999;';
+            badge.style.cssText = 'font-size:12px; color:#999; flex-shrink:0;';
             a.appendChild(badge);
           } else {
             const arrow = document.createElement('span');
@@ -331,7 +342,7 @@
         }
       });
     });
-        function renderBadge(elId, key) {
+          function renderBadge(elId, key) {
       var el = document.getElementById(elId);
       if (!el) return;
       var raw = localStorage.getItem('progress:' + key);
@@ -339,9 +350,15 @@
       var data = JSON.parse(raw);
       if (data.total === 0) { el.textContent = ''; return; }
       if (data.checked === data.total) {
-        el.textContent = '✅';
-        el.style.color = '#2e9e5b';
-        el.closest('.navlink').style.background = '#e3f7e9';
+        el.textContent = '';
+        var card = el.closest('.navlink');
+        var checkbox = document.getElementById('checkbox-' + key);
+        if (checkbox) {
+          checkbox.checked = true;
+          checkbox.style.display = '';
+        }
+        var label = card.querySelector('.navlink-label');
+        if (label) label.classList.add('done');
       } else {
         el.textContent = data.checked + '/' + data.total;
       }
