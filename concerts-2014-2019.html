@@ -281,7 +281,7 @@
           listEl.appendChild(a);
           return;
         }
-        }
+    
 
         makeCheckRow(listEl, item, false, !!(item.subs || item.branches));
 
@@ -319,7 +319,7 @@
             branchRow.appendChild(a);
           });
           listEl.appendChild(branchRow);
-        }
+             }
       });
     });
 
@@ -340,11 +340,11 @@
         }
         var label = card.querySelector('.navlink-label');
         if (label) label.classList.add('done');
-      } else {
+           } else {
         el.textContent = data.checked + '/' + data.total;
       }
     }
-    
+
     renderBadge('badge-concert-hyyh-on-stage', 'concert-hyyh-on-stage', '.navlink');
     renderBadge('badge-concert-hyyh-epilogue', 'concert-hyyh-epilogue', '.navlink');
     renderBadge('badge-concert-hyyh-epilogue-japan', 'concert-hyyh-epilogue-japan', '.navlink');
@@ -355,7 +355,6 @@
     renderBadge('badge-concert-wt-love-yourself-ny', 'concert-wt-love-yourself-ny', '.navlink');
     renderBadge('badge-concert-wt-love-yourself-europe', 'concert-wt-love-yourself-europe', '.navlink');
     renderBadge('badge-concert-lysy-seoul-final-dvd', 'concert-lysy-seoul-final-dvd', '.navlink');
-   
 
     function updateProgress() {
       const all = document.querySelectorAll('.row input[type="checkbox"], .subrow input[type="checkbox"]');
@@ -374,4 +373,4 @@
     }
   </script>
 </body>
-</html>
+</html> 
