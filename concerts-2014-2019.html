@@ -122,14 +122,14 @@
   <script>
     const data = [
       { year: "2014", items: [
-        { text: "The Red Bullet", sub: "c англ. субтитрами", link: "https://t.me/violent_arhive/2355", branchNote: "закадровые:", branches: [
-                    { label: "memories 2014", link: "bts-memories-2014.html" },
-          { label: "memories 2015", link: "bts-memories-2015.html" }
+                { text: "The Red Bullet", sub: "c англ. субтитрами", link: "https://t.me/violent_arhive/2355", branchNote: "закадровые:", branches: [
+                    { label: "memories 2014", link: "bts-memories-2014.html", statKey: "bts-memories-2014" },
+          { label: "memories 2015", link: "bts-memories-2015.html", statKey: "bts-memories-2015" }
         ]}
       ]},
       { year: "2015", items: [
         { text: "SUMMER SONIC FESTIVAL: BTS", sub: "без субтитров", link: "https://t.me/violent_arhive/2344" },
-        { text: "HYYH on stage", navlink: true, link: "concert-hyyh-on-stage.html" },
+               { text: "HYYH on stage", navlink: true, link: "concert-hyyh-on-stage.html", statKey: "concert-hyyh-on-stage" },
         { text: "1st Japan Tour 2015", sub: "без субтитров", link: "https://t.me/violent_arhive/1532", subs: [
           { text: "закадровая съемка", link: "https://t.me/violent_arhive/1519" }
         ]},
@@ -138,19 +138,19 @@
         ]}
       ]},
       { year: "2016", items: [
-        { text: "\"HYYH On Stage: Epilogue\"", navlink: true, link: "concert-hyyh-epilogue.html" },
-        { text: "\"HYYH On Stage: Epilogue\" Japan", navlink: true, link: "concert-hyyh-epilogue-japan.html" }
+                { text: "\"HYYH On Stage: Epilogue\"", navlink: true, link: "concert-hyyh-epilogue.html", statKey: "concert-hyyh-epilogue" },
+        { text: "\"HYYH On Stage: Epilogue\" Japan", navlink: true, link: "concert-hyyh-epilogue-japan.html", statKey: "concert-hyyh-epilogue-japan" }
       ]},
       { year: "2017", items: [
-        { text: "BTS Live Trilogy Episode III: The Wings Tour in Seoul", navlink: true, link: "concert-wings-seoul.html" },
-        { text: "BTS Live Trilogy Episode III: The Wings Tour in Japan", navlink: true, link: "concert-wings-japan.html" },
-        { text: "BTS Live Trilogy Episode III: The Wings Tour The Final", navlink: true, link: "concert-wings-final.html" },
+                { text: "BTS Live Trilogy Episode III: The Wings Tour in Seoul", navlink: true, link: "concert-wings-seoul.html", statKey: "concert-wings-seoul" },
+        { text: "BTS Live Trilogy Episode III: The Wings Tour in Japan", navlink: true, link: "concert-wings-japan.html", statKey: "concert-wings-japan" },
+        { text: "BTS Live Trilogy Episode III: The Wings Tour The Final", navlink: true, link: "concert-wings-final.html", statKey: "concert-wings-final" },
         { text: "BTS PROM PARTY -RE;VIEW & PRE;VIEW", sub: "c рус. субтитрами", link: "https://t.me/violent_arhive/1609" }
       ]},
       { year: "2018", items: [
-        { text: "BTS World Tour Love Yourself In Seoul", navlink: true, link: "concert-wt-love-yourself-seoul.html" },
-        { text: "BTS World Tour Love Yourself In New York", navlink: true, link: "concert-wt-love-yourself-ny.html" },
-        { text: "BTS World Tour Love Yourself Europe", navlink: true, link: "concert-wt-love-yourself-europe.html" }
+               { text: "BTS World Tour Love Yourself In Seoul", navlink: true, link: "concert-wt-love-yourself-seoul.html", statKey: "concert-wt-love-yourself-seoul" },
+        { text: "BTS World Tour Love Yourself In New York", navlink: true, link: "concert-wt-love-yourself-ny.html", statKey: "concert-wt-love-yourself-ny" },
+        { text: "BTS World Tour Love Yourself Europe", navlink: true, link: "concert-wt-love-yourself-europe.html", statKey: "concert-wt-love-yourself-europe" }
       ]},
       { year: "2019", items: [
         { text: "World Tour \"LY:SY\" in Wembley Stadium", sub: "c рус. субтитрами", link: "https://t.me/violent_arhive/2712" },
@@ -162,12 +162,12 @@
           { label: "англ. суб", link: "https://t.me/violent_arhive/2725" },
           { label: "рус. суб", link: "https://t.me/violent_arhive/2767" }
         ]},
-        { text: "World Tour \"LY:SY\" D-3 in Seoul the Final DVD", sub: "c рус. субтитрами", navlink: true, link: "concert-lysy-seoul-final-dvd.html" },
+                { text: "World Tour \"LY:SY\" D-3 in Seoul the Final DVD", sub: "c рус. субтитрами", navlink: true, link: "concert-lysy-seoul-final-dvd.html", statKey: "concert-lysy-seoul-final-dvd" },
         { text: "World Tour \"LY:SY\" in Sao Paulo", sub: "без субтитров", link: "https://t.me/violent_arhive/2730", subs: [
           { text: "закадровая съемка", link: "https://t.me/violent_arhive/2734" }
         ]},
         { text: "World Tour \"LY:SY\" in Japan Edition", sub: "без субтитров", link: "https://t.me/violent_arhive/2735" },
-                { text: "Закадровые моменты тура (memories 2019)", link: "bts-memories-2019.html" }
+                               { text: "Закадровые моменты тура (memories 2019)", navlink: true, link: "bts-memories-2019.html", statKey: "bts-memories-2019" }
       ]}
     ];
 
@@ -242,20 +242,31 @@
       listEl.appendChild(yearTitle);
 
       block.items.forEach((item) => {
-        if (item.navlink) {
+               if (item.navlink) {
           const a = document.createElement('a');
           a.className = 'navlink';
           a.href = item.link;
-          a.textContent = item.text;
+          a.style.justifyContent = 'space-between';
+          const label = document.createElement('span');
+          label.textContent = item.text;
           if (item.sub) {
             const sub = document.createElement('span');
             sub.style.cssText = 'font-size:11px; color:#999; font-weight:400; display:block; margin-top:2px;';
             sub.textContent = item.sub;
+            label.appendChild(sub);
           }
-          const arrow = document.createElement('span');
-          arrow.className = 'arrow';
-          arrow.textContent = '↗';
-          a.appendChild(arrow);
+          a.appendChild(label);
+          if (item.statKey) {
+            const badge = document.createElement('span');
+            badge.id = 'badge-' + item.statKey;
+            badge.style.cssText = 'font-size:12px; color:#999; flex-shrink:0;';
+            a.appendChild(badge);
+          } else {
+            const arrow = document.createElement('span');
+            arrow.className = 'arrow';
+            arrow.textContent = '↗';
+            a.appendChild(arrow);
+          }
           listEl.appendChild(a);
           return;
         }
@@ -271,7 +282,7 @@
           listEl.appendChild(group);
         }
 
-        if (item.branches) {
+               if (item.branches) {
           const note = document.createElement('div');
           note.className = 'branch-note';
           note.textContent = item.branchNote;
@@ -283,13 +294,51 @@
             const a = document.createElement('a');
             a.className = 'branch-pill';
             a.href = b.link;
-            a.textContent = b.text + ' ↗';
+            a.style.cssText += 'display:flex; align-items:center; gap:4px;';
+            const label = document.createElement('span');
+            label.textContent = b.text;
+            a.appendChild(label);
+            if (b.statKey) {
+              const badge = document.createElement('span');
+              badge.id = 'badge-' + b.statKey;
+              badge.style.cssText = 'font-size:10px; color:#999;';
+              a.appendChild(badge);
+            }
             branchRow.appendChild(a);
           });
           listEl.appendChild(branchRow);
         }
       });
     });
+
+        function renderBadge(elId, key, cardClass) {
+      var el = document.getElementById(elId);
+      if (!el) return;
+      var raw = localStorage.getItem('progress:' + key);
+      if (!raw) { el.textContent = ''; return; }
+      var data = JSON.parse(raw);
+      if (data.total === 0) { el.textContent = ''; return; }
+      if (data.checked === data.total) {
+        el.textContent = '✅';
+        el.style.color = '#2e9e5b';
+        el.closest(cardClass).style.background = '#e3f7e9';
+      } else {
+        el.textContent = data.checked + '/' + data.total;
+      }
+    }
+    renderBadge('badge-bts-memories-2014', 'bts-memories-2014', '.branch-pill');
+    renderBadge('badge-bts-memories-2015', 'bts-memories-2015', '.branch-pill');
+    renderBadge('badge-concert-hyyh-on-stage', 'concert-hyyh-on-stage', '.navlink');
+    renderBadge('badge-concert-hyyh-epilogue', 'concert-hyyh-epilogue', '.navlink');
+    renderBadge('badge-concert-hyyh-epilogue-japan', 'concert-hyyh-epilogue-japan', '.navlink');
+    renderBadge('badge-concert-wings-seoul', 'concert-wings-seoul', '.navlink');
+    renderBadge('badge-concert-wings-japan', 'concert-wings-japan', '.navlink');
+    renderBadge('badge-concert-wings-final', 'concert-wings-final', '.navlink');
+    renderBadge('badge-concert-wt-love-yourself-seoul', 'concert-wt-love-yourself-seoul', '.navlink');
+    renderBadge('badge-concert-wt-love-yourself-ny', 'concert-wt-love-yourself-ny', '.navlink');
+    renderBadge('badge-concert-wt-love-yourself-europe', 'concert-wt-love-yourself-europe', '.navlink');
+    renderBadge('badge-concert-lysy-seoul-final-dvd', 'concert-lysy-seoul-final-dvd', '.navlink');
+    renderBadge('badge-bts-memories-2019', 'bts-memories-2019', '.navlink');
 
     function updateProgress() {
       const all = document.querySelectorAll('.row input[type="checkbox"], .subrow input[type="checkbox"]');
