@@ -60,7 +60,10 @@
   <div class="app">
         <a class="back" href="vlogs-bts.html">← Назад</a>
     <h1> VLOGS Чонгук 💜</h1>
-    <a href="gcf.html" style="display:block; background:#f7f7fa; border-radius:12px; padding:12px 14px; text-decoration:none; color:#333; font-size:14px; font-weight:500; margin-bottom:8px;">🎥 Golden Closet Film by JK<div style="font-size:11px; color:#999; margin-top:2px;">видео, снятые Чонгуком</div></a>
+        <a href="gcf.html" id="gcf-card" style="display:flex; justify-content:space-between; align-items:center; background:#f7f7fa; border-radius:12px; padding:12px 14px; text-decoration:none; color:#333; font-size:14px; font-weight:500; margin-bottom:8px;">
+      <div>🎥 Golden Closet Film by JK<div style="font-size:11px; color:#999; margin-top:2px; font-weight:400;">видео, снятые Чонгуком</div></div>
+      <span class="badge" id="badge-gcf" style="font-size:12px; color:#999; font-weight:400;"></span>
+    </a>
     <div id="list"></div>
         <a class="footer-link" href="vlogs-bts.html">Все эфиры и влоги с YouTube ⬅️</a>
   </div>
@@ -126,7 +129,21 @@
       row.appendChild(link);
       listEl.appendChild(row);
     });
-
+    function renderBadge(elId, key) {
+      var el = document.getElementById(elId);
+      var raw = localStorage.getItem('progress:' + key);
+      if (!raw) { el.textContent = ''; return; }
+      var data = JSON.parse(raw);
+      if (data.total === 0) { el.textContent = ''; return; }
+      if (data.checked === data.total) {
+        el.textContent = '✅';
+        el.style.color = '#2e9e5b';
+        document.getElementById('gcf-card').style.background = '#e3f7e9';
+      } else {
+        el.textContent = data.checked + '/' + data.total;
+      }
+    }
+    renderBadge('badge-gcf', 'gcf');
     function updateProgress() {
       const all = document.querySelectorAll('input[type="checkbox"]');
       let total = 0, checked = 0;
