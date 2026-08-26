@@ -124,7 +124,8 @@
       { year: "2014", items: [
                 { text: "The Red Bullet", sub: "c англ. субтитрами", link: "https://t.me/violent_arhive/2355", branchNote: "закадровые:", branches: [
                     { label: "memories 2014", link: "bts-memories-2014.html", statKey: "bts-memories-2014" },
-          { label: "memories 2015", link: "bts-memories-2015.html", statKey: "bts-memories-2015" }
+                              { label: "memories 2014", link: "bts-memories-2014.html" },
+          { label: "memories 2015", link: "bts-memories-2015.html" }
         ]}
       ]},
       { year: "2015", items: [
@@ -167,7 +168,7 @@
           { text: "закадровая съемка", link: "https://t.me/violent_arhive/2734" }
         ]},
         { text: "World Tour \"LY:SY\" in Japan Edition", sub: "без субтитров", link: "https://t.me/violent_arhive/2735" },
-                               { text: "Закадровые моменты тура (memories 2019)", navlink: true, link: "bts-memories-2019.html", statKey: "bts-memories-2019" }
+                      { text: "Закадровые моменты тура (memories 2019)", navlink: true, link: "bts-memories-2019.html" }
       ]}
     ];
 
@@ -326,8 +327,7 @@
         el.textContent = data.checked + '/' + data.total;
       }
     }
-    renderBadge('badge-bts-memories-2014', 'bts-memories-2014', '.branch-pill');
-    renderBadge('badge-bts-memories-2015', 'bts-memories-2015', '.branch-pill');
+    
     renderBadge('badge-concert-hyyh-on-stage', 'concert-hyyh-on-stage', '.navlink');
     renderBadge('badge-concert-hyyh-epilogue', 'concert-hyyh-epilogue', '.navlink');
     renderBadge('badge-concert-hyyh-epilogue-japan', 'concert-hyyh-epilogue-japan', '.navlink');
@@ -338,7 +338,7 @@
     renderBadge('badge-concert-wt-love-yourself-ny', 'concert-wt-love-yourself-ny', '.navlink');
     renderBadge('badge-concert-wt-love-yourself-europe', 'concert-wt-love-yourself-europe', '.navlink');
     renderBadge('badge-concert-lysy-seoul-final-dvd', 'concert-lysy-seoul-final-dvd', '.navlink');
-    renderBadge('badge-bts-memories-2019', 'bts-memories-2019', '.navlink');
+   
 
     function updateProgress() {
       const all = document.querySelectorAll('.row input[type="checkbox"], .subrow input[type="checkbox"]');
