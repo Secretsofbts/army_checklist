@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>BTS Episode 51-100</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 16px; }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .done { color: #bbb; text-decoration: line-through; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+    .footer-link {
+      display: block;
+      text-align: center;
+      font-size: 13px;
+      color: #9b7fd4;
+      text-decoration: none;
+      margin-top: 8px;
+      padding-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="bts-episode.html">← Назад</a>
+    <h1>📽 BTS EPISODE: 51-100 серия 📽</h1>
+    <div id="list"></div>
+    <a class="footer-link" href="bts-episode.html">BTS Episode ⬅️</a>
+    <a class="footer-link" href="https://t.me/violent_arhive/2034" target="_blank">Пост со всеми эпизодами ⬅️</a>
+  </div>
+
+  <script>
+    const items = [
+      { text: "51 серия «\"DNA\" съемка клипа»", link: "https://t.me/violent_arhive/2090" },
+      { text: "52 серия «LY \"Her\" фотосессия»", link: "https://t.me/violent_arhive/2091" },
+      { text: "53 серия «\"Highlight Reel\" sketch»", link: "https://t.me/violent_arhive/2092" },
+      { text: "54 серия «\"Mic Drop\" съемка клипа»", link: "https://t.me/violent_arhive/2093" },
+      { text: "55 серия «BTS @ AMAs 2017»", link: "https://t.me/violent_arhive/2094" },
+      { text: "56 серия «BTS @ 2017 MMA»", link: "https://t.me/violent_arhive/2095" },
+      { text: "57 серия «BTS @ 2017 SBS»", link: "https://t.me/violent_arhive/2096" },
+      { text: "58 серия «J-hope 1st mixtape съемка клипа #1»", link: "https://t.me/violent_arhive/2097" },
+      { text: "59 серия «J-hope 1st mixtape съемка клипа #2»", link: "https://t.me/violent_arhive/2098" },
+      { text: "60 серия «LY \"Tear\" фотосессия»", link: "https://t.me/violent_arhive/2099" },
+      { text: "61 серия «BTS \"Euphoria : Theme of LY Wonder\" съемка»", link: "https://t.me/violent_arhive/2100" },
+      { text: "62 серия «Lee Hyun вечеринка-сюрприз после возвращения»", link: "https://t.me/violent_arhive/2101" },
+      { text: "63 серия «\"Fake Love\" съемка клипа»", link: "https://t.me/violent_arhive/2102" },
+      { text: "64 серия «LY \"Answer\" фотосессия»", link: "https://t.me/violent_arhive/2103" },
+      { text: "65 серия «BTS Billboard Music Awards 2018»", link: "https://t.me/violent_arhive/2104" },
+      { text: "66 серия «\"IDOL\" съемка клипа»", link: "https://t.me/violent_arhive/2105" },
+      { text: "67 серия «Генеральная ассамблея ООН BTS за кадром»", link: "https://t.me/violent_arhive/2106" },
+      { text: "68 серия «BTS 2018 награды корейской популярной культуры и искусства»", link: "https://t.me/violent_arhive/2107" },
+      { text: "69 серия «BTS 2018 MGA»", link: "https://t.me/violent_arhive/2108" },
+      { text: "70 серия «BTS 2018 MMA»", link: "https://t.me/violent_arhive/2109" },
+      { text: "71 серия «Grammy Awards 2019»", link: "https://t.me/violent_arhive/2110" },
+      { text: "72 серия «BTS 2018 MAMA в Японии»", link: "https://t.me/violent_arhive/2111" },
+      { text: "73 серия «\"Boy With Luv feat. Halsey\" съемка клипа»", link: "https://t.me/violent_arhive/2112" },
+      { text: "74 серия «\"Map of the soul: Persona'\" фотосессия»", link: "https://t.me/violent_arhive/2113" },
+      { text: "75 серия «BTS 2018 MAMA в Гонконге»", link: "https://t.me/violent_arhive/2114" },
+      { text: "76 серия «Видеосъемка глобальной кампании LY»", link: "https://t.me/violent_arhive/2115" },
+      { text: "77 серия «BTS SNL»", link: "https://t.me/violent_arhive/2116" },
+      { text: "78 серия «Billboard Music Awards 2019»", link: "https://t.me/violent_arhive/2117" },
+      { text: "79 серия «J-hope \"Chicken Noodle Soup (feat. Becky G)\" съемка клипа»", link: "https://t.me/violent_arhive/2118" },
+      { text: "80 серия «2019 FESTA Съемка Семейного Портрета #1»", link: "https://t.me/violent_arhive/1914" },
+      { text: "81 серия «2019 FESTA Съемка Семейного Портрета #2»", link: "https://t.me/violent_arhive/1915" },
+      { text: "82 серия «Welcome to \"BTS Pop-up: House of BTS\"»", link: "https://t.me/violent_arhive/2120" },
+      { text: "83 серия «\"Interlude: Shadow\" съемка»", link: "https://t.me/violent_arhive/2119" },
+      { text: "84 серия «BTS 2018 SBS Gayo Daejeon»", link: "https://t.me/violent_arhive/2121" },
+      { text: "85 серия «\"Outro: Ego\" съемка»", link: "https://t.me/violent_arhive/2122" },
+      { text: "86 серия «\"Map of the soul: 7'\" фотосессия»", link: "https://t.me/violent_arhive/2123" },
+      { text: "87 серия «\"ON\" съемка клипа»", link: "https://t.me/violent_arhive/2124" },
+      { text: "88 серия «\"Black Swan\" съемка клипа»", link: "https://t.me/violent_arhive/2125" },
+      { text: "89 серия «\"LY: Speak Yourself\" в Сеуле»", link: "https://t.me/violent_arhive/2126" },
+      { text: "90 серия «BTS 2019 MMA»", link: "https://t.me/violent_arhive/2130" },
+      { text: "91 серия «BTS 2019 MAMA»", link: "https://t.me/violent_arhive/2127" },
+      { text: "92 серия «Agust D \"Daechwita\" съемка клипа»", link: "https://t.me/violent_arhive/2128" },
+      { text: "93 серия «BTS на iHR Jingle Ball 2019»", link: "https://t.me/violent_arhive/2129" },
+      { text: "94 серия «BTS на Dick Clark's New Year's Rockin' Eve 2020»", link: "https://t.me/violent_arhive/2131" },
+      { text: "95 серия «Пора перекусить @190427 Show Music Core»", link: "https://t.me/violent_arhive/2132" },
+      { text: "96 серия «BTS 2019 SBS»", link: "https://t.me/violent_arhive/2133" },
+      { text: "97 серия «\"Dynamite\" съемка клипа»", link: "https://t.me/violent_arhive/2134" },
+      { text: "98 серия «BTS 2018 KBS»", link: "https://t.me/violent_arhive/2135" },
+      { text: "99 серия «BTS 2019 KBS»", link: "https://t.me/violent_arhive/2136" },
+      { text: "100 серия «Съемки BTS ON Kinetic Manifesto»", link: "https://t.me/violent_arhive/2137" }
+    ];
+
+    const listEl = document.getElementById('list');
+    items.forEach((item) => {
+      const id = 'video-' + item.link.split('/').pop();
+      const row = document.createElement('div');
+      row.className = 'row';
+
+      const box = document.createElement('input');
+      box.type = 'checkbox';
+
+      const span = document.createElement('span');
+      span.className = 'text';
+      span.textContent = item.text;
+
+      if (localStorage.getItem(id) === 'true') {
+        box.checked = true;
+        span.classList.add('done');
+      }
+      box.addEventListener('change', () => {
+        localStorage.setItem(id, box.checked);
+        span.classList.toggle('done', box.checked);
+        updateProgress();
+      });
+      span.addEventListener('click', () => {
+        box.checked = !box.checked;
+        box.dispatchEvent(new Event('change'));
+      });
+
+      const link = document.createElement('a');
+      link.className = 'link';
+      link.href = item.link;
+      link.target = '_blank';
+      link.textContent = '🔗';
+
+      row.appendChild(box);
+      row.appendChild(span);
+      row.appendChild(link);
+      listEl.appendChild(row);
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:bts-episode-51-100', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
