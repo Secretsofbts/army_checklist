@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>BTS Memories</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 16px; }
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .card {
+      background: #f7f7fa;
+      border-radius: 12px;
+      padding: 12px 14px;
+      text-decoration: none;
+      color: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      display: block;
+    }
+    .outro { font-size: 13px; color: #555; margin: 16px 0 0; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="index.html">← Назад</a>
+    <h1>🔮 BTS Memories (2014 – 2020 год) 🔮</h1>
+    <p class="intro">Название говорит само за себя — воспоминания за год)</p>
+    <div class="list">
+      <a class="card" href="bts-memories-2014.html">🔮 BTS Memories of 2014</a>
+      <a class="card" href="bts-memories-2015.html">🔮 BTS Memories of 2015</a>
+      <a class="card" href="bts-memories-2016.html">🔮 BTS Memories of 2016</a>
+      <a class="card" href="bts-memories-2017.html">🔮 BTS Memories of 2017</a>
+      <a class="card" href="bts-memories-2018.html">🔮 BTS Memories of 2018</a>
+      <a class="card" href="bts-memories-2019.html">🔮 BTS Memories of 2019</a>
+      <a class="card" href="bts-memories-2020.html">🔮 BTS Memories of 2020</a>
+      <a class="card" href="bts-memories-dvd.html">💿 DISK BTS 7 Moments</a>
+    </div>
+    <p class="outro">Приятного просмотра 💜</p>
+  </div>
+
+  <script>
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>

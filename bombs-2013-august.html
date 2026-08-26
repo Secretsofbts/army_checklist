@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Bangtan Bomb 2013 - Август</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 16px; }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .done { color: #bbb; text-decoration: line-through; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+    .footer-link {
+      display: block;
+      text-align: center;
+      font-size: 13px;
+      color: #9b7fd4;
+      text-decoration: none;
+      margin-top: 8px;
+      padding-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="bombs-2013.html">← Назад</a>
+    <h1>💣 BANGTAN BOMB: 2013 — Август 💣</h1>
+    <div id="list"></div>
+    <a class="footer-link" href="bombs-2013.html">Bangtan Bomb 2013г ⬅️</a>
+    <a class="footer-link" href="bangtan-bomb.html">Все Bangtan Bomb ⬅️</a>
+  </div>
+
+  <script>
+    const items = [
+      { text: "Гляделки с Джином", link: "https://t.me/violent_arhive/4806" },
+      { text: "Навык акробатики Чимина", link: "https://t.me/violent_arhive/4807" },
+      { text: "Взгляд Чонгука", link: "https://t.me/violent_arhive/4808" },
+      { text: "Шуга и баскетбол", link: "https://t.me/violent_arhive/4809" },
+      { text: "Поём \"Born Singer\"", link: "https://t.me/violent_arhive/4810" },
+      { text: "BTS и гелиевые шарики", link: "https://t.me/violent_arhive/4811" },
+      { text: "Чимин правда старше Чонгука", link: "https://t.me/violent_arhive/4812" },
+      { text: "Вопрос-ответ в жёлтой комнате", link: "https://t.me/violent_arhive/4813" },
+      { text: "Бантаны как Dynamic Duo", link: "https://t.me/violent_arhive/4814" },
+      { text: "Время танцев", link: "https://t.me/violent_arhive/4815" },
+      { text: "j-hope & Чонгук рэперы!", link: "https://t.me/violent_arhive/4816" },
+      { text: "Спящий красав...чик!", link: "https://t.me/violent_arhive/4817" }
+    ];
+
+    const listEl = document.getElementById('list');
+    items.forEach((item) => {
+      const id = 'video-' + item.link.split('/').pop();
+      const row = document.createElement('div');
+      row.className = 'row';
+
+      const box = document.createElement('input');
+      box.type = 'checkbox';
+
+      const span = document.createElement('span');
+      span.className = 'text';
+      span.textContent = item.text;
+
+      if (localStorage.getItem(id) === 'true') {
+        box.checked = true;
+        span.classList.add('done');
+      }
+      box.addEventListener('change', () => {
+        localStorage.setItem(id, box.checked);
+        span.classList.toggle('done', box.checked);
+        updateProgress();
+      });
+      span.addEventListener('click', () => {
+        box.checked = !box.checked;
+        box.dispatchEvent(new Event('change'));
+      });
+
+      const link = document.createElement('a');
+      link.className = 'link';
+      link.href = item.link;
+      link.target = '_blank';
+      link.textContent = '🔗';
+
+      row.appendChild(box);
+      row.appendChild(span);
+      row.appendChild(link);
+      listEl.appendChild(row);
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:bombs-2013-august', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>

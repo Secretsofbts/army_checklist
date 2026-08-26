@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Ну вроде бы эпизоды</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 16px; }
+    .card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f7f7fa;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      text-decoration: none;
+    }
+    .footer-link {
+      display: block;
+      text-align: center;
+      font-size: 13px;
+      color: #9b7fd4;
+      text-decoration: none;
+      margin-top: 8px;
+      padding-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="bts-episode.html">← Назад</a>
+    <h1>📽 НУ ВРОДЕ БЫ ЭПИЗОДЫ 📽</h1>
+    <p class="intro">Почему-то в 2023 стали часто выходить видео без пометки "EPISODE", но по стилю и атмосфере это будто бы они, потому что закадровые. Вынесу их в вот такой отдельный пост, чтобы не потерялись и вам было проще</p>
+    <div id="list"></div>
+    <a class="footer-link" href="bts-episode.html">BTS Episode ⬅️</a>
+    <a class="footer-link" href="https://t.me/violent_arhive/2034" target="_blank">Пост со всеми эпизодами ⬅️</a>
+  </div>
+
+  <script>
+        const members = [
+      { hearts: "💛", name: "ЧИМИН", link: "bts-episode-other-jimin.html", key: "jimin" },
+      { hearts: "💜", name: "ЧОНГУК", link: "bts-episode-other-jungkook.html", key: "jungkook" },
+      { hearts: "🤍", name: "ХОСОК", link: "bts-episode-other-hoseok.html", key: "hoseok" },
+      { hearts: "🖤", name: "ЮНГИ", link: "bts-episode-other-yoongi.html", key: "yoongi" },
+      { hearts: "💙", name: "НАМДЖУН", link: "bts-episode-other-namjoon.html", key: "namjoon" },
+      { hearts: "💕", name: "ДЖИН", link: "bts-episode-other-jin.html", key: "jin" },
+      { hearts: "💚", name: "ТЭХЁН", link: "bts-episode-other-taehyung.html", key: "taehyung" },
+      { hearts: "❣️", name: "ОТ7 / НЕСКОЛЬКО МЕМБЕРОВ", link: "bts-episode-other-somepeople.html", key: "somepeople" }
+    ];
+
+        const listEl = document.getElementById('list');
+    members.forEach((m) => {
+      const a = document.createElement('a');
+      a.className = 'card';
+      a.href = m.link;
+      a.style.justifyContent = 'space-between';
+      const label = document.createElement('span');
+      label.textContent = m.hearts + ' ' + m.name;
+      const badge = document.createElement('span');
+      badge.id = 'badge-' + m.key;
+      badge.style.cssText = 'font-size:12px; color:#999;';
+      a.appendChild(label);
+      a.appendChild(badge);
+      listEl.appendChild(a);
+    });
+
+    function renderBadge(elId, key) {
+      var el = document.getElementById(elId);
+      if (!el) return;
+      var raw = localStorage.getItem('progress:' + key);
+      if (!raw) { el.textContent = ''; return; }
+      var data = JSON.parse(raw);
+      if (data.total === 0) { el.textContent = ''; return; }
+      if (data.checked === data.total) {
+        el.textContent = '✅';
+        el.style.color = '#2e9e5b';
+        el.closest('.card').style.background = '#e3f7e9';
+      } else {
+        el.textContent = data.checked + '/' + data.total;
+      }
+    }
+    renderBadge('badge-jimin', 'bts-episode-other-jimin');
+    renderBadge('badge-jungkook', 'bts-episode-other-jungkook');
+    renderBadge('badge-hoseok', 'bts-episode-other-hoseok');
+    renderBadge('badge-yoongi', 'bts-episode-other-yoongi');
+    renderBadge('badge-namjoon', 'bts-episode-other-namjoon');
+    renderBadge('badge-jin', 'bts-episode-other-jin');
+    renderBadge('badge-taehyung', 'bts-episode-other-taehyung');
+    renderBadge('badge-somepeople', 'bts-episode-other-somepeople');
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>

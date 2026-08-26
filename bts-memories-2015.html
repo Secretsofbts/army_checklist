@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>BTS Memories of 2015</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 16px; }
+    .section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      margin: 16px 0 6px;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .done { color: #bbb; text-decoration: line-through; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+    .footer-link {
+      display: block;
+      text-align: center;
+      font-size: 13px;
+      color: #9b7fd4;
+      text-decoration: none;
+      margin-top: 16px;
+      padding-top: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="bts-memories.html">← Назад</a>
+    <h1>🔮 BTS Memories of 2015 🔮</h1>
+    <p class="intro">Данное издание включает в себя 4 DVD-диска. Живой концерт 28-29.03.2015 в Сеуле, подготовка к выступлению, съемки фильма, тур по Японии, съемки клипов.</p>
+    <div id="list"></div>
+    <a class="footer-link" href="bts-memories.html">BTS Memories (2014 – 2020 год) ⬅️</a>
+  </div>
+
+  <script>
+    const data = [
+      { section: "Диск 1", items: [
+        { text: "LIVE TRILOGY: BTS BEGINS", link: "https://t.me/violent_arhive/1515" }
+      ]},
+      { section: "Диск 2", items: [
+        { text: "Begins Concert Making", link: "https://t.me/violent_arhive/1518" }
+      ]},
+      { section: "Диск 3", items: [
+        { text: "First Japan Tour (Wake up open your eyes)", link: "https://t.me/violent_arhive/1519" },
+        { text: "Live Trilogy Episode II. THE RED BULLET TOUR (1 часть)", link: "https://t.me/violent_arhive/1521" },
+        { text: "Live Trilogy Episode II. THE RED BULLET TOUR (2 часть)", link: "https://t.me/violent_arhive/1520" }
+      ]},
+      { section: "Диск 4: создание клипов", items: [
+        { text: "Making Run", link: "https://t.me/violent_arhive/1516" },
+        { text: "I need U MV Making Jap (1 часть)", link: "https://t.me/violent_arhive/1522" },
+        { text: "I need U MV Making Jap (2 часть)", link: "https://t.me/violent_arhive/1523" },
+        { text: "\"Butterfly Dream\" making film", link: "https://t.me/violent_arhive/1524" },
+        { text: "Boy In Luv chinese ver. recording", link: "https://t.me/violent_arhive/1525" },
+        { text: "DOPE Making", link: "https://t.me/violent_arhive/1526" },
+        { text: "HYYH pt.1 jacket shooting", link: "https://t.me/violent_arhive/1527" },
+        { text: "HYYH pt.2 jacket shooting", link: "https://t.me/violent_arhive/1528" },
+        { text: "Prologue VCR&Making", link: "https://t.me/violent_arhive/1530" }
+      ]},
+      { section: "Дополнительно", items: [
+        { text: "1st Japan Tour 2015 (Wake up open your eyes) - концерт", link: "https://t.me/violent_arhive/1534" }
+      ]}
+    ];
+
+    const listEl = document.getElementById('list');
+    data.forEach((block) => {
+      const sectionTitle = document.createElement('div');
+      sectionTitle.className = 'section-title';
+      sectionTitle.textContent = block.section;
+      listEl.appendChild(sectionTitle);
+
+      block.items.forEach((item) => {
+        const id = 'video-' + item.link.split('/').pop();
+        const row = document.createElement('div');
+        row.className = 'row';
+
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+
+        const span = document.createElement('span');
+        span.className = 'text';
+        span.textContent = item.text;
+
+        if (localStorage.getItem(id) === 'true') {
+          box.checked = true;
+          span.classList.add('done');
+        }
+        box.addEventListener('change', () => {
+          localStorage.setItem(id, box.checked);
+          span.classList.toggle('done', box.checked);
+          updateProgress();
+        });
+        span.addEventListener('click', () => {
+          box.checked = !box.checked;
+          box.dispatchEvent(new Event('change'));
+        });
+
+        const link = document.createElement('a');
+        link.className = 'link';
+        link.href = item.link;
+        link.target = '_blank';
+        link.textContent = '🔗';
+
+        row.appendChild(box);
+        row.appendChild(span);
+        row.appendChild(link);
+        listEl.appendChild(row);
+      });
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:bts-memories-2015', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>

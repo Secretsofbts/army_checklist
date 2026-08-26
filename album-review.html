@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Album Review</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .section-title { font-size: 15px; font-weight: 700; margin: 16px 0 2px; }
+    .section-desc { font-size: 12px; color: #999; margin: 0 0 10px; }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .done { color: #bbb; text-decoration: line-through; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .sub { display: block; font-size: 11px; color: #999; margin-top: 2px; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+    .footer-link {
+      display: block;
+      text-align: center;
+      font-size: 13px;
+      color: #9b7fd4;
+      text-decoration: none;
+      margin-top: 16px;
+      padding-top: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="bangtantv.html">← Назад</a>
+    <h1>🔍 Album Review 🔍</h1>
+
+    <p class="section-title">Suga's review 🔍</p>
+    <p class="section-desc">Видео-распаковки на некоторые альбомы от Юнги + одно на оборудование</p>
+    <div id="list1"></div>
+
+    <p class="section-title">Album Review by Bts 🔎</p>
+    <p class="section-desc">Распаковка от других мемберов)</p>
+    <div id="list2"></div>
+
+    <a class="footer-link" href="bangtantv.html">BangtanTV ⬅️</a>
+  </div>
+
+  <script>
+    const list1 = [
+      { text: "Maschine mk2", link: "https://t.me/violent_arhive/1778" },
+      { text: "2 Cool 4 Skool", link: "https://t.me/violent_arhive/1774" },
+      { text: "The Most Beautiful In Life pt.1", link: "https://t.me/violent_arhive/1775" },
+      { text: "Skool Luv Affair", link: "https://t.me/violent_arhive/1777" },
+      { text: "Dark & Wild", link: "https://t.me/violent_arhive/1776" },
+      { text: "BE", link: "https://t.me/violent_arhive/208" }
+    ];
+
+    const list2 = [
+      { text: "BE", sub: "все, кроме Юнги", link: "https://t.me/violent_arhive/240" },
+      { text: "Butter", sub: "все", link: "https://t.me/violent_arhive/1049" },
+      { text: "Map Of The Soul: Persona", sub: "Чимин, Гук, Хося", link: "https://t.me/violent_arhive/1780" },
+      { text: "FACE", sub: "Чимин", link: "https://t.me/violent_arhive/3819" },
+      { text: "Jack In The Box", sub: "Юнги, Намджун, Чимин, Тэхён, Чонгук", link: "https://t.me/violent_arhive/4173" }
+    ];
+
+    function renderList(containerId, items) {
+      const listEl = document.getElementById(containerId);
+      items.forEach((item) => {
+        const id = 'video-' + item.link.split('/').pop();
+        const row = document.createElement('div');
+        row.className = 'row';
+
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+
+        const span = document.createElement('span');
+        span.className = 'text';
+        span.textContent = item.text;
+
+        if (item.sub) {
+          const sub = document.createElement('span');
+          sub.className = 'sub';
+          sub.textContent = item.sub;
+          span.appendChild(sub);
+        }
+
+        if (localStorage.getItem(id) === 'true') {
+          box.checked = true;
+          span.classList.add('done');
+        }
+        box.addEventListener('change', () => {
+          localStorage.setItem(id, box.checked);
+          span.classList.toggle('done', box.checked);
+          updateProgress();
+        });
+        span.addEventListener('click', () => {
+          box.checked = !box.checked;
+          box.dispatchEvent(new Event('change'));
+        });
+
+        const link = document.createElement('a');
+        link.className = 'link';
+        link.href = item.link;
+        link.target = '_blank';
+        link.textContent = '🔗';
+
+        row.appendChild(box);
+        row.appendChild(span);
+        row.appendChild(link);
+        listEl.appendChild(row);
+      });
+    }
+
+    renderList('list1', list1);
+    renderList('list2', list2);
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:album-review', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
