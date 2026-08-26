@@ -169,7 +169,9 @@
           { text: "закадровая съемка", link: "https://t.me/violent_arhive/2734" }
         ]},
         { text: "World Tour \"LY:SY\" in Japan Edition", sub: "без субтитров", link: "https://t.me/violent_arhive/2735" },
-                      { text: "Закадровые моменты тура (memories 2019)", navlink: true, link: "bts-memories-2019.html" }
+                             { standaloneBranch: true, branchNote: "закадровые моменты тура:", branches: [
+                    { label: "memories 2019", link: "bts-memories-2019.html" }
+                ]}
       ]}
     ];
 
@@ -243,8 +245,29 @@
       yearTitle.textContent = block.year + ' год';
       listEl.appendChild(yearTitle);
 
-      block.items.forEach((item) => {
-                if (item.navlink) {
+           block.items.forEach((item) => {
+        if (item.standaloneBranch) {
+          const note = document.createElement('div');
+          note.className = 'branch-note';
+          note.textContent = item.branchNote;
+          listEl.appendChild(note);
+
+          const branchRow = document.createElement('div');
+          branchRow.className = 'branch-row';
+          item.branches.forEach((b) => {
+            const a = document.createElement('a');
+            a.className = 'branch-pill';
+            a.href = b.link;
+            const label = document.createElement('span');
+            label.textContent = b.label;
+            a.appendChild(label);
+            branchRow.appendChild(a);
+          });
+          listEl.appendChild(branchRow);
+          return;
+        }
+
+        if (item.navlink) {
           const a = document.createElement('a');
           a.className = 'navlink';
           a.href = item.link;
