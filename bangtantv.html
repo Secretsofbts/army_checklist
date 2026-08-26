@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>BangtanTV</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 16px; }
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .card {
+      background: #f7f7fa;
+      border-radius: 12px;
+      padding: 12px 14px;
+      text-decoration: none;
+      color: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .desc { font-size: 12px; color: #999; margin-top: 2px; font-weight: 400; }
+    .footer-link {
+      display: block;
+      text-align: center;
+      font-size: 13px;
+      color: #9b7fd4;
+      text-decoration: none;
+      margin-top: 16px;
+      padding-top: 12px;
+    }
+        .card.row-done {
+      background: #e3f7e9;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="index.html">← Назад</a>
+    <h1>🖥 BANGTANTV 🖥</h1>
+    <p class="intro">Тут собраны различные видео с канала BTS в YouTube</p>
+    <div class="list">
+           <a class="card" href="all-clips.html">
+        <div>📹 ВСЕ КЛИПЫ BTS 📹<div class="desc">с переводом и без, по годам</div></div>
+        <span class="badge" id="badge-allclips" style="margin-left:auto; font-size:12px; color:#999;"></span>
+      </a>
+      <a class="card" href="bangtan-bomb.html">
+        <div>💣 BANGTAN BOMB 💣<div class="desc">все существующие бомбочки</div></div>
+      </a>
+      <a class="card" href="bts-episode.html">
+        <div>📽 BTS EPISODE 📽<div class="desc">важные и интересные моменты из истории группы</div></div>
+      </a>
+      <a class="card" href="gcf.html">
+        <div>🎥 GOLDEN CLOSET FILM BY JK 🎥<div class="desc">видео, которые создал сам Чонгук</div></div>
+      </a>
+      <a class="card" href="reaction-to-self.html">
+        <div>👀 РЕАКЦИЯ НА СЕБЯ 👀<div class="desc">реакция на разные клипы и видео</div></div>
+      </a>
+      <a class="card" href="album-review.html">
+        <div>🔍 ALBUM REVIEW 🔍<div class="desc">распаковки альбомов от Suga + ver. от всех BTS</div></div>
+      </a>
+      <a class="card" href="vlogs-bts.html">
+        <div>🎥 VLOGS BTS 🎥<div class="desc">влоги от каждого мембера</div></div>
+      </a>
+      <a class="card" href="photo-folio.html">
+        <div>📸 PHOTO-FOLIO 📸<div class="desc">всё, что связано с фотобуками, которые они сами создавали</div></div>
+      </a>
+      <a class="card" href="youtube.html">
+        <div>📽 ТРАНСЛЯЦИИ С YOUTUBE 📽<div class="desc">онлайн или записанные эфиры и влоги + рубрика EatJin</div></div>
+      </a>
+      <a class="card" href="message-from-jin.html">
+        <div>💌 MESSAGE FROM JIN 💌<div class="desc">сообщения, записанные до армии</div></div>
+      </a>
+      <a class="card" href="td-stories.html">
+        <div>🗣 ИСТОРИИ ОТДЕЛА T&D 🗣</div>
+      </a>
+    </div>
+    <a class="footer-link" href="index.html">На главную ⬅️</a>
+  </div>
+
+  <script>
+    function renderBadgeTotal(elId, keys) {
+  var el = document.getElementById(elId);
+  var checked = 0, total = 0;
+  keys.forEach(function(key) {
+    var raw = localStorage.getItem('progress:' + key);
+    if (raw) {
+      var data = JSON.parse(raw);
+      checked += data.checked;
+      total += data.total;
+    }
+  });
+  if (total === 0) { el.textContent = ''; return; }
+  if (checked === total) {
+    el.textContent = '✅';
+    el.style.color = '#2e9e5b';
+    el.closest('.card').classList.add('row-done');
+  } else {
+    el.textContent = checked + '/' + total;
+  }
+}
+renderBadgeTotal('badge-allclips', ['clips-2013-2015', 'clips-2016-2018', 'clips-2019-2021', 'clips-2022-2023', 'clips-2024-2025', 'clips-2026-2027', 'clips-japan', 'clips-mixtape', 'clips-standalone']);
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>

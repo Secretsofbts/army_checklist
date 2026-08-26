@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Все клипы BTS</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 10px; }
+    .section-title { font-size: 13px; font-weight: 600; color: #888; margin: 16px 0 6px; }
+    .list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .card {
+      background: #f7f7fa;
+      border-radius: 12px;
+      padding: 12px 14px;
+      text-decoration: none;
+      color: inherit;
+      font-size: 14px;
+      font-weight: 500;
+      display: block;
+    }
+    .footer-link {
+      display: block;
+      text-align: center;
+      font-size: 13px;
+      color: #9b7fd4;
+      text-decoration: none;
+      margin-top: 16px;
+      padding-top: 12px;
+    }
+        .card.row-done {
+      background: #e3f7e9;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="bangtantv.html">← Назад</a>
+    <h1>📹 ВСЕ КЛИПЫ BTS 📹</h1>
+    <p class="intro">Здесь собраны все клипы, связанные с BTS, кроме тех коллабов, в которых они не принимали участия в съёмках клипа, например IU & Suga - Eight.</p>
+    <p class="intro">Это предусмотрительная мера на всякий случай. Поэтому, если без проблем можете посмотреть клип через YouTube, сделайте это. Ссылка на оригинал есть в каждом посте. Уважайте творчество и силы Бантан и смотрите при возможности через официальные платформы!</p>
+    <p class="intro">+ везде есть видео с переводом, потому что клипы BTS нужно понимать, а не бездумно смотреть)</p>
+
+    <p class="section-title">Клипы, входящие в альбомы:</p>
+        <div class="list">
+      <a class="card" href="clips-2013-2015.html">2013 – 2015 год <span class="badge" id="badge-c1" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
+      <a class="card" href="clips-2016-2018.html">2016 – 2018 год <span class="badge" id="badge-c2" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
+      <a class="card" href="clips-2019-2021.html">2019 – 2021 год <span class="badge" id="badge-c3" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
+      <a class="card" href="clips-2022-2023.html">2022 – 2023 год <span class="badge" id="badge-c4" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
+      <a class="card" href="clips-2024-2025.html">2024 – 2025 год <span class="badge" id="badge-c5" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
+      <a class="card" href="clips-2026-2027.html">2026 – 2027 год <span class="badge" id="badge-c6" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
+    </div>
+
+    <div class="list" style="margin-top:8px;">
+      <a class="card" href="clips-japan.html">Японские клипы <span class="badge" id="badge-cj" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
+      <a class="card" href="clips-mixtape.html">Клипы с микстейпа <span class="badge" id="badge-cm" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
+      <a class="card" href="clips-standalone.html">Клипы, не входящие в альбомы <span class="badge" id="badge-cs" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
+    </div>
+
+    <a class="footer-link" href="bangtantv.html">BangtanTV ⬅️</a>
+  </div>
+
+    <script>
+    function renderBadge(elId, key) {
+      var el = document.getElementById(elId);
+      var raw = localStorage.getItem('progress:' + key);
+      if (!raw) { el.textContent = ''; return; }
+      var data = JSON.parse(raw);
+      if (data.total === 0) { el.textContent = ''; return; }
+      if (data.checked === data.total) {
+        el.textContent = '✅';
+        el.style.color = '#2e9e5b';
+        el.closest('.card').classList.add('row-done');
+      } else {
+        el.textContent = data.checked + '/' + data.total;
+      }
+    }
+    renderBadge('badge-c1', 'clips-2013-2015');
+    renderBadge('badge-c2', 'clips-2016-2018');
+    renderBadge('badge-c3', 'clips-2019-2021');
+    renderBadge('badge-c4', 'clips-2022-2023');
+    renderBadge('badge-c5', 'clips-2024-2025');
+    renderBadge('badge-c6', 'clips-2026-2027');
+    renderBadge('badge-cj', 'clips-japan');
+    renderBadge('badge-cm', 'clips-mixtape');
+    renderBadge('badge-cs', 'clips-standalone');
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>

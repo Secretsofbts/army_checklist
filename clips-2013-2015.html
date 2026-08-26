@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Клипы BTS 2013-2015</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 10px; }
+    .year {
+      font-size: 13px;
+      font-weight: 600;
+      color: #888;
+      margin: 16px 0 6px;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .done { color: #bbb; text-decoration: line-through; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+    .navlink {
+      display: block;
+      background: #f7f7fa;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-top: 16px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      text-decoration: none;
+    }
+    .footer-link {
+      display: block;
+      text-align: center;
+      font-size: 13px;
+      color: #9b7fd4;
+      text-decoration: none;
+      margin-top: 16px;
+      padding-top: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="all-clips.html">← Назад</a>
+    <h1>📹 Все клипы BTS: 2013 – 2015 📹</h1>
+    <p class="intro">Ссылка на оригинал есть в каждом посте. Уважайте творчество и силы Бантан и смотрите при возможности через официальные платформы! + везде есть видео с переводом, потому что клипы BTS нужно понимать, а не бездумно смотреть)</p>
+    <div id="list"></div>
+    <a class="navlink" href="clips-2016-2018.html">Продолжение (2016 – 2018 год) ↗</a>
+  </div>
+
+  <script>
+    const data = [
+      { year: "2013", items: [
+        { text: "No More Dream", link: "https://t.me/violent_arhive/2374" },
+        { text: "No More Dream (Choreography)", link: "https://t.me/violent_arhive/2370" },
+        { text: "We Are Bulletproof Pt.2", link: "https://t.me/violent_arhive/2376" },
+        { text: "N.O", link: "https://t.me/violent_arhive/2378" }
+      ]},
+      { year: "2014", items: [
+        { text: "Boy in Luv", link: "https://t.me/violent_arhive/2380" },
+        { text: "Boy In Luv (Choreography)", link: "https://t.me/violent_arhive/2384" },
+        { text: "Just one day", link: "https://t.me/violent_arhive/2382" },
+        { text: "Danger", link: "https://t.me/violent_arhive/2385" },
+        { text: "War of Hormone", link: "https://t.me/violent_arhive/2387" },
+        { text: "Danger (Mo-Blue-Mix) ft. THANH", link: "https://t.me/violent_arhive/2389" }
+      ]},
+      { year: "2015", items: [
+        { text: "I NEED U (с цензурой)", link: "https://t.me/violent_arhive/2393" },
+        { text: "I NEED U (без цензуры)", link: "https://t.me/violent_arhive/2395" },
+        { text: "Dope", link: "https://t.me/violent_arhive/2411" },
+        { text: "The Most Beautiful Moment in Life", link: "https://t.me/violent_arhive/2416" },
+        { text: "Never Mind", link: "https://t.me/violent_arhive/2418" },
+        { text: "RUN", link: "https://t.me/violent_arhive/2421" }
+      ]}
+    ];
+
+    const listEl = document.getElementById('list');
+    data.forEach((block) => {
+      const yearTitle = document.createElement('div');
+      yearTitle.className = 'year';
+      yearTitle.textContent = block.year + ' год';
+      listEl.appendChild(yearTitle);
+
+      block.items.forEach((item) => {
+        const id = 'video-' + item.link.split('/').pop();
+        const row = document.createElement('div');
+        row.className = 'row';
+
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+
+        const span = document.createElement('span');
+        span.className = 'text';
+        span.textContent = item.text;
+
+        if (localStorage.getItem(id) === 'true') {
+          box.checked = true;
+          span.classList.add('done');
+        }
+        box.addEventListener('change', () => {
+          localStorage.setItem(id, box.checked);
+          span.classList.toggle('done', box.checked);
+          updateProgress();
+        });
+        span.addEventListener('click', () => {
+          box.checked = !box.checked;
+          box.dispatchEvent(new Event('change'));
+        });
+
+        const link = document.createElement('a');
+        link.className = 'link';
+        link.href = item.link;
+        link.target = '_blank';
+        link.textContent = '🔗';
+
+        row.appendChild(box);
+        row.appendChild(span);
+        row.appendChild(link);
+        listEl.appendChild(row);
+      });
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:clips-2013-2015', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>

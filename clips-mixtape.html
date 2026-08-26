@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Клипы с микстейпа</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 10px; }
+    .member {
+      font-size: 14px;
+      font-weight: 700;
+      color: #333;
+      margin: 16px 0 4px;
+    }
+    .album {
+      font-size: 12px;
+      font-weight: 600;
+      color: #9b7fd4;
+      margin: 8px 0 2px 4px;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .done { color: #bbb; text-decoration: line-through; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+    .footer-link {
+      display: block;
+      text-align: center;
+      font-size: 13px;
+      color: #9b7fd4;
+      text-decoration: none;
+      margin-top: 16px;
+      padding-top: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="all-clips.html">← Назад</a>
+    <h1>🎤 КЛИПЫ С МИКСТЕЙПА 🎤</h1>
+    <p class="intro">Mixtape — сборник музыкальных произведений автора, выполненный в свободной форме. Чаще всего mixtape распространяется бесплатно. Только рэп-лайн BTS выпустили свои сборники.</p>
+    <p class="intro">Всё дело в желании рассказать свою историю, поделиться своими мыслями. Автор сам определяет для себя правила своего микстейпа. Ценность микстейпов именно в том, что парни не ограничены видением группы и могут проявить себя по-полной. Представить себя настоящих.</p>
+    <div id="list"></div>
+    <a class="footer-link" href="all-clips.html">Все клипы BTS ⬅️</a>
+  </div>
+
+  <script>
+    const data = [
+      { member: "Agust D", groups: [
+        { album: "1 микстейп:", items: [
+          { text: "Agust D", link: "https://t.me/violent_arhive/2431" },
+          { text: "Give it to me", link: "https://t.me/violent_arhive/2433" }
+        ]},
+        { album: "2 микстейп:", items: [
+          { text: "Daechwita", link: "https://t.me/violent_arhive/2520" }
+        ]}
+      ]},
+      { member: "Rap Monster", groups: [
+        { album: "1 микстейп:", items: [
+          { text: "Awakening", link: "https://t.me/violent_arhive/2364" },
+          { text: "Do You", link: "https://t.me/violent_arhive/2366" },
+          { text: "Joke", link: "https://t.me/violent_arhive/2367" }
+        ]},
+        { album: "2 микстейп:", items: [
+          { text: "Forever rain", link: "https://t.me/violent_arhive/2494" },
+          { text: "Seoul", link: "https://t.me/violent_arhive/2496" },
+          { text: "Moonchild", link: "https://t.me/violent_arhive/2499" }
+        ]}
+      ]},
+      { member: "J-hope", groups: [
+        { album: null, items: [
+          { text: "Daydream", link: "https://t.me/violent_arhive/2476" },
+          { text: "Airplane", link: "https://t.me/violent_arhive/2478" }
+        ]}
+      ]}
+    ];
+
+    const listEl = document.getElementById('list');
+    data.forEach((block) => {
+      const memberTitle = document.createElement('div');
+      memberTitle.className = 'member';
+      memberTitle.textContent = block.member;
+      listEl.appendChild(memberTitle);
+
+      block.groups.forEach((group) => {
+        if (group.album) {
+          const albumTitle = document.createElement('div');
+          albumTitle.className = 'album';
+          albumTitle.textContent = group.album;
+          listEl.appendChild(albumTitle);
+        }
+
+        group.items.forEach((item) => {
+          const id = 'video-' + item.link.split('/').pop();
+          const row = document.createElement('div');
+          row.className = 'row';
+
+          const box = document.createElement('input');
+          box.type = 'checkbox';
+
+          const span = document.createElement('span');
+          span.className = 'text';
+          span.textContent = item.text;
+
+          if (localStorage.getItem(id) === 'true') {
+            box.checked = true;
+            span.classList.add('done');
+          }
+          box.addEventListener('change', () => {
+            localStorage.setItem(id, box.checked);
+            span.classList.toggle('done', box.checked);
+            updateProgress();
+          });
+          span.addEventListener('click', () => {
+            box.checked = !box.checked;
+            box.dispatchEvent(new Event('change'));
+          });
+
+          const link = document.createElement('a');
+          link.className = 'link';
+          link.href = item.link;
+          link.target = '_blank';
+          link.textContent = '🔗';
+
+          row.appendChild(box);
+          row.appendChild(span);
+          row.appendChild(link);
+          listEl.appendChild(row);
+        });
+      });
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:clips-mixtape', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
