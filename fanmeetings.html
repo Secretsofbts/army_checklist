@@ -341,13 +341,7 @@
       if (data.checked === data.total) {
         el.textContent = '✅';
         el.style.color = '#2e9e5b';
-        var card = el.closest('.navlink');
-        card.style.background = '#e3f7e9';
-        var label = card.querySelector('span:first-child');
-        if (label) {
-          label.style.textDecoration = 'line-through';
-          label.style.color = '#888';
-        }
+        el.closest('.navlink').style.background = '#e3f7e9';
       } else {
         el.textContent = data.checked + '/' + data.total;
       }
