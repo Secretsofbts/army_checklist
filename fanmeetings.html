@@ -176,11 +176,11 @@
       { year: "2016", items: [
         { text: "2nd Muster pt.1", link: "https://t.me/violent_arhive/1542" },
                { text: "2nd Muster pt.2", link: "https://t.me/violent_arhive/1536" },
-                                { text: "закадровые в memories 2016", link: "bts-memories-2016.html", navlink: true, internal: true }
+                                  { text: "закадровые в memories 2016", link: "bts-memories-2016.html", navlink: true, internal: true, statKey: "bts-memories-2016" }
       ]},
       { year: "2016 (релиз 2017)", items: [
-                { text: "Japan Official Fanmeeting Vol.3", link: "fm-jp-vol3.html", navlink: true, internal: true },
-        { text: "BTS 3RD MUSTER", link: "fm-3rd-muster.html", navlink: true, internal: true }
+                       { text: "Japan Official Fanmeeting Vol.3", link: "fm-jp-vol3.html", navlink: true, internal: true, statKey: "fm-jp-vol3" },
+        { text: "BTS 3RD MUSTER", link: "fm-3rd-muster.html", navlink: true, internal: true, statKey: "fm-3rd-muster" }
       ]},
       { year: "2017", items: [] },
       { year: "2018", items: [] },
@@ -296,20 +296,29 @@
           return;
         }
 
-          if (item.navlink) {
+                 if (item.navlink) {
           const a = document.createElement('a');
           a.className = 'navlink';
           a.href = item.link;
           if (!item.internal) a.target = '_blank';
-          a.textContent = item.text;
-          const arrow = document.createElement('span');
-          arrow.className = 'arrow';
-          arrow.textContent = '↗';
-          a.appendChild(arrow);
+          a.style.justifyContent = 'space-between';
+          const label = document.createElement('span');
+          label.textContent = item.text;
+          a.appendChild(label);
+          if (item.statKey) {
+            const badge = document.createElement('span');
+            badge.id = 'badge-' + item.statKey;
+            badge.style.cssText = 'font-size:12px; color:#999;';
+            a.appendChild(badge);
+          } else {
+            const arrow = document.createElement('span');
+            arrow.className = 'arrow';
+            arrow.textContent = '↗';
+            a.appendChild(arrow);
+          }
           listEl.appendChild(a);
           return;
         }
-
                 makeCheckRow(listEl, item, false, !!item.subs);
 
         if (item.subs) {
@@ -322,7 +331,24 @@
         }
       });
     });
-
+    function renderBadge(elId, key) {
+      var el = document.getElementById(elId);
+      if (!el) return;
+      var raw = localStorage.getItem('progress:' + key);
+      if (!raw) { el.textContent = ''; return; }
+      var data = JSON.parse(raw);
+      if (data.total === 0) { el.textContent = ''; return; }
+      if (data.checked === data.total) {
+        el.textContent = '✅';
+        el.style.color = '#2e9e5b';
+        el.closest('.navlink').style.background = '#e3f7e9';
+      } else {
+        el.textContent = data.checked + '/' + data.total;
+      }
+    }
+    renderBadge('badge-bts-memories-2016', 'bts-memories-2016');
+    renderBadge('badge-fm-jp-vol3', 'fm-jp-vol3');
+    renderBadge('badge-fm-3rd-muster', 'fm-3rd-muster');
     function updateProgress() {
       const all = document.querySelectorAll('.row input[type="checkbox"], .subrow input[type="checkbox"]');
       let total = 0, checked = 0;
