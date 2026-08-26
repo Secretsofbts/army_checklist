@@ -90,7 +90,12 @@
   align-items: center;
   gap: 8px;
   padding: 0 4px 8px;
+  border-bottom: 1px solid #f0f0f0;
   margin-bottom: 6px;
+}
+.branch-row.tour-note {
+  border-bottom: none;
+  margin-top: -6px;
 }
     .branch-pill {
       background: #f7f7fa;
@@ -246,9 +251,9 @@
       listEl.appendChild(yearTitle);
 
            block.items.forEach((item) => {
-       if (item.standaloneBranch) {
+      if (item.standaloneBranch) {
   const branchRow = document.createElement('div');
-  branchRow.className = 'branch-row';
+  branchRow.className = 'branch-row tour-note';
 
   const note = document.createElement('span');
   note.className = 'branch-note';
