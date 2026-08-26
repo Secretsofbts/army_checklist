@@ -68,7 +68,7 @@
       padding-bottom: 4px;
       margin-bottom: 2px;
     }
-    .navlink {
+       .navlink {
       display: flex;
       align-items: center;
       gap: 10px;
@@ -82,6 +82,8 @@
       text-decoration: none;
     }
     .navlink .arrow { margin-left: auto; color: #999; font-size: 13px; }
+    .navlink input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .navlink-label.done { color: #bbb; text-decoration: line-through; font-weight: 400; }
     .branch-note { font-size: 11px; color: #999; padding: 0 4px; margin-top: -4px; margin-bottom: 4px; }
     .branch-row {
       display: flex;
@@ -242,18 +244,27 @@
       listEl.appendChild(yearTitle);
 
       block.items.forEach((item) => {
-               if (item.navlink) {
+                if (item.navlink) {
           const a = document.createElement('a');
           a.className = 'navlink';
           a.href = item.link;
-          a.style.justifyContent = 'space-between';
           const label = document.createElement('span');
+          label.className = 'navlink-label';
           label.textContent = item.text;
+          label.style.flex = '1';
           if (item.sub) {
             const sub = document.createElement('span');
             sub.style.cssText = 'font-size:11px; color:#999; font-weight:400; display:block; margin-top:2px;';
             sub.textContent = item.sub;
             label.appendChild(sub);
+          }
+          if (item.statKey) {
+            const box = document.createElement('input');
+            box.type = 'checkbox';
+            box.disabled = true;
+            box.id = 'checkbox-' + item.statKey;
+            box.style.display = 'none';
+            a.appendChild(box);
           }
           a.appendChild(label);
           if (item.statKey) {
@@ -269,6 +280,7 @@
           }
           listEl.appendChild(a);
           return;
+        }
         }
 
         makeCheckRow(listEl, item, false, !!(item.subs || item.branches));
@@ -311,7 +323,7 @@
       });
     });
 
-        function renderBadge(elId, key, cardClass) {
+         function renderBadge(elId, key, cardClass) {
       var el = document.getElementById(elId);
       if (!el) return;
       var raw = localStorage.getItem('progress:' + key);
@@ -319,9 +331,15 @@
       var data = JSON.parse(raw);
       if (data.total === 0) { el.textContent = ''; return; }
       if (data.checked === data.total) {
-        el.textContent = '✅';
-        el.style.color = '#2e9e5b';
-        el.closest(cardClass).style.background = '#e3f7e9';
+        el.textContent = '';
+        var card = el.closest(cardClass);
+        var checkbox = document.getElementById('checkbox-' + key);
+        if (checkbox) {
+          checkbox.checked = true;
+          checkbox.style.display = '';
+        }
+        var label = card.querySelector('.navlink-label');
+        if (label) label.classList.add('done');
       } else {
         el.textContent = data.checked + '/' + data.total;
       }
