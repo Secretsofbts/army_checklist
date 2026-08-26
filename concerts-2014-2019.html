@@ -84,14 +84,14 @@
     .navlink .arrow { margin-left: auto; color: #999; font-size: 13px; }
            .navlink input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; margin-left: -6px; }
     .navlink-label.done { color: #bbb; text-decoration: line-through; font-weight: 400; }
-    .branch-note { font-size: 11px; color: #999; padding: 0 4px; margin-top: -4px; margin-bottom: 4px; }
-    .branch-row {
-      display: flex;
-      gap: 8px;
-      padding: 0 4px 8px;
-      border-bottom: 1px solid #f0f0f0;
-      margin-bottom: 6px;
-    }
+    .branch-note { font-size: 11px; color: #999; white-space: nowrap; }
+.branch-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 4px 8px;
+  margin-bottom: 6px;
+}
     .branch-pill {
       background: #f7f7fa;
       border-radius: 8px;
@@ -160,7 +160,7 @@
           { text: "закадровая съемка", link: "https://t.me/violent_arhive/82" }
         ]},
         { text: "World Tour \"LY:SY\" in Riyadh", sub: "без субтитров", link: "https://t.me/violent_arhive/2723" },
-        { text: "W.Tour \"LY:SY\" Seoul D-1", links: [
+        { text: "W.Tour \"LY:SY\" Seoul D1", links: [
           { label: "англ. суб", link: "https://t.me/violent_arhive/2725" },
           { label: "рус. суб", link: "https://t.me/violent_arhive/2767" }
         ]},
@@ -246,15 +246,16 @@
       listEl.appendChild(yearTitle);
 
            block.items.forEach((item) => {
-        if (item.standaloneBranch) {
-          const note = document.createElement('div');
-          note.className = 'branch-note';
-          note.textContent = item.branchNote;
-          listEl.appendChild(note);
+       if (item.standaloneBranch) {
+  const branchRow = document.createElement('div');
+  branchRow.className = 'branch-row';
 
-          const branchRow = document.createElement('div');
-          branchRow.className = 'branch-row';
-          item.branches.forEach((b) => {
+  const note = document.createElement('span');
+  note.className = 'branch-note';
+  note.textContent = item.branchNote;
+  branchRow.appendChild(note);
+
+  item.branches.forEach((b) => {
             const a = document.createElement('a');
             a.className = 'branch-pill';
             a.href = b.link;
@@ -317,15 +318,16 @@
           listEl.appendChild(group);
         }
 
-               if (item.branches) {
-          const note = document.createElement('div');
-          note.className = 'branch-note';
-          note.textContent = item.branchNote;
-          listEl.appendChild(note);
+              if (item.branches) {
+  const branchRow = document.createElement('div');
+  branchRow.className = 'branch-row';
 
-          const branchRow = document.createElement('div');
-          branchRow.className = 'branch-row';
-          item.branches.forEach((b) => {
+  const note = document.createElement('span');
+  note.className = 'branch-note';
+  note.textContent = item.branchNote;
+  branchRow.appendChild(note);
+
+  item.branches.forEach((b) => {
             const a = document.createElement('a');
             a.className = 'branch-pill';
             a.href = b.link;
