@@ -82,7 +82,7 @@
       text-decoration: none;
     }
     .navlink .arrow { margin-left: auto; color: #999; font-size: 13px; }
-    .navlink input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+       .navlink input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; margin-left: -10px; }
     .navlink-label.done { color: #bbb; text-decoration: line-through; font-weight: 400; }
     .branch-note { font-size: 11px; color: #999; padding: 0 4px; margin-top: -4px; margin-bottom: 4px; }
     .branch-row {
@@ -258,10 +258,10 @@
             sub.textContent = item.sub;
             label.appendChild(sub);
           }
-          if (item.statKey) {
+                   if (item.statKey) {
             const box = document.createElement('input');
             box.type = 'checkbox';
-            box.disabled = true;
+            box.style.pointerEvents = 'none';
             box.id = 'checkbox-' + item.statKey;
             box.style.display = 'none';
             a.appendChild(box);
