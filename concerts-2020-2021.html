@@ -132,19 +132,25 @@
       row.appendChild(box);
       row.appendChild(span);
 
-      if (item.links) {
+            if (item.links) {
+        const linksWrap = document.createElement('div');
+        linksWrap.style.cssText = 'display:flex; flex-direction:column; align-items:flex-end; gap:4px;';
         item.links.forEach((l) => {
+          const linkRow = document.createElement('div');
+          linkRow.style.cssText = 'display:flex; align-items:center; gap:2px;';
           const label = document.createElement('span');
-          label.style.cssText = 'font-size:10px; color:#999; margin-right:2px;';
+          label.style.cssText = 'font-size:10px; color:#999;';
           label.textContent = l.label;
           const link = document.createElement('a');
           link.className = 'link';
           link.href = l.link;
           link.target = '_blank';
           link.textContent = '🔗';
-          row.appendChild(label);
-          row.appendChild(link);
+          linkRow.appendChild(label);
+          linkRow.appendChild(link);
+          linksWrap.appendChild(linkRow);
         });
+        row.appendChild(linksWrap);
       } else {
         const link = document.createElement('a');
         link.className = 'link';
