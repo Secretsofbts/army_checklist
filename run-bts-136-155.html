@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>RUN BTS 136-155</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .note { font-size: 12px; color: #999; margin: 0 0 16px; font-style: italic; }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .text.done { color: #bbb; text-decoration: line-through; }
+    .sub { display: block; font-size: 11px; color: #999; margin-top: 2px; font-style: italic; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+    .subrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 4px 4px 26px;
+      font-size: 12px;
+      color: #666;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .subrow input[type="checkbox"] { width: 14px; height: 14px; }
+    .subrow .text { color: #666; }
+    .subrow .text.done { color: #bbb; text-decoration: line-through; }
+    .subrow .link { font-size: 11px; }
+    .footer-link {
+      display: block;
+      text-align: center;
+      font-size: 13px;
+      color: #000;
+      text-decoration: none;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid #eee;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="run-btss.html">← Назад</a>
+    <h1>🏃 RUN BTS: 136-155 эпизод 🏃</h1>
+    <p class="note">❗️Закадровые тут отдельным постом, в статистику не входят❗️</p>
+    <div id="list"></div>
+    <a class="footer-link" href="run-btss.html">Все серии RUN BTS ⬅️</a>
+  </div>
+
+  <script>
+    const items = [
+      { text: "136 серия \"Эстрадная Шоу-викторина\" 1 часть", link: "https://t.me/violent_arhive/655", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/662" } },
+      { text: "137 серия \"Эстрадная Шоу-викторина\" 2 часть", link: "https://t.me/violent_arhive/666", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/667" } },
+      { text: "138 серия \"Настольный теннис\" 1 часть", link: "https://t.me/violent_arhive/701", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/716" } },
+      { text: "139 серия \"Настольный теннис\" 2 часть", link: "https://t.me/violent_arhive/735", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/820" } },
+      { text: "140 серия \"Весеннее путешествие MT\" 1 часть", link: "https://t.me/violent_arhive/763", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/766" } },
+      { text: "🍀 Коллаборация Run BTS Х Fifteen Nights on a Business Trip, 1 часть", link: "https://t.me/violent_arhive/768" },
+      { text: "141 серия \"Весеннее путешествие MT\" 2 часть", link: "https://t.me/violent_arhive/814", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/815" } },
+      { text: "🍀 Коллаборация Run BTS Х Fifteen Nights on a Business Trip, 2 часть", sub: "порядок просмотра: 140 run, коллаб 1 часть, 141 run и коллаб 2 часть", link: "https://t.me/violent_arhive/2223" },
+      { text: "142 серия \"Идеальная комбинация\"", link: "https://t.me/violent_arhive/970", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/1016" } },
+      { text: "143 серия \"Книги Run Bts\"", link: "https://t.me/violent_arhive/1001", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/1021" } },
+      { text: "144 серия \"Run BTS GAYO\"", link: "https://t.me/violent_arhive/1018", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/1037" } },
+      { text: "145 серия \"Поиск стелы Арми-бомбочки\" 1 часть", link: "https://t.me/violent_arhive/1128", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/1160" } },
+      { text: "146 серия \"Поиск стелы Арми-бомбочки\" 2 часть", link: "https://t.me/violent_arhive/1130", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/1170" } },
+      { text: "147 серия \"Поиск стелы Арми-бомбочки\" 3 часть", link: "https://t.me/violent_arhive/1154", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/1254" } },
+      { text: "148 серия \"Дизайн интерьера\" 1 часть", link: "https://t.me/violent_arhive/1163", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/1263" } },
+      { text: "149 серия \"Дизайн интерьера\" 2 часть", link: "https://t.me/violent_arhive/1168", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/1352" } },
+      { text: "150 серия \"Отдых в отеле\" 1ч", link: "https://t.me/violent_arhive/1182", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/1401" } },
+      { text: "151 серия \"Отдых в отеле\" 2ч", link: "https://t.me/violent_arhive/1253", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/1400" } },
+      { text: "152 серия \"Песни ностальгии\" 1 часть", link: "https://t.me/violent_arhive/1351", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/1446" } },
+      { text: "153 серия \"Песни ностальгии\" 2 часть", link: "https://t.me/violent_arhive/1396", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/1474" } },
+      { text: "154 серия \"Run bts\" 1 часть", link: "https://t.me/violent_arhive/1439", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/1513" } },
+      { text: "155 серия \"Run bts\" 2 часть", link: "https://t.me/violent_arhive/1473", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/1593" } }
+    ];
+
+    function makeRow(container, item, isSub) {
+      const id = 'video-' + item.link.split('/').pop();
+      const row = document.createElement('div');
+      row.className = isSub ? 'subrow' : 'row';
+
+      const box = document.createElement('input');
+      box.type = 'checkbox';
+
+      const span = document.createElement('span');
+      span.className = 'text';
+      span.textContent = item.text;
+      if (item.sub && typeof item.sub === 'string') {
+        const sub = document.createElement('span');
+        sub.className = 'sub';
+        sub.textContent = item.sub;
+        span.appendChild(sub);
+      }
+
+      if (localStorage.getItem(id) === 'true') {
+        box.checked = true;
+        span.classList.add('done');
+      }
+      box.addEventListener('change', () => {
+        localStorage.setItem(id, box.checked);
+        span.classList.toggle('done', box.checked);
+        updateProgress();
+      });
+      span.addEventListener('click', () => {
+        box.checked = !box.checked;
+        box.dispatchEvent(new Event('change'));
+      });
+
+      const link = document.createElement('a');
+      link.className = 'link';
+      link.href = item.link;
+      link.target = '_blank';
+      link.textContent = '🔗';
+
+      row.appendChild(box);
+      row.appendChild(span);
+      row.appendChild(link);
+      container.appendChild(row);
+    }
+
+    const listEl = document.getElementById('list');
+    items.forEach((item) => {
+      makeRow(listEl, item, false);
+      if (item.sub && typeof item.sub === 'object') {
+        makeRow(listEl, item.sub, true);
+      }
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('.row input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:run-bts-136-155', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>

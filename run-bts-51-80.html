@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>RUN BTS 51-80</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 16px; }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .text.done { color: #bbb; text-decoration: line-through; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+    .footer-link {
+      display: block;
+      text-align: center;
+      font-size: 13px;
+      color: #000;
+      text-decoration: none;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid #eee;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="run-btss.html">← Назад</a>
+    <h1>🏃 RUN BTS: 51-80 эпизод 🏃</h1>
+    <div id="list"></div>
+    <a class="footer-link" href="run-btss.html">Все серии RUN BTS ⬅️</a>
+  </div>
+
+  <script>
+    const items = [
+      { text: "51 серия \"Особый 50-й эпизод\"", link: "https://t.me/violent_arhive/415" },
+      { text: "52 серия \"Побег из комнаты\"", link: "https://t.me/violent_arhive/416" },
+      { text: "53 серия \"Небольшое путешествие\" (Пикник 1)", link: "https://t.me/violent_arhive/417" },
+      { text: "54 серия \"Пикник 2\"", link: "https://t.me/violent_arhive/418" },
+      { text: "55 серия \"Пикник 3\"", link: "https://t.me/violent_arhive/419" },
+      { text: "56 серия \"Пикник 4\"", link: "https://t.me/violent_arhive/420" },
+      { text: "57 серия \"Шеф-повар\" 1 часть", link: "https://t.me/violent_arhive/422" },
+      { text: "58 серия \"Шеф-повар\" 2 часть", link: "https://t.me/violent_arhive/424" },
+      { text: "59 серия \"Run-BTS в гостинице\" 1 часть", link: "https://t.me/violent_arhive/426" },
+      { text: "60 серия \"Run-BTS в гостинице\" 2 часть", link: "https://t.me/violent_arhive/428" },
+      { text: "61 серия \"Сауна BTS\" 1 часть", link: "https://t.me/violent_arhive/431" },
+      { text: "62 серия \"Сауна BTS\" 2 часть", link: "https://t.me/violent_arhive/433" },
+      { text: "63 серия \"Школа BTS\" 1 часть", link: "https://t.me/violent_arhive/435" },
+      { text: "64 серия \"Школа BTS\" 2 часть", link: "https://t.me/violent_arhive/437" },
+      { text: "65 серия \"Школа BTS\" 3 часть", link: "https://t.me/violent_arhive/439" },
+      { text: "66 серия \"Магазин комиксов\" 1 часть", link: "https://t.me/violent_arhive/441" },
+      { text: "67 серия \"Магазин комиксов\" 2 часть", link: "https://t.me/violent_arhive/443" },
+      { text: "68 серия \"Настольные игры\"", link: "https://t.me/violent_arhive/444" },
+      { text: "69 серия \"BTS в Торонто\" 1ч", link: "https://t.me/violent_arhive/446" },
+      { text: "70 серия \"BTS в Торонто\" 2ч", link: "https://t.me/violent_arhive/447" },
+      { text: "71 серия \"BTS в Торонто\" 3ч", link: "https://t.me/violent_arhive/449" },
+      { text: "72 серия \"Игра в Мафию\"", link: "https://t.me/violent_arhive/451" },
+      { text: "73 серия \"Дорама\" 1 часть", link: "https://t.me/violent_arhive/453" },
+      { text: "74 серия \"Дорама\" 2 часть", link: "https://t.me/violent_arhive/455" },
+      { text: "75 серия \"Дорама\" 3 часть", link: "https://t.me/violent_arhive/457" },
+      { text: "76 серия \"Дорама\" 4 часть", link: "https://t.me/violent_arhive/531" },
+      { text: "77 серия \"Пищевой квест\" 1ч", link: "https://t.me/violent_arhive/462" },
+      { text: "78 серия \"Пищевой квест\" 2ч", link: "https://t.me/violent_arhive/464" },
+      { text: "79 серия \"Операция 007\" 1ч", link: "https://t.me/violent_arhive/466" },
+      { text: "80 серия \"Операция 007\" 2ч", link: "https://t.me/violent_arhive/468" }
+    ];
+
+    const listEl = document.getElementById('list');
+    items.forEach((item) => {
+      const id = 'video-' + item.link.split('/').pop();
+      const row = document.createElement('div');
+      row.className = 'row';
+
+      const box = document.createElement('input');
+      box.type = 'checkbox';
+
+      const span = document.createElement('span');
+      span.className = 'text';
+      span.textContent = item.text;
+
+      if (localStorage.getItem(id) === 'true') {
+        box.checked = true;
+        span.classList.add('done');
+      }
+      box.addEventListener('change', () => {
+        localStorage.setItem(id, box.checked);
+        span.classList.toggle('done', box.checked);
+        updateProgress();
+      });
+      span.addEventListener('click', () => {
+        box.checked = !box.checked;
+        box.dispatchEvent(new Event('change'));
+      });
+
+      const link = document.createElement('a');
+      link.className = 'link';
+      link.href = item.link;
+      link.target = '_blank';
+      link.textContent = '🔗';
+
+      row.appendChild(box);
+      row.appendChild(span);
+      row.appendChild(link);
+      listEl.appendChild(row);
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:run-bts-51-80', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>

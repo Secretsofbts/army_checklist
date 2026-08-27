@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>RUN BTS 112-135</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .note { font-size: 12px; color: #999; margin: 0 0 16px; font-style: italic; }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .text.done { color: #bbb; text-decoration: line-through; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+    .subrow {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 4px 4px 4px 26px;
+      font-size: 12px;
+      color: #666;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .subrow input[type="checkbox"] { width: 14px; height: 14px; }
+    .subrow .text { color: #666; }
+    .subrow .text.done { color: #bbb; text-decoration: line-through; }
+    .subrow .link { font-size: 11px; }
+    .footer-link {
+      display: block;
+      text-align: center;
+      font-size: 13px;
+      color: #000;
+      text-decoration: none;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid #eee;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="run-btss.html">← Назад</a>
+    <h1>🏃 RUN BTS: 112-135 эпизод 🏃</h1>
+    <p class="note">❗️Закадровые тут отдельным постом, в статистику не входят❗️</p>
+    <div id="list"></div>
+    <a class="footer-link" href="run-btss.html">Все серии RUN BTS ⬅️</a>
+  </div>
+
+  <script>
+    const items = [
+      { text: "112 серия \"Школа DALBANG\" 1ч", link: "https://t.me/violent_arhive/57", sub: { text: "За кадром", link: "https://t.me/violent_arhive/335" } },
+      { text: "113 серия \"Школа DALBANG\" 2ч", link: "https://t.me/violent_arhive/67", sub: { text: "За кадром", link: "https://t.me/violent_arhive/68" } },
+      { text: "114 серия \"Лига номер 1\" 1ч", link: "https://t.me/violent_arhive/80", sub: { text: "За кадром", link: "https://t.me/violent_arhive/81" } },
+      { text: "115 серия \"Лига номер 1\" 2ч", link: "https://t.me/violent_arhive/104", sub: { text: "За кадром", link: "https://t.me/violent_arhive/123" } },
+      { text: "116 серия \"Особая командная работа\" 1 часть", link: "https://t.me/violent_arhive/147", sub: { text: "За кадром", link: "https://t.me/violent_arhive/155" } },
+      { text: "117 серия \"Особая командная работа\" 2 часть", link: "https://t.me/violent_arhive/202", sub: { text: "За кадром", link: "https://t.me/violent_arhive/212" } },
+      { text: "118 серия \"Фотоистория\" 1ч", link: "https://t.me/violent_arhive/214", sub: { text: "За кадром", link: "https://t.me/violent_arhive/215" } },
+      { text: "119 серия \"Фотоистория\" 2ч", link: "https://t.me/violent_arhive/239", sub: { text: "За кадром", link: "https://t.me/violent_arhive/242" } },
+      { text: "120 серия \"Ответ Bts Village\" 1ч", link: "https://t.me/violent_arhive/246", sub: { text: "За кадром", link: "https://t.me/violent_arhive/248" } },
+      { text: "121 серия \"Ответ Bts Village\" 2ч", link: "https://t.me/violent_arhive/255", sub: { text: "За кадром", link: "https://t.me/violent_arhive/260" } },
+      { text: "122 серия \"Обратный Аватар Шеф\" 1 часть", link: "https://t.me/violent_arhive/261", sub: { text: "За кадром", link: "https://t.me/violent_arhive/268" } },
+      { text: "123 серия \"Обратный Аватар Шеф\" 2 часть", link: "https://t.me/violent_arhive/270", sub: { text: "За кадром", link: "https://t.me/violent_arhive/272" } },
+      { text: "124 серия \"Стафф Run BTS\" + закадровые", link: "https://t.me/violent_arhive/276" },
+      { text: "125 серия \"Ветчина Спешл\"", link: "https://t.me/violent_arhive/278", sub: { text: "За кадром", link: "https://t.me/violent_arhive/281" } },
+      { text: "126 серия \"777 Счастливая семёрка\" 1 часть", link: "https://t.me/violent_arhive/292", sub: { text: "За кадром", link: "https://t.me/violent_arhive/294" } },
+      { text: "127 серия \"777 Счастливая семёрка\" 2 часть", link: "https://t.me/violent_arhive/295", sub: { text: "За кадром", link: "https://t.me/violent_arhive/297" } },
+      { text: "128 серия \"Привет, 2021\"", link: "https://t.me/violent_arhive/315", sub: { text: "За кадром", link: "https://t.me/violent_arhive/317" } },
+      { text: "129 серия \"Долгосрочный теннисный проект\" 1 часть", link: "https://t.me/violent_arhive/319", sub: { text: "За кадром", link: "https://t.me/violent_arhive/333" } },
+      { text: "130 серия \"Долгосрочный теннисный проект\" 2 часть", link: "https://t.me/violent_arhive/371", sub: { text: "За кадром", link: "https://t.me/violent_arhive/429" } },
+      { text: "131 серия \"77-минутные дебаты\" 1 часть", link: "https://t.me/violent_arhive/537", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/545" } },
+      { text: "132 серия \"77-минутные дебаты\" 2 часть", link: "https://t.me/violent_arhive/566", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/568" } },
+      { text: "133 серия \"2021 Мастерская Run Bts\" 1 часть", link: "https://t.me/violent_arhive/579", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/580" } },
+      { text: "134 серия \"2021 Мастерская Run Bts\" 2 часть", link: "https://t.me/violent_arhive/582", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/648" } },
+      { text: "135 серия \"2021 Мастерская Run Bts\" 3 часть", link: "https://t.me/violent_arhive/636", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/649" } }
+    ];
+
+    function makeRow(container, item, isSub) {
+      const id = 'video-' + item.link.split('/').pop();
+      const row = document.createElement('div');
+      row.className = isSub ? 'subrow' : 'row';
+
+      const box = document.createElement('input');
+      box.type = 'checkbox';
+
+      const span = document.createElement('span');
+      span.className = 'text';
+      span.textContent = item.text;
+
+      if (localStorage.getItem(id) === 'true') {
+        box.checked = true;
+        span.classList.add('done');
+      }
+      box.addEventListener('change', () => {
+        localStorage.setItem(id, box.checked);
+        span.classList.toggle('done', box.checked);
+        updateProgress();
+      });
+      span.addEventListener('click', () => {
+        box.checked = !box.checked;
+        box.dispatchEvent(new Event('change'));
+      });
+
+      const link = document.createElement('a');
+      link.className = 'link';
+      link.href = item.link;
+      link.target = '_blank';
+      link.textContent = '🔗';
+
+      row.appendChild(box);
+      row.appendChild(span);
+      row.appendChild(link);
+      container.appendChild(row);
+    }
+
+    const listEl = document.getElementById('list');
+    items.forEach((item) => {
+      makeRow(listEl, item, false);
+      if (item.sub) {
+        makeRow(listEl, item.sub, true);
+      }
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('.row input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:run-bts-112-135', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
