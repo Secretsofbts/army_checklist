@@ -69,7 +69,8 @@
   </div>
 
   <script>
-    const items = [
+
+    const episodes = [
       { text: "1 эпизод", sub: "\"5 дней всего с дембеля прошло, а они уже тащат меня покорять Халласан…\"", link: "https://t.me/violent_arhive/4735" },
       { text: "2 эпизод", sub: "\"Легендарное возвращение в альма-матер\"", link: "https://t.me/violent_arhive/4740" },
       { text: "3 эпизод", sub: "\"Работа выматывает меня больше, чем армия\"", link: "https://t.me/violent_arhive/4774" },
@@ -158,15 +159,6 @@
       });
     }
 
-    const listEl = document.getElementById('list');
-    const teaserTitle = document.createElement('div');
-    teaserTitle.className = 'section-title';
-    teaserTitle.textContent = 'Тизеры';
-    listEl.appendChild(teaserTitle);
-    const teaserContainer = document.createElement('div');
-    teaserContainer.id = 'teasers';
-    listEl.appendChild(teaserContainer);
-
     const episodeTitle = document.createElement('div');
     episodeTitle.className = 'section-title';
     episodeTitle.textContent = 'Эпизоды';
@@ -175,7 +167,7 @@
     episodeContainer.id = 'episodes';
     listEl.appendChild(episodeContainer);
 
-        renderPlainList('teasers', teasers);
+    
     renderList('episodes', episodes);
     function updateProgress() {
       const all = document.querySelectorAll('input[type="checkbox"]');
