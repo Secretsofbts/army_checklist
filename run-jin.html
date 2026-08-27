@@ -51,6 +51,20 @@
       padding-top: 12px;
       border-top: 1px solid #eee;
     }
+        .navlink {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: #f7f7fa;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      text-decoration: none;
+    }
   </style>
 </head>
 <body>
@@ -63,18 +77,15 @@
   </div>
 
   <script>
-        const navItems = [
-      { text: "1-25 эпизод", link: "run-jin-1-25.html", statKey: "run-jin-1-25" }
-    ];
-    const items = [
-      { text: "RUN JIN (26-32 эпизод) ❤️", link: "https://t.me/violent_arhive/5040" }
+          const navItems = [
+      { text: "1-25 эпизод", link: "run-jin-1-25.html", statKey: "run-jin-1-25" },
+      { text: "26-36 эпизод", link: "run-jin-26-36.html", statKey: "run-jin-26-36" }
     ];
 
-       const listEl = document.getElementById('list');
+            const listEl = document.getElementById('list');
     navItems.forEach((item) => {
       const a = document.createElement('a');
-      a.className = 'row';
-      a.style.textDecoration = 'none';
+      a.className = 'navlink';
       a.href = item.link;
       const span = document.createElement('span');
       span.className = 'text';
@@ -100,7 +111,8 @@
         el.textContent = data.checked + '/' + data.total;
       }
     }
-    renderBadge('badge-run-jin-1-25', 'run-jin-1-25');
+        renderBadge('badge-run-jin-1-25', 'run-jin-1-25');
+    renderBadge('badge-run-jin-26-36', 'run-jin-26-36');
 
     items.forEach((item) => {
       const id = 'video-' + item.link.split('/').pop();
