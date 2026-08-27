@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>RUN JIN 26-36</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 16px; }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .text.done { color: #bbb; text-decoration: line-through; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+    .footer-link {
+      display: block;
+      text-align: center;
+      font-size: 13px;
+      color: #000;
+      text-decoration: none;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid #eee;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="run-jin.html">← Назад</a>
+    <h1>❤️ RUN JIN: 26-36 эпизод ❤️</h1>
+    <p class="intro">Дата выпуска: 2024-2025<br>Джин решил не дожидаться остальных ребят с армии, а устроить своё шоу Run Bts, чтобы мы не скучали =)</p>
+    <div id="list"></div>
+    <a class="footer-link" href="run-jin.html">RUN JIN ⬅️</a>
+  </div>
+
+  <script>
+    const items = [
+      { text: "26 серия", sub: "\"Страстные гурманы\"", link: "https://t.me/violent_arhive/5039" },
+      { text: "27 серия", sub: "\"Фехтовальщики\"", link: "https://t.me/violent_arhive/5050" },
+      { text: "28 серия", sub: "\"Поддаваясь обаянию Джина\"", link: "https://t.me/violent_arhive/5058" },
+      { text: "29 серия", sub: "\"Дом Полного Дзена\"", link: "https://t.me/violent_arhive/5077" },
+      { text: "30 серия", sub: "\"Безумный дом Джина\"", link: "https://t.me/violent_arhive/5098" },
+      { text: "31 серия", sub: "\"В поисках лучшего геймера ч.1\"", link: "https://t.me/violent_arhive/5110" },
+      { text: "32 серия", sub: "\"В поисках лучшего геймера ч.2\"", link: "https://t.me/violent_arhive/5112" },
+      { text: "33 серия", sub: "\"Джин Уик: Миссия невыполнима\"", link: "https://t.me/violent_arhive/5114" },
+      { text: "34 серия", sub: "\"Тхэквондо с Кан Сынюном\"", link: "https://t.me/violent_arhive/5120" },
+      { text: "35 серия", sub: "\"Миссия невыполнджина с Томом Крузом\"", link: "https://t.me/violent_arhive/5127" },
+      { text: "36 серия", sub: "\"Это последний выпуск шоу, а они заставляют меня куда-то карабкаться…\"", link: "https://t.me/violent_arhive/5129" }
+    ];
+
+    const listEl = document.getElementById('list');
+    items.forEach((item) => {
+      const id = 'video-' + item.link.split('/').pop();
+      const row = document.createElement('div');
+      row.className = 'row';
+
+      const box = document.createElement('input');
+      box.type = 'checkbox';
+
+      const span = document.createElement('span');
+      span.className = 'text';
+      span.textContent = item.text;
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+        sub.textContent = item.sub;
+        span.appendChild(sub);
+      }
+
+      if (localStorage.getItem(id) === 'true') {
+        box.checked = true;
+        span.classList.add('done');
+      }
+      box.addEventListener('change', () => {
+        localStorage.setItem(id, box.checked);
+        span.classList.toggle('done', box.checked);
+        updateProgress();
+      });
+      span.addEventListener('click', () => {
+        box.checked = !box.checked;
+        box.dispatchEvent(new Event('change'));
+      });
+
+      const link = document.createElement('a');
+      link.className = 'link';
+      link.href = item.link;
+      link.target = '_blank';
+      link.textContent = '🔗';
+
+      row.appendChild(box);
+      row.appendChild(span);
+      row.appendChild(link);
+      listEl.appendChild(row);
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      localStorage.setItem('progress:run-jin-26-36', JSON.stringify({checked, total}));
+    }
+    updateProgress();
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
