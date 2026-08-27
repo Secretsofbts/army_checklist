@@ -45,38 +45,38 @@
 <body>
   <div class="app">
         <a class="back" href="run-btss.html">← Назад</a>
-    <h1>🏃 RUN BTS: 1-25 эпизод + фильм 🏃</h1>
+    <h1>🏃 01-25 эпизод + фильм 🏃</h1>
     <div id="list"></div>
   </div>
 
   <script>
-    const items = [
-      { text: "Фильм \"Run Bts в Таиланде\"", link: "https://t.me/violent_arhive/339" },
-      { text: "1 эпизод \"Представление участников BTS\"", link: "https://t.me/violent_arhive/340" },
-      { text: "2 эпизод \"Идеальный парень\"", link: "https://t.me/violent_arhive/341" },
-      { text: "3 эпизод \"Парк аттракционов\"", link: "https://t.me/violent_arhive/102" },
-      { text: "4 эпизод \"Пройти за 30 секунд\"", link: "https://t.me/violent_arhive/342" },
-      { text: "5 эпизод \"100 секунд спортивного дня\"", link: "https://t.me/violent_arhive/343" },
-      { text: "6 эпизод \"BTS на исповеди\"", link: "https://t.me/violent_arhive/345" },
-      { text: "7 эпизод \"Последний герой\"", link: "https://t.me/violent_arhive/347" },
-      { text: "8 эпизод \"Игра: найди флажок\"", link: "https://t.me/violent_arhive/348" },
-      { text: "9 эпизод \"Преодолей страх (банджи-джампинг)\"", link: "https://t.me/violent_arhive/103" },
-      { text: "10 эпизод \"Тайный агент\"", link: "https://t.me/violent_arhive/349" },
-      { text: "11 эпизод \"Назад в школу\"", link: "https://t.me/violent_arhive/350" },
-      { text: "12 эпизод \"Полицейские\"", link: "https://t.me/violent_arhive/352" },
-      { text: "13 эпизод \"Возвращение шпиона\" 1 часть", link: "https://t.me/violent_arhive/353" },
-      { text: "14 эпизод \"Возвращение шпиона\" 2 часть", link: "https://t.me/violent_arhive/354" },
-      { text: "15 эпизод \"Возвращение шпиона\" 3 часть", link: "https://t.me/violent_arhive/355" },
-      { text: "16 эпизод \"Зимние Олимпийские игры\"", link: "https://t.me/violent_arhive/356" },
-      { text: "17 эпизод \"Аркадные Олимпийские игры\" 1 часть", link: "https://t.me/violent_arhive/358" },
-      { text: "18 эпизод \"Аркадные Олимпийские игры\" 2 часть", link: "https://t.me/violent_arhive/360" },
-      { text: "19 эпизод \"Страйк\"", link: "https://t.me/violent_arhive/362" },
-      { text: "20 эпизод \"Кулинарная битва\"", link: "https://t.me/violent_arhive/373" },
-      { text: "21 эпизод \"Настольные игры\"", link: "https://t.me/violent_arhive/363" },
-      { text: "22 эпизод \"Счастливого Чусока!\"", link: "https://t.me/violent_arhive/365" },
-      { text: "23 эпизод \"Братья наши меньшие\"", link: "https://t.me/violent_arhive/367" },
-      { text: "24 эпизод \"BTS против Зомби\"", link: "https://t.me/violent_arhive/369" },
-      { text: "25 эпизод \"Король игры\"", link: "https://t.me/violent_arhive/146" }
+        const items = [
+      { text: "Фильм", sub: "\"Run Bts в Таиланде\"", link: "https://t.me/violent_arhive/339" },
+      { text: "1 эпизод", sub: "\"Представление участников BTS\"", link: "https://t.me/violent_arhive/340" },
+      { text: "2 эпизод", sub: "\"Идеальный парень\"", link: "https://t.me/violent_arhive/341" },
+      { text: "3 эпизод", sub: "\"Парк аттракционов\"", link: "https://t.me/violent_arhive/102" },
+      { text: "4 эпизод", sub: "\"Пройти за 30 секунд\"", link: "https://t.me/violent_arhive/342" },
+      { text: "5 эпизод", sub: "\"100 секунд спортивного дня\"", link: "https://t.me/violent_arhive/343" },
+      { text: "6 эпизод", sub: "\"BTS на исповеди\"", link: "https://t.me/violent_arhive/345" },
+      { text: "7 эпизод", sub: "\"Последний герой\"", link: "https://t.me/violent_arhive/347" },
+      { text: "8 эпизод", sub: "\"Игра: найди флажок\"", link: "https://t.me/violent_arhive/348" },
+      { text: "9 эпизод", sub: "\"Преодолей страх (банджи-джампинг)\"", link: "https://t.me/violent_arhive/103" },
+      { text: "10 эпизод", sub: "\"Тайный агент\"", link: "https://t.me/violent_arhive/349" },
+      { text: "11 эпизод", sub: "\"Назад в школу\"", link: "https://t.me/violent_arhive/350" },
+      { text: "12 эпизод", sub: "\"Полицейские\"", link: "https://t.me/violent_arhive/352" },
+      { text: "13 эпизод", sub: "\"Возвращение шпиона\" 1 часть", link: "https://t.me/violent_arhive/353" },
+      { text: "14 эпизод", sub: "\"Возвращение шпиона\" 2 часть", link: "https://t.me/violent_arhive/354" },
+      { text: "15 эпизод", sub: "\"Возвращение шпиона\" 3 часть", link: "https://t.me/violent_arhive/355" },
+      { text: "16 эпизод", sub: "\"Зимние Олимпийские игры\"", link: "https://t.me/violent_arhive/356" },
+      { text: "17 эпизод", sub: "\"Аркадные Олимпийские игры\" 1 часть", link: "https://t.me/violent_arhive/358" },
+      { text: "18 эпизод", sub: "\"Аркадные Олимпийские игры\" 2 часть", link: "https://t.me/violent_arhive/360" },
+      { text: "19 эпизод", sub: "\"Страйк\"", link: "https://t.me/violent_arhive/362" },
+      { text: "20 эпизод", sub: "\"Кулинарная битва\"", link: "https://t.me/violent_arhive/373" },
+      { text: "21 эпизод", sub: "\"Настольные игры\"", link: "https://t.me/violent_arhive/363" },
+      { text: "22 эпизод", sub: "\"Счастливого Чусока!\"", link: "https://t.me/violent_arhive/365" },
+      { text: "23 эпизод", sub: "\"Братья наши меньшие\"", link: "https://t.me/violent_arhive/367" },
+      { text: "24 эпизод", sub: "\"BTS против Зомби\"", link: "https://t.me/violent_arhive/369" },
+      { text: "25 эпизод", sub: "\"Король игры\"", link: "https://t.me/violent_arhive/146" }
     ];
 
     const listEl = document.getElementById('list');
@@ -88,10 +88,15 @@
       const box = document.createElement('input');
       box.type = 'checkbox';
 
-      const span = document.createElement('span');
+           const span = document.createElement('span');
       span.className = 'text';
       span.textContent = item.text;
-
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+        sub.textContent = item.sub;
+        span.appendChild(sub);
+      }
       if (localStorage.getItem(id) === 'true') {
         box.checked = true;
         span.classList.add('done');
