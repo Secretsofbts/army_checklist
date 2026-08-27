@@ -55,45 +55,45 @@
 <body>
   <div class="app">
     <a class="back" href="run-btss.html">← Назад</a>
-    <h1>🏃 RUN BTS: 81-111,5 эпизод 🏃</h1>
+    <h1>🏃 81-111,5 эпизод 🏃</h1>
     <div id="list"></div>
     <a class="footer-link" href="run-btss.html">Все серии RUN BTS ⬅️</a>
   </div>
 
   <script>
-    const items = [
-      { text: "81 серия \"Виртуальная реальность BTS\" 1 часть", link: "https://t.me/violent_arhive/470" },
-      { text: "82 серия \"Виртуальная реальность BTS\" 2 часть", link: "https://t.me/violent_arhive/472" },
-      { text: "83 серия \"Летняя прогулка\" 1ч", link: "https://t.me/violent_arhive/474" },
-      { text: "84 серия \"Летняя прогулка\" 2ч", link: "https://t.me/violent_arhive/476" },
-      { text: "85 серия \"Летняя прогулка\" 3ч", link: "https://t.me/violent_arhive/478" },
-      { text: "86 серия \"День Хангыля\" 1ч", link: "https://t.me/violent_arhive/480" },
-      { text: "87 серия \"День Хангыля\" 2ч", link: "https://t.me/violent_arhive/481" },
-      { text: "88 серия \"День Хангыля\" 3ч", link: "https://t.me/violent_arhive/482" },
-      { text: "89 серия \"Gayo вернулся\" 1ч", link: "https://t.me/violent_arhive/484" },
-      { text: "90 серия \"Gayo вернулся\" 2ч", link: "https://t.me/violent_arhive/486" },
-      { text: "91 серия \"Мини золотой колокольчик\" 1 часть", link: "https://t.me/violent_arhive/488" },
-      { text: "92 серия \"Мини золотой колокольчик\" 2 часть", link: "https://t.me/violent_arhive/490" },
-      { text: "93 серия \"Marble\" 1 часть", link: "https://t.me/violent_arhive/492" },
-      { text: "94 серия \"Marble\" 2 часть", link: "https://t.me/violent_arhive/494" },
-      { text: "95 серия \"Играем с BTS\" 1 часть", link: "https://t.me/violent_arhive/495" },
-      { text: "96 серия \"Играем с BTS\" 2 часть", link: "https://t.me/violent_arhive/496" },
-      { text: "97 серия \"Пижамная вечеринка\" 1 часть", link: "https://t.me/violent_arhive/498" },
-      { text: "98 серия \"Пижамная вечеринка\" 2 часть", link: "https://t.me/violent_arhive/500" },
-      { text: "99 серия \"Флористика\"", link: "https://t.me/violent_arhive/502" },
-      { text: "100 серия \"Специальный эпизод\" 1 часть", link: "https://t.me/violent_arhive/504" },
-      { text: "101 серия \"Специальный эпизод\" 2 часть", link: "https://t.me/violent_arhive/506" },
-      { text: "102 серия \"Король аватара готовки\" 1 часть", link: "https://t.me/violent_arhive/508" },
-      { text: "103 серия \"Король аватара готовки\" 2 часть", link: "https://t.me/violent_arhive/510" },
-      { text: "104 серия \"Фотовыставка\" 1ч", link: "https://t.me/violent_arhive/512" },
-      { text: "105 серия \"Фотовыставка\" 2ч", link: "https://t.me/violent_arhive/514" },
-      { text: "106 серия \"Фотовыставка\" 3ч", link: "https://t.me/violent_arhive/516" },
-      { text: "107 серия \"Геймеры\" 1 часть", link: "https://t.me/violent_arhive/518" },
-      { text: "108 серия \"Геймеры\" 2 часть", link: "https://t.me/violent_arhive/520" },
-      { text: "109 серия \"Дубляж\"", link: "https://t.me/violent_arhive/522" },
-      { text: "110 серия \"Охота за сокровищами\" 1 часть", link: "https://t.me/violent_arhive/524" },
-      { text: "111 серия \"Охота за сокровищами\" 2 часть", link: "https://t.me/violent_arhive/526" },
-      { text: "111,5 серия \"Director's cut\"", link: "https://t.me/violent_arhive/527" }
+        const items = [
+      { text: "81 эпизод", sub: "\"Виртуальная реальность BTS\" 1 часть", link: "https://t.me/violent_arhive/470" },
+      { text: "82 эпизод", sub: "\"Виртуальная реальность BTS\" 2 часть", link: "https://t.me/violent_arhive/472" },
+      { text: "83 эпизод", sub: "\"Летняя прогулка\" 1ч", link: "https://t.me/violent_arhive/474" },
+      { text: "84 эпизод", sub: "\"Летняя прогулка\" 2ч", link: "https://t.me/violent_arhive/476" },
+      { text: "85 эпизод", sub: "\"Летняя прогулка\" 3ч", link: "https://t.me/violent_arhive/478" },
+      { text: "86 эпизод", sub: "\"День Хангыля\" 1ч", link: "https://t.me/violent_arhive/480" },
+      { text: "87 эпизод", sub: "\"День Хангыля\" 2ч", link: "https://t.me/violent_arhive/481" },
+      { text: "88 эпизод", sub: "\"День Хангыля\" 3ч", link: "https://t.me/violent_arhive/482" },
+      { text: "89 эпизод", sub: "\"Gayo вернулся\" 1ч", link: "https://t.me/violent_arhive/484" },
+      { text: "90 эпизод", sub: "\"Gayo вернулся\" 2ч", link: "https://t.me/violent_arhive/486" },
+      { text: "91 эпизод", sub: "\"Мини золотой колокольчик\" 1 часть", link: "https://t.me/violent_arhive/488" },
+      { text: "92 эпизод", sub: "\"Мини золотой колокольчик\" 2 часть", link: "https://t.me/violent_arhive/490" },
+      { text: "93 эпизод", sub: "\"Marble\" 1 часть", link: "https://t.me/violent_arhive/492" },
+      { text: "94 эпизод", sub: "\"Marble\" 2 часть", link: "https://t.me/violent_arhive/494" },
+      { text: "95 эпизод", sub: "\"Играем с BTS\" 1 часть", link: "https://t.me/violent_arhive/495" },
+      { text: "96 эпизод", sub: "\"Играем с BTS\" 2 часть", link: "https://t.me/violent_arhive/496" },
+      { text: "97 эпизод", sub: "\"Пижамная вечеринка\" 1 часть", link: "https://t.me/violent_arhive/498" },
+      { text: "98 эпизод", sub: "\"Пижамная вечеринка\" 2 часть", link: "https://t.me/violent_arhive/500" },
+      { text: "99 эпизод", sub: "\"Флористика\"", link: "https://t.me/violent_arhive/502" },
+      { text: "100 эпизод", sub: "\"Специальный эпизод\" 1 часть", link: "https://t.me/violent_arhive/504" },
+      { text: "101 эпизод", sub: "\"Специальный эпизод\" 2 часть", link: "https://t.me/violent_arhive/506" },
+      { text: "102 эпизод", sub: "\"Король аватара готовки\" 1 часть", link: "https://t.me/violent_arhive/508" },
+      { text: "103 эпизод", sub: "\"Король аватара готовки\" 2 часть", link: "https://t.me/violent_arhive/510" },
+      { text: "104 эпизод", sub: "\"Фотовыставка\" 1ч", link: "https://t.me/violent_arhive/512" },
+      { text: "105 эпизод", sub: "\"Фотовыставка\" 2ч", link: "https://t.me/violent_arhive/514" },
+      { text: "106 эпизод", sub: "\"Фотовыставка\" 3ч", link: "https://t.me/violent_arhive/516" },
+      { text: "107 эпизод", sub: "\"Геймеры\" 1 часть", link: "https://t.me/violent_arhive/518" },
+      { text: "108 эпизод", sub: "\"Геймеры\" 2 часть", link: "https://t.me/violent_arhive/520" },
+      { text: "109 эпизод", sub: "\"Дубляж\"", link: "https://t.me/violent_arhive/522" },
+      { text: "110 эпизод", sub: "\"Охота за сокровищами\" 1 часть", link: "https://t.me/violent_arhive/524" },
+      { text: "111 эпизод", sub: "\"Охота за сокровищами\" 2 часть", link: "https://t.me/violent_arhive/526" },
+      { text: "111,5 эпизод", sub: "\"Director's cut\"", link: "https://t.me/violent_arhive/527" }
     ];
 
     const listEl = document.getElementById('list');
@@ -105,9 +105,15 @@
       const box = document.createElement('input');
       box.type = 'checkbox';
 
-      const span = document.createElement('span');
+            const span = document.createElement('span');
       span.className = 'text';
       span.textContent = item.text;
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+        sub.textContent = item.sub;
+        span.appendChild(sub);
+      }
 
       if (localStorage.getItem(id) === 'true') {
         box.checked = true;

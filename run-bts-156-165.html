@@ -56,24 +56,24 @@
 <body>
   <div class="app">
     <a class="back" href="run-btss.html">← Назад</a>
-    <h1>🏃 RUN BTS: 156-165 эпизод 🏃</h1>
+    <h1>🏃 156-165 эпизод 🏃</h1>
     <p class="note">По сути эти выпуски идут без нумерации, нумерация добавлена для удобства. Закадровых у них нет!</p>
     <div id="list"></div>
     <a class="footer-link" href="run-btss.html">Все серии RUN BTS ⬅️</a>
   </div>
 
   <script>
-    const items = [
-      { text: "156 серия \"Телепатия\" 1 часть", link: "https://t.me/violent_arhive/3009" },
-      { text: "157 серия \"Телепатия\" 2 часть", link: "https://t.me/violent_arhive/3016" },
-      { text: "158 серия \"Аэройога\" 1 часть", link: "https://t.me/violent_arhive/3189" },
-      { text: "159 серия \"Аэройога\" 2 часть", link: "https://t.me/violent_arhive/3215" },
-      { text: "160 серия \"Тв-шоу\" 1 часть", link: "https://t.me/violent_arhive/3323" },
-      { text: "161 серия \"Тв-шоу\" 2 часть", link: "https://t.me/violent_arhive/3335" },
-      { text: "162 серия \"Самый умный\" 1ч.", link: "https://t.me/violent_arhive/3592" },
-      { text: "163 серия \"Самый умный\" 2ч.", link: "https://t.me/violent_arhive/3627" },
-      { text: "164 серия \"День спорта\" 1ч.", link: "https://t.me/violent_arhive/3695" },
-      { text: "165 серия \"День спорта\" 2ч.", link: "https://t.me/violent_arhive/3706" }
+       const items = [
+      { text: "156 эпизод", sub: "\"Телепатия\" 1 часть", link: "https://t.me/violent_arhive/3009" },
+      { text: "157 эпизод", sub: "\"Телепатия\" 2 часть", link: "https://t.me/violent_arhive/3016" },
+      { text: "158 эпизод", sub: "\"Аэройога\" 1 часть", link: "https://t.me/violent_arhive/3189" },
+      { text: "159 эпизод", sub: "\"Аэройога\" 2 часть", link: "https://t.me/violent_arhive/3215" },
+      { text: "160 эпизод", sub: "\"Тв-шоу\" 1 часть", link: "https://t.me/violent_arhive/3323" },
+      { text: "161 эпизод", sub: "\"Тв-шоу\" 2 часть", link: "https://t.me/violent_arhive/3335" },
+      { text: "162 эпизод", sub: "\"Самый умный\" 1ч.", link: "https://t.me/violent_arhive/3592" },
+      { text: "163 эпизод", sub: "\"Самый умный\" 2ч.", link: "https://t.me/violent_arhive/3627" },
+      { text: "164 эпизод", sub: "\"День спорта\" 1ч.", link: "https://t.me/violent_arhive/3695" },
+      { text: "165 эпизод", sub: "\"День спорта\" 2ч.", link: "https://t.me/violent_arhive/3706" }
     ];
 
     const listEl = document.getElementById('list');
@@ -85,9 +85,15 @@
       const box = document.createElement('input');
       box.type = 'checkbox';
 
-      const span = document.createElement('span');
+           const span = document.createElement('span');
       span.className = 'text';
       span.textContent = item.text;
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+        sub.textContent = item.sub;
+        span.appendChild(sub);
+      }
 
       if (localStorage.getItem(id) === 'true') {
         box.checked = true;

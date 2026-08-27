@@ -65,43 +65,43 @@
 <body>
   <div class="app">
     <a class="back" href="run-btss.html">← Назад</a>
-    <h1>🏃 RUN BTS: 51-80 эпизод 🏃</h1>
+    <h1>🏃 51-80 эпизод 🏃</h1>
     <div id="list"></div>
     <a class="footer-link" href="run-btss.html">Все серии RUN BTS ⬅️</a>
   </div>
 
   <script>
-    const items = [
-      { text: "51 серия \"Особый 50-й эпизод\"", link: "https://t.me/violent_arhive/415" },
-      { text: "52 серия \"Побег из комнаты\"", link: "https://t.me/violent_arhive/416" },
-      { text: "53 серия \"Небольшое путешествие\" (Пикник 1)", link: "https://t.me/violent_arhive/417" },
-      { text: "54 серия \"Пикник 2\"", link: "https://t.me/violent_arhive/418" },
-      { text: "55 серия \"Пикник 3\"", link: "https://t.me/violent_arhive/419" },
-      { text: "56 серия \"Пикник 4\"", link: "https://t.me/violent_arhive/420" },
-      { text: "57 серия \"Шеф-повар\" 1 часть", link: "https://t.me/violent_arhive/422" },
-      { text: "58 серия \"Шеф-повар\" 2 часть", link: "https://t.me/violent_arhive/424" },
-      { text: "59 серия \"Run-BTS в гостинице\" 1 часть", link: "https://t.me/violent_arhive/426" },
-      { text: "60 серия \"Run-BTS в гостинице\" 2 часть", link: "https://t.me/violent_arhive/428" },
-      { text: "61 серия \"Сауна BTS\" 1 часть", link: "https://t.me/violent_arhive/431" },
-      { text: "62 серия \"Сауна BTS\" 2 часть", link: "https://t.me/violent_arhive/433" },
-      { text: "63 серия \"Школа BTS\" 1 часть", link: "https://t.me/violent_arhive/435" },
-      { text: "64 серия \"Школа BTS\" 2 часть", link: "https://t.me/violent_arhive/437" },
-      { text: "65 серия \"Школа BTS\" 3 часть", link: "https://t.me/violent_arhive/439" },
-      { text: "66 серия \"Магазин комиксов\" 1 часть", link: "https://t.me/violent_arhive/441" },
-      { text: "67 серия \"Магазин комиксов\" 2 часть", link: "https://t.me/violent_arhive/443" },
-      { text: "68 серия \"Настольные игры\"", link: "https://t.me/violent_arhive/444" },
-      { text: "69 серия \"BTS в Торонто\" 1ч", link: "https://t.me/violent_arhive/446" },
-      { text: "70 серия \"BTS в Торонто\" 2ч", link: "https://t.me/violent_arhive/447" },
-      { text: "71 серия \"BTS в Торонто\" 3ч", link: "https://t.me/violent_arhive/449" },
-      { text: "72 серия \"Игра в Мафию\"", link: "https://t.me/violent_arhive/451" },
-      { text: "73 серия \"Дорама\" 1 часть", link: "https://t.me/violent_arhive/453" },
-      { text: "74 серия \"Дорама\" 2 часть", link: "https://t.me/violent_arhive/455" },
-      { text: "75 серия \"Дорама\" 3 часть", link: "https://t.me/violent_arhive/457" },
-      { text: "76 серия \"Дорама\" 4 часть", link: "https://t.me/violent_arhive/531" },
-      { text: "77 серия \"Пищевой квест\" 1ч", link: "https://t.me/violent_arhive/462" },
-      { text: "78 серия \"Пищевой квест\" 2ч", link: "https://t.me/violent_arhive/464" },
-      { text: "79 серия \"Операция 007\" 1ч", link: "https://t.me/violent_arhive/466" },
-      { text: "80 серия \"Операция 007\" 2ч", link: "https://t.me/violent_arhive/468" }
+       const items = [
+      { text: "51 эпизод", sub: "\"Особый 50-й эпизод\"", link: "https://t.me/violent_arhive/415" },
+      { text: "52 эпизод", sub: "\"Побег из комнаты\"", link: "https://t.me/violent_arhive/416" },
+      { text: "53 эпизод", sub: "\"Небольшое путешествие\" (Пикник 1)", link: "https://t.me/violent_arhive/417" },
+      { text: "54 эпизод", sub: "\"Пикник 2\"", link: "https://t.me/violent_arhive/418" },
+      { text: "55 эпизод", sub: "\"Пикник 3\"", link: "https://t.me/violent_arhive/419" },
+      { text: "56 эпизод", sub: "\"Пикник 4\"", link: "https://t.me/violent_arhive/420" },
+      { text: "57 эпизод", sub: "\"Шеф-повар\" 1 часть", link: "https://t.me/violent_arhive/422" },
+      { text: "58 эпизод", sub: "\"Шеф-повар\" 2 часть", link: "https://t.me/violent_arhive/424" },
+      { text: "59 эпизод", sub: "\"Run-BTS в гостинице\" 1 часть", link: "https://t.me/violent_arhive/426" },
+      { text: "60 эпизод", sub: "\"Run-BTS в гостинице\" 2 часть", link: "https://t.me/violent_arhive/428" },
+      { text: "61 эпизод", sub: "\"Сауна BTS\" 1 часть", link: "https://t.me/violent_arhive/431" },
+      { text: "62 эпизод", sub: "\"Сауна BTS\" 2 часть", link: "https://t.me/violent_arhive/433" },
+      { text: "63 эпизод", sub: "\"Школа BTS\" 1 часть", link: "https://t.me/violent_arhive/435" },
+      { text: "64 эпизод", sub: "\"Школа BTS\" 2 часть", link: "https://t.me/violent_arhive/437" },
+      { text: "65 эпизод", sub: "\"Школа BTS\" 3 часть", link: "https://t.me/violent_arhive/439" },
+      { text: "66 эпизод", sub: "\"Магазин комиксов\" 1 часть", link: "https://t.me/violent_arhive/441" },
+      { text: "67 эпизод", sub: "\"Магазин комиксов\" 2 часть", link: "https://t.me/violent_arhive/443" },
+      { text: "68 эпизод", sub: "\"Настольные игры\"", link: "https://t.me/violent_arhive/444" },
+      { text: "69 эпизод", sub: "\"BTS в Торонто\" 1ч", link: "https://t.me/violent_arhive/446" },
+      { text: "70 эпизод", sub: "\"BTS в Торонто\" 2ч", link: "https://t.me/violent_arhive/447" },
+      { text: "71 эпизод", sub: "\"BTS в Торонто\" 3ч", link: "https://t.me/violent_arhive/449" },
+      { text: "72 эпизод", sub: "\"Игра в Мафию\"", link: "https://t.me/violent_arhive/451" },
+      { text: "73 эпизод", sub: "\"Дорама\" 1 часть", link: "https://t.me/violent_arhive/453" },
+      { text: "74 эпизод", sub: "\"Дорама\" 2 часть", link: "https://t.me/violent_arhive/455" },
+      { text: "75 эпизод", sub: "\"Дорама\" 3 часть", link: "https://t.me/violent_arhive/457" },
+      { text: "76 эпизод", sub: "\"Дорама\" 4 часть", link: "https://t.me/violent_arhive/531" },
+      { text: "77 эпизод", sub: "\"Пищевой квест\" 1ч", link: "https://t.me/violent_arhive/462" },
+      { text: "78 эпизод", sub: "\"Пищевой квест\" 2ч", link: "https://t.me/violent_arhive/464" },
+      { text: "79 эпизод", sub: "\"Операция 007\" 1ч", link: "https://t.me/violent_arhive/466" },
+      { text: "80 эпизод", sub: "\"Операция 007\" 2ч", link: "https://t.me/violent_arhive/468" }
     ];
 
     const listEl = document.getElementById('list');
@@ -113,9 +113,15 @@
       const box = document.createElement('input');
       box.type = 'checkbox';
 
-      const span = document.createElement('span');
+            const span = document.createElement('span');
       span.className = 'text';
       span.textContent = item.text;
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+        sub.textContent = item.sub;
+        span.appendChild(sub);
+      }
 
       if (localStorage.getItem(id) === 'true') {
         box.checked = true;
