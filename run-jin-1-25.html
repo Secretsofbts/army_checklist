@@ -159,16 +159,8 @@
       });
     }
 
-    const episodeTitle = document.createElement('div');
-    episodeTitle.className = 'section-title';
-    episodeTitle.textContent = 'Эпизоды';
-    listEl.appendChild(episodeTitle);
-    const episodeContainer = document.createElement('div');
-    episodeContainer.id = 'episodes';
-    listEl.appendChild(episodeContainer);
+        renderList('list', episodes);
 
-    
-    renderList('episodes', episodes);
     function updateProgress() {
       const all = document.querySelectorAll('input[type="checkbox"]');
       let total = 0, checked = 0;
