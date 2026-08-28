@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js"></script>
   <title>Bangtan Bomb 2013</title>
   <style>
     body {
@@ -116,13 +117,9 @@
       }
     });
 
-        function renderBadge(elId, key) {
-      var el = document.getElementById(elId);
-      if (!el) return;
-      var raw = localStorage.getItem('progress:' + key);
-      if (!raw) { el.textContent = ''; return; }
-      var data = JSON.parse(raw);
-      if (data.total === 0) { el.textContent = ''; return; }
+              function applyBadge(key, data) {
+      var el = document.getElementById('badge-' + key);
+      if (!el || !data || data.total === 0) { if (el) el.textContent = ''; return; }
       if (data.checked === data.total) {
         el.textContent = '✅';
         el.style.color = '#2e9e5b';
@@ -131,12 +128,13 @@
         el.textContent = data.checked + '/' + data.total;
       }
     }
-    renderBadge('badge-bombs-2013-june', 'bombs-2013-june');
-    renderBadge('badge-bombs-2013-july', 'bombs-2013-july');
-    renderBadge('badge-bombs-2013-august', 'bombs-2013-august');
-    renderBadge('badge-bombs-2013-september', 'bombs-2013-september');
-    renderBadge('badge-bombs-2013-october', 'bombs-2013-october');
-    renderBadge('badge-bombs-2013-november', 'bombs-2013-november');
+
+    const monthKeys = ['bombs-2013-june', 'bombs-2013-july', 'bombs-2013-august', 'bombs-2013-september', 'bombs-2013-october', 'bombs-2013-november'];
+    monthKeys.forEach((key) => {
+      var raw = localStorage.getItem('progress:' + key);
+      applyBadge(key, raw ? JSON.parse(raw) : null);
+    });
+    syncBadgesFromCloud(monthKeys, applyBadge);
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
