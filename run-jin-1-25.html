@@ -97,34 +97,20 @@
       { text: "25 эпизод", sub: "\"Игра в кальмара 2ч\"", link: "https://t.me/violent_arhive/5035" }
     ];
 
-    // ===== Облачное хранение (Firebase) =====
+        // ===== Облачное хранение (Firebase) =====
     const FIREBASE_URL = "https://army-checklist-default-rtdb.firebaseio.com";
     let userId = null;
-    let cloudData = {};
-
     if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
       userId = window.Telegram.WebApp.initDataUnsafe.user.id;
     }
 
-    function getChecked(id) {
-      if (userId) {
-        return cloudData[id] === true;
-      }
-      return localStorage.getItem(id) === 'true';
-    }
-
     function setChecked(id, value) {
+      localStorage.setItem(id, value);
       if (userId) {
-        cloudData[id] = value;
         fetch(`${FIREBASE_URL}/users/${userId}/${id}.json`, {
           method: 'PUT',
           body: JSON.stringify(value)
-        }).catch(() => {
-          // если не получилось сохранить в облако — подстрахуемся локально
-          localStorage.setItem(id, value);
-        });
-      } else {
-        localStorage.setItem(id, value);
+        }).catch(() => {});
       }
     }
 
@@ -134,6 +120,7 @@
         const id = 'video-' + item.link.split('/').pop();
         const row = document.createElement('div');
         row.className = 'row';
+        row.dataset.id = id;
 
         const box = document.createElement('input');
         box.type = 'checkbox';
@@ -148,7 +135,7 @@
           span.appendChild(sub);
         }
 
-        if (getChecked(id)) {
+        if (localStorage.getItem(id) === 'true') {
           box.checked = true;
           span.classList.add('done');
         }
@@ -184,34 +171,40 @@
       });
       const key = 'progress:run-jin-1-25';
       const value = JSON.stringify({checked, total});
+      localStorage.setItem(key, value);
       if (userId) {
         fetch(`${FIREBASE_URL}/users/${userId}/${key}.json`, {
           method: 'PUT',
           body: value
-        }).catch(() => localStorage.setItem(key, value));
-      } else {
-        localStorage.setItem(key, value);
+        }).catch(() => {});
       }
     }
 
-    function init() {
-      renderList('list', episodes);
-      updateProgress();
-    }
+    // Рисуем список сразу — по тому, что уже есть локально
+    renderList('list', episodes);
+    updateProgress();
 
+    // Параллельно, без задержки экрана, подтягиваем облако и обновляем то, что отличается
     if (userId) {
-      // Сначала загружаем все данные пользователя из облака, потом рисуем список
       fetch(`${FIREBASE_URL}/users/${userId}.json`)
         .then(res => res.json())
         .then(data => {
-          cloudData = data || {};
-          init();
+          if (!data) return;
+          let changed = false;
+          document.querySelectorAll('#list .row').forEach((row) => {
+            const id = row.dataset.id;
+            if (data[id] !== undefined && data[id] !== (localStorage.getItem(id) === 'true')) {
+              const box = row.querySelector('input[type="checkbox"]');
+              const span = row.querySelector('.text');
+              box.checked = data[id];
+              span.classList.toggle('done', data[id]);
+              localStorage.setItem(id, data[id]);
+              changed = true;
+            }
+          });
+          if (changed) updateProgress();
         })
-        .catch(() => {
-          init();
-        });
-    } else {
-      init();
+        .catch(() => {});
     }
 
     if (window.Telegram && window.Telegram.WebApp) {
