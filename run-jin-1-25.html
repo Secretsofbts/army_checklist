@@ -68,8 +68,7 @@
     <a class="footer-link" href="run-jin.html">RUN JIN ⬅️</a>
   </div>
 
-  <script>
-
+   <script>
     const episodes = [
       { text: "1 эпизод", sub: "\"5 дней всего с дембеля прошло, а они уже тащат меня покорять Халласан…\"", link: "https://t.me/violent_arhive/4735" },
       { text: "2 эпизод", sub: "\"Легендарное возвращение в альма-матер\"", link: "https://t.me/violent_arhive/4740" },
@@ -97,21 +96,38 @@
       { text: "24 эпизод", sub: "\"Игра в кальмара 1ч\"", link: "https://t.me/violent_arhive/5027" },
       { text: "25 эпизод", sub: "\"Игра в кальмара 2ч\"", link: "https://t.me/violent_arhive/5035" }
     ];
-    function renderPlainList(containerId, arr) {
-      const listEl = document.getElementById(containerId);
-      arr.forEach((item) => {
-        const a = document.createElement('a');
-        a.className = 'row';
-        a.style.textDecoration = 'none';
-        a.href = item.link;
-        a.target = '_blank';
-        const span = document.createElement('span');
-        span.className = 'text';
-        span.textContent = item.text;
-        a.appendChild(span);
-        listEl.appendChild(a);
-      });
+
+    // ===== Облачное хранение (Firebase) =====
+    const FIREBASE_URL = "https://army-checklist-default-rtdb.firebaseio.com";
+    let userId = null;
+    let cloudData = {};
+
+    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
+      userId = window.Telegram.WebApp.initDataUnsafe.user.id;
     }
+
+    function getChecked(id) {
+      if (userId) {
+        return cloudData[id] === true;
+      }
+      return localStorage.getItem(id) === 'true';
+    }
+
+    function setChecked(id, value) {
+      if (userId) {
+        cloudData[id] = value;
+        fetch(`${FIREBASE_URL}/users/${userId}/${id}.json`, {
+          method: 'PUT',
+          body: JSON.stringify(value)
+        }).catch(() => {
+          // если не получилось сохранить в облако — подстрахуемся локально
+          localStorage.setItem(id, value);
+        });
+      } else {
+        localStorage.setItem(id, value);
+      }
+    }
+
     function renderList(containerId, arr) {
       const listEl = document.getElementById(containerId);
       arr.forEach((item) => {
@@ -132,12 +148,12 @@
           span.appendChild(sub);
         }
 
-        if (localStorage.getItem(id) === 'true') {
+        if (getChecked(id)) {
           box.checked = true;
           span.classList.add('done');
         }
         box.addEventListener('change', () => {
-          localStorage.setItem(id, box.checked);
+          setChecked(id, box.checked);
           span.classList.toggle('done', box.checked);
           updateProgress();
         });
@@ -159,8 +175,6 @@
       });
     }
 
-        renderList('list', episodes);
-
     function updateProgress() {
       const all = document.querySelectorAll('input[type="checkbox"]');
       let total = 0, checked = 0;
@@ -168,9 +182,37 @@
         total++;
         if (cb.checked) checked++;
       });
-      localStorage.setItem('progress:run-jin-1-25', JSON.stringify({checked, total}));
+      const key = 'progress:run-jin-1-25';
+      const value = JSON.stringify({checked, total});
+      if (userId) {
+        fetch(`${FIREBASE_URL}/users/${userId}/${key}.json`, {
+          method: 'PUT',
+          body: value
+        }).catch(() => localStorage.setItem(key, value));
+      } else {
+        localStorage.setItem(key, value);
+      }
     }
-    updateProgress();
+
+    function init() {
+      renderList('list', episodes);
+      updateProgress();
+    }
+
+    if (userId) {
+      // Сначала загружаем все данные пользователя из облака, потом рисуем список
+      fetch(`${FIREBASE_URL}/users/${userId}.json`)
+        .then(res => res.json())
+        .then(data => {
+          cloudData = data || {};
+          init();
+        })
+        .catch(() => {
+          init();
+        });
+    } else {
+      init();
+    }
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
