@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js"></script>
   <title>RUN JIN 1-25</title>
   <style>
     body {
@@ -98,23 +99,7 @@
     ];
 
         // ===== Облачное хранение (Firebase) =====
-    const FIREBASE_URL = "https://army-checklist-default-rtdb.firebaseio.com";
-    let userId = null;
-    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
-      userId = window.Telegram.WebApp.initDataUnsafe.user.id;
-    }
-
-    function setChecked(id, value) {
-      localStorage.setItem(id, value);
-      if (userId) {
-        fetch(`${FIREBASE_URL}/users/${userId}/${id}.json`, {
-          method: 'PUT',
-          body: JSON.stringify(value)
-        }).catch(() => {});
-      }
-    }
-
-    function renderList(containerId, arr) {
+       function renderList(containerId, arr) {
       const listEl = document.getElementById(containerId);
       arr.forEach((item) => {
         const id = 'video-' + item.link.split('/').pop();
@@ -169,44 +154,12 @@
         total++;
         if (cb.checked) checked++;
       });
-      const key = 'progress:run-jin-1-25';
-      const value = JSON.stringify({checked, total});
-      localStorage.setItem(key, value);
-      if (userId) {
-        fetch(`${FIREBASE_URL}/users/${userId}/${key}.json`, {
-          method: 'PUT',
-          body: value
-        }).catch(() => {});
-      }
+      setProgress('run-jin-1-25', {checked, total});
     }
 
-    // Рисуем список сразу — по тому, что уже есть локально
     renderList('list', episodes);
     updateProgress();
-
-    // Параллельно, без задержки экрана, подтягиваем облако и обновляем то, что отличается
-    if (userId) {
-      fetch(`${FIREBASE_URL}/users/${userId}.json`)
-        .then(res => res.json())
-        .then(data => {
-          if (!data) return;
-          let changed = false;
-          document.querySelectorAll('#list .row').forEach((row) => {
-            const id = row.dataset.id;
-            if (data[id] !== undefined && data[id] !== (localStorage.getItem(id) === 'true')) {
-              const box = row.querySelector('input[type="checkbox"]');
-              const span = row.querySelector('.text');
-              box.checked = data[id];
-              span.classList.toggle('done', data[id]);
-              localStorage.setItem(id, data[id]);
-              changed = true;
-            }
-          });
-          if (changed) updateProgress();
-        })
-        .catch(() => {});
-    }
-
+    syncChecklistFromCloud(updateProgress);
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
       Telegram.WebApp.expand();
