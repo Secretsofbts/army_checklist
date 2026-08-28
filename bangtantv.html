@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js"></script>
   <title>BangtanTV</title>
   <style>
     body {
@@ -107,27 +108,43 @@
   </div>
 
   <script>
-    function renderBadgeTotal(elId, keys) {
-  var el = document.getElementById(elId);
-  var checked = 0, total = 0;
-  keys.forEach(function(key) {
-    var raw = localStorage.getItem('progress:' + key);
-    if (raw) {
-      var data = JSON.parse(raw);
-      checked += data.checked;
-      total += data.total;
+      const allClipsKeys = ['clips-2013-2015', 'clips-2016-2018', 'clips-2019-2021', 'clips-2022-2023', 'clips-2024-2025', 'clips-2026-2027', 'clips-japan', 'clips-mixtape', 'clips-standalone'];
+
+    function applyBadgeTotal(elId, keys, getRaw) {
+      var el = document.getElementById(elId);
+      if (!el) return;
+      var checked = 0, total = 0;
+      keys.forEach(function(key) {
+        var raw = getRaw(key);
+        if (raw) { checked += raw.checked; total += raw.total; }
+      });
+      if (total === 0) { el.textContent = ''; return; }
+      if (checked === total) {
+        el.textContent = '✅';
+        el.style.color = '#2e9e5b';
+        el.closest('.card').classList.add('row-done');
+      } else {
+        el.textContent = checked + '/' + total;
+      }
     }
-  });
-  if (total === 0) { el.textContent = ''; return; }
-  if (checked === total) {
-    el.textContent = '✅';
-    el.style.color = '#2e9e5b';
-    el.closest('.card').classList.add('row-done');
-  } else {
-    el.textContent = checked + '/' + total;
-  }
-}
-renderBadgeTotal('badge-allclips', ['clips-2013-2015', 'clips-2016-2018', 'clips-2019-2021', 'clips-2022-2023', 'clips-2024-2025', 'clips-2026-2027', 'clips-japan', 'clips-mixtape', 'clips-standalone']);
+
+    applyBadgeTotal('badge-allclips', allClipsKeys, function(key) {
+      var raw = localStorage.getItem('progress:' + key);
+      return raw ? JSON.parse(raw) : null;
+    });
+
+    if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
+      fetch(`${FIREBASE_URL}/users/${ARMY_USER_ID}.json`)
+        .then(res => res.json())
+        .then(data => {
+          if (!data) return;
+          applyBadgeTotal('badge-allclips', allClipsKeys, function(key) {
+            return data['progress:' + key];
+          });
+        })
+        .catch(() => {});
+    }
+
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
       Telegram.WebApp.expand();

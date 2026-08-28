@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js"></script>
   <title>Bangtan Bomb</title>
   <style>
     body {
@@ -147,10 +148,41 @@
         el.textContent = checked + '/' + total;
       }
     }
-    renderBadgeTotal('badge-y-2013', ['bombs-2013-june', 'bombs-2013-july', 'bombs-2013-august', 'bombs-2013-september', 'bombs-2013-october', 'bombs-2013-november']);
-renderBadgeTotal('badge-y-2024', ['bombs-2024']);
-renderBadgeTotal('badge-y-2025', ['bombs-2025']);
-renderBadgeTotal('badge-y-2026', ['bombs-2026']);
+       renderBadgeTotal('badge-y-2013', ['bombs-2013-june', 'bombs-2013-july', 'bombs-2013-august', 'bombs-2013-september', 'bombs-2013-october', 'bombs-2013-november']);
+    renderBadgeTotal('badge-y-2024', ['bombs-2024']);
+    renderBadgeTotal('badge-y-2025', ['bombs-2025']);
+    renderBadgeTotal('badge-y-2026', ['bombs-2026']);
+
+    function applyBadgeTotal(elId, keys, cloudData) {
+      var el = document.getElementById(elId);
+      if (!el) return;
+      var checked = 0, total = 0;
+      keys.forEach(function(key) {
+        var raw = cloudData['progress:' + key];
+        if (raw) { checked += raw.checked; total += raw.total; }
+      });
+      if (total === 0) return;
+      if (checked === total) {
+        el.textContent = '✅';
+        el.style.color = '#2e9e5b';
+        el.closest('.card').classList.add('row-done');
+      } else {
+        el.textContent = checked + '/' + total;
+      }
+    }
+    if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
+      fetch(`${FIREBASE_URL}/users/${ARMY_USER_ID}.json`)
+        .then(res => res.json())
+        .then(data => {
+          if (!data) return;
+          applyBadgeTotal('badge-y-2013', ['bombs-2013-june', 'bombs-2013-july', 'bombs-2013-august', 'bombs-2013-september', 'bombs-2013-october', 'bombs-2013-november'], data);
+          applyBadgeTotal('badge-y-2024', ['bombs-2024'], data);
+          applyBadgeTotal('badge-y-2025', ['bombs-2025'], data);
+          applyBadgeTotal('badge-y-2026', ['bombs-2026'], data);
+        })
+        .catch(() => {});
+    }
+
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
       Telegram.WebApp.expand();
