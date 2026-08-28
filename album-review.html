@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js"></script>
   <title>Album Review</title>
   <style>
     body {
@@ -89,12 +90,13 @@
       { text: "Jack In The Box", sub: "Юнги, Намджун, Чимин, Тэхён, Чонгук", link: "https://t.me/violent_arhive/4173" }
     ];
 
-    function renderList(containerId, items) {
+       function renderList(containerId, items) {
       const listEl = document.getElementById(containerId);
       items.forEach((item) => {
         const id = 'video-' + item.link.split('/').pop();
         const row = document.createElement('div');
         row.className = 'row';
+        row.dataset.id = id;
 
         const box = document.createElement('input');
         box.type = 'checkbox';
@@ -115,7 +117,7 @@
           span.classList.add('done');
         }
         box.addEventListener('change', () => {
-          localStorage.setItem(id, box.checked);
+          setChecked(id, box.checked);
           span.classList.toggle('done', box.checked);
           updateProgress();
         });
@@ -147,9 +149,10 @@
         total++;
         if (cb.checked) checked++;
       });
-      localStorage.setItem('progress:album-review', JSON.stringify({checked, total}));
+      setProgress('album-review', {checked, total});
     }
     updateProgress();
+    syncChecklistFromCloud(updateProgress);
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();

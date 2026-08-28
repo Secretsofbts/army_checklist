@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js"></script>
   <title>Все клипы BTS</title>
   <style>
     body {
@@ -87,13 +88,22 @@
     <a class="footer-link" href="bangtantv.html">BangtanTV ⬅️</a>
   </div>
 
-    <script>
-    function renderBadge(elId, key) {
-      var el = document.getElementById(elId);
-      var raw = localStorage.getItem('progress:' + key);
-      if (!raw) { el.textContent = ''; return; }
-      var data = JSON.parse(raw);
-      if (data.total === 0) { el.textContent = ''; return; }
+       <script>
+    const badgeMap = {
+      'clips-2013-2015': 'badge-c1',
+      'clips-2016-2018': 'badge-c2',
+      'clips-2019-2021': 'badge-c3',
+      'clips-2022-2023': 'badge-c4',
+      'clips-2024-2025': 'badge-c5',
+      'clips-2026-2027': 'badge-c6',
+      'clips-japan': 'badge-cj',
+      'clips-mixtape': 'badge-cm',
+      'clips-standalone': 'badge-cs'
+    };
+
+    function applyBadge(key, data) {
+      var el = document.getElementById(badgeMap[key]);
+      if (!el || !data || data.total === 0) { if (el) el.textContent = ''; return; }
       if (data.checked === data.total) {
         el.textContent = '✅';
         el.style.color = '#2e9e5b';
@@ -102,15 +112,15 @@
         el.textContent = data.checked + '/' + data.total;
       }
     }
-    renderBadge('badge-c1', 'clips-2013-2015');
-    renderBadge('badge-c2', 'clips-2016-2018');
-    renderBadge('badge-c3', 'clips-2019-2021');
-    renderBadge('badge-c4', 'clips-2022-2023');
-    renderBadge('badge-c5', 'clips-2024-2025');
-    renderBadge('badge-c6', 'clips-2026-2027');
-    renderBadge('badge-cj', 'clips-japan');
-    renderBadge('badge-cm', 'clips-mixtape');
-    renderBadge('badge-cs', 'clips-standalone');
+
+    function renderBadge(key) {
+      var raw = localStorage.getItem('progress:' + key);
+      var data = raw ? JSON.parse(raw) : null;
+      applyBadge(key, data);
+    }
+
+    Object.keys(badgeMap).forEach(renderBadge);
+    syncBadgesFromCloud(Object.keys(badgeMap), applyBadge);
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
