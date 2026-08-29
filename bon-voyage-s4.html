@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="sync.js"></script>
-  <title>Бон Вояж</title>
+  <title>Бон Вояж 4 сезон</title>
   <style>
     body {
       background: #f2f0f7;
@@ -60,19 +60,17 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="shows.html">← Назад</a>
-    <h1>🏕 БОН ВОЯЖ 🧭</h1>
-    <p class="intro">Шоу, где BTS путешествуют по разным странам. При этом им нужно самим все спланировать и обеспечить себя всем в рамках ограниченного бюджета</p>
+    <a class="back" href="bon-voyage.html">← Назад</a>
+    <h1>🏕 4 сезон: Новая Зеландия (2019) 🧭</h1>
+    <p class="intro">Выберите версию просмотра</p>
     <div id="list"></div>
-    <a class="footer-link" href="shows.html">Пост всех шоу ⬅️</a>
+    <a class="footer-link" href="bon-voyage.html">Бон Вояж ⬅️</a>
   </div>
 
   <script>
     const navItems = [
-      { text: "1 сезон", sub: "Норвегия, Финляндия, Швеция (2016)", link: "bon-voyage-s1.html", statKey: "bon-voyage-s1" },
-      { text: "2 сезон", sub: "Гавайи (2017)", link: "bon-voyage-s2.html", statKey: "bon-voyage-s2" },
-      { text: "3 сезон", sub: "Мальта (2018)", link: "bon-voyage-s3.html", statKey: "bon-voyage-s3" },
-            { text: "4 сезон", sub: "Новая Зеландия (2019)", link: "bon-voyage-s4.html", statKey: "bon-voyage-s4" },
+      { text: "С субтитрами", link: "bon-voyage-s4-sub.html", statKey: "bon-voyage-s4-sub" },
+      { text: "Озвучка Softbox", link: "bon-voyage-s4-dub.html", statKey: "bon-voyage-s4-dub" }
     ];
 
     const listEl = document.getElementById('list');
@@ -84,12 +82,6 @@
       label.className = 'navlink-label';
       label.style.flex = '1';
       label.textContent = item.text;
-      if (item.sub) {
-        const sub = document.createElement('span');
-        sub.style.cssText = 'font-size:11px; color:#999; font-weight:400; display:block; margin-top:2px;';
-        sub.textContent = item.sub;
-        label.appendChild(sub);
-      }
       if (item.statKey) {
         const box = document.createElement('input');
         box.type = 'checkbox';
