@@ -100,10 +100,7 @@
         el.textContent = checked + '/' + total;
       }
     }
-    renderBadgeTotal('badge-vb-jimin', ['vlogsbts-jimin']);
-    renderBadgeTotal('badge-vb-jin', ['vlogsbts-jin']);
-    renderBadgeTotal('badge-vb-taehyung', ['vlogsbts-taehyung']);
-    function renderBadgeJungkook() {
+        function renderBadgeJungkook() {
   var el = document.getElementById('badge-vb-jungkook');
   var checked = 0, total = 0;
   ['vlogsbts-jungkook', 'gcf'].forEach(function(key) {
@@ -128,10 +125,18 @@
     el.textContent = checked + '/' + total;
   }
 }
-renderBadgeJungkook();
-    renderBadgeTotal('badge-vb-namjoon', ['vlogsbts-namjoon']);
-    renderBadgeTotal('badge-vb-yoongi', ['vlogsbts-yoongi']);
-    renderBadgeTotal('badge-vb-hoseok', ['vlogsbts-hoseok']);
+
+    function renderAllBadges() {
+      renderBadgeTotal('badge-vb-jimin', ['vlogsbts-jimin']);
+      renderBadgeTotal('badge-vb-jin', ['vlogsbts-jin']);
+      renderBadgeTotal('badge-vb-taehyung', ['vlogsbts-taehyung']);
+      renderBadgeJungkook();
+      renderBadgeTotal('badge-vb-namjoon', ['vlogsbts-namjoon']);
+      renderBadgeTotal('badge-vb-yoongi', ['vlogsbts-yoongi']);
+      renderBadgeTotal('badge-vb-hoseok', ['vlogsbts-hoseok']);
+    }
+    renderAllBadges();
+    refreshLocalStorageFromCloud(renderAllBadges);
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
