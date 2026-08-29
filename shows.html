@@ -66,23 +66,29 @@
     <h1>🎲 РАЗЛИЧНЫЕ ШОУ 🎲</h1>
     <p class="intro">Все шоу с BTS с самого дебюта</p>
     <div class="list">
-      <a class="card" href="run-bts.html">
+            <a class="card" href="run-bts.html">
         <div>🏃‍♂️ RUN BTS 🏃‍♂️<div class="desc">накачаете пресс от смеха</div></div>
+        <span class="badge" id="badge-run-bts-all" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
       <a class="card" href="bon-voyage.html">
         <div>🍒 БОН ВОЯЖ ВСЕ СЕЗОНЫ 🍒<div class="desc">интересные путешествия по странам</div></div>
+        <span class="badge" id="badge-bon-voyage" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
       <a class="card" href="in-the-soop.html">
         <div>🌳 IN THE SOOP 🌳<div class="desc">релакс-шоу</div></div>
+        <span class="badge" id="badge-in-the-soop" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
       <a class="card" href="are-you-sure.html">
         <div>🌟 УВЕРЕН?! 🌟<div class="desc">путешествие с Чигуками</div></div>
+        <span class="badge" id="badge-are-you-sure" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
       <a class="card" href="bts-gayo.html">
         <div>⭐️ BTS GAYO ⭐️<div class="desc">небольшое старое смешное шоу</div></div>
+        <span class="badge" id="badge-bts-gayo" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
       <a class="card" href="american-hustle-life.html">
         <div>🇺🇸 BTS AMERICAN HUSTLE LIFE 🇺🇸<div class="desc">о приключениях в Америке в 2014 году</div></div>
+        <span class="badge" id="badge-american-hustle-life" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
       <a class="card" href="rookie-king.html">
         <div>👑 ROOKIE KING BANGTAN BOYS<div class="desc">очень смешное шоу 2013 года</div></div>
@@ -100,7 +106,45 @@
     <a class="footer-link" href="index.html">На главную ⬅️</a>
   </div>
 
+   <script src="sync.js"></script>
   <script>
+    function applyBadgeTotal(elId, keys, getRaw) {
+      var el = document.getElementById(elId);
+      if (!el) return;
+      var checked = 0, total = 0;
+      keys.forEach(function(key) {
+        var raw = getRaw(key);
+        if (raw) { checked += raw.checked; total += raw.total; }
+      });
+      if (total === 0) { el.textContent = ''; return; }
+      if (checked === total) {
+        el.textContent = '✅';
+        el.style.color = '#2e9e5b';
+      } else {
+        el.textContent = checked + '/' + total;
+      }
+    }
+
+    const badgeGroups = {
+      'badge-run-bts-all': ['run-bts-1-25', 'run-bts-26-50', 'run-bts-51-80', 'run-bts-81-111', 'run-bts-112-135', 'run-bts-136-155', 'run-bts-156-165', 'run-jin-1-25', 'run-jin-26-36', 'run-bts-2-0-1-25'],
+      'badge-bon-voyage': ['bon-voyage-s1', 'bon-voyage-s2', 'bon-voyage-s3', 'bon-voyage-s4'],
+      'badge-in-the-soop': ['in-the-soop-s1', 'in-the-soop-s2', 'in-the-soop-friendcation'],
+      'badge-are-you-sure': ['are-you-sure-s1', 'are-you-sure-s2'],
+      'badge-bts-gayo': ['bts-gayo'],
+      'badge-american-hustle-life': ['american-hustle-life-episodes', 'american-hustle-life-deleted']
+    };
+
+    function renderAllBadges() {
+      Object.keys(badgeGroups).forEach((elId) => {
+        applyBadgeTotal(elId, badgeGroups[elId], function(key) {
+          var raw = localStorage.getItem('progress:' + key);
+          return raw ? JSON.parse(raw) : null;
+        });
+      });
+    }
+    renderAllBadges();
+    refreshLocalStorageFromCloud(renderAllBadges);
+
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
       Telegram.WebApp.expand();
