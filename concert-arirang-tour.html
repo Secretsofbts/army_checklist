@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js"></script>
   <title>Tour ARIRANG</title>
   <style>
     body {
@@ -92,10 +93,11 @@
       cityTitle.textContent = block.city;
       listEl.appendChild(cityTitle);
 
-      block.items.forEach((item) => {
+            block.items.forEach((item) => {
         const id = 'video-' + item.link.split('/').pop();
         const row = document.createElement('div');
         row.className = 'row';
+        row.dataset.id = id;
 
         const box = document.createElement('input');
         box.type = 'checkbox';
@@ -115,7 +117,7 @@
           span.classList.add('done');
         }
         box.addEventListener('change', () => {
-          localStorage.setItem(id, box.checked);
+          setChecked(id, box.checked);
           span.classList.toggle('done', box.checked);
           updateProgress();
         });
@@ -144,9 +146,10 @@
         total++;
         if (cb.checked) checked++;
       });
-      localStorage.setItem('progress:concert-arirang-tour', JSON.stringify({checked, total}));
+      setProgress('concert-arirang-tour', {checked, total});
     }
     updateProgress();
+    syncChecklistFromCloud(updateProgress);
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();

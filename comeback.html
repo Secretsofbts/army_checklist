@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js"></script>
   <title>Comeback</title>
   <style>
     body {
@@ -48,8 +49,8 @@
       border-top: 1px solid #eee;
    }
     input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; }
-    .done { color: #bbb; text-decoration: line-through; }
-    .text { flex: 1; cursor: pointer; }
+        .text { flex: 1; cursor: pointer; color: #333; }
+    .text.done { color: #bbb; text-decoration: line-through; }
     .sub { display: block; font-size: 12px; color: #999; margin-top: 2px; }
     .link { color: #9b7fd4; text-decoration: none; font-size: 13px; flex-shrink: 0; }
   </style>
@@ -94,11 +95,12 @@
       { text: "STUDIO NOTES ARIRANG 👑", sub: "(ARIRANG) от 20.03.2026", link: "https://t.me/violent_arhive/5426" }
     ];
 
-    const listEl = document.getElementById('list');
-    items.forEach((item, ii) => {
+       const listEl = document.getElementById('list');
+    items.forEach((item) => {
       const id = 'video-' + item.link.split('/').pop();
       const row = document.createElement('div');
       row.className = 'row';
+      row.dataset.id = id;
 
       const box = document.createElement('input');
       box.type = 'checkbox';
@@ -107,17 +109,12 @@
       span.className = 'text';
       span.textContent = item.text;
 
-      const subEl = document.createElement('span');
-      subEl.className = 'sub';
-      subEl.textContent = item.sub;
-      span.appendChild(subEl);
-
       if (localStorage.getItem(id) === 'true') {
         box.checked = true;
         span.classList.add('done');
       }
       box.addEventListener('change', () => {
-        localStorage.setItem(id, box.checked);
+        setChecked(id, box.checked);
         span.classList.toggle('done', box.checked);
         updateProgress();
       });
@@ -145,9 +142,10 @@
         total++;
         if (cb.checked) checked++;
       });
-      localStorage.setItem('progress:comeback', JSON.stringify({checked, total}));
+      setProgress('comeback', {checked, total});
     }
     updateProgress();
+    syncChecklistFromCloud(updateProgress);
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();

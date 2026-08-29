@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js"></script>
   <title>HYYH on stage</title>
   <style>
     body {
@@ -71,11 +72,12 @@
       { text: "Prologue VCR&Making - съемки пролога", link: "https://t.me/violent_arhive/1530" }
     ];
 
-    const listEl = document.getElementById('list');
+       const listEl = document.getElementById('list');
     items.forEach((item) => {
       const id = 'video-' + item.link.split('/').pop();
       const row = document.createElement('div');
       row.className = 'row';
+      row.dataset.id = id;
 
       const box = document.createElement('input');
       box.type = 'checkbox';
@@ -96,7 +98,7 @@
         span.classList.add('done');
       }
       box.addEventListener('change', () => {
-        localStorage.setItem(id, box.checked);
+        setChecked(id, box.checked);
         span.classList.toggle('done', box.checked);
         updateProgress();
       });
@@ -124,9 +126,10 @@
         total++;
         if (cb.checked) checked++;
       });
-      localStorage.setItem('progress:concert-hyyh-on-stage', JSON.stringify({checked, total}));
+      setProgress('concert-hyyh-on-stage', {checked, total});
     }
     updateProgress();
+    syncChecklistFromCloud(updateProgress);
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
