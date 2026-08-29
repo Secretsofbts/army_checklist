@@ -10,7 +10,8 @@ function setChecked(id, value) {
   if (ARMY_USER_ID) {
     fetch(`${FIREBASE_URL}/users/${ARMY_USER_ID}/${id}.json`, {
       method: 'PUT',
-      body: JSON.stringify(value)
+      body: JSON.stringify(value),
+      keepalive: true
     }).catch(() => {});
   }
 }
@@ -21,7 +22,8 @@ function setProgress(key, value) {
   if (ARMY_USER_ID) {
     fetch(`${FIREBASE_URL}/users/${ARMY_USER_ID}/${fullKey}.json`, {
       method: 'PUT',
-      body: JSON.stringify(value)
+      body: JSON.stringify(value),
+      keepalive: true
     }).catch(() => {});
   }
 }
