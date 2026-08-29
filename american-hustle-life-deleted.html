@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js"></script>
+  <title>American Hustle Life: Вырезанные сцены</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 16px; }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .text.done { color: #bbb; text-decoration: line-through; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+    .footer-link {
+      display: block;
+      text-align: center;
+      font-size: 13px;
+      color: #000;
+      text-decoration: none;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid #eee;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="american-hustle-life.html">← Назад</a>
+    <h1>🇺🇸 American Hustle Life: Вырезанные сцены 🇺🇸</h1>
+    <div id="list"></div>
+    <a class="footer-link" href="american-hustle-life.html">American Hustle Life ⬅️</a>
+  </div>
+
+  <script>
+    const items = [
+      { text: "Радостные парни в самолете, который летит в Америку", link: "https://t.me/violent_arhive/1423" },
+      { text: "Bangtan Boys играют в самолете", link: "https://t.me/violent_arhive/1424" },
+      { text: "Нерелевантные чары V", link: "https://t.me/violent_arhive/1425" },
+      { text: "V с уроком о штрафах", link: "https://t.me/violent_arhive/1426" },
+      { text: "Законы торга в Америке", link: "https://t.me/violent_arhive/1427" },
+      { text: "Чимин быстро превратился в мадам в Америке", link: "https://t.me/violent_arhive/1428" },
+      { text: "Веселый в дороге после покупок", link: "https://t.me/violent_arhive/1430" },
+      { text: "V, Интервью по английскому на месте!", link: "https://t.me/violent_arhive/1431" },
+      { text: "Чимин, \"Тебе нравится йогурт?\"", link: "https://t.me/violent_arhive/1432" },
+      { text: "V, Suga, Jungkook акробаты на скейтборде?!", link: "https://t.me/violent_arhive/1433" },
+      { text: "Шуга, Ви, Чонгук! Другой может видеть фейерверк по-другому?", link: "https://t.me/violent_arhive/1434" },
+      { text: "Джей-Хоуп, Джин и звезда Youtube танцуют вместе!", link: "https://t.me/violent_arhive/1447" },
+      { text: "Почти проснувшийся V. Как пьяный?!", link: "https://t.me/violent_arhive/1448" },
+      { text: "Suga, V, JungKook прекрасный номер?!", link: "https://t.me/violent_arhive/1449" },
+      { text: "Мы знаем, чем РМ и Чимини занимаются прямо сейчас. Прекрасное предсказание!", link: "https://t.me/violent_arhive/1451" },
+      { text: "Ви, Чонгук и заговор с мороженым?", link: "https://t.me/violent_arhive/1452" },
+      { text: "Чонгук: Я действительно хочу повзрослеть. Время жаловаться!", link: "https://t.me/violent_arhive/1453" },
+      { text: "V, Чимин и Джей-Хоуп!", link: "https://t.me/violent_arhive/1454" },
+      { text: "Интервью BTS за кулисами!", link: "https://t.me/violent_arhive/1457" },
+      { text: "Неожиданно с самого начала мальчики восхищаются MNET!", link: "https://t.me/violent_arhive/1458" },
+      { text: "V выбирает опасную любовь. Чонгук - чистую.", link: "https://t.me/violent_arhive/1461" },
+      { text: "Внешний вид участников на сцене клипа Boy In Luv America Version", link: "https://t.me/violent_arhive/1462" },
+      { text: "Чонгуки ест виноград!", link: "https://t.me/violent_arhive/1463" },
+      { text: "Золотой макнэ из BTS! С Днем рождения, Чонгукки", link: "https://t.me/violent_arhive/1464" },
+      { text: "Объявление MVP их баскетбольного матча!", link: "https://t.me/violent_arhive/1465" },
+      { text: "Выпуск селфи-камеры Джина!!", link: "https://t.me/violent_arhive/1466" },
+      { text: "Что произошло во время интервью Bangtan Boys; предыстория раскрыта!", link: "https://t.me/violent_arhive/1467" },
+      { text: "Чимин: \"Я звезда нового поколения! Кофе и пончик!\"", link: "https://t.me/violent_arhive/1468" },
+      { text: "За день до концерта Чимин выражает свое беспокойство и трепещущее сердце своим телом!", link: "https://t.me/violent_arhive/1469" }
+    ];
+
+    const listEl = document.getElementById('list');
+    items.forEach((item) => {
+      const id = 'video-' + item.link.split('/').pop();
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.dataset.id = id;
+
+      const box = document.createElement('input');
+      box.type = 'checkbox';
+
+      const span = document.createElement('span');
+      span.className = 'text';
+      span.textContent = item.text;
+
+      if (localStorage.getItem(id) === 'true') {
+        box.checked = true;
+        span.classList.add('done');
+      }
+      box.addEventListener('change', () => {
+        setChecked(id, box.checked);
+        span.classList.toggle('done', box.checked);
+        updateProgress();
+      });
+      span.addEventListener('click', () => {
+        box.checked = !box.checked;
+        box.dispatchEvent(new Event('change'));
+      });
+
+      const link = document.createElement('a');
+      link.className = 'link';
+      link.href = item.link;
+      link.target = '_blank';
+      link.textContent = '🔗';
+
+      row.appendChild(box);
+      row.appendChild(span);
+      row.appendChild(link);
+      listEl.appendChild(row);
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      setProgress('american-hustle-life-deleted', {checked, total});
+    }
+    updateProgress();
+    syncChecklistFromCloud(updateProgress);
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
