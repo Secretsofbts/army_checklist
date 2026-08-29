@@ -54,20 +54,24 @@
       padding-top: 12px;
       border-top: 1px solid #eee;
     }
+    .sub {
+  font-size: 12px;
+  color: #999;
+  margin-right: 6px;
+}
   </style>
 </head>
 <body>
   <div class="app">
     <a class="back" href="bon-voyage.html">← Назад</a>
-    <h1>🍒 Бон Вояж: 4 сезон 🍒</h1>
-    <p class="intro">Новая Зеландия (2019)</p>
+    <h1>🏕 Бон Вояж: 4 сезон 🧭</h1>
     <div id="list"></div>
     <a class="footer-link" href="bon-voyage.html">Бон Вояж ⬅️</a>
   </div>
 
   <script>
     const items = [
-      { text: "0 серия", link: "https://t.me/violent_arhive/129" },
+     { text: "0 серия", link: "https://t.me/violent_arhive/129", note: "с суб" },
       { text: "1 серия", links: [
         { label: "с суб", link: "https://t.me/violent_arhive/2166" },
         { label: "с озв", link: "https://t.me/violent_arhive/2156" }
@@ -146,7 +150,13 @@
           row.appendChild(label);
           row.appendChild(link);
         });
-      } else {
+           } else {
+        if (item.note) {
+          const note = document.createElement('span');
+          note.className = 'sub';
+          note.textContent = item.note;
+          row.appendChild(note);
+        }
         const link = document.createElement('a');
         link.className = 'link';
         link.href = item.link;
