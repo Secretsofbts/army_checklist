@@ -106,8 +106,9 @@
 
     function makeRow(container, item, isSub, hasSub) {
       const id = 'video-' + item.link.split('/').pop();
-      const row = document.createElement('div');
+           const row = document.createElement('div');
       row.className = isSub ? 'subrow' : 'row';
+      row.dataset.id = id;
       if (hasSub) row.style.borderBottom = 'none';
 
       const box = document.createElement('input');

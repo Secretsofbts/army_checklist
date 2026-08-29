@@ -98,8 +98,9 @@
 
         function makeRow(container, item, isSub) {
       const id = 'video-' + (item.link ? item.link.split('/').pop() : item.links[0].link.split('/').pop());
-      const row = document.createElement('div');
-      row.className = isSub ? 'subrow' : 'row';
+              const row = document.createElement('div');
+        row.className = isSub ? 'subrow' : 'row';
+        row.dataset.id = id;
 
       const box = document.createElement('input');
       box.type = 'checkbox';
