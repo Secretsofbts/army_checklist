@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js"></script>
   <title>VLOGS BTS: Юнги</title>
   <style>
     body {
@@ -81,6 +82,7 @@
       const id = 'video-' + item.link.split('/').pop();
       const row = document.createElement('div');
       row.className = 'row';
+      row.dataset.id = id;
 
       const box = document.createElement('input');
       box.type = 'checkbox';
@@ -103,11 +105,11 @@
       }
       function toggle() {
         box.checked = !box.checked;
-        localStorage.setItem(id, box.checked);
+        setChecked(id, box.checked);src="sync.js"></script>;
         row.classList.toggle('done', box.checked);
       }
       box.addEventListener('change', () => {
-        localStorage.setItem(id, box.checked);
+        setChecked(id, box.checked);src="sync.js"></script>;
         row.classList.toggle('done', box.checked);
         updateProgress();
       });
@@ -134,9 +136,10 @@
         total++;
         if (cb.checked) checked++;
       });
-      localStorage.setItem('progress:vlogsbts-yoongi', JSON.stringify({checked, total}));
+      setProgress('vlogsbts-yoongi', {checked, total});
     }
     updateProgress();
+    syncChecklistFromCloud(updateProgress);
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();

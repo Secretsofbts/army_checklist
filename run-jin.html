@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js"></script>
   <title>RUN JIN</title>
   <style>
     body {
@@ -98,12 +99,15 @@
       listEl.appendChild(a);
     });
 
-    function renderBadge(elId, key) {
+        const FIREBASE_URL = "https://army-checklist-default-rtdb.firebaseio.com";
+    let userId = null;
+    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
+      userId = window.Telegram.WebApp.initDataUnsafe.user.id;
+    }
+
+    function applyBadge(elId, data) {
       var el = document.getElementById(elId);
-      var raw = localStorage.getItem('progress:' + key);
-      if (!raw) { el.textContent = ''; return; }
-      var data = JSON.parse(raw);
-      if (data.total === 0) { el.textContent = ''; return; }
+      if (!data || data.total === 0) { el.textContent = ''; return; }
       if (data.checked === data.total) {
         el.textContent = '✅';
         el.style.color = '#2e9e5b';
@@ -111,13 +115,33 @@
         el.textContent = data.checked + '/' + data.total;
       }
     }
-        renderBadge('badge-run-jin-1-25', 'run-jin-1-25');
+
+    function renderBadge(elId, key) {
+      var raw = localStorage.getItem('progress:' + key);
+      var data = raw ? JSON.parse(raw) : null;
+      applyBadge(elId, data);
+    }
+    renderBadge('badge-run-jin-1-25', 'run-jin-1-25');
     renderBadge('badge-run-jin-26-36', 'run-jin-26-36');
+
+    if (userId) {
+      fetch(`${FIREBASE_URL}/users/${userId}.json`)
+        .then(res => res.json())
+        .then(data => {
+          if (!data) return;
+          ['run-jin-1-25', 'run-jin-26-36'].forEach((key) => {
+            var cloudVal = data['progress:' + key];
+            if (cloudVal) applyBadge('badge-' + key, cloudVal);
+          });
+        })
+        .catch(() => {});
+    }
 
     items.forEach((item) => {
       const id = 'video-' + item.link.split('/').pop();
       const row = document.createElement('div');
       row.className = 'row';
+      row.dataset.id = id;
 
       const box = document.createElement('input');
       box.type = 'checkbox';
@@ -130,8 +154,8 @@
         box.checked = true;
         span.classList.add('done');
       }
-      box.addEventListener('change', () => {
-        localStorage.setItem(id, box.checked);
+            box.addEventListener('change', () => {
+        setChecked(id, box.checked);
         span.classList.toggle('done', box.checked);
         updateProgress();
       });
@@ -159,9 +183,10 @@
         total++;
         if (cb.checked) checked++;
       });
-      localStorage.setItem('progress:run-jin', JSON.stringify({checked, total}));
+      setProgress('run-jin', {checked, total});
     }
     updateProgress();
+    syncChecklistFromCloud(updateProgress);
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();

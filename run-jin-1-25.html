@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="sync.js"></script>
+  <script src="sync.js"></script>
   <title>RUN JIN 1-25</title>
   <style>
     body {
@@ -105,6 +106,7 @@
         const id = 'video-' + item.link.split('/').pop();
         const row = document.createElement('div');
         row.className = 'row';
+      row.dataset.id = id;
         row.dataset.id = id;
 
         const box = document.createElement('input');

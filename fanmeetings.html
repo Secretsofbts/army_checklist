@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js"></script>
   <title>Фанмитинги BTS</title>
   <style>
     body {
@@ -246,7 +247,7 @@
         row.classList.add('done');
       }
       box.addEventListener('change', () => {
-        localStorage.setItem(id, box.checked);
+        setChecked(id, box.checked);src="sync.js"></script>;
         row.classList.toggle('done', box.checked);
         updateProgress();
       });
@@ -287,6 +288,7 @@
                 if (item.crossed) {
           const row = document.createElement('div');
           row.className = 'row';
+      row.dataset.id = id;
           const fakeBox = document.createElement('span');
           fakeBox.className = 'fake-checkbox';
           const span = document.createElement('span');
@@ -373,9 +375,10 @@
         total++;
         if (cb.checked) checked++;
       });
-      localStorage.setItem('progress:fanmeetings', JSON.stringify({checked, total}));
+      setProgress('fanmeetings', {checked, total});
     }
     updateProgress();
+    syncChecklistFromCloud(updateProgress);
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();

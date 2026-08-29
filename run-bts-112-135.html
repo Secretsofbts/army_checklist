@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js"></script>
   <title>RUN BTS 112-135</title>
   <style>
     body {
@@ -137,7 +138,7 @@
         span.classList.add('done');
       }
       box.addEventListener('change', () => {
-        localStorage.setItem(id, box.checked);
+        setChecked(id, box.checked);src="sync.js"></script>;
         span.classList.toggle('done', box.checked);
         updateProgress();
       });
@@ -173,9 +174,10 @@
         total++;
         if (cb.checked) checked++;
       });
-      localStorage.setItem('progress:run-bts-112-135', JSON.stringify({checked, total}));
+      setProgress('run-bts-112-135', {checked, total});
     }
     updateProgress();
+    syncChecklistFromCloud(updateProgress);
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();

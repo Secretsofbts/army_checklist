@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js"></script>
   <title>BTS Live Trilogy Episode III: The Wings Tour in Seoul</title>
   <style>
     body {
@@ -95,6 +96,7 @@
       const id = 'video-' + item.link.split('/').pop();
       const row = document.createElement('div');
       row.className = 'row';
+      row.dataset.id = id;
 
       const box = document.createElement('input');
       box.type = 'checkbox';
@@ -107,8 +109,8 @@
         box.checked = true;
         span.classList.add('done');
       }
-      box.addEventListener('change', () => {
-        localStorage.setItem(id, box.checked);
+           box.addEventListener('change', () => {
+        setChecked(id, box.checked);
         span.classList.toggle('done', box.checked);
         updateProgress();
       });
@@ -136,9 +138,10 @@
         total++;
         if (cb.checked) checked++;
       });
-      localStorage.setItem('progress:concert-wings-seoul', JSON.stringify({checked, total}));
+      setProgress('concert-wings-seoul', {checked, total});
     }
     updateProgress();
+    syncChecklistFromCloud(updateProgress);
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
