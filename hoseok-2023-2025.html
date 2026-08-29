@@ -124,11 +124,12 @@
       yearTitle.textContent = block.year + ' год';
       listEl.appendChild(yearTitle);
 
-      block.items.forEach((item, ii) => {
+           block.items.forEach((item, ii) => {
         const id = item.link ? ('video-' + item.link.split('/').pop()) : ('noline-hoseok-' + block.year + '-' + ii);
+        const oldId = 'noline-hoseok-' + block.year + '-' + ii;
         const row = document.createElement('div');
         row.className = 'row';
-      row.dataset.id = id;
+        row.dataset.id = id;
 
         const box = document.createElement('input');
         box.type = 'checkbox';
@@ -137,7 +138,14 @@
         span.className = 'text';
         span.textContent = item.text;
 
-        if (localStorage.getItem(id) === 'true') {
+        let saved = localStorage.getItem(id);
+        if (saved === null && item.link && oldId !== id) {
+          saved = localStorage.getItem(oldId);
+          if (saved === 'true') {
+            setChecked(id, true);
+          }
+        }
+        if (saved === 'true') {
           box.checked = true;
           span.classList.add('done');
         }

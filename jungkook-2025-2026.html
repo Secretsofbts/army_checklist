@@ -135,7 +135,7 @@
         row.className = 'row';
         row.dataset.id = id;
 
-        if (item.link === null) {
+               if (item.link === null) {
           const box = document.createElement('input');
           box.type = 'checkbox';
 
@@ -147,6 +147,7 @@
             box.checked = true;
             span.classList.add('done');
           }
+          // сохраняем id для будущей миграции, если позже появится ссылка
           box.addEventListener('change', () => {
             setChecked(id, box.checked);
             span.classList.toggle('done', box.checked);
@@ -163,7 +164,8 @@
           return;
         }
 
-                 const oldId = 'jk25-' + block.year + '-' + ii;
+                            const oldId = 'jk25-' + block.year + '-' + ii;
+        const oldNolineId = 'noline-jungkook-' + block.year + '-' + ii;
         const box = document.createElement('input');
         box.type = 'checkbox';
 
@@ -173,6 +175,12 @@
 
         let saved = localStorage.getItem(id);
         if (saved === null) saved = localStorage.getItem(oldId);
+        if (saved === null) {
+          saved = localStorage.getItem(oldNolineId);
+          if (saved === 'true') {
+            setChecked(id, true);
+          }
+        }
         if (saved === 'true') {
           box.checked = true;
           span.classList.add('done');
