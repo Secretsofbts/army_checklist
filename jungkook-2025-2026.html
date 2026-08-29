@@ -129,12 +129,11 @@
       yearTitle.textContent = block.year + ' год';
       listEl.appendChild(yearTitle);
 
-      block.items.forEach((item, ii) => {
+            block.items.forEach((item, ii) => {
+        const id = item.link ? ('video-' + item.link.split('/').pop()) : ('noline-jungkook-' + block.year + '-' + ii);
         const row = document.createElement('div');
         row.className = 'row';
-      row.dataset.id = id;
-
-                  const id = item.link ? ('video-' + item.link.split('/').pop()) : ('noline-jungkook-' + block.year + '-' + ii);
+        row.dataset.id = id;
 
         if (item.link === null) {
           const box = document.createElement('input');
