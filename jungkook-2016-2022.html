@@ -177,9 +177,10 @@
       setProgress('jungkook-2016-2022', {checked, total});
     }
 
-    document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
+       document.querySelectorAll('input[type="checkbox"]').forEach(cb => {
       cb.addEventListener('change', updateProgress);
     });
     updateProgress();
+    syncChecklistFromCloud(updateProgress);
 </script>
 </html>
