@@ -68,12 +68,14 @@
     <p class="intro">Дата выпуска: 03.12.2025</p>
     <p class="intro">От тихих гор Швейцарии до оживлённых улиц Вьетнама, их путешествия символизируют переход от рутины к новому открытию и путь к окончательному переосмыслению цели. Их поездка на первый взгляд кажется простой: они готовят себе еду и расходуют деньги на местные покупки, обсуждают концепции, намекая на то, что лучшие истории часто рассказываются в самые обыденные моменты.</p>
 
-    <p class="section-title">Дополнительные видео к шоу</p>
+       <p class="section-title">Дополнительные видео к шоу</p>
     <p class="section-note">Входят в статистику</p>
-    <div id="extras"></div>
+    <div id="extras" style="margin-bottom: 20px;"></div>
 
-    <div id="list"></div>
+    <p class="section-title">Серии</p>
+    <div id="list" style="margin-bottom: 20px;"></div>
 
+    <p class="section-title">Закадровые</p>
     <div id="behind"></div>
 
     <a class="footer-link" href="are-you-sure.html">ARE YOU SURE? ⬅️</a>
@@ -97,13 +99,13 @@
       { text: "6 серия", link: null, oldId: "noline-ays2-5" },
       { text: "7 серия", link: null, oldId: "noline-ays2-6" },
       { text: "8 серия", link: null, oldId: "noline-ays2-7" }
-    ];
+    ];  
 
     const behindItems = [
       { text: "Закадровые", link: "https://t.me/violent_arhive/5373" }
     ];
 
-    function renderList(containerId, arr, prefix) {
+        function renderList(containerId, arr, prefix) {
       const listEl = document.getElementById(containerId);
       arr.forEach((item, ii) => {
         const id = item.link ? ('video-' + item.link.split('/').pop()) : ('noline-' + prefix + '-' + ii);
@@ -118,7 +120,14 @@
         span.className = 'text';
         span.textContent = item.text;
 
-        if (localStorage.getItem(id) === 'true') {
+        let saved = localStorage.getItem(id);
+        if (saved === null && item.oldId) {
+          saved = localStorage.getItem(item.oldId);
+          if (saved === 'true') {
+            setChecked(id, true);
+          }
+        }
+        if (saved === 'true') {
           box.checked = true;
           span.classList.add('done');
         }
