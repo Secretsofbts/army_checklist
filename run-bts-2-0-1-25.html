@@ -62,12 +62,12 @@
   </div>
 
   <script>
-    const items = [
-      { text: "0 эпизод \"Возвращение\"", link: "https://t.me/violent_arhive/5461" },
-      { text: "1 эпизод \"Поездка 1ч\"", link: "https://t.me/violent_arhive/5486" },
-      { text: "2 эпизод \"Поездка 2ч\"", link: "https://t.me/violent_arhive/5493" },
-      { text: "3 эпизод \"Поездка 3ч\"", link: "https://t.me/violent_arhive/5495" },
-      { text: "4 эпизод \"Ужин Фесты 2.0\"", link: "https://t.me/violent_arhive/5523" }
+        const items = [
+      { text: "0 эпизод", sub: "\"Возвращение\"", link: "https://t.me/violent_arhive/5461" },
+      { text: "1 эпизод", sub: "\"Поездка 1ч\"", link: "https://t.me/violent_arhive/5486" },
+      { text: "2 эпизод", sub: "\"Поездка 2ч\"", link: "https://t.me/violent_arhive/5493" },
+      { text: "3 эпизод", sub: "\"Поездка 3ч\"", link: "https://t.me/violent_arhive/5495" },
+      { text: "4 эпизод", sub: "\"Ужин Фесты 2.0\"", link: "https://t.me/violent_arhive/5523" }
     ];
 
     const listEl = document.getElementById('list');
@@ -80,9 +80,15 @@
       const box = document.createElement('input');
       box.type = 'checkbox';
 
-      const span = document.createElement('span');
+           const span = document.createElement('span');
       span.className = 'text';
       span.textContent = item.text;
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+        sub.textContent = item.sub;
+        span.appendChild(sub);
+      }
 
       if (localStorage.getItem(id) === 'true') {
         box.checked = true;
