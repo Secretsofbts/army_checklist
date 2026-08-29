@@ -77,13 +77,13 @@
     <a class="footer-link" href="run-bts.html">RUN BTS ⬅️</a>
   </div>
 
-  <script>
-          const navItems = [
+        <script>
+    const navItems = [
       { text: "1-25 эпизод", link: "run-jin-1-25.html", statKey: "run-jin-1-25" },
       { text: "26-36 эпизод", link: "run-jin-26-36.html", statKey: "run-jin-26-36" }
     ];
 
-            const listEl = document.getElementById('list');
+    const listEl = document.getElementById('list');
     navItems.forEach((item) => {
       const a = document.createElement('a');
       a.className = 'navlink';
@@ -98,12 +98,6 @@
       a.appendChild(badge);
       listEl.appendChild(a);
     });
-
-        const FIREBASE_URL = "https://army-checklist-default-rtdb.firebaseio.com";
-    let userId = null;
-    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
-      userId = window.Telegram.WebApp.initDataUnsafe.user.id;
-    }
 
     function applyBadge(elId, data) {
       var el = document.getElementById(elId);
@@ -121,75 +115,13 @@
       var data = raw ? JSON.parse(raw) : null;
       applyBadge(elId, data);
     }
-function renderAllBadges() {
-    renderBadge('badge-run-jin-1-25', 'run-jin-1-25');
-    renderBadge('badge-run-jin-26-36', 'run-jin-26-36');
+
+    function renderAllBadges() {
+      renderBadge('badge-run-jin-1-25', 'run-jin-1-25');
+      renderBadge('badge-run-jin-26-36', 'run-jin-26-36');
     }
     renderAllBadges();
     refreshLocalStorageFromCloud(renderAllBadges);
-    if (userId) {
-      fetch(`${FIREBASE_URL}/users/${userId}.json`)
-        .then(res => res.json())
-        .then(data => {
-          if (!data) return;
-          ['run-jin-1-25', 'run-jin-26-36'].forEach((key) => {
-            var cloudVal = data['progress:' + key];
-            if (cloudVal) applyBadge('badge-' + key, cloudVal);
-          });
-        })
-        .catch(() => {});
-    }
-
-    items.forEach((item) => {
-      const id = 'video-' + item.link.split('/').pop();
-      const row = document.createElement('div');
-      row.className = 'row';
-      row.dataset.id = id;
-
-      const box = document.createElement('input');
-      box.type = 'checkbox';
-
-      const span = document.createElement('span');
-      span.className = 'text';
-      span.textContent = item.text;
-
-      if (localStorage.getItem(id) === 'true') {
-        box.checked = true;
-        span.classList.add('done');
-      }
-            box.addEventListener('change', () => {
-        setChecked(id, box.checked);
-        span.classList.toggle('done', box.checked);
-        updateProgress();
-      });
-      span.addEventListener('click', () => {
-        box.checked = !box.checked;
-        box.dispatchEvent(new Event('change'));
-      });
-
-      const link = document.createElement('a');
-      link.className = 'link';
-      link.href = item.link;
-      link.target = '_blank';
-      link.textContent = '🔗';
-
-      row.appendChild(box);
-      row.appendChild(span);
-      row.appendChild(link);
-      listEl.appendChild(row);
-    });
-
-    function updateProgress() {
-      const all = document.querySelectorAll('input[type="checkbox"]');
-      let total = 0, checked = 0;
-      all.forEach(cb => {
-        total++;
-        if (cb.checked) checked++;
-      });
-      setProgress('run-jin', {checked, total});
-    }
-    updateProgress();
-    syncChecklistFromCloud(updateProgress);
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
