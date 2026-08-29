@@ -5,14 +5,23 @@ if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData
   ARMY_USER_ID = window.Telegram.WebApp.initDataUnsafe.user.id;
 }
 
+function saveToCloudWithRetry(path, value, attempt) {
+  attempt = attempt || 1;
+  fetch(`${FIREBASE_URL}/${path}.json`, {
+    method: 'PUT',
+    body: JSON.stringify(value),
+    keepalive: true
+  }).catch(() => {
+    if (attempt < 3) {
+      setTimeout(() => saveToCloudWithRetry(path, value, attempt + 1), 1000 * attempt);
+    }
+  });
+}
+
 function setChecked(id, value) {
   localStorage.setItem(id, value);
   if (ARMY_USER_ID) {
-    fetch(`${FIREBASE_URL}/users/${ARMY_USER_ID}/${id}.json`, {
-      method: 'PUT',
-      body: JSON.stringify(value),
-      keepalive: true
-    }).catch(() => {});
+    saveToCloudWithRetry(`users/${ARMY_USER_ID}/${id}`, value);
   }
 }
 
@@ -20,11 +29,7 @@ function setProgress(key, value) {
   const fullKey = 'progress:' + key;
   localStorage.setItem(fullKey, JSON.stringify(value));
   if (ARMY_USER_ID) {
-    fetch(`${FIREBASE_URL}/users/${ARMY_USER_ID}/${fullKey}.json`, {
-      method: 'PUT',
-      body: JSON.stringify(value),
-      keepalive: true
-    }).catch(() => {});
+    saveToCloudWithRetry(`users/${ARMY_USER_ID}/${fullKey}`, value);
   }
 }
 
