@@ -148,11 +148,14 @@
         el.textContent = checked + '/' + total;
       }
     }
+function renderAllBadges() {
        renderBadgeTotal('badge-y-2013', ['bombs-2013-june', 'bombs-2013-july', 'bombs-2013-august', 'bombs-2013-september', 'bombs-2013-october', 'bombs-2013-november']);
     renderBadgeTotal('badge-y-2024', ['bombs-2024']);
     renderBadgeTotal('badge-y-2025', ['bombs-2025']);
     renderBadgeTotal('badge-y-2026', ['bombs-2026']);
-
+    }
+    renderAllBadges();
+    refreshLocalStorageFromCloud(renderAllBadges);
     function applyBadgeTotal(elId, keys, cloudData) {
       var el = document.getElementById(elId);
       if (!el) return;

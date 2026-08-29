@@ -366,9 +366,12 @@
       }
     }
   
+function renderAllBadges() {
     renderBadge('badge-fm-jp-vol3', 'fm-jp-vol3');
     renderBadge('badge-fm-3rd-muster', 'fm-3rd-muster');
-    function updateProgress() {
+    }
+    renderAllBadges();
+    refreshLocalStorageFromCloud(renderAllBadges);    function updateProgress() {
       const all = document.querySelectorAll('.row input[type="checkbox"], .subrow input[type="checkbox"]');
       let total = 0, checked = 0;
       all.forEach(cb => {

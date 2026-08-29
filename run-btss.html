@@ -93,6 +93,7 @@
         el.textContent = data.checked + '/' + data.total;
       }
     }
+function renderAllBadges() {
     renderBadge('badge-1-25', 'run-bts-1-25');
     renderBadge('badge-26-50', 'run-bts-26-50');
     renderBadge('badge-51-80', 'run-bts-51-80');
@@ -100,7 +101,9 @@
     renderBadge('badge-112-135', 'run-bts-112-135');
     renderBadge('badge-136-155', 'run-bts-136-155');
     renderBadge('badge-156-165', 'run-bts-156-165');
-
+    }
+    renderAllBadges();
+    refreshLocalStorageFromCloud(renderAllBadges);
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
       Telegram.WebApp.expand();

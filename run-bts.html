@@ -104,10 +104,13 @@
         el.textContent = checked + '/' + total;
       }
     }
+function renderAllBadges() {
     renderBadgeTotal('badge-run-bts', ['run-bts-1-25', 'run-bts-26-50', 'run-bts-51-80', 'run-bts-81-111', 'run-bts-112-135', 'run-bts-136-155', 'run-bts-156-165']);
     renderBadgeTotal('badge-run-jin', ['run-jin']);
     renderBadgeTotal('badge-run-bts20', ['run-bts-2-0']);
-
+    }
+    renderAllBadges();
+    refreshLocalStorageFromCloud(renderAllBadges);
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
       Telegram.WebApp.expand();

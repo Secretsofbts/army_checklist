@@ -104,9 +104,12 @@
         el.textContent = checked + '/' + total;
       }
     }
+function renderAllBadges() {
     renderBadge('badge-2015-2022', 'jimin-2015-2022');
     renderBadge('badge-2023-2026', 'jimin-2023-2026');
-
+    }
+    renderAllBadges();
+    refreshLocalStorageFromCloud(renderAllBadges);
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
       Telegram.WebApp.expand();

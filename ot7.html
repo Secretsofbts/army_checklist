@@ -110,10 +110,13 @@
         el.textContent = checked + '/' + total;
       }
     }
+function renderAllBadges() {
     renderBadge('badge-2015-2017', 'ot7-2015-2017');
     renderBadge('badge-2018-2022', 'ot7-2018-2022');
     renderBadge('badge-2023-2026', 'ot7-2023-2026');
-
+    }
+    renderAllBadges();
+    refreshLocalStorageFromCloud(renderAllBadges);
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
       Telegram.WebApp.expand();

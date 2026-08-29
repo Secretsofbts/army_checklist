@@ -120,13 +120,16 @@
         el.textContent = checked + '/' + total;
       }
     }
+function renderAllBadges() {
     renderBadge('badge-2015', 'somepeople-2015');
 renderBadge('badge-2016', 'somepeople-2016');
 renderBadge('badge-2017-2019', 'somepeople-2017-2019');
 renderBadge('badge-2020-2022', 'somepeople-2020-2022');
 renderBadge('badge-2023-2025', 'somepeople-2023-2025');
 renderBadge('badge-2026', 'somepeople-2026');
-
+    }
+    renderAllBadges();
+    refreshLocalStorageFromCloud(renderAllBadges);
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
       Telegram.WebApp.expand();

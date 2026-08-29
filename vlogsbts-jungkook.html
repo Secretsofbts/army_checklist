@@ -145,8 +145,11 @@
         el.textContent = data.checked + '/' + data.total;
       }
     }
+function renderAllBadges() {
     renderBadge('badge-gcf', 'gcf');
-    function updateProgress() {
+    }
+    renderAllBadges();
+    refreshLocalStorageFromCloud(renderAllBadges);    function updateProgress() {
       const all = document.querySelectorAll('input[type="checkbox"]');
       let total = 0, checked = 0;
       all.forEach(cb => {

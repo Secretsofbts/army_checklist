@@ -121,9 +121,12 @@
       var data = raw ? JSON.parse(raw) : null;
       applyBadge(elId, data);
     }
+function renderAllBadges() {
     renderBadge('badge-run-jin-1-25', 'run-jin-1-25');
     renderBadge('badge-run-jin-26-36', 'run-jin-26-36');
-
+    }
+    renderAllBadges();
+    refreshLocalStorageFromCloud(renderAllBadges);
     if (userId) {
       fetch(`${FIREBASE_URL}/users/${userId}.json`)
         .then(res => res.json())

@@ -378,6 +378,7 @@ makeCheckRow(listEl, item, false, !!(item.subs || item.branches || (nextItem && 
       }
     }
 
+function renderAllBadges() {
     renderBadge('badge-concert-hyyh-on-stage', 'concert-hyyh-on-stage', '.navlink');
     renderBadge('badge-concert-hyyh-epilogue', 'concert-hyyh-epilogue', '.navlink');
     renderBadge('badge-concert-hyyh-epilogue-japan', 'concert-hyyh-epilogue-japan', '.navlink');
@@ -388,7 +389,9 @@ makeCheckRow(listEl, item, false, !!(item.subs || item.branches || (nextItem && 
     renderBadge('badge-concert-wt-love-yourself-ny', 'concert-wt-love-yourself-ny', '.navlink');
     renderBadge('badge-concert-wt-love-yourself-europe', 'concert-wt-love-yourself-europe', '.navlink');
     renderBadge('badge-concert-lysy-seoul-final-dvd', 'concert-lysy-seoul-final-dvd', '.navlink');
-
+    }
+    renderAllBadges();
+    refreshLocalStorageFromCloud(renderAllBadges);
     function updateProgress() {
       const all = document.querySelectorAll('.row input[type="checkbox"], .subrow input[type="checkbox"]');
       let total = 0, checked = 0;

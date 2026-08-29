@@ -112,11 +112,14 @@
         el.textContent = checked + '/' + total;
       }
     }
+function renderAllBadges() {
     renderBadge('badge-2015-2022', 'taehyung-2015-2022');
     renderBadge('badge-2023-2024', 'taehyung-2023-2024');
     renderBadge('badge-2025', 'taehyung-2025');
     renderBadge('badge-2026', 'taehyung-2026');
-
+    }
+    renderAllBadges();
+    refreshLocalStorageFromCloud(renderAllBadges);
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
       Telegram.WebApp.expand();
