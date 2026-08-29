@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js"></script>
   <title>BTS Episode</title>
   <style>
     body {
@@ -104,13 +105,9 @@
       }
       listEl.appendChild(a);
     });
-    function renderBadge(elId, key) {
-      var el = document.getElementById(elId);
-      if (!el) return;
-      var raw = localStorage.getItem('progress:' + key);
-      if (!raw) { el.textContent = ''; return; }
-      var data = JSON.parse(raw);
-      if (data.total === 0) { el.textContent = ''; return; }
+       function applyBadge(key, data) {
+      var el = document.getElementById('badge-' + key);
+      if (!el || !data || data.total === 0) { if (el) el.textContent = ''; return; }
       if (data.checked === data.total) {
         el.textContent = '✅';
         el.style.color = '#2e9e5b';
@@ -119,22 +116,21 @@
         el.textContent = data.checked + '/' + data.total;
       }
     }
-        renderBadge('badge-bts-episode-1-50', 'bts-episode-1-50');
-    renderBadge('badge-bts-episode-51-100', 'bts-episode-51-100');
-    renderBadge('badge-bts-episode-101-150', 'bts-episode-101-150');
-    renderBadge('badge-bts-episode-151-194', 'bts-episode-151-194');
 
-    function renderBadgeTotal(elId, keys) {
-      var el = document.getElementById(elId);
+    const partKeys = ['bts-episode-1-50', 'bts-episode-51-100', 'bts-episode-101-150', 'bts-episode-151-194'];
+    partKeys.forEach((key) => {
+      var raw = localStorage.getItem('progress:' + key);
+      applyBadge(key, raw ? JSON.parse(raw) : null);
+    });
+    syncBadgesFromCloud(partKeys, applyBadge);
+
+    function applyBadgeTotal(key, keys, getRaw) {
+      var el = document.getElementById('badge-' + key);
       if (!el) return;
       var checked = 0, total = 0;
-      keys.forEach(function(key) {
-        var raw = localStorage.getItem('progress:' + key);
-        if (raw) {
-          var data = JSON.parse(raw);
-          checked += data.checked;
-          total += data.total;
-        }
+      keys.forEach(function(k) {
+        var raw = getRaw(k);
+        if (raw) { checked += raw.checked; total += raw.total; }
       });
       if (total === 0) { el.textContent = ''; return; }
       if (checked === total) {
@@ -145,7 +141,23 @@
         el.textContent = checked + '/' + total;
       }
     }
-    renderBadgeTotal('badge-bts-episode-other', ['bts-episode-other-jimin', 'bts-episode-other-jungkook', 'bts-episode-other-hoseok', 'bts-episode-other-yoongi', 'bts-episode-other-namjoon', 'bts-episode-other-jin', 'bts-episode-other-taehyung', 'bts-episode-other-somepeople']);
+    const otherKeys = ['bts-episode-other-jimin', 'bts-episode-other-jungkook', 'bts-episode-other-hoseok', 'bts-episode-other-yoongi', 'bts-episode-other-namjoon', 'bts-episode-other-jin', 'bts-episode-other-taehyung', 'bts-episode-other-somepeople'];
+    applyBadgeTotal('bts-episode-other', otherKeys, function(key) {
+      var raw = localStorage.getItem('progress:' + key);
+      return raw ? JSON.parse(raw) : null;
+    });
+    if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
+      fetch(`${FIREBASE_URL}/users/${ARMY_USER_ID}.json`)
+        .then(res => res.json())
+        .then(data => {
+          if (!data) return;
+          applyBadgeTotal('bts-episode-other', otherKeys, function(key) {
+            return data['progress:' + key];
+          });
+        })
+        .catch(() => {});
+    }
+
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
       Telegram.WebApp.expand();

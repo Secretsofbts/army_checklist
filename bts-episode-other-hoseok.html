@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js"></script>
   <title>Ну вроде бы эпизоды: Хосок</title>
   <style>
     body {
@@ -61,69 +62,51 @@
   </div>
 
   <script>
-    const items = [
-      { text: "Бекстейдж со съёмок на постер документального сериала «HOPE ON THE STREET»", link: "https://t.me/violent_arhive/4551" },
-      { text: "Закулисье записи альбома к \"HOPE ON THE STREET\"", link: "https://t.me/violent_arhive/4561" },
-      { text: "Закадровые шоу Ли Хена", link: "https://t.me/violent_arhive/4922" },
-      { text: "Съемки клипа \"Sweet Dreams\"", link: "https://t.me/violent_arhive/5028" },
-      { text: "Процесс создания песен \"Sweet Dreams\" & \"MONA LISA\"", link: "https://t.me/violent_arhive/5038" },
-      { text: "Процесс съёмок клипа на сингл \"MONA LISA\"", link: "https://t.me/violent_arhive/5056" },
-      { text: "\"Mona Lisa\" практика танцев", link: "https://t.me/violent_arhive/5062" },
-      { text: "Бэкстейдж со съемок концепт-фильма «Charm of HOPE»", link: "https://t.me/violent_arhive/5192" },
-      { text: "Бэкстейдж с практики «Killin' It Girl»", link: "https://t.me/violent_arhive/5178" },
-      { text: "Съемки j-hope 'Killin' It Girl' MV & Choreography ver.", link: "https://t.me/violent_arhive/5191" },
-      { text: "Скетч с промоушена «Killin' It Girl» на музыкальных шоу", link: "https://t.me/violent_arhive/5232" }
+       const members = [
+      { hearts: "💛", name: "ЧИМИН", link: "bts-episode-other-jimin.html", key: "bts-episode-other-jimin" },
+      { hearts: "💜", name: "ЧОНГУК", link: "bts-episode-other-jungkook.html", key: "bts-episode-other-jungkook" },
+      { hearts: "🤍", name: "ХОСОК", link: "bts-episode-other-hoseok.html", key: "bts-episode-other-hoseok" },
+      { hearts: "🖤", name: "ЮНГИ", link: "bts-episode-other-yoongi.html", key: "bts-episode-other-yoongi" },
+      { hearts: "💙", name: "НАМДЖУН", link: "bts-episode-other-namjoon.html", key: "bts-episode-other-namjoon" },
+      { hearts: "💕", name: "ДЖИН", link: "bts-episode-other-jin.html", key: "bts-episode-other-jin" },
+      { hearts: "💚", name: "ТЭХЁН", link: "bts-episode-other-taehyung.html", key: "bts-episode-other-taehyung" },
+      { hearts: "❣️", name: "ОТ7 / НЕСКОЛЬКО МЕМБЕРОВ", link: "bts-episode-other-somepeople.html", key: "bts-episode-other-somepeople" }
     ];
 
     const listEl = document.getElementById('list');
-    items.forEach((item) => {
-      const id = 'video-' + item.link.split('/').pop();
-      const row = document.createElement('div');
-      row.className = 'row';
-
-      const box = document.createElement('input');
-      box.type = 'checkbox';
-
-      const span = document.createElement('span');
-      span.className = 'text';
-      span.textContent = item.text;
-
-      if (localStorage.getItem(id) === 'true') {
-        box.checked = true;
-        span.classList.add('done');
-      }
-      box.addEventListener('change', () => {
-        localStorage.setItem(id, box.checked);
-        span.classList.toggle('done', box.checked);
-        updateProgress();
-      });
-      span.addEventListener('click', () => {
-        box.checked = !box.checked;
-        box.dispatchEvent(new Event('change'));
-      });
-
-      const link = document.createElement('a');
-      link.className = 'link';
-      link.href = item.link;
-      link.target = '_blank';
-      link.textContent = '🔗';
-
-      row.appendChild(box);
-      row.appendChild(span);
-      row.appendChild(link);
-      listEl.appendChild(row);
+    members.forEach((m) => {
+      const a = document.createElement('a');
+      a.className = 'card';
+      a.href = m.link;
+      a.style.justifyContent = 'space-between';
+      const label = document.createElement('span');
+      label.textContent = m.hearts + ' ' + m.name;
+      const badge = document.createElement('span');
+      badge.id = 'badge-' + m.key;
+      badge.style.cssText = 'font-size:12px; color:#999;';
+      a.appendChild(label);
+      a.appendChild(badge);
+      listEl.appendChild(a);
     });
 
-    function updateProgress() {
-      const all = document.querySelectorAll('input[type="checkbox"]');
-      let total = 0, checked = 0;
-      all.forEach(cb => {
-        total++;
-        if (cb.checked) checked++;
-      });
-      localStorage.setItem('progress:bts-episode-other-hoseok', JSON.stringify({checked, total}));
+    function applyBadge(key, data) {
+      var el = document.getElementById('badge-' + key);
+      if (!el || !data || data.total === 0) { if (el) el.textContent = ''; return; }
+      if (data.checked === data.total) {
+        el.textContent = '✅';
+        el.style.color = '#2e9e5b';
+        el.closest('.card').style.background = '#e3f7e9';
+      } else {
+        el.textContent = data.checked + '/' + data.total;
+      }
     }
-    updateProgress();
+
+    const memberKeys = members.map(m => m.key);
+    memberKeys.forEach((key) => {
+      var raw = localStorage.getItem('progress:' + key);
+      applyBadge(key, raw ? JSON.parse(raw) : null);
+    });
+    syncBadgesFromCloud(memberKeys, applyBadge);
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();

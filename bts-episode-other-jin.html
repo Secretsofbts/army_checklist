@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js"></script>
   <title>Ну вроде бы эпизоды: Джин</title>
   <style>
     body {
@@ -37,8 +38,8 @@
       font-size: 14px;
     }
     input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
-    .done { color: #bbb; text-decoration: line-through; }
-    .text { flex: 1; cursor: pointer; color: #333; }
+       .text { flex: 1; cursor: pointer; color: #333; }
+    .text.done { color: #bbb; text-decoration: line-through; }
     .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
     .footer-link {
       display: block;
@@ -75,11 +76,12 @@
       { text: "Бэкстейдж с промоушена альбома Джина «ECHO» по Северной Америке", link: "https://t.me/violent_arhive/5236" }
     ];
 
-    const listEl = document.getElementById('list');
+       const listEl = document.getElementById('list');
     items.forEach((item) => {
       const id = 'video-' + item.link.split('/').pop();
       const row = document.createElement('div');
       row.className = 'row';
+      row.dataset.id = id;
 
       const box = document.createElement('input');
       box.type = 'checkbox';
@@ -93,7 +95,7 @@
         span.classList.add('done');
       }
       box.addEventListener('change', () => {
-        localStorage.setItem(id, box.checked);
+        setChecked(id, box.checked);
         span.classList.toggle('done', box.checked);
         updateProgress();
       });
@@ -121,9 +123,10 @@
         total++;
         if (cb.checked) checked++;
       });
-      localStorage.setItem('progress:bts-episode-other-jin', JSON.stringify({checked, total}));
+      setProgress('bts-episode-other-jin', {checked, total});
     }
     updateProgress();
+    syncChecklistFromCloud(updateProgress);
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
