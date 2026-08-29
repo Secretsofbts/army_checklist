@@ -142,11 +142,11 @@
       }
       function toggle() {
         box.checked = !box.checked;
-        setChecked(id, box.checked);src="sync.js"></script>;
+        setChecked(id, box.checked);
         row.classList.toggle('done', box.checked);
       }
       box.addEventListener('change', () => {
-        setChecked(id, box.checked);src="sync.js"></script>;
+        setChecked(id, box.checked);
         row.classList.toggle('done', box.checked);
         updateProgress();
       });
