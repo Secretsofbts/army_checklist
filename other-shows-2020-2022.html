@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js"></script>
+  <title>Другие шоу с BTS: 2020-2022</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 16px; }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .text.done { color: #bbb; text-decoration: line-through; }
+    .sub { display: block; font-size: 11px; color: #999; margin-top: 2px; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+    .navlink {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f7f7fa;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      text-decoration: none;
+    }
+    .navlink input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; margin-left: -6px; }
+    .navlink-label { flex: 1; }
+    .navlink-label .sub { font-weight: 400; }
+    .navlink-label.done { color: #bbb; text-decoration: line-through; }
+    .footer-link {
+      display: block;
+      text-align: center;
+      font-size: 13px;
+      color: #000;
+      text-decoration: none;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid #eee;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="other-shows.html">← Назад</a>
+    <h1>📺 ШОУ С BTS: 2020-2022 год 📺</h1>
+    <div id="list"></div>
+    <a class="footer-link" href="other-shows.html">Другие шоу с BTS за все года ⬅️</a>
+  </div>
+
+  <script>
+    const items = [
+      { navlink: true, text: "MapleStory X BTS", sub: "сотрудничают с онлайн-игрой", link: "other-shows-maplestory.html", statKey: "other-shows-maplestory" },
+      { text: "You Quiz On The Block / Уличная викторина Ю (99 выпуск)", link: "https://t.me/violent_arhive/2221" },
+      { text: "100-минутное ток-шоу \"Let's BTS\"", link: "https://t.me/violent_arhive/718" },
+      { navlink: true, text: "BTS на I-LAND", link: "other-shows-i-land.html", statKey: "other-shows-i-land" },
+      { navlink: true, text: "Tokopedia x BTS", link: "other-shows-tokopedia.html", statKey: "other-shows-tokopedia" },
+      { text: "Масляный побег с BTS", link: "https://t.me/violent_arhive/1039" },
+      { text: "BTS, The BEST", link: "https://t.me/violent_arhive/5325" },
+      { text: "Коллаб Run BTS Х Fifteen Nights", sub: "относится к Run BTS, схема просмотра указана в его посте, с 140 эп.", link: "https://t.me/violent_arhive/764" },
+      { navlink: true, text: "Made Collection By BTS", sub: "видео о том, как создавался эксклюзивный мерч от BTS", link: "other-shows-made-collection.html", statKey: "other-shows-made-collection" },
+      { navlink: true, text: "Лаборатория MBTI", sub: "определение типа личности", link: "other-shows-mbti-lab.html", statKey: "other-shows-mbti-lab" },
+      { navlink: true, text: "BTS Island: In the SEOM", sub: "разработка новой игры", link: "other-shows-in-the-seom.html", statKey: "other-shows-in-the-seom" },
+      { navlink: true, text: "BTS X Cookie Run: Kingdom", sub: "коллаб с мобильной игрой", link: "other-shows-cookie-run.html", statKey: "other-shows-cookie-run" },
+      { navlink: true, text: "Running Man", sub: "кор. шоу, в котором участвовал 💙 Джун, 💕 Джин, 💚 Тэ и все BTS", link: "other-shows-running-man.html", statKey: "other-shows-running-man" },
+      { navlink: true, text: "WORKOUT with BTS", sub: "тренировки с BTS", link: "other-shows-workout.html", statKey: "other-shows-workout" },
+      { navlink: true, text: "Kiss The Radio / Sukira", sub: "бантаны на радио", link: "other-shows-kiss-the-radio.html", statKey: "other-shows-kiss-the-radio" },
+      { text: "Crush x 🤍 J-Hope (1 эпизод)", link: "https://t.me/violent_arhive/3136" },
+      { text: "🤍 J-Hope на шоу IU \"The Palette\"", link: "https://t.me/violent_arhive/2900" },
+      { text: "BTS играют в \"Do You Know Me?\"", link: "https://t.me/violent_arhive/2796" },
+      { text: "Алкогольный дневник", sub: "(в гостях 💕 Джин)", link: "https://t.me/violent_arhive/3216" },
+      { navlink: true, text: "C Джимми Фэллоном", link: "other-shows-jimmy-fallon.html", statKey: "other-shows-jimmy-fallon" },
+      { navlink: true, text: "С Джеймсом Корденом", link: "other-shows-james-corden.html", statKey: "other-shows-james-corden" },
+      { navlink: true, text: "Ли Хён стал менеджером BTS на один день", link: "other-shows-lee-hyun-manager.html", statKey: "other-shows-lee-hyun-manager" },
+      { navlink: true, text: "Game of Money", link: "other-shows-game-of-money.html", statKey: "other-shows-game-of-money" },
+      { text: "Викторина с Бантанами", link: "https://t.me/violent_arhive/3277" },
+      { text: "💕 Джин в гостях у Мёнсу", link: "https://t.me/violent_arhive/3291" },
+      { navlink: true, text: "Посиделки под градусом", sub: "💕 Джин и Пэк распивают алкоголь", link: "other-shows-drinking-party.html", statKey: "other-shows-drinking-party" },
+      { text: "Спец. коллекция \"The Astronaut\"", sub: "(💕 Джин + 🤍 Хосок)", link: "https://t.me/violent_arhive/3334" },
+      { navlink: true, text: "🥃 Шучвита", sub: "шоу Юнги на ютубе", link: "suchwita.html", statKey: "suchwita" },
+      { navlink: true, text: "Словарь бесполезных человеческих знаний", sub: "шоу, где 💙 Джун ведущий", link: "other-shows-useless-knowledge-dictionary.html", statKey: "other-shows-useless-knowledge-dictionary" },
+      { text: "Psick Show с 💙 RM из BTS", link: "https://t.me/violent_arhive/3559" }
+    ];
+
+    const listEl = document.getElementById('list');
+
+    function applyNavBadge(key) {
+      var checkbox = document.getElementById('checkbox-' + key);
+      var label = document.getElementById('label-' + key);
+      var raw = localStorage.getItem('progress:' + key);
+      if (!raw) return;
+      var data = JSON.parse(raw);
+      if (data.total > 0 && data.checked === data.total) {
+        if (checkbox) {
+          checkbox.checked = true;
+          checkbox.style.display = '';
+        }
+        if (label) label.classList.add('done');
+      }
+    }
+
+    items.forEach((item) => {
+      if (item.navlink) {
+        const a = document.createElement('a');
+        a.className = 'navlink';
+        a.href = item.link;
+
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+        box.style.pointerEvents = 'none';
+        box.id = 'checkbox-' + item.statKey;
+        box.style.display = 'none';
+        a.appendChild(box);
+
+        const label = document.createElement('span');
+        label.className = 'navlink-label';
+        label.id = 'label-' + item.statKey;
+        label.textContent = item.text;
+        if (item.sub) {
+          const sub = document.createElement('span');
+          sub.className = 'sub';
+          sub.textContent = item.sub;
+          label.appendChild(sub);
+        }
+        a.appendChild(label);
+        listEl.appendChild(a);
+        applyNavBadge(item.statKey);
+        return;
+      }
+
+      const id = 'video-' + item.link.split('/').pop();
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.dataset.id = id;
+
+      const box = document.createElement('input');
+      box.type = 'checkbox';
+
+      const span = document.createElement('span');
+      span.className = 'text';
+      span.textContent = item.text;
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.className = 'sub';
+        sub.textContent = item.sub;
+        span.appendChild(sub);
+      }
+
+      if (localStorage.getItem(id) === 'true') {
+        box.checked = true;
+        span.classList.add('done');
+      }
+      box.addEventListener('change', () => {
+        setChecked(id, box.checked);
+        span.classList.toggle('done', box.checked);
+        updateProgress();
+      });
+      span.addEventListener('click', () => {
+        box.checked = !box.checked;
+        box.dispatchEvent(new Event('change'));
+      });
+
+      const link = document.createElement('a');
+      link.className = 'link';
+      link.href = item.link;
+      link.target = '_blank';
+      link.textContent = '🔗';
+
+      row.appendChild(box);
+      row.appendChild(span);
+      row.appendChild(link);
+      listEl.appendChild(row);
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('.row input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      setProgress('other-shows-2020-2022', {checked, total});
+    }
+    updateProgress();
+    syncChecklistFromCloud(updateProgress);
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
