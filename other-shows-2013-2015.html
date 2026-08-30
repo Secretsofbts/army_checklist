@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js"></script>
+  <title>Другие шоу с BTS: 2013-2015</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 16px; }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .text.done { color: #bbb; text-decoration: line-through; }
+    .sub { display: block; font-size: 11px; color: #999; margin-top: 2px; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+    .navlink {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f7f7fa;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      text-decoration: none;
+    }
+    .navlink input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; margin-left: -6px; }
+    .navlink-label { flex: 1; }
+    .navlink-label .sub { font-weight: 400; }
+    .navlink-label.done { color: #bbb; text-decoration: line-through; }
+    .footer-link {
+      display: block;
+      text-align: center;
+      font-size: 13px;
+      color: #000;
+      text-decoration: none;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid #eee;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="other-shows.html">← Назад</a>
+    <h1>📺 ШОУ С BTS: 2013-2015 год 📺</h1>
+    <div id="list"></div>
+    <a class="footer-link" href="other-shows.html">Другие шоу с BTS за все года ⬅️</a>
+  </div>
+
+  <script>
+    const items = [
+      { text: "Широко открытая студия", link: "https://t.me/violent_arhive/3247" },
+      { navlink: true, text: "Kiss The Radio / Sukira", sub: "бантаны на радио", link: "other-shows-kiss-the-radio.html", statKey: "other-shows-kiss-the-radio" },
+      { navlink: true, text: "After School Club", sub: "шоу, где фанаты задают вопросы", link: "other-shows-after-school-club.html", statKey: "other-shows-after-school-club" },
+      { text: "JJANG", link: "https://t.me/violent_arhive/3244" },
+      { text: "Код Битлз 3D", link: "https://t.me/violent_arhive/3243" },
+      { text: "Давайте поговорим начистоту", sub: "(в гостях был 💙 Намджун)", link: "https://t.me/violent_arhive/3242" },
+      { text: "Глобальный запрос: Песня", link: "https://t.me/violent_arhive/3241" },
+      { text: "Hope Delivery", link: "https://t.me/violent_arhive/4881" },
+      { navlink: true, text: "Шоу Weekly Idol", link: "other-shows-weekly-idol.html", statKey: "other-shows-weekly-idol" },
+      { navlink: true, text: "Idol Star Athletics Championships", sub: "спортивные игры айдолов", link: "other-shows-isac.html", statKey: "other-shows-isac" },
+      { text: "GO! BTS!", link: "https://t.me/violent_arhive/3221" },
+      { navlink: true, text: "BTS на YinYueTai - три дня в Китае", link: "other-shows-yinyuetai.html", statKey: "other-shows-yinyuetai" },
+      { text: "Best Ramyun", sub: "(в гостях был 🤍 Хосок)", link: "https://t.me/violent_arhive/3240" },
+      { text: "Idol's True Colors (13 серия)", link: "https://t.me/violent_arhive/2225" },
+      { text: "Idol's True Colors (47 серия)", link: "https://t.me/violent_arhive/111" },
+      { navlink: true, text: "Yaman TV", link: "other-shows-yaman-tv.html", statKey: "other-shows-yaman-tv" },
+      { navlink: true, text: "BTS Lucky draw - Повезет или нет", sub: "маленькое шоу bts", link: "other-shows-lucky-draw.html", statKey: "other-shows-lucky-draw" },
+      { text: "My pet clinic (6 эпизод)", sub: "(в гостях 🤍 Хосок, 💛 Чимин и 💚 Тэхён)", link: "https://t.me/violent_arhive/1754" },
+      { text: "BTS Idol Show (2 серии)", link: "https://t.me/violent_arhive/2265" },
+      { navlink: true, text: "Running Man", link: "other-shows-running-man.html", statKey: "other-shows-running-man" },
+      { navlink: true, text: "Ток-шоу \"Привет\"", link: "other-shows-hello-talkshow.html", statKey: "other-shows-hello-talkshow" },
+      { text: "Музыкальные пародии", link: "https://t.me/violent_arhive/2260" },
+      { navlink: true, text: "Радио-шоу Cultwo", link: "other-shows-cultwo.html", statKey: "other-shows-cultwo" },
+      { navlink: true, text: "Проблемные мужчины", sub: "шоу, в котором участвовал 💙 Намджун", link: "other-shows-problematic-men.html", statKey: "other-shows-problematic-men" }
+    ];
+
+    const listEl = document.getElementById('list');
+
+    function applyNavBadge(key) {
+      var checkbox = document.getElementById('checkbox-' + key);
+      var label = document.getElementById('label-' + key);
+      var raw = localStorage.getItem('progress:' + key);
+      if (!raw) return;
+      var data = JSON.parse(raw);
+      if (data.total > 0 && data.checked === data.total) {
+        if (checkbox) {
+          checkbox.checked = true;
+          checkbox.style.display = '';
+        }
+        if (label) label.classList.add('done');
+      }
+    }
+
+    items.forEach((item) => {
+      if (item.navlink) {
+        const a = document.createElement('a');
+        a.className = 'navlink';
+        a.href = item.link;
+
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+        box.style.pointerEvents = 'none';
+        box.id = 'checkbox-' + item.statKey;
+        box.style.display = 'none';
+        a.appendChild(box);
+
+        const label = document.createElement('span');
+        label.className = 'navlink-label';
+        label.id = 'label-' + item.statKey;
+        label.textContent = item.text;
+        if (item.sub) {
+          const sub = document.createElement('span');
+          sub.className = 'sub';
+          sub.textContent = item.sub;
+          label.appendChild(sub);
+        }
+        a.appendChild(label);
+        listEl.appendChild(a);
+        applyNavBadge(item.statKey);
+        return;
+      }
+
+      const id = 'video-' + item.link.split('/').pop();
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.dataset.id = id;
+
+      const box = document.createElement('input');
+      box.type = 'checkbox';
+
+      const span = document.createElement('span');
+      span.className = 'text';
+      span.textContent = item.text;
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.className = 'sub';
+        sub.textContent = item.sub;
+        span.appendChild(sub);
+      }
+
+      if (localStorage.getItem(id) === 'true') {
+        box.checked = true;
+        span.classList.add('done');
+      }
+      box.addEventListener('change', () => {
+        setChecked(id, box.checked);
+        span.classList.toggle('done', box.checked);
+        updateProgress();
+      });
+      span.addEventListener('click', () => {
+        box.checked = !box.checked;
+        box.dispatchEvent(new Event('change'));
+      });
+
+      const link = document.createElement('a');
+      link.className = 'link';
+      link.href = item.link;
+      link.target = '_blank';
+      link.textContent = '🔗';
+
+      row.appendChild(box);
+      row.appendChild(span);
+      row.appendChild(link);
+      listEl.appendChild(row);
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('.row input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      setProgress('other-shows-2013-2015', {checked, total});
+    }
+    updateProgress();
+    syncChecklistFromCloud(updateProgress);
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
