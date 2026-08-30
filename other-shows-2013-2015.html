@@ -81,12 +81,15 @@
 
   <script>
        const items = [
-      { text: "Широко открытая студия", link: "https://t.me/violent_arhive/3247" },
+          { text: "Широко открытая студия", links: [
+        { label: "18 серия", link: "https://t.me/violent_arhive/3247" },
+        { label: "32 серия", link: "https://t.me/violent_arhive/3248" }
+      ]},
       { navlink: true, text: "Kiss The Radio / Sukira", sub: "бантаны на радио", link: "other-shows-kiss-the-radio.html", statKey: "other-shows-kiss-the-radio" },
       { navlink: true, text: "After School Club", sub: "шоу, где фанаты задают вопросы", link: "other-shows-after-school-club.html", statKey: "other-shows-after-school-club" },
       { text: "JJANG", link: "https://t.me/violent_arhive/3244" },
       { text: "Код Битлз 3D", link: "https://t.me/violent_arhive/3243" },
-      { text: "Давайте поговорим начистоту", hearts: "💙", link: "https://t.me/violent_arhive/3242" },
+      { text: "Поговорим начистоту", hearts: "💙", link: "https://t.me/violent_arhive/3242" },
       { text: "Глобальный запрос: Песня", link: "https://t.me/violent_arhive/3241" },
       { text: "Hope Delivery", link: "https://t.me/violent_arhive/4881" },
       { navlink: true, text: "Шоу Weekly Idol", link: "other-shows-weekly-idol.html", statKey: "other-shows-weekly-idol" },
@@ -170,7 +173,7 @@
         return;
       }
 
-      const id = 'video-' + item.link.split('/').pop();
+           const id = 'video-' + (item.link ? item.link.split('/').pop() : item.links[0].link.split('/').pop());
       const row = document.createElement('div');
       row.className = 'row';
       row.dataset.id = id;
@@ -183,7 +186,7 @@
       span.textContent = item.text;
       if (item.sub) {
         const sub = document.createElement('span');
-        sub.className = 'sub';
+        sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px;';
         sub.textContent = item.sub;
         span.appendChild(sub);
       }
@@ -202,20 +205,36 @@
         box.dispatchEvent(new Event('change'));
       });
 
-            const hearts = document.createElement('span');
+      const hearts = document.createElement('span');
       hearts.style.cssText = 'font-size:13px; flex-shrink:0;';
       hearts.textContent = item.hearts || '';
-
-      const link = document.createElement('a');
-      link.className = 'link';
-      link.href = item.link;
-      link.target = '_blank';
-      link.textContent = '🔗';
 
       row.appendChild(box);
       row.appendChild(span);
       row.appendChild(hearts);
-      row.appendChild(link);
+
+      if (item.links) {
+        item.links.forEach((l) => {
+          const label = document.createElement('span');
+          label.style.cssText = 'font-size:10px; color:#999; margin-left:4px;';
+          label.textContent = l.label;
+          const link = document.createElement('a');
+          link.className = 'link';
+          link.href = l.link;
+          link.target = '_blank';
+          link.textContent = '🔗';
+          row.appendChild(label);
+          row.appendChild(link);
+        });
+      } else {
+        const link = document.createElement('a');
+        link.className = 'link';
+        link.href = item.link;
+        link.target = '_blank';
+        link.textContent = '🔗';
+        row.appendChild(link);
+      }
+
       listEl.appendChild(row);
     });
 
