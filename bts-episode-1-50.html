@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="sync.js"></script>
   <title>BTS Episode 1-50</title>
   <style>
@@ -38,24 +38,25 @@
       font-size: 14px;
     }
     input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
-        .text { flex: 1; cursor: pointer; color: #333; }
+    .text { flex: 1; cursor: pointer; color: #333; }
     .text.done { color: #bbb; text-decoration: line-through; }
     .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
     .footer-link {
       display: block;
       text-align: center;
       font-size: 13px;
-      color: #9b7fd4;
+      color: #000;
       text-decoration: none;
-      margin-top: 8px;
-      padding-top: 8px;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid #eee;
     }
   </style>
 </head>
 <body>
   <div class="app">
     <a class="back" href="bts-episode.html">← Назад</a>
-    <h1>📽 BTS EPISODE: 1-50 серия 📽</h1>
+    <h1>📽 BTS EPISODE: 1-50 эпизод 📽</h1>
     <div id="list"></div>
     <a class="footer-link" href="bts-episode.html">BTS Episode ⬅️</a>
     <a class="footer-link" href="https://t.me/violent_arhive/2034" target="_blank">Пост со всеми эпизодами ⬅️</a>
@@ -63,59 +64,59 @@
 
   <script>
     const items = [
-      { text: "1 серия «2 COOL 4 SKOOL съемки дебютного клипа»", link: "https://t.me/violent_arhive/2042" },
-      { text: "2 серия «2 COOL 4 SKOOL дебютная фотосессия»", link: "https://t.me/violent_arhive/2043" },
-      { text: "3 серия «BTS дебютный день 130613»", link: "https://t.me/violent_arhive/2044" },
-      { text: "4 серия «Like (Showcase sketch)»", link: "https://t.me/violent_arhive/2045" },
-      { text: "5 серия «\"N.O\" съемка клипа»", link: "https://t.me/violent_arhive/2046" },
-      { text: "6 серия «BTS O! RUL8,2? фотосессия»", link: "https://t.me/violent_arhive/2047" },
-      { text: "7 серия «Сюрприз на день рождения для Чонгука!»", link: "https://t.me/violent_arhive/2048" },
-      { text: "8 серия «Письмо BTS к АРМИ на вечеринке по случаю дня рождения»", link: "https://t.me/violent_arhive/2049" },
-      { text: "9 серия «Be the BEST NEW ARTIST 2013 in Melon Music Awards»", link: "https://t.me/violent_arhive/2050" },
-      { text: "10 серия «\"Boy In Luv\" съемка клипа»", link: "https://t.me/violent_arhive/2051" },
-      { text: "11 серия «\"Skool Luv Affair\" фотосессия»", link: "https://t.me/violent_arhive/2052" },
-      { text: "12 серия «140218 It's a j-hope-ful day!»", link: "https://t.me/violent_arhive/2053" },
-      { text: "13 серия «Чонгук пошел в старшую школу с BTS!»", link: "https://t.me/violent_arhive/2054" },
-      { text: "14 серия «Мероприятие в поддержку дня рождения SUGA»", link: "https://t.me/violent_arhive/2055" },
-      { text: "15 серия «\"Just one day\" съемка клипа»", link: "https://t.me/violent_arhive/2056" },
-      { text: "16 серия «BTS 1st anniversary - so 4 more»", link: "https://t.me/violent_arhive/2057" },
-      { text: "17 серия «2014 FESTA 1-я вечеринка по случаю дня рождения BTS (Jin chef of BTS)»", link: "https://t.me/violent_arhive/1804" },
-      { text: "18 серия «\"DARK&WILD\" фотосессия»", link: "https://t.me/violent_arhive/2058" },
-      { text: "19 серия «\"Danger\" съемка клипа»", link: "https://t.me/violent_arhive/2059" },
-      { text: "20 серия «Лето BTS за границей в 2014 году»", link: "https://t.me/violent_arhive/2060" },
-      { text: "21 серия «\"War of Hormone\" съемка клипа & фотосессия»", link: "https://t.me/violent_arhive/2061" },
-      { text: "22 серия «SUGA подарок на день рождения для фанатов»", link: "https://t.me/violent_arhive/2062" },
-      { text: "23 серия «Съемки клипа RM «Do You» (BTS поддержали RM)»", link: "https://t.me/violent_arhive/2063" },
-      { text: "24 серия «Rap Monster with Warren G (1/3)»", link: "https://t.me/violent_arhive/2064" },
-      { text: "25 серия «Rap Monster with Warren G (2/3)»", link: "https://t.me/violent_arhive/2065" },
-      { text: "26 серия «Rap Monster with Warren G (3/3)»", link: "https://t.me/violent_arhive/2066" },
-      { text: "27 серия «\"The most beautiful moment in life pt.1\" фотосессия»", link: "https://t.me/violent_arhive/2067" },
-      { text: "28 серия «\"I NEED U\" съемка клипа»", link: "https://t.me/violent_arhive/2068" },
-      { text: "29 серия «Концептуальное фото и клип на песню \"Dope\"»", link: "https://t.me/violent_arhive/2069" },
-      { text: "30 серия «\"Фантастическая четверка\" с ARMY»", link: "https://t.me/violent_arhive/2070" },
-      { text: "31 серия «Вечеринка в честь Хэллоуина с BTS»", link: "https://t.me/violent_arhive/2071" },
-      { text: "32 серия «\"The most beautiful moment in life pt.2\" фотосессия»", link: "https://t.me/violent_arhive/2072" },
-      { text: "33 серия «\"RUN\" съемка клипа»", link: "https://t.me/violent_arhive/2073" },
-      { text: "34 серия «Рекламная фотосессия PUMA»", link: "https://t.me/violent_arhive/2074" },
-      { text: "35 серия «#BTS1000days с A.R.M.Y»", link: "https://t.me/violent_arhive/2075" },
-      { text: "36 серия «\"Young Forever\" фотосессия»", link: "https://t.me/violent_arhive/2076" },
-      { text: "37 серия «\"FIRE\" съемка клипа»", link: "https://t.me/violent_arhive/2077" },
-      { text: "38 серия «\"Fire\" 1st win 160512 M countdown»", link: "https://t.me/violent_arhive/2078" },
-      { text: "39 серия «\"Epilogue:Young Forever'\" съемка клипа»", link: "https://t.me/violent_arhive/2079" },
-      { text: "40 серия «2016 FESTA Настоящая семейная фотосессия»", link: "https://t.me/violent_arhive/1822" },
-      { text: "41 серия «\"Save Me\" съемка клипа»", link: "https://t.me/violent_arhive/2080" },
-      { text: "42 серия «\"Blood Sweat & Tears\" победа»", link: "https://t.me/violent_arhive/2081" },
-      { text: "43 серия «\"Blood Sweat & Tears\" съемка клипа»", link: "https://t.me/violent_arhive/2082" },
-      { text: "44 серия «BTS 2016 MMA»", link: "https://t.me/violent_arhive/2083" },
-      { text: "45 серия «\"WINGS\" фотосессия»", link: "https://t.me/violent_arhive/2084" },
-      { text: "46 серия «\"Spring Day\" съемка клипа»", link: "https://t.me/violent_arhive/2085" },
-      { text: "47 серия «\"YOU NEVER WALK ALONE\" фотосессия»", link: "https://t.me/violent_arhive/2086" },
-      { text: "48 серия «\"Not Today\" съемка клипа»", link: "https://t.me/violent_arhive/2087" },
-      { text: "49 серия «Это Хансон из «Хваран» (он же Ви из BTS)»", link: "https://t.me/violent_arhive/2088" },
-      { text: "50 серия «Billboard Music Awards 2017»", link: "https://t.me/violent_arhive/2089" }
+      { text: "1 эпизод", sub: "«2 COOL 4 SKOOL съемки дебютного клипа»", link: "https://t.me/violent_arhive/2042" },
+      { text: "2 эпизод", sub: "«2 COOL 4 SKOOL дебютная фотосессия»", link: "https://t.me/violent_arhive/2043" },
+      { text: "3 эпизод", sub: "«BTS дебютный день 130613»", link: "https://t.me/violent_arhive/2044" },
+      { text: "4 эпизод", sub: "«Like (Showcase sketch)»", link: "https://t.me/violent_arhive/2045" },
+      { text: "5 эпизод", sub: "«\"N.O\" съемка клипа»", link: "https://t.me/violent_arhive/2046" },
+      { text: "6 эпизод", sub: "«BTS O! RUL8,2? фотосессия»", link: "https://t.me/violent_arhive/2047" },
+      { text: "7 эпизод", sub: "«Сюрприз на день рождения для Чонгука!»", link: "https://t.me/violent_arhive/2048" },
+      { text: "8 эпизод", sub: "«Письмо BTS к АРМИ на вечеринке по случаю дня рождения»", link: "https://t.me/violent_arhive/2049" },
+      { text: "9 эпизод", sub: "«Be the BEST NEW ARTIST 2013 in Melon Music Awards»", link: "https://t.me/violent_arhive/2050" },
+      { text: "10 эпизод", sub: "«\"Boy In Luv\" съемка клипа»", link: "https://t.me/violent_arhive/2051" },
+      { text: "11 эпизод", sub: "«\"Skool Luv Affair\" фотосессия»", link: "https://t.me/violent_arhive/2052" },
+      { text: "12 эпизод", sub: "«140218 It's a j-hope-ful day!»", link: "https://t.me/violent_arhive/2053" },
+      { text: "13 эпизод", sub: "«Чонгук пошел в старшую школу с BTS!»", link: "https://t.me/violent_arhive/2054" },
+      { text: "14 эпизод", sub: "«Мероприятие в поддержку дня рождения SUGA»", link: "https://t.me/violent_arhive/2055" },
+      { text: "15 эпизод", sub: "«\"Just one day\" съемка клипа»", link: "https://t.me/violent_arhive/2056" },
+      { text: "16 эпизод", sub: "«BTS 1st anniversary - so 4 more»", link: "https://t.me/violent_arhive/2057" },
+      { text: "17 эпизод", sub: "«2014 FESTA 1-я вечеринка по случаю дня рождения BTS (Jin chef of BTS)»", link: "https://t.me/violent_arhive/1804" },
+      { text: "18 эпизод", sub: "«\"DARK&WILD\" фотосессия»", link: "https://t.me/violent_arhive/2058" },
+      { text: "19 эпизод", sub: "«\"Danger\" съемка клипа»", link: "https://t.me/violent_arhive/2059" },
+      { text: "20 эпизод", sub: "«Лето BTS за границей в 2014 году»", link: "https://t.me/violent_arhive/2060" },
+      { text: "21 эпизод", sub: "«\"War of Hormone\" съемка клипа & фотосессия»", link: "https://t.me/violent_arhive/2061" },
+      { text: "22 эпизод", sub: "«SUGA подарок на день рождения для фанатов»", link: "https://t.me/violent_arhive/2062" },
+      { text: "23 эпизод", sub: "«Съемки клипа RM «Do You» (BTS поддержали RM)»", link: "https://t.me/violent_arhive/2063" },
+      { text: "24 эпизод", sub: "«Rap Monster with Warren G (1/3)»", link: "https://t.me/violent_arhive/2064" },
+      { text: "25 эпизод", sub: "«Rap Monster with Warren G (2/3)»", link: "https://t.me/violent_arhive/2065" },
+      { text: "26 эпизод", sub: "«Rap Monster with Warren G (3/3)»", link: "https://t.me/violent_arhive/2066" },
+      { text: "27 эпизод", sub: "«\"The most beautiful moment in life pt.1\" фотосессия»", link: "https://t.me/violent_arhive/2067" },
+      { text: "28 эпизод", sub: "«\"I NEED U\" съемка клипа»", link: "https://t.me/violent_arhive/2068" },
+      { text: "29 эпизод", sub: "«Концептуальное фото и клип на песню \"Dope\"»", link: "https://t.me/violent_arhive/2069" },
+      { text: "30 эпизод", sub: "«\"Фантастическая четверка\" с ARMY»", link: "https://t.me/violent_arhive/2070" },
+      { text: "31 эпизод", sub: "«Вечеринка в честь Хэллоуина с BTS»", link: "https://t.me/violent_arhive/2071" },
+      { text: "32 эпизод", sub: "«\"The most beautiful moment in life pt.2\" фотосессия»", link: "https://t.me/violent_arhive/2072" },
+      { text: "33 эпизод", sub: "«\"RUN\" съемка клипа»", link: "https://t.me/violent_arhive/2073" },
+      { text: "34 эпизод", sub: "«Рекламная фотосессия PUMA»", link: "https://t.me/violent_arhive/2074" },
+      { text: "35 эпизод", sub: "«#BTS1000days с A.R.M.Y»", link: "https://t.me/violent_arhive/2075" },
+      { text: "36 эпизод", sub: "«\"Young Forever\" фотосессия»", link: "https://t.me/violent_arhive/2076" },
+      { text: "37 эпизод", sub: "«\"FIRE\" съемка клипа»", link: "https://t.me/violent_arhive/2077" },
+      { text: "38 эпизод", sub: "«\"Fire\" 1st win 160512 M countdown»", link: "https://t.me/violent_arhive/2078" },
+      { text: "39 эпизод", sub: "«\"Epilogue:Young Forever'\" съемка клипа»", link: "https://t.me/violent_arhive/2079" },
+      { text: "40 эпизод", sub: "«2016 FESTA Настоящая семейная фотосессия»", link: "https://t.me/violent_arhive/1822" },
+      { text: "41 эпизод", sub: "«\"Save Me\" съемка клипа»", link: "https://t.me/violent_arhive/2080" },
+      { text: "42 эпизод", sub: "«\"Blood Sweat & Tears\" победа»", link: "https://t.me/violent_arhive/2081" },
+      { text: "43 эпизод", sub: "«\"Blood Sweat & Tears\" съемка клипа»", link: "https://t.me/violent_arhive/2082" },
+      { text: "44 эпизод", sub: "«BTS 2016 MMA»", link: "https://t.me/violent_arhive/2083" },
+      { text: "45 эпизод", sub: "«\"WINGS\" фотосессия»", link: "https://t.me/violent_arhive/2084" },
+      { text: "46 эпизод", sub: "«\"Spring Day\" съемка клипа»", link: "https://t.me/violent_arhive/2085" },
+      { text: "47 эпизод", sub: "«\"YOU NEVER WALK ALONE\" фотосессия»", link: "https://t.me/violent_arhive/2086" },
+      { text: "48 эпизод", sub: "«\"Not Today\" съемка клипа»", link: "https://t.me/violent_arhive/2087" },
+      { text: "49 эпизод", sub: "«Это Хансон из «Хваран» (он же Ви из BTS)»", link: "https://t.me/violent_arhive/2088" },
+      { text: "50 эпизод", sub: "«Billboard Music Awards 2017»", link: "https://t.me/violent_arhive/2089" }
     ];
 
-       const listEl = document.getElementById('list');
+    const listEl = document.getElementById('list');
     items.forEach((item) => {
       const id = 'video-' + item.link.split('/').pop();
       const row = document.createElement('div');
@@ -128,6 +129,12 @@
       const span = document.createElement('span');
       span.className = 'text';
       span.textContent = item.text;
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+        sub.textContent = item.sub;
+        span.appendChild(sub);
+      }
 
       if (localStorage.getItem(id) === 'true') {
         box.checked = true;
