@@ -81,10 +81,8 @@
 
   <script>
        const items = [
-          { text: "Широко открытая студия", links: [
-        { label: "18 серия", link: "https://t.me/violent_arhive/3247" },
-        { label: "32 серия", link: "https://t.me/violent_arhive/3248" }
-      ]},
+              { text: "Широко открытая студия", sub: "18 серия", link: "https://t.me/violent_arhive/3247" },
+      { text: "Широко открытая студия", sub: "32 серия", link: "https://t.me/violent_arhive/3248" },
       { navlink: true, text: "Kiss The Radio / Sukira", sub: "бантаны на радио", link: "other-shows-kiss-the-radio.html", statKey: "other-shows-kiss-the-radio" },
       { navlink: true, text: "After School Club", sub: "шоу, где фанаты задают вопросы", link: "other-shows-after-school-club.html", statKey: "other-shows-after-school-club" },
       { text: "JJANG", link: "https://t.me/violent_arhive/3244" },
@@ -173,7 +171,7 @@
         return;
       }
 
-           const id = 'video-' + (item.link ? item.link.split('/').pop() : item.links[0].link.split('/').pop());
+              const id = 'video-' + item.link.split('/').pop();
       const row = document.createElement('div');
       row.className = 'row';
       row.dataset.id = id;
@@ -209,32 +207,16 @@
       hearts.style.cssText = 'font-size:13px; flex-shrink:0;';
       hearts.textContent = item.hearts || '';
 
+      const link = document.createElement('a');
+      link.className = 'link';
+      link.href = item.link;
+      link.target = '_blank';
+      link.textContent = '🔗';
+
       row.appendChild(box);
       row.appendChild(span);
       row.appendChild(hearts);
-
-      if (item.links) {
-        item.links.forEach((l) => {
-          const label = document.createElement('span');
-          label.style.cssText = 'font-size:10px; color:#999; margin-left:4px;';
-          label.textContent = l.label;
-          const link = document.createElement('a');
-          link.className = 'link';
-          link.href = l.link;
-          link.target = '_blank';
-          link.textContent = '🔗';
-          row.appendChild(label);
-          row.appendChild(link);
-        });
-      } else {
-        const link = document.createElement('a');
-        link.className = 'link';
-        link.href = item.link;
-        link.target = '_blank';
-        link.textContent = '🔗';
-        row.appendChild(link);
-      }
-
+      row.appendChild(link);
       listEl.appendChild(row);
     });
 
