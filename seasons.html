@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js"></script>
+  <title>Season's Greeting / Summer Winter Package</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 10px; }
+    .section-title { font-size: 16px; font-weight: 700; margin: 16px 0 2px; }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .text.done { color: #bbb; text-decoration: line-through; }
+    .sub { display: block; font-size: 11px; color: #999; margin-top: 2px; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+    .footer-link {
+      display: block;
+      text-align: center;
+      font-size: 13px;
+      color: #000;
+      text-decoration: none;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid #eee;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="index.html">← Назад</a>
+    <h1>📆 BTS SEASON'S GREETING 📆</h1>
+    <p class="intro">Специальное издание группы BTS со съёмок Season Greetings</p>
+    <div id="list1"></div>
+
+    <p class="section-title">BTS SUMMER/WINTER PACKAGE ☃️</p>
+    <p class="intro">Проведите летние или зимние каникулы весело вместе с BTS)</p>
+    <div id="list2"></div>
+
+    <a class="footer-link" href="index.html">На главную ⬅️</a>
+  </div>
+
+  <script>
+    const list1 = [
+      { text: "Season's Greeting 2015 год", link: "https://t.me/violent_arhive/1477" },
+      { text: "Season's Greeting 2016 год", link: "https://t.me/violent_arhive/1479" },
+      { text: "Season's Greeting 2017 год", link: "https://t.me/violent_arhive/1478" },
+      { text: "Season's Greeting 2018 год", link: "https://t.me/violent_arhive/1480" },
+      { text: "Season's Greeting 2019 год", link: "https://t.me/violent_arhive/1481" },
+      { text: "Season's Greeting 2020 год", link: "https://t.me/violent_arhive/1482" },
+      { text: "Season's Greeting 2021 год", link: "https://t.me/violent_arhive/1484" },
+      { text: "Season's Greeting 2022 год", link: "https://t.me/violent_arhive/2143" }
+    ];
+
+    const list2 = [
+      { text: "☀️ Summer Package in Kota Kinabalu", sub: "2015 год", link: "https://t.me/violent_arhive/1494" },
+      { text: "☀️ Summer Package in Dubai", sub: "2016 год", link: "https://t.me/violent_arhive/1495" },
+      { text: "☀️ Summer Package in Palawan", sub: "2017 год", link: "https://t.me/violent_arhive/1496" },
+      { text: "☀️ Summer Package in Saipan", sub: "2018 год", link: "https://t.me/violent_arhive/1499" },
+      { text: "☀️ Summer Package in Korea", sub: "2019 год", link: "https://t.me/violent_arhive/1497" },
+      { text: "❄️ Winter Package In Helsinki", sub: "2020 год", link: "https://t.me/violent_arhive/1492" },
+      { text: "❄️ Winter Package In Gangwon", sub: "2021 год", link: "https://t.me/violent_arhive/1491" }
+    ];
+
+    function renderList(containerId, items) {
+      const listEl = document.getElementById(containerId);
+      items.forEach((item) => {
+        const id = 'video-' + item.link.split('/').pop();
+        const row = document.createElement('div');
+        row.className = 'row';
+        row.dataset.id = id;
+
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+
+        const span = document.createElement('span');
+        span.className = 'text';
+        span.textContent = item.text;
+        if (item.sub) {
+          const sub = document.createElement('span');
+          sub.className = 'sub';
+          sub.textContent = item.sub;
+          span.appendChild(sub);
+        }
+
+        if (localStorage.getItem(id) === 'true') {
+          box.checked = true;
+          span.classList.add('done');
+        }
+        box.addEventListener('change', () => {
+          setChecked(id, box.checked);
+          span.classList.toggle('done', box.checked);
+          updateProgress();
+        });
+        span.addEventListener('click', () => {
+          box.checked = !box.checked;
+          box.dispatchEvent(new Event('change'));
+        });
+
+        const link = document.createElement('a');
+        link.className = 'link';
+        link.href = item.link;
+        link.target = '_blank';
+        link.textContent = '🔗';
+
+        row.appendChild(box);
+        row.appendChild(span);
+        row.appendChild(link);
+        listEl.appendChild(row);
+      });
+    }
+
+    renderList('list1', list1);
+    renderList('list2', list2);
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      setProgress('seasons', {checked, total});
+    }
+    updateProgress();
+    syncChecklistFromCloud(updateProgress);
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
