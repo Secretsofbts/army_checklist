@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js"></script>
+  <title>Другие шоу с BTS: 2026</title>
+  <style>
+    body {
+      background: #f2f0f7;
+      font-family: Arial, sans-serif;
+      display: flex;
+      justify-content: center;
+      padding: 20px;
+    }
+    .app {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      width: 340px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .back {
+      color: #888;
+      text-decoration: none;
+      font-size: 14px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+    h1 { font-size: 18px; margin: 0 0 16px; }
+    .row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 4px;
+      border-bottom: 1px solid #f0f0f0;
+      font-size: 14px;
+    }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .text.done { color: #bbb; text-decoration: line-through; }
+    .sub { display: block; font-size: 11px; color: #999; margin-top: 2px; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+    .navlink {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f7f7fa;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      text-decoration: none;
+    }
+    .navlink input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; margin-left: -6px; }
+    .navlink-label { flex: 1; }
+    .navlink-label .sub { font-weight: 400; }
+    .navlink-label.done { color: #bbb; text-decoration: line-through; }
+    .outro { font-size: 13px; color: #555; margin: 16px 0 0; text-align: center; }
+    .footer-link {
+      display: block;
+      text-align: center;
+      font-size: 13px;
+      color: #000;
+      text-decoration: none;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid #eee;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="other-shows.html">← Назад</a>
+    <h1>📺 ШОУ С BTS: 2026 год 📺</h1>
+    <div id="list"></div>
+    <p class="outro">Ждём новые шоу 😌❤️</p>
+    <a class="footer-link" href="other-shows.html">Другие шоу с BTS за все года ⬅️</a>
+  </div>
+
+  <script>
+    const items = [
+      { navlink: true, text: "В гостях у Киана84", sub: "💕", link: "other-shows-kian-guesthouse.html", statKey: "other-shows-kian-guesthouse" },
+      { text: "💛 Салон красоты «Рандеву»", link: "https://t.me/violent_arhive/5400" },
+      { text: "🤍 Шоу \"FIND KANY\"", link: "https://t.me/violent_arhive/5404" },
+      { text: "🖤💙 EPIKASE", link: "https://t.me/violent_arhive/5456" },
+      { navlink: true, text: "C Джимми Фэллоном", sub: "BTS на \"The Tonight Show\"", link: "other-shows-jimmy-fallon.html", statKey: "other-shows-jimmy-fallon" },
+      { text: "💛💚💕 «Now Serving» от Vogue", link: "https://t.me/violent_arhive/5410" },
+      { text: "💚💙 BDNS", link: "https://t.me/violent_arhive/5463" },
+      { text: "💚 Фея Джэхен", link: "https://t.me/violent_arhive/5462" },
+      { text: "💜💛 Шоу Чу Сонхуна", link: "https://t.me/violent_arhive/5478" },
+      { text: "💙🖤💜🤍 Корейский для начинающих: учим (почти) матерные слова в гостях у VOGUE", link: "https://t.me/violent_arhive/5453" },
+      { text: "Hot Ones 🔥", link: "https://t.me/violent_arhive/5566" },
+      { navlink: true, text: "Интервью для Rolling Stone", link: "other-shows-rolling-stone.html", statKey: "other-shows-rolling-stone" },
+      { text: "💙 Подкаст Fashion Neurosis", link: "https://t.me/violent_arhive/5563" },
+      { text: "Very British Day Out", link: "https://t.me/violent_arhive/5571" }
+    ];
+
+    const listEl = document.getElementById('list');
+
+    function applyNavBadge(key) {
+      var checkbox = document.getElementById('checkbox-' + key);
+      var label = document.getElementById('label-' + key);
+      var raw = localStorage.getItem('progress:' + key);
+      if (!raw) return;
+      var data = JSON.parse(raw);
+      if (data.total > 0 && data.checked === data.total) {
+        if (checkbox) {
+          checkbox.checked = true;
+          checkbox.style.display = '';
+        }
+        if (label) label.classList.add('done');
+      }
+    }
+
+    items.forEach((item) => {
+      if (item.navlink) {
+        const a = document.createElement('a');
+        a.className = 'navlink';
+        a.href = item.link;
+
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+        box.style.pointerEvents = 'none';
+        box.id = 'checkbox-' + item.statKey;
+        box.style.display = 'none';
+        a.appendChild(box);
+
+        const label = document.createElement('span');
+        label.className = 'navlink-label';
+        label.id = 'label-' + item.statKey;
+        label.textContent = item.text;
+        if (item.sub) {
+          const sub = document.createElement('span');
+          sub.className = 'sub';
+          sub.textContent = item.sub;
+          label.appendChild(sub);
+        }
+        a.appendChild(label);
+        listEl.appendChild(a);
+        applyNavBadge(item.statKey);
+        return;
+      }
+
+      const id = 'video-' + item.link.split('/').pop();
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.dataset.id = id;
+
+      const box = document.createElement('input');
+      box.type = 'checkbox';
+
+      const span = document.createElement('span');
+      span.className = 'text';
+      span.textContent = item.text;
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.className = 'sub';
+        sub.textContent = item.sub;
+        span.appendChild(sub);
+      }
+
+      if (localStorage.getItem(id) === 'true') {
+        box.checked = true;
+        span.classList.add('done');
+      }
+      box.addEventListener('change', () => {
+        setChecked(id, box.checked);
+        span.classList.toggle('done', box.checked);
+        updateProgress();
+      });
+      span.addEventListener('click', () => {
+        box.checked = !box.checked;
+        box.dispatchEvent(new Event('change'));
+      });
+
+      const link = document.createElement('a');
+      link.className = 'link';
+      link.href = item.link;
+      link.target = '_blank';
+      link.textContent = '🔗';
+
+      row.appendChild(box);
+      row.appendChild(span);
+      row.appendChild(link);
+      listEl.appendChild(row);
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('.row input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      setProgress('other-shows-2026', {checked, total});
+    }
+    updateProgress();
+    syncChecklistFromCloud(updateProgress);
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
