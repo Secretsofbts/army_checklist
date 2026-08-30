@@ -63,14 +63,14 @@
   </div>
 
   <script>
-    const items = [
-      { text: "Suga/Namjoon от 28.07.2013", link: "https://t.me/violent_arhive/1246" },
-      { text: "BTS от 01.03.2014", link: "https://t.me/violent_arhive/1243" },
-      { text: "Jin/J-Hope от 03.04.2014", link: "https://t.me/violent_arhive/1247" },
-      { text: "BTS от 30.08.2014", link: "https://t.me/violent_arhive/1249" },
-      { text: "BTS от 05.05.2015", link: "https://t.me/violent_arhive/1245" },
-      { text: "BTS от 02.07.2015", link: "https://t.me/violent_arhive/1244" },
-      { text: "Jimin от 21.07.2022", link: "https://t.me/violent_arhive/2876" }
+       const items = [
+      { text: "от 28.07.2013", hearts: "🖤💙", link: "https://t.me/violent_arhive/1246" },
+      { text: "от 01.03.2014", hearts: "❤️", link: "https://t.me/violent_arhive/1243" },
+      { text: "от 03.04.2014", hearts: "💕🤍", link: "https://t.me/violent_arhive/1247" },
+      { text: "от 30.08.2014", hearts: "❤️", link: "https://t.me/violent_arhive/1249" },
+      { text: "от 05.05.2015", hearts: "❤️", link: "https://t.me/violent_arhive/1245" },
+      { text: "от 02.07.2015", hearts: "❤️", link: "https://t.me/violent_arhive/1244" },
+      { text: "от 21.07.2022", hearts: "💛", link: "https://t.me/violent_arhive/2876" }
     ];
 
     const listEl = document.getElementById('list');
@@ -83,7 +83,7 @@
       const box = document.createElement('input');
       box.type = 'checkbox';
 
-      const span = document.createElement('span');
+          const span = document.createElement('span');
       span.className = 'text';
       span.textContent = item.text;
 
@@ -101,6 +101,10 @@
         box.dispatchEvent(new Event('change'));
       });
 
+      const hearts = document.createElement('span');
+      hearts.style.cssText = 'font-size:13px; flex-shrink:0;';
+      hearts.textContent = item.hearts || '';
+
       const link = document.createElement('a');
       link.className = 'link';
       link.href = item.link;
@@ -109,6 +113,7 @@
 
       row.appendChild(box);
       row.appendChild(span);
+      row.appendChild(hearts);
       row.appendChild(link);
       listEl.appendChild(row);
     });
