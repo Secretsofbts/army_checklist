@@ -80,31 +80,31 @@
   </div>
 
   <script>
-    const items = [
+       const items = [
       { text: "Широко открытая студия", link: "https://t.me/violent_arhive/3247" },
       { navlink: true, text: "Kiss The Radio / Sukira", sub: "бантаны на радио", link: "other-shows-kiss-the-radio.html", statKey: "other-shows-kiss-the-radio" },
       { navlink: true, text: "After School Club", sub: "шоу, где фанаты задают вопросы", link: "other-shows-after-school-club.html", statKey: "other-shows-after-school-club" },
       { text: "JJANG", link: "https://t.me/violent_arhive/3244" },
       { text: "Код Битлз 3D", link: "https://t.me/violent_arhive/3243" },
-      { text: "Давайте поговорим начистоту", sub: "(в гостях был 💙 Намджун)", link: "https://t.me/violent_arhive/3242" },
+      { text: "Давайте поговорим начистоту", hearts: "💙", link: "https://t.me/violent_arhive/3242" },
       { text: "Глобальный запрос: Песня", link: "https://t.me/violent_arhive/3241" },
       { text: "Hope Delivery", link: "https://t.me/violent_arhive/4881" },
       { navlink: true, text: "Шоу Weekly Idol", link: "other-shows-weekly-idol.html", statKey: "other-shows-weekly-idol" },
       { navlink: true, text: "Idol Star Athletics Championships", sub: "спортивные игры айдолов", link: "other-shows-isac.html", statKey: "other-shows-isac" },
       { text: "GO! BTS!", link: "https://t.me/violent_arhive/3221" },
       { navlink: true, text: "BTS на YinYueTai - три дня в Китае", link: "other-shows-yinyuetai.html", statKey: "other-shows-yinyuetai" },
-      { text: "Best Ramyun", sub: "(в гостях был 🤍 Хосок)", link: "https://t.me/violent_arhive/3240" },
-      { text: "Idol's True Colors (13 серия)", link: "https://t.me/violent_arhive/2225" },
-      { text: "Idol's True Colors (47 серия)", link: "https://t.me/violent_arhive/111" },
+      { text: "Best Ramyun", hearts: "🤍", link: "https://t.me/violent_arhive/3240" },
+      { text: "Idol's True Colors", sub: "13 серия", link: "https://t.me/violent_arhive/2225" },
+      { text: "Idol's True Colors", sub: "47 серия", link: "https://t.me/violent_arhive/111" },
       { navlink: true, text: "Yaman TV", link: "other-shows-yaman-tv.html", statKey: "other-shows-yaman-tv" },
       { navlink: true, text: "BTS Lucky draw - Повезет или нет", sub: "маленькое шоу bts", link: "other-shows-lucky-draw.html", statKey: "other-shows-lucky-draw" },
-      { text: "My pet clinic (6 эпизод)", sub: "(в гостях 🤍 Хосок, 💛 Чимин и 💚 Тэхён)", link: "https://t.me/violent_arhive/1754" },
-      { text: "BTS Idol Show (2 серии)", link: "https://t.me/violent_arhive/2265" },
+      { text: "My pet clinic", sub: "6 эпизод", hearts: "🤍💛💚", link: "https://t.me/violent_arhive/1754" },
+      { text: "BTS Idol Show", sub: "2 серии", link: "https://t.me/violent_arhive/2265" },
       { navlink: true, text: "Running Man", link: "other-shows-running-man.html", statKey: "other-shows-running-man" },
       { navlink: true, text: "Ток-шоу \"Привет\"", link: "other-shows-hello-talkshow.html", statKey: "other-shows-hello-talkshow" },
       { text: "Музыкальные пародии", link: "https://t.me/violent_arhive/2260" },
       { navlink: true, text: "Радио-шоу Cultwo", link: "other-shows-cultwo.html", statKey: "other-shows-cultwo" },
-      { navlink: true, text: "Проблемные мужчины", sub: "шоу, в котором участвовал 💙 Намджун", link: "other-shows-problematic-men.html", statKey: "other-shows-problematic-men" }
+      { navlink: true, text: "Проблемные мужчины", hearts: "💙", link: "other-shows-problematic-men.html", statKey: "other-shows-problematic-men" }
     ];
 
     const listEl = document.getElementById('list');
@@ -151,7 +151,14 @@
           sub.textContent = item.sub;
           label.appendChild(sub);
         }
-        a.appendChild(label);
+              a.appendChild(label);
+
+        if (item.hearts) {
+          const hearts = document.createElement('span');
+          hearts.style.cssText = 'font-size:13px; flex-shrink:0;';
+          hearts.textContent = item.hearts;
+          a.appendChild(hearts);
+        }
 
         const badge = document.createElement('span');
         badge.id = 'badge-' + item.statKey;
@@ -195,6 +202,10 @@
         box.dispatchEvent(new Event('change'));
       });
 
+            const hearts = document.createElement('span');
+      hearts.style.cssText = 'font-size:13px; flex-shrink:0;';
+      hearts.textContent = item.hearts || '';
+
       const link = document.createElement('a');
       link.className = 'link';
       link.href = item.link;
@@ -203,6 +214,7 @@
 
       row.appendChild(box);
       row.appendChild(span);
+      row.appendChild(hearts);
       row.appendChild(link);
       listEl.appendChild(row);
     });
