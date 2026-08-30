@@ -109,23 +109,27 @@
 
     const listEl = document.getElementById('list');
 
-    function applyNavBadge(key) {
+      function applyNavBadge(key) {
       var checkbox = document.getElementById('checkbox-' + key);
       var label = document.getElementById('label-' + key);
+      var badge = document.getElementById('badge-' + key);
       var raw = localStorage.getItem('progress:' + key);
       if (!raw) return;
       var data = JSON.parse(raw);
-      if (data.total > 0 && data.checked === data.total) {
+      if (data.total === 0) return;
+      if (data.checked === data.total) {
         if (checkbox) {
           checkbox.checked = true;
           checkbox.style.display = '';
         }
         if (label) label.classList.add('done');
+      } else if (badge) {
+        badge.textContent = data.checked + '/' + data.total;
       }
     }
 
     items.forEach((item) => {
-      if (item.navlink) {
+          if (item.navlink) {
         const a = document.createElement('a');
         a.className = 'navlink';
         a.href = item.link;
@@ -148,6 +152,12 @@
           label.appendChild(sub);
         }
         a.appendChild(label);
+
+        const badge = document.createElement('span');
+        badge.id = 'badge-' + item.statKey;
+        badge.style.cssText = 'font-size:12px; color:#999; flex-shrink:0;';
+        a.appendChild(badge);
+
         listEl.appendChild(a);
         applyNavBadge(item.statKey);
         return;
