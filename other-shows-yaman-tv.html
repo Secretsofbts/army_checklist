@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="sync.js"></script>
-  <title>BTS на YinYueTai</title>
+  <title>Yaman TV</title>
   <style>
     body {
       background: #f2f0f7;
@@ -56,19 +56,18 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="other-shows-2013-2015.html">← Назад</a>
-    <h1>🇨🇳 BTS на YinYueTai - 3 дня в Китае 🇨🇳</h1>
-    <p class="intro">Год выпуска: 2014</p>
-    <p class="intro">Небольшой документальный фильм о путешествии в Поднебесной Империи. Что они делали? И как они сходили с ума, профессионально!</p>
+    <a class="back" href="other-shows.html">← Назад</a>
+    <h1>📺 Yaman TV 📺</h1>
+    <p class="intro">Год выпуска: 2015 🕑</p>
+    <p class="intro">Yaman TV - ТВ-шоу, где каждую неделю приглашаются различные гости, которые показывают свои таланты</p>
     <div id="list"></div>
     <a class="footer-link" href="other-shows-2013-2015.html">Другие шоу (2013 - 2015) ⬅️</a>
   </div>
 
   <script>
     const items = [
-      { text: "1 серия", link: "https://t.me/violent_arhive/2257" },
-      { text: "2 серия", link: "https://t.me/violent_arhive/2258" },
-      { text: "3 серия", link: "https://t.me/violent_arhive/2259" }
+      { text: "23 эпизод", link: "https://t.me/violent_arhive/1785" },
+      { text: "24 эпизод", link: "https://t.me/violent_arhive/1786" }
     ];
 
     const listEl = document.getElementById('list');
@@ -118,7 +117,7 @@
         total++;
         if (cb.checked) checked++;
       });
-      setProgress('other-shows-yinyuetai', {checked, total});
+      setProgress('other-shows-yaman-tv', {checked, total});
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);
