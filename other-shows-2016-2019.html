@@ -111,20 +111,24 @@
 
       const listEl = document.getElementById('list');
 
-      function applyNavBadge(key) {
-        var checkbox = document.getElementById('checkbox-' + key);
-        var label = document.getElementById('label-' + key);
-        var raw = localStorage.getItem('progress:' + key);
-        if (!raw) return;
-        var data = JSON.parse(raw);
-        if (data.total > 0 && data.checked === data.total) {
-          if (checkbox) {
-            checkbox.checked = true;
-            checkbox.style.display = '';
-          }
-          if (label) label.classList.add('done');
+          function applyNavBadge(key) {
+      var checkbox = document.getElementById('checkbox-' + key);
+      var label = document.getElementById('label-' + key);
+      var badge = document.getElementById('badge-' + key);
+      var raw = localStorage.getItem('progress:' + key);
+      if (!raw) return;
+      var data = JSON.parse(raw);
+      if (data.total === 0) return;
+      if (data.checked === data.total) {
+        if (checkbox) {
+          checkbox.checked = true;
+          checkbox.style.display = '';
         }
+        if (label) label.classList.add('done');
+      } else if (badge) {
+        badge.textContent = data.checked + '/' + data.total;
       }
+    }
 
       items.forEach((item) => {
         if (item.navlink) {
