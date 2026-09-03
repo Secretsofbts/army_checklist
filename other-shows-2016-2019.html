@@ -139,7 +139,7 @@
           box.style.display = 'none';
           a.appendChild(box);
 
-                  const label = document.createElement('span');
+               const label = document.createElement('span');
         label.className = 'navlink-label';
         label.id = 'label-' + item.statKey;
         label.textContent = item.text;
@@ -157,6 +157,11 @@
           hearts.textContent = item.hearts;
           a.appendChild(hearts);
         }
+
+        const badge = document.createElement('span');
+        badge.id = 'badge-' + item.statKey;
+        badge.style.cssText = 'font-size:12px; color:#999; flex-shrink:0;';
+        a.appendChild(badge);
 
         listEl.appendChild(a);
         applyNavBadge(item.statKey);
