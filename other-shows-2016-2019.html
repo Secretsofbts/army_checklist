@@ -251,9 +251,9 @@
       listEl.appendChild(row);
     });
 
-        const weightedSources = [
+           const weightedSources = [
       { ids: ["video-3231", "video-3232", "video-3233", "video-3234", "video-3235"] }, // Закон джунглей — 5
-      { id: "video-2237", weight: 1 }, // Star Show 360 — только Полный выпуск
+      { progressKey: "other-shows-star-show-360", weight: 1 }, // Star Show 360 — засчитывается 1, только когда ВСЕ 3 пункта на его странице отмечены
       { ids: ["video-896", "video-897", "video-898", "video-899", "video-900", "video-1022", "video-1023", "video-1024", "video-1026", "video-1025"] }, // Звёздный Броманс — 10
       { ids: ["video-3236", "video-3237", "video-3238"] }, // Star King — 3
       { ids: ["video-2249"] }, // Ток-шоу Привет — только 316 серия
@@ -262,7 +262,7 @@
       { ids: ["video-3224", "video-3225", "video-3226"] } // Cultwo — 62, 73, 107
     ];
 
-    function computeWeightedStats() {
+       function computeWeightedStats() {
       let checked = 0, total = 0;
       weightedSources.forEach((src) => {
         if (src.ids) {
@@ -273,6 +273,13 @@
         } else if (src.id && src.weight) {
           total += src.weight;
           if (localStorage.getItem(src.id) === 'true') checked += src.weight;
+        } else if (src.progressKey && src.weight) {
+          total += src.weight;
+          const raw = localStorage.getItem('progress:' + src.progressKey);
+          if (raw) {
+            const data = JSON.parse(raw);
+            if (data.total > 0 && data.checked === data.total) checked += src.weight;
+          }
         }
       });
       return { checked, total };
