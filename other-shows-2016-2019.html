@@ -140,17 +140,25 @@
           box.style.display = 'none';
           a.appendChild(box);
 
-          const label = document.createElement('span');
-          label.className = 'navlink-label';
-          label.id = 'label-' + item.statKey;
-          label.textContent = item.text;
-          if (item.sub) {
-            const sub = document.createElement('span');
-            sub.className = 'sub';
-            sub.textContent = item.sub;
-            label.appendChild(sub);
+                  const label = document.createElement('span');
+        label.className = 'navlink-label';
+        label.id = 'label-' + item.statKey;
+        label.textContent = item.text;
+        if (item.sub) {
+          const sub = document.createElement('span');
+          sub.className = 'sub';
+          sub.textContent = item.sub;
+          label.appendChild(sub);
         }
         a.appendChild(label);
+
+        if (item.hearts) {
+          const hearts = document.createElement('span');
+          hearts.style.cssText = 'font-size:13px; flex-shrink:0;';
+          hearts.textContent = item.hearts;
+          a.appendChild(hearts);
+        }
+
         listEl.appendChild(a);
         applyNavBadge(item.statKey);
         return;
