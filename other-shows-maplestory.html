@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js"></script>
+  <title>MapleStory X BTS</title>
+  <style>
+    body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
+    .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
+    h1 { font-size: 18px; margin: 0 0 16px; }
+    .navlink {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: #f7f7fa;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      text-decoration: none;
+    }
+    .navlink input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; margin-left: -6px; }
+    .navlink-label.done { color: #bbb; text-decoration: line-through; font-weight: 400; }
+    .footer-link { display: block; text-align: center; font-size: 13px; color: #000; text-decoration: none; margin-top: 16px; padding-top: 12px; border-top: 1px solid #eee; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="other-shows.html">← Назад</a>
+    <h1>🎮 MapleStory X BTS 🎮</h1>
+    <div id="list"></div>
+    <a class="footer-link" href="other-shows-2020-2022.html">Другие шоу (2020 - 2022) ⬅️</a>
+  </div>
+  <script>
+    const navItems = [
+      { text: "MapleStory X BTS", link: "other-shows-maplestory-bts.html", statKey: "other-shows-maplestory-bts" },
+      { text: "MapleStory X Jin", link: "other-shows-maplestory-jin.html", statKey: "other-shows-maplestory-jin" }
+    ];
+    const listEl = document.getElementById('list');
+    navItems.forEach((item) => {
+      const a = document.createElement('a');
+      a.className = 'navlink';
+      a.href = item.link;
+      const label = document.createElement('span');
+      label.className = 'navlink-label';
+      label.style.flex = '1';
+      label.textContent = item.text;
+      if (item.statKey) {
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+        box.style.pointerEvents = 'none';
+        box.id = 'checkbox-' + item.statKey;
+        box.style.display = 'none';
+        a.appendChild(box);
+      }
+      a.appendChild(label);
+      const badge = document.createElement('span');
+      badge.id = 'badge-' + item.statKey;
+      badge.style.cssText = 'font-size:12px; color:#999; flex-shrink:0;';
+      a.appendChild(badge);
+      listEl.appendChild(a);
+    });
+    function applyBadge(key, data) {
+      var el = document.getElementById('badge-' + key);
+      if (!el || !data || data.total === 0) { if (el) el.textContent = ''; return; }
+      if (data.checked === data.total) {
+        el.textContent = '';
+        var checkbox = document.getElementById('checkbox-' + key);
+        if (checkbox) { checkbox.checked = true; checkbox.style.display = ''; }
+        var label = el.closest('.navlink').querySelector('.navlink-label');
+        if (label) label.classList.add('done');
+      } else {
+        el.textContent = data.checked + '/' + data.total;
+      }
+    }
+    const navKeys = navItems.map(i => i.statKey);
+    function renderAllBadges() {
+      navKeys.forEach((key) => {
+        var raw = localStorage.getItem('progress:' + key);
+        applyBadge(key, raw ? JSON.parse(raw) : null);
+      });
+    }
+    renderAllBadges();
+    refreshLocalStorageFromCloud(renderAllBadges);
+    if (window.Telegram && window.Telegram.WebApp) { Telegram.WebApp.ready(); Telegram.WebApp.expand(); }
+  </script>
+</body>
+</html>
