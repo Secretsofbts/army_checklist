@@ -251,6 +251,33 @@
       listEl.appendChild(row);
     });
 
+        const weightedSources = [
+      { ids: ["video-3231", "video-3232", "video-3233", "video-3234", "video-3235"] }, // Закон джунглей — 5
+      { id: "video-2237", weight: 1 }, // Star Show 360 — только Полный выпуск
+      { ids: ["video-896", "video-897", "video-898", "video-899", "video-900", "video-1022", "video-1023", "video-1024", "video-1026", "video-1025"] }, // Звёздный Броманс — 10
+      { ids: ["video-3236", "video-3237", "video-3238"] }, // Star King — 3
+      { ids: ["video-2249"] }, // Ток-шоу Привет — только 316 серия
+      { ids: ["video-1753"] }, // Running Man — только 300 эпизод
+      { ids: ["video-2240", "video-2241"] }, // Позаботьтесь о холодильнике — 2
+      { ids: ["video-3224", "video-3225", "video-3226"] } // Cultwo — 62, 73, 107
+    ];
+
+    function computeWeightedStats() {
+      let checked = 0, total = 0;
+      weightedSources.forEach((src) => {
+        if (src.ids) {
+          src.ids.forEach((id) => {
+            total++;
+            if (localStorage.getItem(id) === 'true') checked++;
+          });
+        } else if (src.id && src.weight) {
+          total += src.weight;
+          if (localStorage.getItem(src.id) === 'true') checked += src.weight;
+        }
+      });
+      return { checked, total };
+    }
+
     function updateProgress() {
       const all = document.querySelectorAll('.row input[type="checkbox"]');
       let total = 0, checked = 0;
@@ -258,10 +285,33 @@
         total++;
         if (cb.checked) checked++;
       });
+      const weighted = computeWeightedStats();
+      total += weighted.total;
+      checked += weighted.checked;
       setProgress('other-shows-2016-2019', {checked, total});
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);
+
+    if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
+      fetch(`${FIREBASE_URL}/users/${ARMY_USER_ID}.json`)
+        .then(res => res.json())
+        .then(data => {
+          if (!data) return;
+          let changed = false;
+          weightedSources.forEach((src) => {
+            const ids = src.ids || [src.id];
+            ids.forEach((id) => {
+              if (data[id] !== undefined && data[id] !== (localStorage.getItem(id) === 'true')) {
+                localStorage.setItem(id, data[id]);
+                changed = true;
+              }
+            });
+          });
+          if (changed) updateProgress();
+        })
+        .catch(() => {});
+    }
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
