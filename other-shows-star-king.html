@@ -65,9 +65,9 @@
   </div>
 
   <script>
-    const items = [
-      { text: "Вырезанная сцена из 413 серии", hearts: "💚💙", link: "https://t.me/violent_arhive/3236" },
-      { text: "Вырезанная сцена из 433 серии", hearts: "💚🤍", link: "https://t.me/violent_arhive/3237" },
+        const items = [
+      { text: "413 серия", sub: "Вырезанная сцена", hearts: "💚💙", link: "https://t.me/violent_arhive/3236" },
+      { text: "433 серия", sub: "Вырезанная сцена", hearts: "💚🤍", link: "https://t.me/violent_arhive/3237" },
       { text: "447 серия", hearts: "💙💛🤍", link: "https://t.me/violent_arhive/3238" }
     ];
 
@@ -81,9 +81,15 @@
       const box = document.createElement('input');
       box.type = 'checkbox';
 
-      const span = document.createElement('span');
+           const span = document.createElement('span');
       span.className = 'text';
       span.textContent = item.text;
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+        sub.textContent = item.sub;
+        span.appendChild(sub);
+      }
 
       if (localStorage.getItem(id) === 'true') {
         box.checked = true;
