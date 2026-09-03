@@ -80,9 +80,9 @@
   </div>
 
   <script>
-    const items = [
+        const items = [
       { navlink: true, text: "MapleStory X BTS", sub: "сотрудничают с онлайн-игрой", link: "other-shows-maplestory.html", statKey: "other-shows-maplestory" },
-      { text: "You Quiz On The Block / Уличная викторина Ю (99 выпуск)", link: "https://t.me/violent_arhive/2221" },
+      { text: "You Quiz On The Block / Уличная викторина Ю", sub: "99 выпуск", link: "https://t.me/violent_arhive/2221" },
       { text: "100-минутное ток-шоу \"Let's BTS\"", link: "https://t.me/violent_arhive/718" },
       { navlink: true, text: "BTS на I-LAND", link: "other-shows-i-land.html", statKey: "other-shows-i-land" },
       { navlink: true, text: "Tokopedia x BTS", link: "other-shows-tokopedia.html", statKey: "other-shows-tokopedia" },
@@ -93,24 +93,23 @@
       { navlink: true, text: "Лаборатория MBTI", sub: "определение типа личности", link: "other-shows-mbti-lab.html", statKey: "other-shows-mbti-lab" },
       { navlink: true, text: "BTS Island: In the SEOM", sub: "разработка новой игры", link: "other-shows-in-the-seom.html", statKey: "other-shows-in-the-seom" },
       { navlink: true, text: "BTS X Cookie Run: Kingdom", sub: "коллаб с мобильной игрой", link: "other-shows-cookie-run.html", statKey: "other-shows-cookie-run" },
-      { navlink: true, text: "Running Man", sub: "кор. шоу, в котором участвовал 💙 Джун, 💕 Джин, 💚 Тэ и все BTS", link: "other-shows-running-man.html", statKey: "other-shows-running-man" },
+      { navlink: true, text: "Running Man", link: "other-shows-running-man.html", statKey: "other-shows-running-man" },
       { navlink: true, text: "WORKOUT with BTS", sub: "тренировки с BTS", link: "other-shows-workout.html", statKey: "other-shows-workout" },
       { navlink: true, text: "Kiss The Radio / Sukira", sub: "бантаны на радио", link: "other-shows-kiss-the-radio.html", statKey: "other-shows-kiss-the-radio" },
-      { text: "Crush x 🤍 J-Hope (1 эпизод)", link: "https://t.me/violent_arhive/3136" },
-      { text: "🤍 J-Hope на шоу IU \"The Palette\"", link: "https://t.me/violent_arhive/2900" },
+      { text: "Crush x J-Hope", hearts: "🤍", sub: "1 эпизод", link: "https://t.me/violent_arhive/3136" },
+      { text: "J-Hope на шоу IU \"The Palette\"", hearts: "🤍", link: "https://t.me/violent_arhive/2900" },
       { text: "BTS играют в \"Do You Know Me?\"", link: "https://t.me/violent_arhive/2796" },
-      { text: "Алкогольный дневник", sub: "(в гостях 💕 Джин)", link: "https://t.me/violent_arhive/3216" },
+      { text: "Алкогольный дневник", hearts: "💕", link: "https://t.me/violent_arhive/3216" },
       { navlink: true, text: "C Джимми Фэллоном", link: "other-shows-jimmy-fallon.html", statKey: "other-shows-jimmy-fallon" },
       { navlink: true, text: "С Джеймсом Корденом", link: "other-shows-james-corden.html", statKey: "other-shows-james-corden" },
       { navlink: true, text: "Ли Хён стал менеджером BTS на один день", link: "other-shows-lee-hyun-manager.html", statKey: "other-shows-lee-hyun-manager" },
       { navlink: true, text: "Game of Money", link: "other-shows-game-of-money.html", statKey: "other-shows-game-of-money" },
       { text: "Викторина с Бантанами", link: "https://t.me/violent_arhive/3277" },
-      { text: "💕 Джин в гостях у Мёнсу", link: "https://t.me/violent_arhive/3291" },
-      { navlink: true, text: "Посиделки под градусом", sub: "💕 Джин и Пэк распивают алкоголь", link: "other-shows-drinking-party.html", statKey: "other-shows-drinking-party" },
-      { text: "Спец. коллекция \"The Astronaut\"", sub: "(💕 Джин + 🤍 Хосок)", link: "https://t.me/violent_arhive/3334" },
-      { navlink: true, text: "🥃 Шучвита", sub: "шоу Юнги на ютубе", link: "suchwita.html", statKey: "suchwita" },
-      { navlink: true, text: "Словарь бесполезных человеческих знаний", sub: "шоу, где 💙 Джун ведущий", link: "other-shows-useless-knowledge-dictionary.html", statKey: "other-shows-useless-knowledge-dictionary" },
-      { text: "Psick Show с 💙 RM из BTS", link: "https://t.me/violent_arhive/3559" }
+      { text: "Джин в гостях у Мёнсу", hearts: "💕", link: "https://t.me/violent_arhive/3291" },
+      { navlink: true, text: "Посиделки под градусом", hearts: "💕", link: "other-shows-drinking-party.html", statKey: "other-shows-drinking-party" },
+      { text: "Спец. коллекция \"The Astronaut\"", hearts: "💕🤍", link: "https://t.me/violent_arhive/3334" },
+      { navlink: true, text: "Словарь бесполезных человеческих знаний", hearts: "💙", link: "other-shows-useless-knowledge-dictionary.html", statKey: "other-shows-useless-knowledge-dictionary" },
+      { text: "Psick Show с RM из BTS", hearts: "💙", link: "https://t.me/violent_arhive/3559" }
     ];
 
     const listEl = document.getElementById('list');
@@ -132,6 +131,16 @@
 
     items.forEach((item) => {
       if (item.navlink) {
+                a.appendChild(label);
+
+        if (item.hearts) {
+          const hearts = document.createElement('span');
+          hearts.style.cssText = 'font-size:13px; flex-shrink:0;';
+          hearts.textContent = item.hearts;
+          a.appendChild(hearts);
+        }
+
+        const badge = document.createElement('span');
         const a = document.createElement('a');
         a.className = 'navlink';
         a.href = item.link;
