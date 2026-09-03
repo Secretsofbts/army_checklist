@@ -111,7 +111,7 @@
 
       const listEl = document.getElementById('list');
 
-          function applyNavBadge(key) {
+           function applyNavBadge(key) {
       var checkbox = document.getElementById('checkbox-' + key);
       var label = document.getElementById('label-' + key);
       var badge = document.getElementById('badge-' + key);
@@ -127,6 +127,31 @@
         if (label) label.classList.add('done');
       } else if (badge) {
         badge.textContent = data.checked + '/' + data.total;
+      }
+    }
+
+    function applyNestedNavBadge(key, subKeys) {
+      var checkbox = document.getElementById('checkbox-' + key);
+      var label = document.getElementById('label-' + key);
+      var badge = document.getElementById('badge-' + key);
+      var checked = 0, total = 0;
+      subKeys.forEach(function(subKey) {
+        var raw = localStorage.getItem('progress:' + subKey);
+        if (raw) {
+          var data = JSON.parse(raw);
+          checked += data.checked;
+          total += data.total;
+        }
+      });
+      if (total === 0) return;
+      if (checked === total) {
+        if (checkbox) {
+          checkbox.checked = true;
+          checkbox.style.display = '';
+        }
+        if (label) label.classList.add('done');
+      } else if (badge) {
+        badge.textContent = checked + '/' + total;
       }
     }
 
@@ -162,13 +187,18 @@
           a.appendChild(hearts);
         }
 
-        const badge = document.createElement('span');
+               const badge = document.createElement('span');
         badge.id = 'badge-' + item.statKey;
         badge.style.cssText = 'font-size:12px; color:#999; flex-shrink:0;';
         a.appendChild(badge);
 
         listEl.appendChild(a);
-        applyNavBadge(item.statKey);
+
+        if (item.statKey === 'other-shows-star-bromance') {
+          applyNestedNavBadge(item.statKey, ['other-shows-star-bromance-minwoo-jungkook', 'other-shows-star-bromance-taehyung-minche']);
+        } else {
+          applyNavBadge(item.statKey);
+        }
         return;
       }
 
