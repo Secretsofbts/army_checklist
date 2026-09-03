@@ -80,32 +80,31 @@
   </div>
 
     <script>
-      const items = [
+           const items = [
         { navlink: true, text: "Закон джунглей", sub: "в пяти сериях был 💕 Джин", link: "other-shows-law-of-jungle.html", statKey: "other-shows-law-of-jungle" },
-               { navlink: true, text: "Star Show 360", sub: "8 серия", link: "other-shows-star-show-360.html", statKey: "other-shows-star-show-360" },
+        { navlink: true, text: "Star Show 360", sub: "8 серия", link: "other-shows-star-show-360.html", statKey: "other-shows-star-show-360" },
         { navlink: true, text: "Звездный броманс", sub: "один день с какой-то знаменитостью", link: "other-shows-star-bromance.html", statKey: "other-shows-star-bromance" },
-        { text: "Flower Crew", sub: "(в гостях 💜 Чонгук)", link: "https://t.me/violent_arhive/2231" },
-        { text: "King of Masked Singer", sub: "(в этом шоу участвовал 💜 Чонгук)", link: "https://t.me/violent_arhive/3169" },
+        { text: "Flower Crew", hearts: "💜", link: "https://t.me/violent_arhive/2231" },
+        { text: "King of Masked Singer", hearts: "💜", link: "https://t.me/violent_arhive/3169" },
         { text: "Boss is Watching", link: "https://t.me/violent_arhive/2242" },
-        { text: "Король готовки среди айдолов", sub: "(в гостях 💕 Джин)", link: "https://t.me/violent_arhive/2244" },
+        { text: "Король готовки среди айдолов", hearts: "💕", link: "https://t.me/violent_arhive/2244" },
         { text: "MBC Section TV", link: "https://t.me/violent_arhive/3220" },
-        { navlink: true, text: "Star King", sub: "💚 Тэ, 🤍 Хоби, 💛 Чимин и 💙 RM", link: "other-shows-star-king.html", statKey: "other-shows-star-king" },
+        { navlink: true, text: "Star King", hearts: "💚🤍💛💙", link: "other-shows-star-king.html", statKey: "other-shows-star-king" },
         { navlink: true, text: "Ток-шоу \"Привет\"", link: "other-shows-hello-talkshow.html", statKey: "other-shows-hello-talkshow" },
-        { navlink: true, text: "Running Man", sub: "кор. шоу, в котором участвовал 💙 Джун, 💕 Джин, 💚 Тэ и все BTS", link: "other-shows-running-man.html", statKey: "other-shows-running-man" },
-               { text: "Новое Ян Нам Шоу", sub: "1 эпизод", link: "https://t.me/violent_arhive/2235" },
+        { navlink: true, text: "Running Man", link: "other-shows-running-man.html", statKey: "other-shows-running-man" },
+        { text: "Новое Ян Нам Шоу", sub: "1 эпизод", link: "https://t.me/violent_arhive/2235" },
         { text: "Idol Party", sub: "11 серия", link: "https://t.me/violent_arhive/2234" },
         { text: "Всеведущие братья - cтащи участника", sub: "94 серия", link: "https://t.me/violent_arhive/1135" },
-        { text: "Всеведущие братья - cтащи участника (94 серия)", link: "https://t.me/violent_arhive/1135" },
         { navlink: true, text: "Пожалуйста, позаботьтесь о моем холодильнике", link: "other-shows-take-care-of-my-fridge.html", statKey: "other-shows-take-care-of-my-fridge" },
-        { text: "Chef King", sub: "(💕 Джин и 🤍 Хосок)", link: "https://t.me/violent_arhive/3250" },
-               { text: "Давайте поедим вместе", sub: "50 серия", link: "https://t.me/violent_arhive/2246" },
+        { text: "Chef King", hearts: "💕🤍", link: "https://t.me/violent_arhive/3250" },
+        { text: "Давайте поедим вместе", sub: "50 серия", link: "https://t.me/violent_arhive/2246" },
         { text: "Secret Show Live in Chicago", link: "https://t.me/violent_arhive/2794" },
         { text: "MNet Comeback Show BTS \"DNA\"", link: "https://t.me/violent_arhive/3373" },
         { text: "Yoshimoto Shinkigeki", link: "https://t.me/violent_arhive/3239" },
         { navlink: true, text: "Idol Star Athletics Championships", sub: "спортивные игры айдолов", link: "other-shows-isac.html", statKey: "other-shows-isac" },
         { text: "The Ellen Show 2017 год", link: "https://t.me/violent_arhive/3174" },
         { text: "The Ellen Show 2018 год", link: "https://t.me/violent_arhive/3177" },
-        { text: "Japan PON BTS Jimin & J-Hope", sub: "💛 Джимин и 🤍 Джей-Хоуп", link: "https://t.me/violent_arhive/4163" },
+        { text: "Japan PON BTS Jimin & J-Hope", hearts: "💛🤍", link: "https://t.me/violent_arhive/4163" },
         { text: "Сладкая вечеринка Харадзюку", link: "https://t.me/violent_arhive/2256" },
         { text: "Музыкальные пародии", link: "https://t.me/violent_arhive/2260" },
         { navlink: true, text: "Радио-шоу Cultwo", link: "other-shows-cultwo.html", statKey: "other-shows-cultwo" }
@@ -189,6 +188,10 @@
         box.dispatchEvent(new Event('change'));
       });
 
+            const hearts = document.createElement('span');
+      hearts.style.cssText = 'font-size:13px; flex-shrink:0;';
+      hearts.textContent = item.hearts || '';
+
       const link = document.createElement('a');
       link.className = 'link';
       link.href = item.link;
@@ -197,6 +200,7 @@
 
       row.appendChild(box);
       row.appendChild(span);
+      row.appendChild(hearts);
       row.appendChild(link);
       listEl.appendChild(row);
     });
