@@ -86,3 +86,20 @@ function refreshLocalStorageFromCloud(callback) {
     })
     .catch(() => {});
 }
+// Проверка версии сайта — если на сервере версия выше, чем у пользователя, страница перезагрузится один раз
+function checkForUpdate() {
+  fetch('version.json?t=' + Date.now())
+    .then(res => res.json())
+    .then(data => {
+      const serverVersion = data.v;
+      const localVersion = localStorage.getItem('siteVersion');
+      if (localVersion !== null && parseInt(localVersion) < serverVersion) {
+        localStorage.setItem('siteVersion', serverVersion);
+        location.reload(true);
+      } else if (localVersion === null) {
+        localStorage.setItem('siteVersion', serverVersion);
+      }
+    })
+    .catch(() => {});
+}
+checkForUpdate();
