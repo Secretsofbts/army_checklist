@@ -24,16 +24,16 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="other-shows.html">← Назад</a>
-    <h1>🌙 BTS c Джимми Фэллоном 🌙</h1>
+    <a class="back" href="other-shows-2020-2022.html">← Назад</a>
+    <h1>🌙С Джимми Фэллоном 🌙</h1>
     <div id="list"></div>
-    <a class="footer-link" href="other-shows.html">Другие шоу с BTS ⬅️</a>
+        <a class="footer-link" href="other-shows-2020-2022.html">Другие шоу (2020 - 2022) ⬅️</a>
   </div>
 
   <script>
-    const items = [
-      { text: "Метро + ON", link: "https://t.me/violent_arhive/3163" },
-      { text: "Игра \"Влезет ли?\"", link: "https://t.me/violent_arhive/1094" }
+       const items = [
+      { text: "Метро + ON", sub: "от 25.02.2020", link: "https://t.me/violent_arhive/3163" },
+      { text: "Игра \"Влезет ли?\"", sub: "от 24.07.2021", link: "https://t.me/violent_arhive/1094" }
     ];
 
     const listEl = document.getElementById('list');
@@ -44,9 +44,15 @@
       row.dataset.id = id;
       const box = document.createElement('input');
       box.type = 'checkbox';
-      const span = document.createElement('span');
+          const span = document.createElement('span');
       span.className = 'text';
       span.textContent = item.text;
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+        sub.textContent = item.sub;
+        span.appendChild(sub);
+      }
       if (localStorage.getItem(id) === 'true') { box.checked = true; span.classList.add('done'); }
       box.addEventListener('change', () => {
         setChecked(id, box.checked);
