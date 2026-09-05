@@ -80,8 +80,9 @@
           updateProgress();
         });
         span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
+               const heart = item.text.slice(0, 2); // забираем сердечко из начала текста
         const link = document.createElement('a');
-        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
+        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = heart;
         row.appendChild(box); row.appendChild(span); row.appendChild(link);
         listEl.appendChild(row);
       });
