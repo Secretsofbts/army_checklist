@@ -226,6 +226,43 @@
       listEl.appendChild(row);
     });
 
+        const weightedSources = [
+      { ids: ["video-218", "video-220", "video-243", "video-3007", "video-3011", "video-3017"] }, // MapleStory X BTS — 6
+      { allOf: ["video-3909","video-3910","video-3911","video-3912","video-3913","video-3914","video-3915","video-3917","video-3919","video-3920","video-3921","video-3922","video-3923"], weight: 1 }, // I-LAND 7 серия — 1 при полном комплекте
+      { allOf: ["video-3924","video-3925","video-3926","video-3927"], weight: 1 }, // I-LAND 12 серия — 1 при полном комплекте
+      { ids: ["video-290", "video-314", "video-760", "video-1164", "video-1166"] }, // Tokopedia — 5
+      { ids: ["video-1980","video-1998","video-1997","video-1996","video-2028","video-2023","video-2031","video-2003","video-2002","video-2004","video-2001","video-2027","video-2024","video-2032"] }, // Made Collection — 14
+      { ids: ["video-2655", "video-2688"] }, // MBTI Lab — 2
+      { ids: ["video-2595", "video-2624", "video-2710", "video-2711"] }, // In the SEOM — 4
+      { ids: ["video-3185", "video-3187"] }, // Cookie Run: Kingdom — 2 (без бонусных кадров)
+      { ids: ["video-3292"] }, // Running Man — только 627 эпизод
+      { ids: ["video-2654", "video-2689", "video-2709"] }, // WORKOUT — 3
+      { ids: ["video-2876"] }, // Kiss The Radio — только Jimin 2022
+      { ids: ["video-3163", "video-1094"] }, // Джимми Фэллон — 2
+      { ids: ["video-947", "video-946", "video-2239"] }, // Джеймс Корден — 3 (без Прятки)
+      { ids: ["video-991", "video-1032"] }, // Ли Хён менеджер — 2
+      { ids: ["video-3129", "video-3140"] }, // Game of Money — 2
+      { ids: ["video-3298", "video-3299", "video-3304", "video-3305"] }, // Посиделки под градусом — 4
+      { ids: ["video-3549", "video-3583", "video-3709", "video-3710", "video-3742"] } // Словарь бесполезных знаний — первых 5
+    ];
+
+    function computeWeightedStats() {
+      let checked = 0, total = 0;
+      weightedSources.forEach((src) => {
+        if (src.ids) {
+          src.ids.forEach((id) => {
+            total++;
+            if (localStorage.getItem(id) === 'true') checked++;
+          });
+        } else if (src.allOf && src.weight) {
+          total += src.weight;
+          const allChecked = src.allOf.every((id) => localStorage.getItem(id) === 'true');
+          if (allChecked) checked += src.weight;
+        }
+      });
+      return { checked, total };
+    }
+
     function updateProgress() {
       const all = document.querySelectorAll('.row input[type="checkbox"]');
       let total = 0, checked = 0;
@@ -233,10 +270,33 @@
         total++;
         if (cb.checked) checked++;
       });
+      const weighted = computeWeightedStats();
+      total += weighted.total;
+      checked += weighted.checked;
       setProgress('other-shows-2020-2022', {checked, total});
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);
+
+    if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
+      fetch(`${FIREBASE_URL}/users/${ARMY_USER_ID}.json`)
+        .then(res => res.json())
+        .then(data => {
+          if (!data) return;
+          let changed = false;
+          weightedSources.forEach((src) => {
+            const ids = src.ids || src.allOf || [];
+            ids.forEach((id) => {
+              if (data[id] !== undefined && data[id] !== (localStorage.getItem(id) === 'true')) {
+                localStorage.setItem(id, data[id]);
+                changed = true;
+              }
+            });
+          });
+          if (changed) updateProgress();
+        })
+        .catch(() => {});
+    }
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
