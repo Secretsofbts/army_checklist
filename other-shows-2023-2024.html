@@ -83,54 +83,58 @@
   </div>
 
   <script>
-    const items = [
-      { navlink: true, text: "Словарь бесполезных человеческих знаний", sub: "шоу, где 💙 Джун ведущий", link: "other-shows-useless-knowledge-dictionary.html", statKey: "other-shows-useless-knowledge-dictionary" },
-      { text: "🤍 Джей-Хоуп на шоу MMTG", link: "https://t.me/violent_arhive/3687" },
-      { navlink: true, text: "У СоДжина / Кухня Юн", sub: "💚 Тэхён - стажёр на кухне (само шоу + интервью с кастом)", link: "other-shows-kitchen-yoon.html", statKey: "other-shows-kitchen-yoon" },
-      { navlink: true, text: "C Джимми Фэллоном", sub: "💛 Чимин, 🖤 Юнги, 💜 Чонгук, 💕 Джин", link: "other-shows-jimmy-fallon.html", statKey: "other-shows-jimmy-fallon" },
-      { text: "💛 Чимин на PIXID", link: "https://t.me/violent_arhive/3820" },
-      { text: "💛 Чимин на шоу LeeMujin Service (первоапрельский выпуск, эп 56)", link: "https://t.me/violent_arhive/3876" },
-      { text: "💛 Чимин на \"Beat Coin\" (эп 30)", link: "https://t.me/violent_arhive/3871" },
-      { text: "💛 Чимин на SBS RADIO", link: "https://t.me/violent_arhive/3907" },
-      { text: "\"Палитра Айю\" с 🖤 Agust D", link: "https://t.me/violent_arhive/3885" },
-      { text: "🖤💛 Юнмины на шоу DdeunDdeun", link: "https://t.me/violent_arhive/4582" },
-      { text: "💙 Шоу Colde «Blue Room» с RM", link: "https://t.me/violent_arhive/4100" },
-      { navlink: true, text: "Чонгук на шоу Spotify", sub: "💜 Чонгук", link: "other-shows-spotify.html", statKey: "other-shows-spotify" },
-      { text: "Dingo с 💚 Тэхеном из BTS — Что, если V обнимет меня?", link: "https://t.me/violent_arhive/4197" },
-      { text: "💚 Тэхён на PIXID", link: "https://t.me/violent_arhive/4192" },
-      { text: "You Quiz On The Block / Уличная викторина Ю (210 выпуск с 💚 Тэ)", link: "https://t.me/violent_arhive/4949" },
-      { navlink: true, text: "«Spotipoly»", sub: "💚 Тэхён, 💜 Чонгук", link: "other-shows-spotipoly.html", statKey: "other-shows-spotipoly" },
-      { text: "\"Палитра Айю\" - в гостях 💚 Тэхён", link: "https://t.me/violent_arhive/4504" },
-      { text: "20-секундное лайв-выступление 💚 Тэхёна в Канныне", link: "https://t.me/violent_arhive/4258" },
+       const items = [
+      { navlink: true, text: "Словарь бесполезных человеческих знаний", sub: "шоу, где Джун ведущий", hearts: "💙", link: "other-shows-useless-knowledge-dictionary.html", statKey: "other-shows-useless-knowledge-dictionary" },
+      { text: "Джей-Хоуп на шоу MMTG", hearts: "🤍", link: "https://t.me/violent_arhive/3687" },
+      { navlink: true, text: "У СоДжина / Кухня Юн", sub: "Тэхён - стажёр на кухне (само шоу + интервью с кастом)", hearts: "💚", link: "other-shows-kitchen-yoon.html", statKey: "other-shows-kitchen-yoon" },
+      { navlink: true, text: "C Джимми Фэллоном", hearts: "💛🖤💜💕", link: "other-shows-jimmy-fallon.html", statKey: "other-shows-jimmy-fallon" },
+      { text: "Чимин на PIXID", hearts: "💛", link: "https://t.me/violent_arhive/3820" },
+      { text: "Чимин на шоу LeeMujin Service (первоапрельский выпуск)", sub: "эп 56", hearts: "💛", link: "https://t.me/violent_arhive/3876" },
+      { text: "Чимин на \"Beat Coin\"", sub: "эп 30", hearts: "💛", link: "https://t.me/violent_arhive/3871" },
+      { text: "Чимин на SBS RADIO", hearts: "💛", link: "https://t.me/violent_arhive/3907" },
+      { text: "\"Палитра Айю\" с Agust D", hearts: "🖤", link: "https://t.me/violent_arhive/3885" },
+      { text: "Юнмины на шоу DdeunDdeun", hearts: "🖤💛", link: "https://t.me/violent_arhive/4582" },
+      { text: "Шоу Colde «Blue Room» с RM", hearts: "💙", link: "https://t.me/violent_arhive/4100" },
+      { navlink: true, text: "Чонгук на шоу Spotify", hearts: "💜", link: "other-shows-spotify.html", statKey: "other-shows-spotify" },
+      { text: "Dingo с Тэхеном из BTS — Что, если V обнимет меня?", hearts: "💚", link: "https://t.me/violent_arhive/4197" },
+      { text: "Тэхён на PIXID", hearts: "💚", link: "https://t.me/violent_arhive/4192" },
+      { text: "You Quiz On The Block / Уличная викторина Ю", sub: "210 выпуск", hearts: "💚", link: "https://t.me/violent_arhive/4949" },
+      { navlink: true, text: "«Spotipoly»", hearts: "💚💜", link: "other-shows-spotipoly.html", statKey: "other-shows-spotipoly" },
+      { text: "\"Палитра Айю\" - в гостях Тэхён", hearts: "💚", link: "https://t.me/violent_arhive/4504" },
+      { text: "20-секундное лайв-выступление Тэхёна в Канныне", hearts: "💚", link: "https://t.me/violent_arhive/4258" },
       { navlink: true, text: "Running Man", link: "other-shows-running-man.html", statKey: "other-shows-running-man" },
-      { text: "💛 Jimin's Production Diary: Квиз-шоу", sub: "(к док. фильму Чимина)", link: "https://t.me/violent_arhive/4295" },
-      { text: "На-ПиДи и СоДжун поздравляют 💚 ТэХёна с будущим ДР", link: "https://t.me/violent_arhive/4433" },
-      { text: "Обмен альбомами МиниМони", sub: "(версия \"RPWP\" 💙 RM)", link: "https://t.me/violent_arhive/4583" },
-      { text: "Обмен альбомами МиниМони", sub: "(версия \"MUSE\" 💛 Чимин)", link: "https://t.me/violent_arhive/4648" },
-      { navlink: true, text: "Полузвездочный отель на Затерянном острове / Повезет, если отдохнёшь", sub: "(в гостях 💕 Джин)", link: "other-shows-halfstar-hotel.html", statKey: "other-shows-halfstar-hotel" },
-      { text: "I Love Everybody's Zoo", sub: "(💕 Джин)", link: "https://t.me/violent_arhive/4803" },
-      { text: "KStarNextDoor4 с 💕 Джином", link: "https://t.me/violent_arhive/4860" },
-      { text: "Salon Drip с 💕 Джином", link: "https://t.me/violent_arhive/4878" },
-      { text: "💕 Джин на шоу LeeMujin Service", link: "https://t.me/violent_arhive/4888" },
-      { text: "Мой лучший друг, Ли Хён - 🤍 j-hope", link: "https://t.me/violent_arhive/4940" },
-      { text: "\"Счастливый автобус\"", sub: "(💕 Джин)", link: "https://t.me/violent_arhive/4903" },
-      { navlink: true, text: "Красивые парни", sub: "(💕 Джин)", link: "other-shows-handsome-guys.html", statKey: "other-shows-handsome-guys" }
+      { text: "Jimin's Production Diary: Квиз-шоу", sub: "(к док. фильму Чимина)", hearts: "💛", link: "https://t.me/violent_arhive/4295" },
+      { text: "На-ПиДи и СоДжун поздравляют ТэХёна с будущим ДР", hearts: "💚", link: "https://t.me/violent_arhive/4433" },
+      { text: "Обмен альбомами МиниМони", sub: "(версия \"RPWP\")", hearts: "💙", link: "https://t.me/violent_arhive/4583" },
+      { text: "Обмен альбомами МиниМони", sub: "(версия \"MUSE\")", hearts: "💛", link: "https://t.me/violent_arhive/4648" },
+      { navlink: true, text: "Полузвездочный отель на Затерянном острове / Повезет, если отдохнёшь", hearts: "💕", link: "other-shows-halfstar-hotel.html", statKey: "other-shows-halfstar-hotel" },
+      { text: "I Love Everybody's Zoo", hearts: "💕", link: "https://t.me/violent_arhive/4803" },
+      { text: "KStarNextDoor4 с Джином", hearts: "💕", link: "https://t.me/violent_arhive/4860" },
+      { text: "Salon Drip с Джином", hearts: "💕", link: "https://t.me/violent_arhive/4878" },
+      { text: "Джин на шоу LeeMujin Service", hearts: "💕", link: "https://t.me/violent_arhive/4888" },
+      { text: "Мой лучший друг, Ли Хён - j-hope", hearts: "🤍", link: "https://t.me/violent_arhive/4940" },
+      { text: "\"Счастливый автобус\"", hearts: "💕", link: "https://t.me/violent_arhive/4903" },
+      { navlink: true, text: "Красивые парни", hearts: "💕", link: "other-shows-handsome-guys.html", statKey: "other-shows-handsome-guys" }
     ];
 
     const listEl = document.getElementById('list');
 
-    function applyNavBadge(key) {
+       function applyNavBadge(key) {
       var checkbox = document.getElementById('checkbox-' + key);
       var label = document.getElementById('label-' + key);
+      var badge = document.getElementById('badge-' + key);
       var raw = localStorage.getItem('progress:' + key);
       if (!raw) return;
       var data = JSON.parse(raw);
-      if (data.total > 0 && data.checked === data.total) {
+      if (data.total === 0) return;
+      if (data.checked === data.total) {
         if (checkbox) {
           checkbox.checked = true;
           checkbox.style.display = '';
         }
         if (label) label.classList.add('done');
+      } else if (badge) {
+        badge.textContent = data.checked + '/' + data.total;
       }
     }
 
@@ -157,7 +161,20 @@
           sub.textContent = item.sub;
           label.appendChild(sub);
         }
-        a.appendChild(label);
+                a.appendChild(label);
+
+        if (item.hearts) {
+          const hearts = document.createElement('span');
+          hearts.style.cssText = 'font-size:13px; flex-shrink:0;';
+          hearts.textContent = item.hearts;
+          a.appendChild(hearts);
+        }
+
+        const badge = document.createElement('span');
+        badge.id = 'badge-' + item.statKey;
+        badge.style.cssText = 'font-size:12px; color:#999; flex-shrink:0;';
+        a.appendChild(badge);
+
         listEl.appendChild(a);
         applyNavBadge(item.statKey);
         return;
@@ -195,6 +212,10 @@
         box.dispatchEvent(new Event('change'));
       });
 
+           const hearts = document.createElement('span');
+      hearts.style.cssText = 'font-size:13px; flex-shrink:0;';
+      hearts.textContent = item.hearts || '';
+
       const link = document.createElement('a');
       link.className = 'link';
       link.href = item.link;
@@ -203,6 +224,7 @@
 
       row.appendChild(box);
       row.appendChild(span);
+      row.appendChild(hearts);
       row.appendChild(link);
       listEl.appendChild(row);
     });
