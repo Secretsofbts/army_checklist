@@ -41,24 +41,24 @@
   </div>
 
   <script>
-    const list1 = [
-      { text: "💕 Джин", link: "https://t.me/violent_arhive/1980" },
-      { text: "💙 Намджун", link: "https://t.me/violent_arhive/1998" },
-      { text: "💚 Тэхён", link: "https://t.me/violent_arhive/1997" },
-      { text: "🖤 Юнги", link: "https://t.me/violent_arhive/1996" },
-      { text: "🤍 Хосок", link: "https://t.me/violent_arhive/2028" },
-      { text: "💛 Чимин", link: "https://t.me/violent_arhive/2023" },
-      { text: "💜 Чонгук", link: "https://t.me/violent_arhive/2031" }
+        const list1 = [
+      { text: "Джин", hearts: "💕", link: "https://t.me/violent_arhive/1980" },
+      { text: "Намджун", hearts: "💙", link: "https://t.me/violent_arhive/1998" },
+      { text: "Тэхён", hearts: "💚", link: "https://t.me/violent_arhive/1997" },
+      { text: "Юнги", hearts: "🖤", link: "https://t.me/violent_arhive/1996" },
+      { text: "Хосок", hearts: "🤍", link: "https://t.me/violent_arhive/2028" },
+      { text: "Чимин", hearts: "💛", link: "https://t.me/violent_arhive/2023" },
+      { text: "Чонгук", hearts: "💜", link: "https://t.me/violent_arhive/2031" }
     ];
 
     const list2 = [
-      { text: "💕 Джин", link: "https://t.me/violent_arhive/2003" },
-      { text: "💙 Намджун", link: "https://t.me/violent_arhive/2002" },
-      { text: "💚 Тэхён", link: "https://t.me/violent_arhive/2004" },
-      { text: "🖤 Юнги", link: "https://t.me/violent_arhive/2001" },
-      { text: "🤍 Хосок", link: "https://t.me/violent_arhive/2027" },
-      { text: "💛 Чимин", link: "https://t.me/violent_arhive/2024" },
-      { text: "💜 Чонгук", link: "https://t.me/violent_arhive/2032" }
+      { text: "Джин", hearts: "💕", link: "https://t.me/violent_arhive/2003" },
+      { text: "Намджун", hearts: "💙", link: "https://t.me/violent_arhive/2002" },
+      { text: "Тэхён", hearts: "💚", link: "https://t.me/violent_arhive/2004" },
+      { text: "Юнги", hearts: "🖤", link: "https://t.me/violent_arhive/2001" },
+      { text: "Хосок", hearts: "🤍", link: "https://t.me/violent_arhive/2027" },
+      { text: "Чимин", hearts: "💛", link: "https://t.me/violent_arhive/2024" },
+      { text: "Чонгук", hearts: "💜", link: "https://t.me/violent_arhive/2032" }
     ];
 
     function renderList(containerId, items) {
@@ -79,11 +79,13 @@
           span.classList.toggle('done', box.checked);
           updateProgress();
         });
-        span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
-               const heart = item.text.slice(0, 2); // забираем сердечко из начала текста
+               span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
+        const hearts = document.createElement('span');
+        hearts.style.cssText = 'font-size:13px; flex-shrink:0;';
+        hearts.textContent = item.hearts || '';
         const link = document.createElement('a');
-        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = heart;
-        row.appendChild(box); row.appendChild(span); row.appendChild(link);
+        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
+        row.appendChild(box); row.appendChild(span); row.appendChild(hearts); row.appendChild(link);
         listEl.appendChild(row);
       });
     }
