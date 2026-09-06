@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js?v=2"></script>
+  <title>BTS Memories of 2019</title>
+  <style>
+    body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
+    .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 10px; }
+    .disc-title { font-size: 13px; font-weight: 600; color: #888; margin: 16px 0 4px; }
+    .month-title { font-size: 12px; font-weight: 600; color: #aaa; margin: 8px 0 2px; }
+    .row { display: flex; align-items: center; gap: 10px; padding: 8px 4px; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .text.done { color: #bbb; text-decoration: line-through; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+    .footer-link { display: block; text-align: center; font-size: 13px; color: #000; text-decoration: none; margin-top: 16px; padding-top: 12px; border-top: 1px solid #eee; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="bts-memories.html">← Назад</a>
+    <h1>🔮 BTS Memories of 2019 🔮</h1>
+    <p class="intro">В этом мемориcе ещё сложнее 🤣 На часть видео будут указаны ссылки на первоисточник, как в memories 2018. Часть загружена сюда. Часть на английском языке, к большому сожалению...</p>
+    <p class="intro">С английскими видео есть несколько вариантов: смотреть и любоваться без перевода, выучить язык 🤣, или можно получить доступ к остальным видео (их переводил Fsg Korean Wave) — для этого нужно на время стать «доном» в их группе ВК, стоимость около 200 рублей. Ссылка на группу: <a href="https://vk.com/club182432566" target="_blank">vk.com/club182432566</a></p>
+    <p class="intro">Рассказываю это, чтобы вы знали все варианты)</p>
+    <div id="list"></div>
+    <a class="footer-link" href="bts-memories.html">BTS Memories (2014 - 2020 год) ⬅️</a>
+  </div>
+
+  <script>
+    const data = [
+      { disc: "Диск 1", groups: [
+        { items: [
+          { text: "'LY: Speak Yourself' в Лос-Анджелесе — Часть 1", link: "https://t.me/violent_arhive/1648" }
+        ]}
+      ]},
+      { disc: "Диск 2", groups: [
+        { items: [
+          { text: "'LY: Speak Yourself' в Лос-Анджелесе — Часть 2", link: "https://t.me/violent_arhive/1639" },
+          { text: "'LY: Speak Yourself' в Лос-Анджелесе — За кадром", link: "https://t.me/violent_arhive/1670" }
+        ]}
+      ]},
+      { disc: "Диск 3", groups: [
+        { month: "Январь", items: [
+          { text: "33-я Golden Disc Awards — За кадром", link: "https://vk.com/video-182432566_456239672" },
+          { text: "'LY: Speak Yourself' Japan Edition MD — За кадром", link: "https://vk.com/video-182432566_456239645" },
+          { text: "Map of the Soul: Persona — Съёмки обложки альбома", link: "https://t.me/violent_arhive/1649" },
+          { text: "28-я Seoul Music Awards — За кадром", link: "https://vk.com/video-182432566_456239667" }
+        ]},
+        { month: "Февраль", items: [
+          { text: "2019 Грэмми — За кадром", link: "https://vk.com/video-182432566_456239668" },
+          { text: "2019 5th Muster: Magic Shop — Съёмки постера и MD", link: "https://vk.com/video-182432566_456239680" }
+        ]},
+        { month: "Март", items: [
+          { text: "RM Map of the Soul: Persona Comeback Trailer — За кадром", link: "https://vk.com/video-182432566_456239664" },
+          { text: "Клип Boy With Luv (Feat. Halsey) — За кадром", link: "https://vk.com/video-182432566_456239659" }
+        ]}
+      ]},
+      { disc: "Диск 4", groups: [
+        { month: "Апрель", items: [
+          { text: "'LY: Speak Yourself' Открывающий VCR — За кадром", link: "https://t.me/violent_arhive/1650" },
+          { text: "'LY: Speak Yourself' Брифинг и практика — За кадром", link: "https://vk.com/video-182432566_456239665" },
+          { text: "Saturday Night Live — За кадром", link: "https://t.me/violent_arhive/1651" },
+          { text: "Пресс-конференция Map of the Soul: Persona и музыкальная трансляция — За кадром", link: "https://t.me/violent_arhive/1652" },
+          { text: "2019 FESTA семейный портрет — За кадром", link: "https://t.me/violent_arhive/1653" }
+        ]},
+        { month: "Май", items: [
+          { text: "2019 Billboard Music Awards — За кадром", link: "https://t.me/violent_arhive/1654" },
+          { text: "The Voice / GMA Summer Concert Series 2019 / The Late Show with Stephen Colbert / iHeartRadio Live — За кадром", link: "https://t.me/violent_arhive/1655" }
+        ]}
+      ]},
+      { disc: "Диск 5", groups: [
+        { month: "Май", items: [
+          { text: "'LY: Speak Yourself' Чикаго — За кадром", link: "https://t.me/violent_arhive/1656" },
+          { text: "'LY: Speak Yourself' Нью-Джерси — За кадром (eng.sub)", link: "https://t.me/violent_arhive/1659" }
+        ]},
+        { month: "Июнь", items: [
+          { text: "'LY: Speak Yourself' Париж — За кадром (eng.sub)", link: "https://t.me/violent_arhive/1661" }
+        ]},
+        { month: "Июль", items: [
+          { text: "'LY: Speak Yourself' Осака — За кадром", link: "https://t.me/violent_arhive/1657" },
+          { text: "'LY: Speak Yourself' Финал в Сеуле MD — За кадром", link: "https://t.me/violent_arhive/1658" },
+          { text: "'LY: Speak Yourself' Сидзуока — За кадром (eng.sub)", link: "https://t.me/violent_arhive/1660" },
+          { text: "2019 Summer Package — За кадром", link: "https://vk.com/video-182432566_456239638" }
+        ]},
+        { month: "Август", items: [
+          { text: "Клип Джей-Хоупа 'Chicken Noodle Soup (feat. Becky G)' — За кадром (eng.sub)", link: "https://t.me/violent_arhive/1662" }
+        ]},
+        { month: "Сентябрь", items: [
+          { text: "'LY: Speak Yourself' Финал в Сеуле VCR #1 — За кадром", link: "https://vk.com/video-182432566_456239666" }
+        ]}
+      ]},
+      { disc: "Диск 6", groups: [
+        { month: "Октябрь", items: [
+          { text: "'LY: Speak Yourself' Финал в Сеуле VCR #2 — За кадром (eng.sub)", link: "https://t.me/violent_arhive/1666" },
+          { text: "'LY: Speak Yourself' Саудовская Аравия — За кадром", link: "https://t.me/violent_arhive/1663" }
+        ]},
+        { month: "Ноябрь", items: [
+          { text: "2020 Winter Package — За кадром", link: "https://t.me/violent_arhive/1673" },
+          { text: "2019 MMA / MAMA VCR и практика — За кадром", link: "https://t.me/violent_arhive/1664" },
+          { text: "2019 MMA — За кадром", link: "https://t.me/violent_arhive/1667" }
+        ]},
+        { month: "Декабрь", items: [
+          { text: "2019 MAMA — За кадром", link: "https://t.me/violent_arhive/1665" },
+          { text: "2019 iHeartRadio Jingle Ball и Variety Hitmaker Awards — За кадром", link: "https://t.me/violent_arhive/1669" },
+          { text: "Dick Clark's New Year's Rockin' Eve — За кадром", link: "https://t.me/violent_arhive/1668" }
+        ]}
+      ]}
+    ];
+
+    const listEl = document.getElementById('list');
+    data.forEach((disc) => {
+      const discTitle = document.createElement('div');
+      discTitle.className = 'disc-title';
+      discTitle.textContent = disc.disc + ':';
+      listEl.appendChild(discTitle);
+
+      disc.groups.forEach((group) => {
+        if (group.month) {
+          const monthTitle = document.createElement('div');
+          monthTitle.className = 'month-title';
+          monthTitle.textContent = group.month + ':';
+          listEl.appendChild(monthTitle);
+        }
+
+        group.items.forEach((item) => {
+          const id = 'video-' + item.link.split('/').pop();
+          const row = document.createElement('div');
+          row.className = 'row';
+          row.dataset.id = id;
+
+          const box = document.createElement('input');
+          box.type = 'checkbox';
+
+          const span = document.createElement('span');
+          span.className = 'text';
+          span.textContent = item.text;
+
+          if (localStorage.getItem(id) === 'true') {
+            box.checked = true;
+            span.classList.add('done');
+          }
+          box.addEventListener('change', () => {
+            setChecked(id, box.checked);
+            span.classList.toggle('done', box.checked);
+            updateProgress();
+          });
+          span.addEventListener('click', () => {
+            box.checked = !box.checked;
+            box.dispatchEvent(new Event('change'));
+          });
+
+          const link = document.createElement('a');
+          link.className = 'link';
+          link.href = item.link;
+          link.target = '_blank';
+          link.textContent = '🔗';
+
+          row.appendChild(box);
+          row.appendChild(span);
+          row.appendChild(link);
+          listEl.appendChild(row);
+        });
+      });
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      setProgress('bts-memories-2019', {checked, total});
+    }
+    updateProgress();
+    syncChecklistFromCloud(updateProgress);
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
