@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js?v=2"></script>
+  <title>BTS Memories of 2017</title>
+  <style>
+    body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
+    .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
+    h1 { font-size: 18px; margin: 0 0 16px; }
+    .disc-title { font-size: 13px; font-weight: 600; color: #888; margin: 16px 0 4px; }
+    .disc-desc { font-size: 11px; color: #999; margin: 0 0 6px; }
+    .row { display: flex; align-items: center; gap: 10px; padding: 8px 4px; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .text.done { color: #bbb; text-decoration: line-through; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+    .footer-link { display: block; text-align: center; font-size: 13px; color: #000; text-decoration: none; margin-top: 16px; padding-top: 12px; border-top: 1px solid #eee; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="bts-memories.html">← Назад</a>
+    <h1>🔮 BTS Memories of 2017 🔮</h1>
+    <div id="list"></div>
+    <a class="footer-link" href="bts-memories.html">BTS Memories (2014 - 2020 год) ⬅️</a>
+  </div>
+
+  <script>
+    const data = [
+      { disc: "Диск 1", items: [
+        { text: "Live The Wings Tour The Final (1 часть с рус. суб, качество 720)", link: "https://t.me/violent_arhive/1634" },
+        { text: "Live The Wings Tour The Final (2 часть с рус. суб, качество 360)", link: "https://t.me/violent_arhive/2650" },
+        { text: "Live The Wings Tour The Final (без перевода, качество 720)", link: "https://t.me/violent_arhive/1560" },
+        { text: "Live The Wings Tour The Final (без перевода, качество 1080)", link: "https://t.me/violent_arhive/2661" }
+      ]},
+      { disc: "Диск 2", desc: "Making Film", items: [
+        { text: "MD & POSTER & VCR Making Film", link: "https://t.me/violent_arhive/1582" },
+        { text: "Practice & Rehearsal Making Film", link: "https://t.me/violent_arhive/1581" },
+        { text: "CONCERT D-DAY Making Film", link: "https://t.me/violent_arhive/1583" }
+      ]},
+      { disc: "Диск 3", items: [
+        { text: "LIVE TRILOGY EPISODE III THE WINGS TOUR IN JAPAN", link: "https://t.me/violent_arhive/1584" },
+        { text: "LIVE TRILOGY EPISODE III THE WINGS TOUR", link: "https://t.me/violent_arhive/1586" },
+        { text: "WINGS TOUR FINAL IN SEOUL Making Film", link: "https://t.me/violent_arhive/1585" }
+      ]},
+      { disc: "Диск 4", desc: "создание клипов", items: [
+        { text: "YOU NEVER WALK ALONE MF", link: "https://t.me/violent_arhive/1587" },
+        { text: "Spring Day Making Film", link: "https://t.me/violent_arhive/1588" },
+        { text: "Not Today Making Film", link: "https://t.me/violent_arhive/1589" },
+        { text: "RM & Wale Change Making Film", link: "https://t.me/violent_arhive/1590" },
+        { text: "LOVE YOURSELF \"Her\" Making Film", link: "https://t.me/violent_arhive/1591" },
+        { text: "POSTER Making Film", link: "https://t.me/violent_arhive/1592" },
+        { text: "Serendipity Making Film", link: "https://t.me/violent_arhive/1677" },
+        { text: "HIGHLIGHT REEL Making film", link: "https://t.me/violent_arhive/1594" },
+        { text: "MIC DROP (Steve Aoki Remix) Making Film", link: "https://t.me/violent_arhive/1595" }
+      ]},
+      { disc: "Диск 5", items: [
+        { text: "RM & V: 4 O'CLOCK Recording Story", link: "https://t.me/violent_arhive/1597" },
+        { text: "VCR Making Film", link: "https://t.me/violent_arhive/1598" },
+        { text: "PRACTICE & D-DAY Making Film", link: "https://t.me/violent_arhive/1599" },
+        { text: "SEO TAI JI CONCERT TIME: Behind Film", link: "https://t.me/violent_arhive/1596" },
+        { text: "2017 MAMA Behind Story", link: "https://t.me/violent_arhive/1601" },
+        { text: "GENIUS LAB Making Film", link: "https://t.me/violent_arhive/1600" }
+      ]}
+    ];
+
+    const listEl = document.getElementById('list');
+    data.forEach((block) => {
+      const discTitle = document.createElement('div');
+      discTitle.className = 'disc-title';
+      discTitle.textContent = block.disc + ':';
+      listEl.appendChild(discTitle);
+
+      if (block.desc) {
+        const desc = document.createElement('div');
+        desc.className = 'disc-desc';
+        desc.textContent = block.desc;
+        listEl.appendChild(desc);
+      }
+
+      block.items.forEach((item) => {
+        const id = 'video-' + item.link.split('/').pop();
+        const row = document.createElement('div');
+        row.className = 'row';
+        row.dataset.id = id;
+
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+
+        const span = document.createElement('span');
+        span.className = 'text';
+        span.textContent = item.text;
+
+        if (localStorage.getItem(id) === 'true') {
+          box.checked = true;
+          span.classList.add('done');
+        }
+        box.addEventListener('change', () => {
+          setChecked(id, box.checked);
+          span.classList.toggle('done', box.checked);
+          updateProgress();
+        });
+        span.addEventListener('click', () => {
+          box.checked = !box.checked;
+          box.dispatchEvent(new Event('change'));
+        });
+
+        const link = document.createElement('a');
+        link.className = 'link';
+        link.href = item.link;
+        link.target = '_blank';
+        link.textContent = '🔗';
+
+        row.appendChild(box);
+        row.appendChild(span);
+        row.appendChild(link);
+        listEl.appendChild(row);
+      });
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      setProgress('bts-memories-2017', {checked, total});
+    }
+    updateProgress();
+    syncChecklistFromCloud(updateProgress);
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
