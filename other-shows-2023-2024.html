@@ -279,7 +279,7 @@
     updateProgress();
     syncChecklistFromCloud(updateProgress);
 
-    if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
+        if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
       fetch(`${FIREBASE_URL}/users/${ARMY_USER_ID}.json`)
         .then(res => res.json())
         .then(data => {
@@ -294,7 +294,12 @@
               }
             });
           });
-          if (changed) updateProgress();
+          if (changed) {
+            updateProgress();
+            items.forEach((item) => {
+              if (item.navlink) applyNavBadge(item.statKey);
+            });
+          }
         })
         .catch(() => {});
     }
