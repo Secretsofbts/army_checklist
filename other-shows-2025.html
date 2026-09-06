@@ -215,6 +215,33 @@
       listEl.appendChild(row);
     });
 
+        const weightedSources = [
+      { ids: ["video-4958"] }, // Красивые парни — только 2 эпизод (1 уже засчитан в 2023-2024, 5,6 там же, 23 без ссылки — здесь не считается пока нет ID)
+      { ids: ["video-5016", "video-5036"] }, // Я живу один — 2
+      { ids: ["video-5024", "video-5621"] }, // Позаботьтесь о холодильнике — 2
+      { allOf: ["video-5045","video-5046","video-5047","video-5033"], weight: 1 }, // Хосок у Фэллона — 1 при полном комплекте
+      { ids: ["video-5079","video-5084","video-5099","video-5111","video-5113","video-5117","video-5118","video-5119","video-5128"] }, // Гостевой дом Киана — 9
+      { allOf: ["video-5132","video-5130","video-5131"], weight: 1 }, // Джин у Фэллона — 1 при полном комплекте
+      { ids: ["video-5169", "video-5228"] } // Omniscient Interfering View — 2
+    ];
+
+    function computeWeightedStats() {
+      let checked = 0, total = 0;
+      weightedSources.forEach((src) => {
+        if (src.ids) {
+          src.ids.forEach((id) => {
+            total++;
+            if (localStorage.getItem(id) === 'true') checked++;
+          });
+        } else if (src.allOf && src.weight) {
+          total += src.weight;
+          const allChecked = src.allOf.every((id) => localStorage.getItem(id) === 'true');
+          if (allChecked) checked += src.weight;
+        }
+      });
+      return { checked, total };
+    }
+
     function updateProgress() {
       const all = document.querySelectorAll('.row input[type="checkbox"]');
       let total = 0, checked = 0;
@@ -222,11 +249,38 @@
         total++;
         if (cb.checked) checked++;
       });
+      const weighted = computeWeightedStats();
+      total += weighted.total;
+      checked += weighted.checked;
       setProgress('other-shows-2025', {checked, total});
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);
 
+    if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
+      fetch(`${FIREBASE_URL}/users/${ARMY_USER_ID}.json`)
+        .then(res => res.json())
+        .then(data => {
+          if (!data) return;
+          let changed = false;
+          weightedSources.forEach((src) => {
+            const ids = src.ids || src.allOf || [];
+            ids.forEach((id) => {
+              if (data[id] !== undefined && data[id] !== (localStorage.getItem(id) === 'true')) {
+                localStorage.setItem(id, data[id]);
+                changed = true;
+              }
+            });
+          });
+          if (changed) {
+            updateProgress();
+            items.forEach((item) => {
+              if (item.navlink) applyNavBadge(item.statKey);
+            });
+          }
+        })
+        .catch(() => {});
+    }
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
       Telegram.WebApp.expand();
