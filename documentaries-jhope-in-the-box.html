@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="sync.js?v=2"></script>
-  <title>Break The Silence</title>
+  <title>J-Hope IN THE BOX</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
     .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -27,34 +27,33 @@
 <body>
   <div class="app">
     <a class="back" href="documentaries.html">← Назад</a>
-    <h1>⚡️ Break The Silence ⚡️</h1>
-    <p class="intro">Год выпуска: 2020</p>
-    <p class="intro">Документальный сериал, в котором рассказано о путешествии длиною в 351 день, начиная с мирового тура BTS Love Yourself и заканчивая туром Love Yourself: Speak Yourself. Ребята расскажут, на чём держится их прочная связь, и что они значат друг для друга</p>
-
-    <p class="section-title">Сериал</p>
-    <div id="list-episodes"></div>
+    <h1>📦 J-Hope IN THE BOX 📦</h1>
+    <p class="intro">Год выпуска: 2023</p>
+    <p class="intro">🤍 Этот фильм расскажет о том, как Хосок спродюсировал свой сольный альбом, о выступлении на Лоллапалузе и разные закулисные моменты! В фильме будут истории, которыми он раньше никогда не делился с Арми.</p>
 
     <p class="section-title">Фильм</p>
-    <p class="intro">Фильм икак не связан с сериалом. Вышел в сентябре 2020. События происходят уже после этих двух туров</p>
     <div id="list-film"></div>
+
+    <p class="section-title">Видео от Disney+</p>
+    <p class="intro">Выпускали перед выходом фильма (типа интервьюшки)</p>
+    <div id="list-disney"></div>
 
     <a class="footer-link" href="documentaries.html">Документальные проекты ⬅️</a>
   </div>
 
   <script>
-    const episodeItems = [
-      { text: "1 серия", link: "https://t.me/violent_arhive/298" },
-      { text: "2 серия", link: "https://t.me/violent_arhive/299" },
-      { text: "3 серия", link: "https://t.me/violent_arhive/300" },
-      { text: "4 серия", link: "https://t.me/violent_arhive/301" },
-      { text: "5 серия", link: "https://t.me/violent_arhive/302" },
-      { text: "6 серия", link: "https://t.me/violent_arhive/303" },
-      { text: "7 серия", link: "https://t.me/violent_arhive/304" }
+    const filmItems = [
+      { text: "Сам фильм J-Hope IN THE BOX", link: "https://t.me/violent_arhive/3699" },
+      { text: "Комментарии Хосока", link: "https://t.me/violent_arhive/3834" }
     ];
 
-    const filmItems = [
-      { text: "Break The Silence: Persona", link: "https://t.me/violent_arhive/250" },
-      { text: "Комментарии от ребят", link: "https://t.me/violent_arhive/259" }
+    const disneyItems = [
+      { text: "Анкеты на Disney+", link: "https://t.me/violent_arhive/3651" },
+      { text: "Встреча Хосока и J-Hope", link: "https://t.me/violent_arhive/3654" },
+      { text: "Ответы на вопросы", link: "https://t.me/violent_arhive/3668" },
+      { text: "Интервью по ключевому слову", link: "https://t.me/violent_arhive/3704" },
+      { text: "Игра \"Одно из Двух\"", link: "https://t.me/violent_arhive/3741" },
+      { text: "Любимый мультфильм", link: "https://t.me/violent_arhive/3765" }
     ];
 
     function renderList(containerId, items) {
@@ -83,14 +82,14 @@
       });
     }
 
-    renderList('list-episodes', episodeItems);
     renderList('list-film', filmItems);
+    renderList('list-disney', disneyItems);
 
     function updateProgress() {
       const all = document.querySelectorAll('input[type="checkbox"]');
       let total = 0, checked = 0;
       all.forEach(cb => { total++; if (cb.checked) checked++; });
-      setProgress('documentaries-break-the-silence', {checked, total});
+      setProgress('documentaries-jhope-in-the-box', {checked, total});
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);
