@@ -234,6 +234,36 @@
       listEl.appendChild(row);
     });
 
+      const weightedSources = [
+      { ids: ["video-3758", "video-3771", "video-3775", "video-3896"] }, // Словарь бесполезных знаний — 6-9 серия
+      { ids: ["video-3737","video-3757","video-3772","video-3794","video-3808","video-3828","video-3874","video-3933","video-3950","video-3985","video-4008","video-3708","video-3761","video-4270","video-4282"] }, // Кухня Юн — 15
+      { allOf: ["video-3801","video-3805","video-3812","video-3809"], weight: 1 }, // Чимин у Фэллона — 1 при полном комплекте
+      { allOf: ["video-4004","video-3994","video-3999","video-4000"], weight: 1 }, // Юнги у Фэллона — 1 при полном комплекте
+      { ids: ["video-4998", "video-4213"] }, // Spotipoly с Тэхёном — 2
+          { ids: ["video-4224", "video-4404", "video-4425"] }, // Running Man — 671, 682 и 683 серии
+      { allOf: ["video-4314","video-4311","video-4312"], weight: 1 }, // Чонгук у Фэллона — 1 при полном комплекте
+      { ids: ["video-4776", "video-4801"] }, // Полузвездочный отель — 2
+      { allOf: ["video-4891","video-59797","video-59822","video-4890","video-4961"], weight: 1 }, // Джин у Фэллона — 1 при полном комплекте
+      { ids: ["video-4954", "video-4958"] } // Красивые парни — только 1 и 2 эпизод
+    ];
+
+    function computeWeightedStats() {
+      let checked = 0, total = 0;
+      weightedSources.forEach((src) => {
+        if (src.ids) {
+          src.ids.forEach((id) => {
+            total++;
+            if (localStorage.getItem(id) === 'true') checked++;
+          });
+        } else if (src.allOf && src.weight) {
+          total += src.weight;
+          const allChecked = src.allOf.every((id) => localStorage.getItem(id) === 'true');
+          if (allChecked) checked += src.weight;
+        }
+      });
+      return { checked, total };
+    }
+
     function updateProgress() {
       const all = document.querySelectorAll('.row input[type="checkbox"]');
       let total = 0, checked = 0;
@@ -241,10 +271,33 @@
         total++;
         if (cb.checked) checked++;
       });
+      const weighted = computeWeightedStats();
+      total += weighted.total;
+      checked += weighted.checked;
       setProgress('other-shows-2023-2024', {checked, total});
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);
+
+    if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
+      fetch(`${FIREBASE_URL}/users/${ARMY_USER_ID}.json`)
+        .then(res => res.json())
+        .then(data => {
+          if (!data) return;
+          let changed = false;
+          weightedSources.forEach((src) => {
+            const ids = src.ids || src.allOf || [];
+            ids.forEach((id) => {
+              if (data[id] !== undefined && data[id] !== (localStorage.getItem(id) === 'true')) {
+                localStorage.setItem(id, data[id]);
+                changed = true;
+              }
+            });
+          });
+          if (changed) updateProgress();
+        })
+        .catch(() => {});
+    }
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
