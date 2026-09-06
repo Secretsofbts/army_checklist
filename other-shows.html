@@ -66,7 +66,8 @@
     <a class="back" href="shows.html">← Назад</a>
     <h1>📺 ДРУГИЕ ШОУ С BTS 📺</h1>
     <p class="intro">Здесь собраны все шоу ребят, в которых они участвовали за все годы. В основном тут коллабы, небольшие проекты или участие в чужих шоу в качестве гостя</p>
-    <div id="list"></div>
+       <div id="list"></div>
+    <div id="total-stats" style="text-align:center; font-size:13px; color:#999; margin-top:8px;"></div>
     <a class="footer-link" href="shows.html">Пост всех шоу ⬅️</a>
   </div>
 
@@ -129,8 +130,30 @@
         applyBadge(key, raw ? JSON.parse(raw) : null);
       });
     }
+      const yearKeys = ["other-shows-2013-2015", "other-shows-2016-2019", "other-shows-2020-2022", "other-shows-2023-2024", "other-shows-2025", "other-shows-2026"];
+
+    function renderTotalStats() {
+      let checked = 0, total = 0;
+      yearKeys.forEach((key) => {
+        const raw = localStorage.getItem('progress:' + key);
+        if (raw) {
+          const data = JSON.parse(raw);
+          checked += data.checked;
+          total += data.total;
+        }
+      });
+      const el = document.getElementById('total-stats');
+      if (el && total > 0) {
+        el.textContent = 'Всего по всем годам: ' + checked + ' / ' + total;
+      }
+    }
+
     renderAllBadges();
-    refreshLocalStorageFromCloud(renderAllBadges);
+    renderTotalStats();
+    refreshLocalStorageFromCloud(() => {
+      renderAllBadges();
+      renderTotalStats();
+    });
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
