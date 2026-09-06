@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js?v=2"></script>
+  <title>Jimin's Production Diary</title>
+  <style>
+    body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
+    .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 10px; }
+    .section-title { font-size: 13px; font-weight: 600; color: #888; margin: 16px 0 4px; }
+    .row { display: flex; align-items: center; gap: 10px; padding: 8px 4px; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .text.done { color: #bbb; text-decoration: line-through; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+    .footer-link { display: block; text-align: center; font-size: 13px; color: #000; text-decoration: none; margin-top: 16px; padding-top: 12px; border-top: 1px solid #eee; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="documentaries.html">← Назад</a>
+    <h1>📕 Jimin's Production Diary 📕</h1>
+    <p class="intro">Год выпуска: 2023</p>
+    <p class="intro">💛 Этот фильм познакомит фанатов с творческим путём Чимина при создании сольного альбома "FACE". Он поделится с нами своими мыслями и переживаниями.</p>
+
+    <div class="row">
+      <span class="text" style="cursor:default;">📹 Главный трейлер фильма</span>
+      <a class="link" href="https://t.me/violent_arhive/4264" target="_blank">🔗</a>
+    </div>
+
+    <div id="list-main"></div>
+
+    <p class="section-title">Видео перед выходом фильма</p>
+    <div id="list-preview"></div>
+
+    <a class="footer-link" href="documentaries.html">Документальные проекты ⬅️</a>
+  </div>
+
+  <script>
+    const mainItems = [
+      { text: "💛 Сам фильм Production Diary", link: "https://t.me/violent_arhive/4291" },
+      { text: "✨ Комментарии Чимина", link: "https://t.me/violent_arhive/4399" },
+      { text: "⁉️ Квиз-шоу", link: "https://t.me/violent_arhive/4295" },
+      { text: "🔆 Трансляция Чимина", link: "https://t.me/violent_arhive/4322" },
+      { text: "🗨️ Special Talk с Чимином", link: "https://t.me/violent_arhive/4326" },
+      { text: "💣 Бомбочка с Special Talk", link: "https://t.me/violent_arhive/4388" }
+    ];
+
+    const previewItems = [
+      { text: "По ключевым словам FACE", link: "https://t.me/violent_arhive/4263" },
+      { text: "Несказанная правда", link: "https://t.me/violent_arhive/4268" },
+      { text: "Эмоджи-скетч", link: "https://t.me/violent_arhive/4269" },
+      { text: "Любимые строчки из FACE", link: "https://t.me/violent_arhive/4273" },
+      { text: "Создание хэштега", link: "https://t.me/violent_arhive/4283" }
+    ];
+
+    function renderList(containerId, items) {
+      const listEl = document.getElementById(containerId);
+      items.forEach((item) => {
+        const id = 'video-' + item.link.split('/').pop();
+        const row = document.createElement('div');
+        row.className = 'row';
+        row.dataset.id = id;
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+        const span = document.createElement('span');
+        span.className = 'text';
+        span.textContent = item.text;
+        if (localStorage.getItem(id) === 'true') { box.checked = true; span.classList.add('done'); }
+        box.addEventListener('change', () => {
+          setChecked(id, box.checked);
+          span.classList.toggle('done', box.checked);
+          updateProgress();
+        });
+        span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
+        const link = document.createElement('a');
+        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
+        row.appendChild(box); row.appendChild(span); row.appendChild(link);
+        listEl.appendChild(row);
+      });
+    }
+
+    renderList('list-main', mainItems);
+    renderList('list-preview', previewItems);
+
+    function updateProgress() {
+      const all = document.querySelectorAll('#list-main input[type="checkbox"], #list-preview input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => { total++; if (cb.checked) checked++; });
+      setProgress('documentaries-jimin-production-diary', {checked, total});
+    }
+    updateProgress();
+    syncChecklistFromCloud(updateProgress);
+
+    if (window.Telegram && window.Telegram.WebApp) { Telegram.WebApp.ready(); Telegram.WebApp.expand(); }
+  </script>
+</body>
+</html>
