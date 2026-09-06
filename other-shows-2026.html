@@ -98,8 +98,8 @@
       { text: "Корейский для начинающих: учим (почти) матерные слова", hearts: "💙🖤💜🤍", link: "https://t.me/violent_arhive/5453" },
       { text: "Hot Ones", hearts: "🔥🔥🔥", link: "https://t.me/violent_arhive/5566" },
       { navlink: true, text: "Интервью для Rolling Stone", link: "other-shows-rolling-stone.html", statKey: "other-shows-rolling-stone" },
-      { text: "Подкаст Fashion Neurosis", hearts: "💙", link: "https://t.me/violent_arhive/5563" },
-      { text: "Very British Day Out", hearts: "без💙", link: "https://t.me/violent_arhive/5571" }
+      { text: "Fashion Neurosis", hearts: "💙", link: "https://t.me/violent_arhive/5563" },
+      { text: "Very British Day Out", hearts: "без 💙", link: "https://t.me/violent_arhive/5571" }
     ];
 
     const listEl = document.getElementById('list');
@@ -214,6 +214,29 @@
       listEl.appendChild(row);
     });
 
+       const weightedSources = [
+      { ids: ["video-5411"] }, // В гостях у Киана84 — 1
+      { allOf: ["video-5465","video-5466","video-5467","video-5468","video-5447","video-5446"], weight: 1 }, // BTS у Джимми Фэллона — 1 при полном комплекте
+      { ids: ["video-5553","video-5491","video-5492","video-5488","video-5483","video-5489","video-5490","video-5482"] } // Интервью для Rolling Stone — 8
+    ];
+
+    function computeWeightedStats() {
+      let checked = 0, total = 0;
+      weightedSources.forEach((src) => {
+        if (src.ids) {
+          src.ids.forEach((id) => {
+            total++;
+            if (localStorage.getItem(id) === 'true') checked++;
+          });
+        } else if (src.allOf && src.weight) {
+          total += src.weight;
+          const allChecked = src.allOf.every((id) => localStorage.getItem(id) === 'true');
+          if (allChecked) checked += src.weight;
+        }
+      });
+      return { checked, total };
+    }
+
     function updateProgress() {
       const all = document.querySelectorAll('.row input[type="checkbox"]');
       let total = 0, checked = 0;
@@ -221,10 +244,38 @@
         total++;
         if (cb.checked) checked++;
       });
+      const weighted = computeWeightedStats();
+      total += weighted.total;
+      checked += weighted.checked;
       setProgress('other-shows-2026', {checked, total});
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);
+
+    if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
+      fetch(`${FIREBASE_URL}/users/${ARMY_USER_ID}.json`)
+        .then(res => res.json())
+        .then(data => {
+          if (!data) return;
+          let changed = false;
+          weightedSources.forEach((src) => {
+            const ids = src.ids || src.allOf || [];
+            ids.forEach((id) => {
+              if (data[id] !== undefined && data[id] !== (localStorage.getItem(id) === 'true')) {
+                localStorage.setItem(id, data[id]);
+                changed = true;
+              }
+            });
+          });
+          if (changed) {
+            updateProgress();
+            items.forEach((item) => {
+              if (item.navlink) applyNavBadge(item.statKey);
+            });
+          }
+        })
+        .catch(() => {});
+    }
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
