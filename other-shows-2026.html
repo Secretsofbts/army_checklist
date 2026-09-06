@@ -85,37 +85,41 @@
   </div>
 
   <script>
-    const items = [
-      { navlink: true, text: "В гостях у Киана84", sub: "💕", link: "other-shows-kian-guesthouse.html", statKey: "other-shows-kian-guesthouse" },
-      { text: "💛 Салон красоты «Рандеву»", link: "https://t.me/violent_arhive/5400" },
-      { text: "🤍 Шоу \"FIND KANY\"", link: "https://t.me/violent_arhive/5404" },
-      { text: "🖤💙 EPIKASE", link: "https://t.me/violent_arhive/5456" },
-      { navlink: true, text: "C Джимми Фэллоном", sub: "BTS на \"The Tonight Show\"", link: "other-shows-jimmy-fallon.html", statKey: "other-shows-jimmy-fallon" },
-      { text: "💛💚💕 «Now Serving» от Vogue", link: "https://t.me/violent_arhive/5410" },
-      { text: "💚💙 BDNS", link: "https://t.me/violent_arhive/5463" },
-      { text: "💚 Фея Джэхен", link: "https://t.me/violent_arhive/5462" },
-      { text: "💜💛 Шоу Чу Сонхуна", link: "https://t.me/violent_arhive/5478" },
-      { text: "💙🖤💜🤍 Корейский для начинающих: учим (почти) матерные слова в гостях у VOGUE", link: "https://t.me/violent_arhive/5453" },
-      { text: "Hot Ones 🔥", link: "https://t.me/violent_arhive/5566" },
+       const items = [
+      { text: "В гостях у Киана84", hearts: "💕", link: "https://t.me/violent_arhive/5411" },
+      { text: "Салон красоты «Рандеву»", hearts: "💛", link: "https://t.me/violent_arhive/5400" },
+      { text: "Шоу \"FIND KANY\"", hearts: "🤍", link: "https://t.me/violent_arhive/5404" },
+      { text: "EPIKASE", hearts: "🖤💙", link: "https://t.me/violent_arhive/5456" },
+      { text: "BTS на \"The Tonight Show\"", hearts: "❤️", link: "https://t.me/violent_arhive/5435" },
+      { text: "«Now Serving» от Vogue", hearts: "💛💚💕", link: "https://t.me/violent_arhive/5410" },
+      { text: "BDNS", hearts: "💚💙", link: "https://t.me/violent_arhive/5463" },
+      { text: "Фея Джэхен", hearts: "💚", link: "https://t.me/violent_arhive/5462" },
+      { text: "Шоу Чу Сонхуна", hearts: "💜💛", link: "https://t.me/violent_arhive/5478" },
+      { text: "Корейский для начинающих: учим (почти) матерные слова в гостях у VOGUE", hearts: "💙🖤💜🤍", link: "https://t.me/violent_arhive/5453" },
+      { text: "Hot Ones", hearts: "🔥", link: "https://t.me/violent_arhive/5566" },
       { navlink: true, text: "Интервью для Rolling Stone", link: "other-shows-rolling-stone.html", statKey: "other-shows-rolling-stone" },
-      { text: "💙 Подкаст Fashion Neurosis", link: "https://t.me/violent_arhive/5563" },
+      { text: "Подкаст Fashion Neurosis", hearts: "💙", link: "https://t.me/violent_arhive/5563" },
       { text: "Very British Day Out", link: "https://t.me/violent_arhive/5571" }
     ];
 
     const listEl = document.getElementById('list');
 
-    function applyNavBadge(key) {
+       function applyNavBadge(key) {
       var checkbox = document.getElementById('checkbox-' + key);
       var label = document.getElementById('label-' + key);
+      var badge = document.getElementById('badge-' + key);
       var raw = localStorage.getItem('progress:' + key);
       if (!raw) return;
       var data = JSON.parse(raw);
-      if (data.total > 0 && data.checked === data.total) {
+      if (data.total === 0) return;
+      if (data.checked === data.total) {
         if (checkbox) {
           checkbox.checked = true;
           checkbox.style.display = '';
         }
         if (label) label.classList.add('done');
+      } else if (badge) {
+        badge.textContent = data.checked + '/' + data.total;
       }
     }
 
@@ -142,7 +146,20 @@
           sub.textContent = item.sub;
           label.appendChild(sub);
         }
-        a.appendChild(label);
+               a.appendChild(label);
+
+        if (item.hearts) {
+          const hearts = document.createElement('span');
+          hearts.style.cssText = 'font-size:13px; flex-shrink:0;';
+          hearts.textContent = item.hearts;
+          a.appendChild(hearts);
+        }
+
+        const badge = document.createElement('span');
+        badge.id = 'badge-' + item.statKey;
+        badge.style.cssText = 'font-size:12px; color:#999; flex-shrink:0;';
+        a.appendChild(badge);
+
         listEl.appendChild(a);
         applyNavBadge(item.statKey);
         return;
@@ -180,6 +197,10 @@
         box.dispatchEvent(new Event('change'));
       });
 
+            const hearts = document.createElement('span');
+      hearts.style.cssText = 'font-size:13px; flex-shrink:0;';
+      hearts.textContent = item.hearts || '';
+
       const link = document.createElement('a');
       link.className = 'link';
       link.href = item.link;
@@ -188,6 +209,7 @@
 
       row.appendChild(box);
       row.appendChild(span);
+      row.appendChild(hearts);
       row.appendChild(link);
       listEl.appendChild(row);
     });
