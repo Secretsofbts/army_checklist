@@ -51,22 +51,22 @@
   </div>
 
   <script>
-    const items = [
-      { navlink: true, text: "Burn The Stage", sub: "8 серий + фильм · 2018", link: "documentaries-burn-the-stage.html", statKey: "documentaries-burn-the-stage" },
-      { navlink: true, text: "Bring The Soul", sub: "6 серий + фильм + комментарии · 2019", link: "documentaries-bring-the-soul.html", statKey: "documentaries-bring-the-soul" },
-      { navlink: true, text: "Break The Silence", sub: "7 серий + фильм + комментарии · 2020", link: "documentaries-break-the-silence.html", statKey: "documentaries-break-the-silence" },
-      { text: "Good Insight", sub: "небольшой фильм о BTS · 2018", link: "https://t.me/violent_arhive/2326" },
-      { text: "RM 'Indigo' Album Magazine Film", sub: "о сольном альбоме Намджуна · 2022", link: "https://t.me/violent_arhive/3339" },
-      { navlink: true, text: "J-Hope IN THE BOX 📦", hearts: "🤍", sub: "фильм Хосока + комментарии · 2023", link: "documentaries-jhope-in-the-box.html", statKey: "documentaries-jhope-in-the-box" },
-      { navlink: true, text: "SUGA: Road to D-DAY 🎸", hearts: "🖤", sub: "фильм Юнги · 2023", link: "documentaries-suga-road-to-dday.html", statKey: "documentaries-suga-road-to-dday" },
-      { navlink: true, text: "Jimin's Production Diary 📕", hearts: "💛", sub: "фильм Чимина · 2023", link: "documentaries-jimin-production-diary.html", statKey: "documentaries-jimin-production-diary" },
-      { navlink: true, text: "BTS Monuments: Beyond The Star", sub: "8 серий · 2023-2024", link: "documentaries-bts-monuments.html", statKey: "documentaries-bts-monuments" },
-      { navlink: true, text: "HOPE ON THE STREET", sub: "6 серий, сериал Хосока · 2024", link: "documentaries-hope-on-the-street.html", statKey: "documentaries-hope-on-the-street" },
-      { navlink: true, text: "JUNG KOOK: I AM STILL", sub: "3 серии, сериал Чонгука · 2024", link: "documentaries-jungkook-i-am-still.html", statKey: "documentaries-jungkook-i-am-still" },
-      { text: "TOUR 'D-DAY' The Original", sub: "фильм Юнги (DVD) · 2024", link: "https://t.me/violent_arhive/4978" },
-      { text: "Right People, Wrong Place", sub: "фильм Намджуна · 2024", link: "https://t.me/violent_arhive/5441" },
-      { text: "HOPE ON THE STAGE", sub: "фильм Хосока · 2025", link: "https://t.me/violent_arhive/5440" },
-      { text: "BTS: THE RETURN", sub: "фильм о создании ARIRANG · 2026", link: "https://t.me/violent_arhive/5422" }
+       const items = [
+      { navlink: true, text: "Burn The Stage", sub: "8 серий + фильм", year: "2018", link: "documentaries-burn-the-stage.html", statKey: "documentaries-burn-the-stage" },
+      { navlink: true, text: "Bring The Soul", sub: "6 серий + фильм + комментарии", year: "2019", link: "documentaries-bring-the-soul.html", statKey: "documentaries-bring-the-soul" },
+      { navlink: true, text: "Break The Silence", sub: "7 серий + фильм + комментарии", year: "2020", link: "documentaries-break-the-silence.html", statKey: "documentaries-break-the-silence" },
+      { text: "Good Insight", sub: "небольшой фильм о BTS", year: "2018", link: "https://t.me/violent_arhive/2326" },
+      { text: "RM 'Indigo' Album Magazine Film", sub: "о сольном альбоме Намджуна", year: "2022", link: "https://t.me/violent_arhive/3339" },
+      { navlink: true, text: "J-Hope IN THE BOX 📦", hearts: "🤍", sub: "фильм Хосока + комментарии", year: "2023", link: "documentaries-jhope-in-the-box.html", statKey: "documentaries-jhope-in-the-box" },
+      { navlink: true, text: "SUGA: Road to D-DAY 🎸", hearts: "🖤", sub: "фильм Юнги", year: "2023", link: "documentaries-suga-road-to-dday.html", statKey: "documentaries-suga-road-to-dday" },
+      { navlink: true, text: "Jimin's Production Diary 📕", hearts: "💛", sub: "фильм Чимина", year: "2023", link: "documentaries-jimin-production-diary.html", statKey: "documentaries-jimin-production-diary" },
+      { navlink: true, text: "BTS Monuments: Beyond The Star", sub: "8 серий", year: "2023-2024", link: "documentaries-bts-monuments.html", statKey: "documentaries-bts-monuments" },
+      { navlink: true, text: "HOPE ON THE STREET", sub: "6 серий, сериал Хосока", year: "2024", link: "documentaries-hope-on-the-street.html", statKey: "documentaries-hope-on-the-street" },
+      { navlink: true, text: "JUNG KOOK: I AM STILL", sub: "3 серии, сериал Чонгука", year: "2024", link: "documentaries-jungkook-i-am-still.html", statKey: "documentaries-jungkook-i-am-still" },
+      { text: "TOUR 'D-DAY' The Original", sub: "фильм Юнги (DVD)", year: "2024", link: "https://t.me/violent_arhive/4978" },
+      { text: "Right People, Wrong Place", sub: "фильм Намджуна", year: "2024", link: "https://t.me/violent_arhive/5441" },
+      { text: "HOPE ON THE STAGE", sub: "фильм Хосока", year: "2025", link: "https://t.me/violent_arhive/5440" },
+      { text: "BTS: THE RETURN", sub: "фильм о создании ARIRANG", year: "2026", link: "https://t.me/violent_arhive/5422" }
     ];
 
     const listEl = document.getElementById('list');
@@ -104,11 +104,18 @@
         label.className = 'navlink-label';
         label.id = 'label-' + item.statKey;
         label.textContent = item.text;
-        if (item.sub) {
+               if (item.sub) {
           const sub = document.createElement('span');
           sub.className = 'sub';
           sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px;';
           sub.textContent = item.sub;
+          if (item.year) {
+            const yearSpan = document.createElement('span');
+            yearSpan.style.cssText = 'display:block; font-size:10px; color:#bbb; margin-top:1px;';
+            yearSpan.textContent = item.year;
+            sub.appendChild(document.createElement('br'));
+            sub.appendChild(yearSpan);
+          }
           label.appendChild(sub);
         }
         a.appendChild(label);
@@ -141,10 +148,17 @@
       const span = document.createElement('span');
       span.className = 'text';
       span.textContent = item.text;
-      if (item.sub) {
+            if (item.sub) {
         const sub = document.createElement('span');
         sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px;';
         sub.textContent = item.sub;
+        if (item.year) {
+          const yearSpan = document.createElement('span');
+          yearSpan.style.cssText = 'display:block; font-size:10px; color:#bbb; margin-top:1px;';
+          yearSpan.textContent = item.year;
+          sub.appendChild(document.createElement('br'));
+          sub.appendChild(yearSpan);
+        }
         span.appendChild(sub);
       }
 
