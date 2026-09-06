@@ -36,14 +36,14 @@
   </div>
 
   <script>
-    const items = [
+        const items = [
       { text: "11 серия", link: "https://t.me/violent_arhive/5024" },
-      { text: "12 серия", link: null }
+      { text: "12 серия", link: "https://t.me/violent_arhive/5621" }
     ];
 
-    const listEl = document.getElementById('list');
-    items.forEach((item, ii) => {
-      const id = item.link ? ('video-' + item.link.split('/').pop()) : ('noline-fridge-2025-' + ii);
+       const listEl = document.getElementById('list');
+    items.forEach((item) => {
+      const id = 'video-' + item.link.split('/').pop();
       const row = document.createElement('div');
       row.className = 'row';
       row.dataset.id = id;
@@ -59,13 +59,9 @@
         updateProgress();
       });
       span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
-      row.appendChild(box);
-      row.appendChild(span);
-      if (item.link) {
-        const link = document.createElement('a');
-        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
-        row.appendChild(link);
-      }
+      const link = document.createElement('a');
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
+      row.appendChild(box); row.appendChild(span); row.appendChild(link);
       listEl.appendChild(row);
     });
 
