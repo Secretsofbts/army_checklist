@@ -31,7 +31,7 @@
     <a class="back" href="documentaries.html">← Назад</a>
     <h1>🕺 HOPE ON THE STREET 🕺</h1>
     <p class="intro">Год выпуска: 2024</p>
-    <p class="intro">🤍 Во время съёмок этого сериала Хосок посетил Осаку, Париж, Нью-Йорк и свой родной город Кванджу, чтобы пообщаться и потанцевать с уличными танцорами. Хоби рассказывает о том, что решил обратиться к своим корням. Вспомнить, кто он. Ведь всё началось именно с танцев</p>
+    <p class="intro">Во время съёмок этого сериала Хосок посетил Осаку, Париж, Нью-Йорк и свой родной город Кванджу, чтобы пообщаться и потанцевать с уличными танцорами. Хоби рассказывает о том, что решил обратиться к своим корням. Вспомнить, кто он. Ведь всё началось именно с танцев</p>
     <p class="quote">«Если бы не было танцев, я бы не оказался там, где я сейчас. Я без танца не имею смысла. j-hope бы не существовало. Даже Чон Хосок был бы другим человеком»</p>
 
     <div class="row">
@@ -51,11 +51,11 @@
   </div>
 
   <script>
-    const extraItems = [
-      { text: "🗨 Мини-интервью", link: "https://t.me/violent_arhive/4545" },
-      { text: "🤝 Представление танцоров", link: "https://t.me/violent_arhive/4558" },
-      { text: "🎥 Закулисье записи альбома", link: "https://t.me/violent_arhive/4561" },
-      { text: "📷 Съёмки на постер", link: "https://t.me/violent_arhive/4551" }
+        const extraItems = [
+      { text: "Мини-интервью", hearts: "🗨", link: "https://t.me/violent_arhive/4545" },
+      { text: "Представление танцоров", hearts: "🤝", link: "https://t.me/violent_arhive/4558" },
+      { text: "Закулисье записи альбома", hearts: "🎥", link: "https://t.me/violent_arhive/4561" },
+      { text: "Съёмки на постер", hearts: "📷", link: "https://t.me/violent_arhive/4551" }
     ];
 
     const episodeItems = [
@@ -67,7 +67,7 @@
       { text: "6 серия", link: "https://t.me/violent_arhive/4566" }
     ];
 
-    function renderList(containerId, items) {
+        function renderList(containerId, items) {
       const listEl = document.getElementById(containerId);
       items.forEach((item) => {
         const id = 'video-' + item.link.split('/').pop();
@@ -86,9 +86,12 @@
           updateProgress();
         });
         span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
+        const hearts = document.createElement('span');
+        hearts.style.cssText = 'font-size:13px; flex-shrink:0;';
+        hearts.textContent = item.hearts || '';
         const link = document.createElement('a');
         link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
-        row.appendChild(box); row.appendChild(span); row.appendChild(link);
+        row.appendChild(box); row.appendChild(span); row.appendChild(hearts); row.appendChild(link);
         listEl.appendChild(row);
       });
     }
