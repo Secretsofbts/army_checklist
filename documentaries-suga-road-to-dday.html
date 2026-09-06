@@ -98,8 +98,8 @@
     renderList('list-performances', performanceItems);
     renderList('list-disney', disneyItems);
 
-    function updateProgress() {
-      const all = document.querySelectorAll('input[type="checkbox"]');
+       function updateProgress() {
+      const all = document.querySelectorAll('#list-film input[type="checkbox"], #list-disney input[type="checkbox"]');
       let total = 0, checked = 0;
       all.forEach(cb => { total++; if (cb.checked) checked++; });
       setProgress('documentaries-suga-road-to-dday', {checked, total});
