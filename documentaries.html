@@ -110,9 +110,9 @@
           sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px;';
           sub.textContent = item.sub;
           if (item.year) {
-            const yearSpan = document.createElement('span');
+                       const yearSpan = document.createElement('span');
             yearSpan.style.cssText = 'display:block; font-size:10px; color:#bbb; margin-top:1px;';
-            yearSpan.textContent = item.year;
+            yearSpan.textContent = 'Год выпуска: ' + item.year;
             sub.appendChild(document.createElement('br'));
             sub.appendChild(yearSpan);
           }
