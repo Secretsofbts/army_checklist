@@ -27,9 +27,9 @@
 <body>
   <div class="app">
     <a class="back" href="documentaries.html">← Назад</a>
-    <h1>📕 Jimin's Production Diary 📕</h1>
+    <h1>Jimin's Production Diary 📕</h1>
     <p class="intro">Год выпуска: 2023</p>
-    <p class="intro">💛 Этот фильм познакомит фанатов с творческим путём Чимина при создании сольного альбома "FACE". Он поделится с нами своими мыслями и переживаниями.</p>
+    <p class="intro">Этот фильм познакомит фанатов с творческим путём Чимина при создании сольного альбома "FACE". Он поделится с нами своими мыслями и переживаниями</p>
 
     <div class="row">
       <span class="text" style="cursor:default;">📹 Главный трейлер фильма</span>
@@ -45,13 +45,13 @@
   </div>
 
   <script>
-    const mainItems = [
-      { text: "💛 Сам фильм Production Diary", link: "https://t.me/violent_arhive/4291" },
-      { text: "✨ Комментарии Чимина", link: "https://t.me/violent_arhive/4399" },
-      { text: "⁉️ Квиз-шоу", link: "https://t.me/violent_arhive/4295" },
-      { text: "🔆 Трансляция Чимина", link: "https://t.me/violent_arhive/4322" },
-      { text: "🗨️ Special Talk с Чимином", link: "https://t.me/violent_arhive/4326" },
-      { text: "💣 Бомбочка с Special Talk", link: "https://t.me/violent_arhive/4388" }
+       const mainItems = [
+      { text: "Фильм Production Diary", hearts: "💛", link: "https://t.me/violent_arhive/4291" },
+      { text: "Комментарии Чимина", hearts: "✨", link: "https://t.me/violent_arhive/4399" },
+      { text: "Квиз-шоу", hearts: "⁉️", link: "https://t.me/violent_arhive/4295" },
+      { text: "Трансляция Чимина", hearts: "🔆", link: "https://t.me/violent_arhive/4322" },
+      { text: "Special Talk с Чимином", hearts: "🗨️", link: "https://t.me/violent_arhive/4326" },
+      { text: "Бомбочка с Special Talk", hearts: "💣", link: "https://t.me/violent_arhive/4388" }
     ];
 
     const previewItems = [
@@ -62,7 +62,7 @@
       { text: "Создание хэштега", link: "https://t.me/violent_arhive/4283" }
     ];
 
-    function renderList(containerId, items) {
+        function renderList(containerId, items) {
       const listEl = document.getElementById(containerId);
       items.forEach((item) => {
         const id = 'video-' + item.link.split('/').pop();
@@ -81,9 +81,12 @@
           updateProgress();
         });
         span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
+        const hearts = document.createElement('span');
+        hearts.style.cssText = 'font-size:13px; flex-shrink:0;';
+        hearts.textContent = item.hearts || '';
         const link = document.createElement('a');
         link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
-        row.appendChild(box); row.appendChild(span); row.appendChild(link);
+        row.appendChild(box); row.appendChild(span); row.appendChild(hearts); row.appendChild(link);
         listEl.appendChild(row);
       });
     }
