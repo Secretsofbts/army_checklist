@@ -84,55 +84,54 @@
   <div class="app">
     <a class="back" href="all-clips.html">← Назад</a>
     <h1>📹 Клипы: 2022 – 2023 📹</h1>
-    <div id="list"></div>
-    <a class="navlink" href="clips-2024-2025.html">Продолжение (2024 – 2025 год) ↗</a>
+       <div id="list"></div>
+    <a class="footer-link" href="all-clips.html">Все клипы BTS ⬅️</a>
   </div>
 
   <script>
-    const data = [
+       const data = [
       { year: "2022", groups: [
         { album: null, items: [
           { text: "Yet To Come", link: "https://t.me/violent_arhive/2757" },
-          { text: "Yet To Come (Hyundai)", link: "https://t.me/violent_arhive/3146" }
+          { text: "Yet To Come", sub: "Hyundai", link: "https://t.me/violent_arhive/3146" }
         ]},
-        { album: "Альбом J-hope:", items: [
+        { album: "Альбом J-hope:", hearts: "🤍", items: [
           { text: "MORE", link: "https://t.me/violent_arhive/2788" },
           { text: "Arson", link: "https://t.me/violent_arhive/2851" }
         ]},
-        { album: "Сингл Джина:", items: [
+        { album: "Сингл Джина:", hearts: "💕", items: [
           { text: "The Astronaut", link: "https://t.me/violent_arhive/3255" }
         ]},
-        { album: "Альбом Намджуна:", items: [
+        { album: "Альбом Намджуна:", hearts: "💙", items: [
           { text: "Wild Flower", link: "https://t.me/violent_arhive/3337" },
           { text: "Still Life", link: "https://t.me/violent_arhive/3365" }
         ]}
       ]},
       { year: "2023", groups: [
-        { album: "Альбом Чимина:", items: [
+        { album: "Альбом Чимина:", hearts: "💛", items: [
           { text: "Set Me Free Pt.2", link: "https://t.me/violent_arhive/3787" },
           { text: "Like Crazy", link: "https://t.me/violent_arhive/3813" }
         ]},
-        { album: "Альбом Юнги:", items: [
+        { album: "Альбом Юнги:", hearts: "🖤", items: [
           { text: "People Pt.2", link: "https://t.me/violent_arhive/3953" },
           { text: "Haegeum", link: "https://t.me/violent_arhive/3951" },
           { text: "Amygdala", link: "https://t.me/violent_arhive/3979" }
         ]},
-        { album: "Альбом Тэхёна:", items: [
+        { album: "Альбом Тэхёна:", hearts: "💚", items: [
           { text: "Love Me Again", link: "https://t.me/violent_arhive/4159" },
           { text: "Rainy Days", link: "https://t.me/violent_arhive/4161" },
           { text: "Slow Dancing", link: "https://t.me/violent_arhive/4220" },
           { text: "Blue", link: "https://t.me/violent_arhive/4222" }
         ]},
-        { album: "Альбом Чонгука:", items: [
+        { album: "Альбом Чонгука:", hearts: "💜", items: [
           { text: "Seven", link: "https://t.me/violent_arhive/4108" },
           { text: "3D", link: "https://t.me/violent_arhive/4252" },
           { text: "Standing Next to You", link: "https://t.me/violent_arhive/4304" },
-          { text: "Standing Next to You (Choreography)", link: "https://t.me/violent_arhive/4346" },
-          { text: "Standing Next to You - Usher Remix", link: "https://t.me/violent_arhive/4444" }
+          { text: "Standing Next to You", sub: "Choreography", link: "https://t.me/violent_arhive/4346" },
+          { text: "Standing Next to You", sub: "Usher Remix", link: "https://t.me/violent_arhive/4444" }
         ]}
       ]}
     ];
-
     const listEl = document.getElementById('list');
     data.forEach((block) => {
       const yearTitle = document.createElement('div');
@@ -140,11 +139,11 @@
       yearTitle.textContent = block.year + ' год';
       listEl.appendChild(yearTitle);
 
-      block.groups.forEach((group) => {
+            block.groups.forEach((group) => {
         if (group.album) {
           const albumTitle = document.createElement('div');
           albumTitle.className = 'album';
-          albumTitle.textContent = group.album;
+          albumTitle.textContent = (group.hearts ? group.hearts + ' ' : '') + group.album;
           listEl.appendChild(albumTitle);
         }
 
@@ -157,9 +156,15 @@
           const box = document.createElement('input');
           box.type = 'checkbox';
 
-          const span = document.createElement('span');
+                   const span = document.createElement('span');
           span.className = 'text';
           span.textContent = item.text;
+          if (item.sub) {
+            const sub = document.createElement('span');
+            sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+            sub.textContent = item.sub;
+            span.appendChild(sub);
+          }
 
           if (localStorage.getItem(id) === 'true') {
             box.checked = true;
