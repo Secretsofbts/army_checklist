@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js?v=4"></script>
+  <title>BTS Festa</title>
+  <style>
+    body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
+    .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 10px; }
+    .outro { font-size: 13px; color: #555; margin: 12px 0 0; text-align: center; }
+    .navlink {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: #f7f7fa;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      text-decoration: none;
+    }
+    .navlink input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; margin-left: -6px; }
+    .navlink-label.done { color: #bbb; text-decoration: line-through; font-weight: 400; }
+    .footer-link { display: block; text-align: center; font-size: 13px; color: #000; text-decoration: none; margin-top: 16px; padding-top: 12px; border-top: 1px solid #eee; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="index.html">← Назад</a>
+    <h1>🎉 BTS FESTA 🎉</h1>
+    <p class="intro">Тусовка в честь дебюта группы, которая длится почти 2 недели в начале июня каждого года)</p>
+    <p class="intro">В 2014-2018 были ещё профайлы ребят, но их никто не перевёл, поэтому я их не добавила. Кроме них весь контент фесты тут)</p>
+    <div id="list"></div>
+    <p class="outro">Запасайтесь попкорном или чипсиками, впереди вас ждёт очень много контента ☺️ Мы буквально можем посмотреть, как на наших глазах выросли ребята)</p>
+    <a class="footer-link" href="index.html">На главную ⬅️</a>
+  </div>
+
+  <script>
+    const navItems = [
+      { text: "BTS FESTA 2014", sub: "1st birthday", link: "bts-festa-2014.html", statKey: "bts-festa-2014" },
+      { text: "BTS FESTA 2015", sub: "2nd birthday", link: "bts-festa-2015.html", statKey: "bts-festa-2015" },
+      { text: "BTS FESTA 2016", sub: "3rd birthday", link: "bts-festa-2016.html", statKey: "bts-festa-2016" },
+      { text: "BTS FESTA 2017", sub: "4th birthday", link: "bts-festa-2017.html", statKey: "bts-festa-2017" },
+      { text: "BTS FESTA 2018", sub: "5th birthday", link: "bts-festa-2018.html", statKey: "bts-festa-2018" },
+      { text: "BTS FESTA 2019", sub: "6th birthday", link: "bts-festa-2019.html", statKey: "bts-festa-2019" },
+      { text: "BTS FESTA 2020", sub: "7th birthday", link: "bts-festa-2020.html", statKey: "bts-festa-2020" },
+      { text: "BTS FESTA 2021", sub: "8th birthday", link: "bts-festa-2021.html", statKey: "bts-festa-2021" },
+      { text: "BTS FESTA 2022", sub: "9th birthday", link: "bts-festa-2022.html", statKey: "bts-festa-2022" },
+      { text: "BTS FESTA 2023", sub: "10th birthday", link: "bts-festa-2023.html", statKey: "bts-festa-2023" },
+      { text: "BTS FESTA 2024", sub: "11th birthday", link: "bts-festa-2024.html", statKey: "bts-festa-2024" },
+      { text: "BTS FESTA 2025", sub: "12th birthday", link: "bts-festa-2025.html", statKey: "bts-festa-2025" },
+      { text: "BTS FESTA 2026", sub: "13th birthday", link: "bts-festa-2026.html", statKey: "bts-festa-2026" }
+    ];
+
+    const listEl = document.getElementById('list');
+    navItems.forEach((item) => {
+      const a = document.createElement('a');
+      a.className = 'navlink';
+      a.href = item.link;
+      const label = document.createElement('span');
+      label.className = 'navlink-label';
+      label.style.flex = '1';
+      label.textContent = item.text;
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+        sub.textContent = item.sub;
+        label.appendChild(sub);
+      }
+      if (item.statKey) {
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+        box.style.pointerEvents = 'none';
+        box.id = 'checkbox-' + item.statKey;
+        box.style.display = 'none';
+        a.appendChild(box);
+      }
+      a.appendChild(label);
+      const badge = document.createElement('span');
+      badge.id = 'badge-' + item.statKey;
+      badge.style.cssText = 'font-size:12px; color:#999; flex-shrink:0;';
+      a.appendChild(badge);
+      listEl.appendChild(a);
+    });
+
+    function applyBadge(key, data) {
+      var el = document.getElementById('badge-' + key);
+      if (!el || !data || data.total === 0) { if (el) el.textContent = ''; return; }
+      if (data.checked === data.total) {
+        el.textContent = '';
+        var checkbox = document.getElementById('checkbox-' + key);
+        if (checkbox) {
+          checkbox.checked = true;
+          checkbox.style.display = '';
+        }
+        var label = el.closest('.navlink').querySelector('.navlink-label');
+        if (label) label.classList.add('done');
+      } else {
+        el.textContent = data.checked + '/' + data.total;
+      }
+    }
+
+    const navKeys = navItems.map(i => i.statKey);
+    function renderAllBadges() {
+      navKeys.forEach((key) => {
+        var raw = localStorage.getItem('progress:' + key);
+        applyBadge(key, raw ? JSON.parse(raw) : null);
+      });
+    }
+    renderAllBadges();
+    refreshLocalStorageFromCloud(renderAllBadges);
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
