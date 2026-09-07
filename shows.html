@@ -147,9 +147,12 @@
       'badge-american-hustle-life': ['american-hustle-life-episodes']    };
     
 
-    function renderAllBadges() {
+      function renderAllBadges() {
       Object.keys(badgeGroups).forEach((elId) => {
         applyBadgeTotal(elId, badgeGroups[elId], function(key) {
+          if (typeof YEAR_WEIGHTED_MAP !== 'undefined' && YEAR_WEIGHTED_MAP[key]) {
+            return getCombinedYearStats(key);
+          }
           var raw = localStorage.getItem('progress:' + key);
           return raw ? JSON.parse(raw) : null;
         });
