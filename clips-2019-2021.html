@@ -78,35 +78,35 @@
   <div class="app">
     <a class="back" href="all-clips.html">← Назад</a>
     <h1>📹 Клипы: 2019 – 2021 📹</h1>
-    <div id="list"></div>
-    <a class="navlink" href="clips-2022-2023.html">Продолжение (2022 – 2023 год) ↗</a>
+        <div id="list"></div>
+    <a class="footer-link" href="all-clips.html">Все клипы BTS ⬅️</a>
   </div>
 
   <script>
-    const data = [
+        const data = [
       { year: "2019", items: [
-        { text: "RM - Persona", link: "https://t.me/violent_arhive/2500" },
-        { text: "Boy With Luv (feat. Halsey)", link: "https://t.me/violent_arhive/2502" },
-        { text: "Boy With Luv (ARMY With Luv ver)", link: "https://t.me/violent_arhive/2504" },
-        { text: "Make It Right (feat. Lauv)", link: "https://t.me/violent_arhive/2508" }
+        { text: "Persona", hearts: "💙", link: "https://t.me/violent_arhive/2500" },
+        { text: "Boy With Luv", sub: "feat. Halsey", link: "https://t.me/violent_arhive/2502" },
+        { text: "Boy With Luv", sub: "ARMY With Luv ver", link: "https://t.me/violent_arhive/2504" },
+        { text: "Make It Right", sub: "feat. Lauv", link: "https://t.me/violent_arhive/2508" }
       ]},
       { year: "2020", items: [
-        { text: "Suga - Interlude: Shadow", link: "https://t.me/violent_arhive/2510" },
-        { text: "J-hope - Outro: Ego", link: "https://t.me/violent_arhive/2512" },
+        { text: "Interlude: Shadow", hearts: "🖤", link: "https://t.me/violent_arhive/2510" },
+        { text: "Outro: Ego", hearts: "🤍", link: "https://t.me/violent_arhive/2512" },
         { text: "ON Kinetic Manifesto Film", link: "https://t.me/violent_arhive/2514" },
         { text: "ON", link: "https://t.me/violent_arhive/2516" },
         { text: "Black Swan", link: "https://t.me/violent_arhive/2518" },
         { text: "Dynamite", link: "https://t.me/violent_arhive/2524" },
-        { text: "Dynamite (B-side)", link: "https://t.me/violent_arhive/2526" },
-        { text: "Dynamite (Choreography)", link: "https://t.me/violent_arhive/2528" },
+        { text: "Dynamite", sub: "B-side", link: "https://t.me/violent_arhive/2526" },
+        { text: "Dynamite", sub: "Choreography", link: "https://t.me/violent_arhive/2528" },
         { text: "Life Goes On", link: "https://t.me/violent_arhive/2529" },
-        { text: "Life Goes On: on my pillow", link: "https://t.me/violent_arhive/2555" },
-        { text: "Life Goes On: in the forest", link: "https://t.me/violent_arhive/2531" }
+        { text: "Life Goes On", sub: "on my pillow", link: "https://t.me/violent_arhive/2555" },
+        { text: "Life Goes On", sub: "in the forest", link: "https://t.me/violent_arhive/2531" }
       ]},
       { year: "2021", items: [
         { text: "Butter", link: "https://t.me/violent_arhive/2535" },
-        { text: "Butter (Hotter Remix)", link: "https://t.me/violent_arhive/2537" },
-        { text: "Butter (Cooler Remix)", link: "https://t.me/violent_arhive/2538" },
+        { text: "Butter", sub: "Hotter Remix", link: "https://t.me/violent_arhive/2537" },
+        { text: "Butter", sub: "Cooler Remix", link: "https://t.me/violent_arhive/2538" },
         { text: "Permission to Dance", link: "https://t.me/violent_arhive/2539" },
         { text: "My Universe", link: "https://t.me/violent_arhive/2541" }
       ]}
@@ -128,9 +128,15 @@
         const box = document.createElement('input');
         box.type = 'checkbox';
 
-        const span = document.createElement('span');
+               const span = document.createElement('span');
         span.className = 'text';
         span.textContent = item.text;
+        if (item.sub) {
+          const sub = document.createElement('span');
+          sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+          sub.textContent = item.sub;
+          span.appendChild(sub);
+        }
 
         if (localStorage.getItem(id) === 'true') {
           box.checked = true;
@@ -146,6 +152,10 @@
           box.dispatchEvent(new Event('change'));
         });
 
+        const hearts = document.createElement('span');
+        hearts.style.cssText = 'font-size:13px; flex-shrink:0;';
+        hearts.textContent = item.hearts || '';
+
         const link = document.createElement('a');
         link.className = 'link';
         link.href = item.link;
@@ -154,6 +164,7 @@
 
         row.appendChild(box);
         row.appendChild(span);
+        row.appendChild(hearts);
         row.appendChild(link);
         listEl.appendChild(row);
       });
