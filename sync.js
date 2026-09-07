@@ -171,7 +171,11 @@
     'other-shows-jimmy-fallon-hoseok': { allOf: ["video-5045","video-5046","video-5047","video-5033"], weight: 1 },
     'other-shows-kian-guesthouse': ["video-5079","video-5084","video-5099","video-5111","video-5113","video-5117","video-5118","video-5119","video-5128"],
     'other-shows-jimmy-fallon-jin-2025': { allOf: ["video-5132","video-5130","video-5131"], weight: 1 },
-    'other-shows-omniscient-interfering-view': ["video-5169","video-5228"]
+        'other-shows-omniscient-interfering-view': ["video-5169","video-5228"]
+  },
+  'other-shows-2026': {
+    'other-shows-jimmy-fallon-bts-2026': { allOf: ["video-5465","video-5466","video-5467","video-5468","video-5447","video-5446"], weight: 1 },
+    'other-shows-rolling-stone': ["video-5553","video-5491","video-5492","video-5488","video-5483","video-5489","video-5490","video-5482"]
   }
 };
 
