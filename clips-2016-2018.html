@@ -78,47 +78,47 @@
   <div class="app">
     <a class="back" href="all-clips.html">← Назад</a>
     <h1>📹 Клипы: 2016 – 2018 📹</h1>
-    <div id="list"></div>
-    <a class="navlink" href="clips-2019-2021.html">Продолжение (2019 – 2021 год) ↗</a>
+       <div id="list"></div>
+    <a class="footer-link" href="all-clips.html">Все клипы BTS ⬅️</a>
   </div>
 
   <script>
-    const data = [
+        const data = [
       { year: "2016", items: [
         { text: "Epilogue: Forever Young", link: "https://t.me/violent_arhive/2423" },
         { text: "FIRE", link: "https://t.me/violent_arhive/2426" },
-        { text: "FIRE (Choreography)", link: "https://t.me/violent_arhive/2428" },
+        { text: "FIRE", sub: "Choreography", link: "https://t.me/violent_arhive/2428" },
         { text: "Save ME", link: "https://t.me/violent_arhive/2429" },
-        { text: "WINGS Short Film #1 BEGIN", link: "https://t.me/violent_arhive/2435" },
-        { text: "WINGS Short Film #2 LIE", link: "https://t.me/violent_arhive/2437" },
-        { text: "WINGS Short Film #3 STIGMA", link: "https://t.me/violent_arhive/2439" },
-        { text: "WINGS Short Film #4 FIRST LOVE", link: "https://t.me/violent_arhive/2441" },
-        { text: "WINGS Short Film #5 REFLECTION", link: "https://t.me/violent_arhive/2443" },
-        { text: "WINGS Short Film #6 MAMA", link: "https://t.me/violent_arhive/2445" },
-        { text: "WINGS Short Film #7 AWAKE", link: "https://t.me/violent_arhive/2447" },
+        { text: "WINGS Short Film", sub: "#1 BEGIN", link: "https://t.me/violent_arhive/2435" },
+        { text: "WINGS Short Film", sub: "#2 LIE", link: "https://t.me/violent_arhive/2437" },
+        { text: "WINGS Short Film", sub: "#3 STIGMA", link: "https://t.me/violent_arhive/2439" },
+        { text: "WINGS Short Film", sub: "#4 FIRST LOVE", link: "https://t.me/violent_arhive/2441" },
+        { text: "WINGS Short Film", sub: "#5 REFLECTION", link: "https://t.me/violent_arhive/2443" },
+        { text: "WINGS Short Film", sub: "#6 MAMA", link: "https://t.me/violent_arhive/2445" },
+        { text: "WINGS Short Film", sub: "#7 AWAKE", link: "https://t.me/violent_arhive/2447" },
         { text: "WINGS: Boy Meets Evil", link: "https://t.me/violent_arhive/2449" },
         { text: "Blood Sweat & Tears", link: "https://t.me/violent_arhive/2451" }
       ]},
       { year: "2017", items: [
         { text: "Spring Day", link: "https://t.me/violent_arhive/2455" },
         { text: "Not Today", link: "https://t.me/violent_arhive/2457" },
-        { text: "Not Today (Choreography)", link: "https://t.me/violent_arhive/2459" },
+        { text: "Not Today", sub: "Choreography", link: "https://t.me/violent_arhive/2459" },
         { text: "LY: Highlight Reel (1)", link: "https://t.me/violent_arhive/2462" },
         { text: "LY: Highlight Reel (2)", link: "https://t.me/violent_arhive/2464" },
         { text: "LY: Highlight Reel (3)", link: "https://t.me/violent_arhive/2466" },
         { text: "LY: Highlight Reel (4)", link: "https://t.me/violent_arhive/2468" },
-        { text: "Jimin - Serendipity", link: "https://t.me/violent_arhive/2470" },
+        { text: "Serendipity", hearts: "💛", link: "https://t.me/violent_arhive/2470" },
         { text: "DNA", link: "https://t.me/violent_arhive/2472" },
-        { text: "MIC Drop (Steve Aoki Remix)", link: "https://t.me/violent_arhive/2474" }
+        { text: "MIC Drop", sub: "Steve Aoki Remix", link: "https://t.me/violent_arhive/2474" }
       ]},
       { year: "2018", items: [
         { text: "Euphoria: Theme of LY", link: "https://t.me/violent_arhive/2480" },
-        { text: "V - Singularity", link: "https://t.me/violent_arhive/2482" },
+        { text: "Singularity", hearts: "💚", link: "https://t.me/violent_arhive/2482" },
         { text: "FAKE LOVE", link: "https://t.me/violent_arhive/2484" },
-        { text: "FAKE LOVE (расширенная версия)", link: "https://t.me/violent_arhive/2486" },
-        { text: "Jin - Epiphany", link: "https://t.me/violent_arhive/2488" },
+        { text: "FAKE LOVE", sub: "расширенная версия", link: "https://t.me/violent_arhive/2486" },
+        { text: "Epiphany", hearts: "💕", link: "https://t.me/violent_arhive/2488" },
         { text: "IDOL", link: "https://t.me/violent_arhive/2490" },
-        { text: "IDOL (Feat. Nicki Minaj)", link: "https://t.me/violent_arhive/2492" }
+        { text: "IDOL", sub: "Feat. Nicki Minaj", link: "https://t.me/violent_arhive/2492" }
       ]}
     ];
 
@@ -138,9 +138,15 @@
         const box = document.createElement('input');
         box.type = 'checkbox';
 
-        const span = document.createElement('span');
+               const span = document.createElement('span');
         span.className = 'text';
         span.textContent = item.text;
+        if (item.sub) {
+          const sub = document.createElement('span');
+          sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+          sub.textContent = item.sub;
+          span.appendChild(sub);
+        }
 
         if (localStorage.getItem(id) === 'true') {
           box.checked = true;
@@ -156,6 +162,10 @@
           box.dispatchEvent(new Event('change'));
         });
 
+        const hearts = document.createElement('span');
+        hearts.style.cssText = 'font-size:13px; flex-shrink:0;';
+        hearts.textContent = item.hearts || '';
+
         const link = document.createElement('a');
         link.className = 'link';
         link.href = item.link;
@@ -164,6 +174,7 @@
 
         row.appendChild(box);
         row.appendChild(span);
+        row.appendChild(hearts);
         row.appendChild(link);
         listEl.appendChild(row);
       });
