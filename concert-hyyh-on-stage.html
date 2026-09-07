@@ -130,6 +130,7 @@
         if (cb.checked) checked++;
       });
       setProgress('concert-hyyh-on-stage', {checked, total});
+      pushWeightedContributions('concert-hyyh-on-stage');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

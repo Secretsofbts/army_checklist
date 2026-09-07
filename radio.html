@@ -160,6 +160,7 @@
         if (cb.checked) checked++;
       });
       setProgress('radio', {checked, total});
+      pushWeightedContributions('radio');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

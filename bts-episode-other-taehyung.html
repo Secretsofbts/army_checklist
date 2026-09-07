@@ -125,6 +125,7 @@
         if (cb.checked) checked++;
       });
       setProgress('bts-episode-other-taehyung', {checked, total});
+      pushWeightedContributions('bts-episode-other-taehyung');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

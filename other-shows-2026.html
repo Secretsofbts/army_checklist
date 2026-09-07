@@ -247,6 +247,7 @@
       total += weighted.total;
       checked += weighted.checked;
       setProgress('other-shows-2026', {checked, total});
+      pushWeightedContributions('other-shows-2026');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

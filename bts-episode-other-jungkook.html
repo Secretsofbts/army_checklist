@@ -129,6 +129,7 @@
         if (cb.checked) checked++;
       });
       setProgress('bts-episode-other-jungkook', {checked, total});
+      pushWeightedContributions('bts-episode-other-jungkook');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

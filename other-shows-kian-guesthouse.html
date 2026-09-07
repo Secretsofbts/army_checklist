@@ -78,6 +78,7 @@
       let total = 0, checked = 0;
       all.forEach(cb => { total++; if (cb.checked) checked++; });
       setProgress('other-shows-kian-guesthouse', {checked, total});
+      pushWeightedContributions('other-shows-kian-guesthouse');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

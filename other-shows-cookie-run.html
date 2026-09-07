@@ -81,6 +81,7 @@
         if (cb.checked) checked++;
       });
       setProgress('other-shows-cookie-run', {checked, total});
+      pushWeightedContributions('other-shows-cookie-run');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

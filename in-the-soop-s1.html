@@ -147,6 +147,7 @@
         if (cb.checked) checked++;
       });
       setProgress('in-the-soop-s1', {checked, total});
+      pushWeightedContributions('in-the-soop-s1');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

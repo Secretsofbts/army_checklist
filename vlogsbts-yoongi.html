@@ -141,6 +141,7 @@
         if (cb.checked) checked++;
       });
       setProgress('vlogsbts-yoongi', {checked, total});
+      pushWeightedContributions('vlogsbts-yoongi');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

@@ -134,6 +134,7 @@
         if (cb.checked) checked++;
       });
       setProgress('in-the-soop-friendcation', {checked, total});
+      pushWeightedContributions('in-the-soop-friendcation');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

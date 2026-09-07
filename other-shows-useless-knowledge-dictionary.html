@@ -76,6 +76,7 @@
       let total = 0, checked = 0;
       all.forEach(cb => { total++; if (cb.checked) checked++; });
       setProgress('other-shows-useless-knowledge-dictionary', {checked, total});
+      pushWeightedContributions('other-shows-useless-knowledge-dictionary');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

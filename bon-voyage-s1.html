@@ -127,6 +127,7 @@
         if (cb.checked) checked++;
       });
       setProgress('bon-voyage-s1', {checked, total});
+      pushWeightedContributions('bon-voyage-s1');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

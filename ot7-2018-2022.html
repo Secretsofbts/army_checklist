@@ -166,6 +166,7 @@
         if (cb.checked) checked++;
       });
       setProgress('ot7-2018-2022', {checked, total});
+      pushWeightedContributions('ot7-2018-2022');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

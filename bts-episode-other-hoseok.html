@@ -128,6 +128,7 @@
         if (cb.checked) checked++;
       });
       setProgress('bts-episode-other-hoseok', {checked, total});
+      pushWeightedContributions('bts-episode-other-hoseok');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

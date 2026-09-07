@@ -122,6 +122,7 @@
         if (cb.checked) checked++;
       });
       setProgress('other-shows-take-care-of-my-fridge', {checked, total});
+      pushWeightedContributions('other-shows-take-care-of-my-fridge');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

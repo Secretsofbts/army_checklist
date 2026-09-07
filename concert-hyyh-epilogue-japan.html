@@ -142,6 +142,7 @@
         if (cb.checked) checked++;
       });
       setProgress('concert-hyyh-epilogue-japan', {checked, total});
+      pushWeightedContributions('concert-hyyh-epilogue-japan');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

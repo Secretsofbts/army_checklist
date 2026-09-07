@@ -88,6 +88,7 @@
       let total = 0, checked = 0;
       all.forEach(cb => { total++; if (cb.checked) checked++; });
       setProgress('documentaries-burn-the-stage', {checked, total});
+      pushWeightedContributions('documentaries-burn-the-stage');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

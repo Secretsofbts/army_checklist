@@ -122,6 +122,7 @@
         if (cb.checked) checked++;
       });
       setProgress('bts-episode-other-yoongi', {checked, total});
+      pushWeightedContributions('bts-episode-other-yoongi');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

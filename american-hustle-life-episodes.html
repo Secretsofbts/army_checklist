@@ -124,6 +124,7 @@
         if (cb.checked) checked++;
       });
       setProgress('american-hustle-life-episodes', {checked, total});
+      pushWeightedContributions('american-hustle-life-episodes');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

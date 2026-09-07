@@ -133,6 +133,7 @@
         if (cb.checked) checked++;
       });
       setProgress('other-shows-star-king', {checked, total});
+      pushWeightedContributions('other-shows-star-king');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

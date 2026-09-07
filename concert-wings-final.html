@@ -149,6 +149,7 @@
         if (cb.checked) checked++;
       });
       setProgress('concert-wings-final', {checked, total});
+      pushWeightedContributions('concert-wings-final');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

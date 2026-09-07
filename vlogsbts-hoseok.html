@@ -135,6 +135,7 @@
         if (cb.checked) checked++;
       });
       setProgress('vlogsbts-hoseok', {checked, total});
+      pushWeightedContributions('vlogsbts-hoseok');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

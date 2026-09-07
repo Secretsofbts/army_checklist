@@ -161,6 +161,7 @@
         if (cb.checked) checked++;
       });
       setProgress('jin-2023-2025', {checked, total});
+      pushWeightedContributions('jin-2023-2025');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

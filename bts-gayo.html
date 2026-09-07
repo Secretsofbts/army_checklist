@@ -157,6 +157,7 @@
         if (cb.checked) checked++;
       });
       setProgress('bts-gayo', {checked, total});
+      pushWeightedContributions('bts-gayo');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

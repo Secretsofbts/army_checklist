@@ -127,6 +127,7 @@
         if (cb.checked) checked++;
       });
       setProgress('td-stories', {checked, total});
+      pushWeightedContributions('td-stories');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

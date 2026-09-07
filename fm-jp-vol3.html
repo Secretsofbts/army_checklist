@@ -132,6 +132,7 @@
         if (cb.checked) checked++;
       });
       setProgress('fm-jp-vol3', {checked, total});
+      pushWeightedContributions('fm-jp-vol3');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

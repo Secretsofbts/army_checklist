@@ -382,6 +382,7 @@ function renderAllBadges() {
         if (cb.checked) checked++;
       });
       setProgress('fanmeetings', {checked, total});
+      pushWeightedContributions('fanmeetings');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

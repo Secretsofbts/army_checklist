@@ -166,6 +166,7 @@
         if (cb.checked) checked++;
       });
       setProgress('clips-standalone', {checked, total});
+      pushWeightedContributions('clips-standalone');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

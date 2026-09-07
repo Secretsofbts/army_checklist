@@ -127,6 +127,7 @@
         if (cb.checked) checked++;
       });
       setProgress('run-bts-2-0-1-25', {checked, total});
+      pushWeightedContributions('run-bts-2-0-1-25');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

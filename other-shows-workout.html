@@ -74,6 +74,7 @@
       let total = 0, checked = 0;
       all.forEach(cb => { total++; if (cb.checked) checked++; });
       setProgress('other-shows-workout', {checked, total});
+      pushWeightedContributions('other-shows-workout');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

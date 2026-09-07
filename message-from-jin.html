@@ -133,6 +133,7 @@
         if (cb.checked) checked++;
       });
       setProgress('message-from-jin', {checked, total});
+      pushWeightedContributions('message-from-jin');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

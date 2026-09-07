@@ -184,6 +184,7 @@
         if (cb.checked) checked++;
       });
       setProgress('concerts-2020-2021', {checked, total});
+      pushWeightedContributions('concerts-2020-2021');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

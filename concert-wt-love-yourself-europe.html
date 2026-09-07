@@ -127,6 +127,7 @@
         if (cb.checked) checked++;
       });
       setProgress('concert-wt-love-yourself-europe', {checked, total});
+      pushWeightedContributions('concert-wt-love-yourself-europe');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

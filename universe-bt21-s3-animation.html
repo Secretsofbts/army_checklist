@@ -133,6 +133,7 @@
         if (cb.checked) checked++;
       });
       setProgress('universe-bt21-s3-animation', {checked, total});
+      pushWeightedContributions('universe-bt21-s3-animation');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

@@ -133,6 +133,7 @@
         if (cb.checked) checked++;
       });
       setProgress('bts-memories-2017', {checked, total});
+      pushWeightedContributions('bts-memories-2017');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

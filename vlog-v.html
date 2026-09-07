@@ -157,6 +157,7 @@
         if (cb.checked) checked++;
       });
       setProgress('vlog-v', {checked, total});
+      pushWeightedContributions('vlog-v');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

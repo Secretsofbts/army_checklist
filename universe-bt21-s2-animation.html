@@ -135,6 +135,7 @@
         if (cb.checked) checked++;
       });
       setProgress('universe-bt21-s2-animation', {checked, total});
+      pushWeightedContributions('universe-bt21-s2-animation');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

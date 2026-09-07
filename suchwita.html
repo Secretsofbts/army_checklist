@@ -154,6 +154,7 @@
         if (cb.checked) checked++;
       });
       setProgress('suchwita', {checked, total});
+      pushWeightedContributions('suchwita');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

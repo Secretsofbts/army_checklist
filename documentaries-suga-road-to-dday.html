@@ -103,6 +103,7 @@
       let total = 0, checked = 0;
       all.forEach(cb => { total++; if (cb.checked) checked++; });
       setProgress('documentaries-suga-road-to-dday', {checked, total});
+      pushWeightedContributions('documentaries-suga-road-to-dday');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

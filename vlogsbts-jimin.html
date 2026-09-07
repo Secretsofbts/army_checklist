@@ -135,6 +135,7 @@
         if (cb.checked) checked++;
       });
       setProgress('vlogsbts-jimin', {checked, total});
+      pushWeightedContributions('vlogsbts-jimin');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

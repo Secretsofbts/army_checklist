@@ -134,6 +134,7 @@
         if (cb.checked) checked++;
       });
       setProgress('hoseok-2026-HB', {checked, total});
+      pushWeightedContributions('hoseok-2026-HB');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

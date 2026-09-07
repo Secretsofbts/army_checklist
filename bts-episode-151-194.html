@@ -169,6 +169,7 @@
         if (cb.checked) checked++;
       });
       setProgress('bts-episode-151-194', {checked, total});
+      pushWeightedContributions('bts-episode-151-194');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

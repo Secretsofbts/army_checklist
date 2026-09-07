@@ -135,6 +135,7 @@
         if (cb.checked) checked++;
       });
       setProgress('run-jin-26-36', {checked, total});
+      pushWeightedContributions('run-jin-26-36');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

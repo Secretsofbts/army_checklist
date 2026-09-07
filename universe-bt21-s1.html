@@ -146,6 +146,7 @@
         if (cb.checked) checked++;
       });
       setProgress('universe-bt21-s1', {checked, total});
+      pushWeightedContributions('universe-bt21-s1');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

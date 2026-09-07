@@ -127,6 +127,7 @@
         if (cb.checked) checked++;
       });
       setProgress('other-shows-law-of-jungle', {checked, total});
+      pushWeightedContributions('other-shows-law-of-jungle');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

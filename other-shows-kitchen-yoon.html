@@ -109,6 +109,7 @@
       let total = 0, checked = 0;
       all.forEach(cb => { total++; if (cb.checked) checked++; });
       setProgress('other-shows-kitchen-yoon', {checked, total});
+      pushWeightedContributions('other-shows-kitchen-yoon');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

@@ -118,6 +118,7 @@
         if (cb.checked) checked++;
       });
       setProgress('bts-episode-other-namjoon', {checked, total});
+      pushWeightedContributions('bts-episode-other-namjoon');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

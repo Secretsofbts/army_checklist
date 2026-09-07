@@ -145,6 +145,7 @@
         if (cb.checked) checked++;
       });
       setProgress('american-hustle-life-deleted', {checked, total});
+      pushWeightedContributions('american-hustle-life-deleted');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

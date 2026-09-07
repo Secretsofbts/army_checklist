@@ -157,6 +157,7 @@
         if (cb.checked) checked++;
       });
       setProgress('vlog-jungkook', {checked, total});
+      pushWeightedContributions('vlog-jungkook');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

@@ -155,6 +155,7 @@
         if (cb.checked) checked++;
       });
       setProgress('concert-arirang-tour', {checked, total});
+      pushWeightedContributions('concert-arirang-tour');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

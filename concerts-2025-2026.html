@@ -172,6 +172,7 @@ function renderAllBadges() {
         if (cb.checked) checked++;
       });
       setProgress('concerts-2025-2026', {checked, total});
+      pushWeightedContributions('concerts-2025-2026');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

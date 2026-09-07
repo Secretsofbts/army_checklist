@@ -146,6 +146,7 @@
         if (cb.checked) checked++;
       });
       setProgress('comeback', {checked, total});
+      pushWeightedContributions('comeback');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

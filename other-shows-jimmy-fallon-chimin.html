@@ -70,6 +70,7 @@
       let total = 0, checked = 0;
       all.forEach(cb => { total++; if (cb.checked) checked++; });
       setProgress('other-shows-jimmy-fallon-chimin', {checked, total});
+      pushWeightedContributions('other-shows-jimmy-fallon-chimin');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

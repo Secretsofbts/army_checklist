@@ -160,6 +160,7 @@ function renderAllBadges() {
         if (cb.checked) checked++;
       });
       setProgress('vlogsbts-jungkook', {checked, total});
+      pushWeightedContributions('vlogsbts-jungkook');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

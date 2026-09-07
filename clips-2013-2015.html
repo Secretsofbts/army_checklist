@@ -164,6 +164,7 @@
         if (cb.checked) checked++;
       });
       setProgress('clips-2013-2015', {checked, total});
+      pushWeightedContributions('clips-2013-2015');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

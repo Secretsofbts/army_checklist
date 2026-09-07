@@ -122,6 +122,7 @@
         if (cb.checked) checked++;
       });
       setProgress('other-shows-star-show-360', {checked, total});
+      pushWeightedContributions('other-shows-star-show-360');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

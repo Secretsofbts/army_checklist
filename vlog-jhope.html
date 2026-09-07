@@ -163,6 +163,7 @@
         if (cb.checked) checked++;
       });
       setProgress('vlog-jhope', {checked, total});
+      pushWeightedContributions('vlog-jhope');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

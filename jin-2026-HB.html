@@ -132,6 +132,7 @@
         if (cb.checked) checked++;
       });
       setProgress('jin-2026-HB', {checked, total});
+      pushWeightedContributions('jin-2026-HB');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

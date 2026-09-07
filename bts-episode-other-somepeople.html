@@ -139,6 +139,7 @@
         if (cb.checked) checked++;
       });
       setProgress('bts-episode-other-somepeople', {checked, total});
+      pushWeightedContributions('bts-episode-other-somepeople');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

@@ -140,6 +140,7 @@
         if (cb.checked) checked++;
       });
       setProgress('fm-3rd-muster', {checked, total});
+      pushWeightedContributions('fm-3rd-muster');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

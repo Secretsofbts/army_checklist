@@ -141,6 +141,7 @@
         if (cb.checked) checked++;
       });
       setProgress('universe-bt21-inside-manga', {checked, total});
+      pushWeightedContributions('universe-bt21-inside-manga');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

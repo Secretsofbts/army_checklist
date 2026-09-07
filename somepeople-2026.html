@@ -149,6 +149,7 @@
         if (cb.checked) checked++;
       });
       setProgress('somepeople-2026', {checked, total});
+      pushWeightedContributions('somepeople-2026');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

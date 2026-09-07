@@ -141,6 +141,7 @@
         if (cb.checked) checked++;
       });
       setProgress('vlogsbts-taehyung', {checked, total});
+      pushWeightedContributions('vlogsbts-taehyung');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

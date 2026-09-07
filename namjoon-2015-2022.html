@@ -175,6 +175,7 @@
         if (cb.checked) checked++;
       });
       setProgress('namjoon-2015-2022', {checked, total});
+      pushWeightedContributions('namjoon-2015-2022');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

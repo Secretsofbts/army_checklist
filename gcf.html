@@ -126,6 +126,7 @@
         if (cb.checked) checked++;
       });
       setProgress('gcf', {checked, total});
+      pushWeightedContributions('gcf');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

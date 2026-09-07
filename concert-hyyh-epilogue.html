@@ -144,6 +144,7 @@
         if (cb.checked) checked++;
       });
       setProgress('concert-hyyh-epilogue', {checked, total});
+      pushWeightedContributions('concert-hyyh-epilogue');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

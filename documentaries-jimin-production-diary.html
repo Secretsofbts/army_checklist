@@ -100,6 +100,7 @@
       let total = 0, checked = 0;
       all.forEach(cb => { total++; if (cb.checked) checked++; });
       setProgress('documentaries-jimin-production-diary', {checked, total});
+      pushWeightedContributions('documentaries-jimin-production-diary');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

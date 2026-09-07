@@ -182,6 +182,7 @@
         if (cb.checked) checked++;
       });
       setProgress('logon', {checked, total});
+      pushWeightedContributions('logon');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

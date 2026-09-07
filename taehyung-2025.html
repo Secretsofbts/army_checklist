@@ -144,6 +144,7 @@
         if (cb.checked) checked++;
       });
       setProgress('taehyung-2025', {checked, total});
+      pushWeightedContributions('taehyung-2025');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

@@ -171,6 +171,7 @@
         if (cb.checked) checked++;
       });
       setProgress('are-you-sure-s2', {checked, total});
+      pushWeightedContributions('are-you-sure-s2');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

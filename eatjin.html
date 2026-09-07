@@ -143,6 +143,7 @@
         if (cb.checked) checked++;
       });
       setProgress('eatjin', {checked, total});
+      pushWeightedContributions('eatjin');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

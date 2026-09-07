@@ -195,6 +195,7 @@
         if (cb.checked) checked++;
       });
       setProgress('other-shows-isac', {checked, total});
+      pushWeightedContributions('other-shows-isac');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

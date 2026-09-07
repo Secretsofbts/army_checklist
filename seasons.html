@@ -154,6 +154,7 @@
         if (cb.checked) checked++;
       });
       setProgress('seasons', {checked, total});
+      pushWeightedContributions('seasons');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

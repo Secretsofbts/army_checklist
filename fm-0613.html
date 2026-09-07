@@ -158,6 +158,7 @@
         if (cb.checked) checked++;
       });
       setProgress('fm-0613', {checked, total});
+      pushWeightedContributions('fm-0613');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

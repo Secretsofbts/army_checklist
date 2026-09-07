@@ -164,6 +164,7 @@
         if (cb.checked) checked++;
       });
       setProgress('concert-wings-japan', {checked, total});
+      pushWeightedContributions('concert-wings-japan');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

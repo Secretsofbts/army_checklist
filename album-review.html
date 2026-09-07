@@ -153,6 +153,7 @@
         if (cb.checked) checked++;
       });
       setProgress('album-review', {checked, total});
+      pushWeightedContributions('album-review');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

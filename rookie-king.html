@@ -128,6 +128,7 @@
         if (cb.checked) checked++;
       });
       setProgress('rookie-king', {checked, total});
+      pushWeightedContributions('rookie-king');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

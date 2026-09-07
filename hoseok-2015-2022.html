@@ -169,6 +169,7 @@
         if (cb.checked) checked++;
       });
       setProgress('hoseok-2015-2022', {checked, total});
+      pushWeightedContributions('hoseok-2015-2022');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

@@ -403,6 +403,7 @@ function renderAllBadges() {
         if (cb.checked) checked++;
       });
       setProgress('concerts-2014-2019', {checked, total});
+      pushWeightedContributions('concerts-2014-2019');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

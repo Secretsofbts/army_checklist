@@ -140,6 +140,7 @@
         if (cb.checked) checked++;
       });
       setProgress('bombs-2026', {checked, total});
+      pushWeightedContributions('bombs-2026');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

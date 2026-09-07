@@ -120,6 +120,7 @@
         if (cb.checked) checked++;
       });
       setProgress('bombs-2013-june', {checked, total});
+      pushWeightedContributions('bombs-2013-june');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

@@ -162,6 +162,7 @@
         if (cb.checked) checked++;
       });
       setProgress('vlog-suga', {checked, total});
+      pushWeightedContributions('vlog-suga');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

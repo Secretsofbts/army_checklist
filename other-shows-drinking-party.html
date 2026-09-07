@@ -70,6 +70,7 @@
       let total = 0, checked = 0;
       all.forEach(cb => { total++; if (cb.checked) checked++; });
       setProgress('other-shows-drinking-party', {checked, total});
+      pushWeightedContributions('other-shows-drinking-party');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

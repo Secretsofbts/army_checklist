@@ -198,6 +198,7 @@
         if (cb.checked) checked++;
       });
       setProgress('clips-2022-2023', {checked, total});
+      pushWeightedContributions('clips-2022-2023');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

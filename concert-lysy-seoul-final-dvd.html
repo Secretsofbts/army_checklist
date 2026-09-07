@@ -164,6 +164,7 @@
         if (cb.checked) checked++;
       });
       setProgress('concert-lysy-seoul-final-dvd', {checked, total});
+      pushWeightedContributions('concert-lysy-seoul-final-dvd');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

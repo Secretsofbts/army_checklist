@@ -149,6 +149,7 @@
         if (cb.checked) checked++;
       });
       setProgress('vlog-ot7', {checked, total});
+      pushWeightedContributions('vlog-ot7');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

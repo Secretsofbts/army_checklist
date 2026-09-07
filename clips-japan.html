@@ -131,6 +131,7 @@
         if (cb.checked) checked++;
       });
       setProgress('clips-japan', {checked, total});
+      pushWeightedContributions('clips-japan');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

@@ -76,6 +76,7 @@
       let total = 0, checked = 0;
       all.forEach(cb => { total++; if (cb.checked) checked++; });
       setProgress('documentaries-jungkook-i-am-still', {checked, total});
+      pushWeightedContributions('documentaries-jungkook-i-am-still');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

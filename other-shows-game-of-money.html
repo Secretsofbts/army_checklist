@@ -67,6 +67,7 @@
       let total = 0, checked = 0;
       all.forEach(cb => { total++; if (cb.checked) checked++; });
       setProgress('other-shows-game-of-money', {checked, total});
+      pushWeightedContributions('other-shows-game-of-money');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

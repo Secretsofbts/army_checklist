@@ -169,6 +169,7 @@
         if (cb.checked) checked++;
       });
       setProgress('vlog-namjoon', {checked, total});
+      pushWeightedContributions('vlog-namjoon');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);
