@@ -76,8 +76,9 @@
         <div>📹 ВСЕ КЛИПЫ BTS 📹<div class="desc">с переводом и без, по годам</div></div>
         <span class="badge" id="badge-allclips" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
-      <a class="card" href="bangtan-bomb.html">
+            <a class="card" href="bangtan-bomb.html">
         <div>💣 BANGTAN BOMB 💣<div class="desc">все существующие бомбочки</div></div>
+        <span class="badge" id="badge-bombs" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
       <a class="card" href="bts-episode.html">
         <div>📽 BTS EPISODE 📽<div class="desc">важные и интересные моменты из истории группы</div></div>
@@ -111,7 +112,8 @@
   </div>
 
   <script>
-      const allClipsKeys = ['clips-2013-2015', 'clips-2016-2018', 'clips-2019-2021', 'clips-2022-2023', 'clips-2024-2025', 'clips-2026-2027', 'clips-japan', 'clips-mixtape', 'clips-standalone'];
+           const allClipsKeys = ['clips-2013-2015', 'clips-2016-2018', 'clips-2019-2021', 'clips-2022-2023', 'clips-2024-2025', 'clips-2026-2027', 'clips-japan', 'clips-mixtape', 'clips-standalone'];
+      const bombsKeys = ['bombs-2013-june', 'bombs-2013-july', 'bombs-2013-august', 'bombs-2013-september', 'bombs-2013-october', 'bombs-2013-november', 'bombs-2024', 'bombs-2025', 'bombs-2026'];
 
     function applyBadgeTotal(elId, keys, getRaw) {
       var el = document.getElementById(elId);
@@ -131,7 +133,11 @@
       }
     }
 
-    applyBadgeTotal('badge-allclips', allClipsKeys, function(key) {
+       applyBadgeTotal('badge-allclips', allClipsKeys, function(key) {
+      var raw = localStorage.getItem('progress:' + key);
+      return raw ? JSON.parse(raw) : null;
+    });
+    applyBadgeTotal('badge-bombs', bombsKeys, function(key) {
       var raw = localStorage.getItem('progress:' + key);
       return raw ? JSON.parse(raw) : null;
     });
@@ -141,7 +147,10 @@
         .then(res => res.json())
         .then(data => {
           if (!data) return;
-          applyBadgeTotal('badge-allclips', allClipsKeys, function(key) {
+                    applyBadgeTotal('badge-allclips', allClipsKeys, function(key) {
+            return data['progress:' + key];
+          });
+          applyBadgeTotal('badge-bombs', bombsKeys, function(key) {
             return data['progress:' + key];
           });
         })
