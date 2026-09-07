@@ -121,7 +121,7 @@
     'other-shows-cultwo': ["video-3223"],
     'other-shows-problematic-men': ["video-4942","video-3281","video-3282","video-3283","video-3284","video-3285","video-3286","video-3287","video-3288","video-3289","video-3290"]
   },
-  'other-shows-2016-2019': {
+    'other-shows-2016-2019': {
     'other-shows-law-of-jungle': ["video-3231","video-3232","video-3233","video-3234","video-3235"],
     'other-shows-star-show-360': { allOf: ["video-2237","video-4826","video-4827"], weight: 1 },
     'other-shows-star-bromance-minwoo-jungkook': ["video-896","video-897","video-898","video-899","video-900"],
@@ -131,7 +131,26 @@
     'other-shows-running-man': ["video-1753"],
     'other-shows-take-care-of-my-fridge': ["video-2240","video-2241"],
     'other-shows-cultwo': ["video-3224","video-3225","video-3226"],
-       'other-shows-james-corden': ["video-947"]
+    'other-shows-james-corden': ["video-947"]
+  },
+     'other-shows-2020-2022': {
+    'other-shows-maplestory-bts': ["video-218","video-220","video-243"],
+    'other-shows-maplestory-jin': ["video-3007","video-3011","video-3017"],
+    'other-shows-i-land': { allOf: ["video-3909","video-3910","video-3911","video-3912","video-3913","video-3914","video-3915","video-3917","video-3919","video-3920","video-3921","video-3922","video-3923"], weight: 1 },
+    'other-shows-tokopedia': ["video-290","video-314","video-760","video-1164","video-1166"],
+    'other-shows-made-collection': ["video-1980","video-1998","video-1997","video-1996","video-2028","video-2023","video-2031","video-2003","video-2002","video-2004","video-2001","video-2027","video-2024","video-2032"],
+    'other-shows-mbti-lab': ["video-2655","video-2688"],
+    'other-shows-in-the-seom': ["video-2595","video-2624","video-2710","video-2711"],
+    'other-shows-cookie-run': ["video-3185","video-3187"],
+    'other-shows-running-man': ["video-3292"],
+    'other-shows-workout': ["video-2654","video-2689","video-2709"],
+    'other-shows-kiss-the-radio': ["video-2876"],
+    'other-shows-jimmy-fallon': ["video-3163","video-1094"],
+    'other-shows-james-corden': ["video-946","video-2239"],
+    'other-shows-lee-hyun-manager': ["video-991","video-1032"],
+    'other-shows-game-of-money': ["video-3129","video-3140"],
+    'other-shows-drinking-party': ["video-3298","video-3299","video-3304","video-3305"],
+    'other-shows-useless-knowledge-dictionary': ["video-3549","video-3583","video-3709","video-3710","video-3742"]
   }
 };
 
