@@ -102,12 +102,14 @@
       listEl.appendChild(a);
     });
 
-    function applyBadge(elId, data) {
+        function applyBadge(elId, data) {
       var el = document.getElementById(elId);
       if (!data || data.total === 0) { el.textContent = ''; return; }
       if (data.checked === data.total) {
         el.textContent = '✅';
         el.style.color = '#2e9e5b';
+        var card = el.closest('.navlink');
+        if (card) card.style.background = '#e3f7e9';
       } else {
         el.textContent = data.checked + '/' + data.total;
       }
