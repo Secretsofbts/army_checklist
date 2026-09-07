@@ -156,24 +156,27 @@ function pushWeightedContributions(sourceKey) {
 }
 
   // Считает итоговую цифру года: свои пункты + все довески
-  function getCombinedYearStats(yearKey) {
-    let checked = 0, total = 0;
-    const own = localStorage.getItem('progress:' + yearKey + ':own');
-    if (own) {
-      const d = JSON.parse(own);
-      checked += d.checked;
-      total += d.total;
-    }
-    const sources = YEAR_WEIGHTED_MAP[yearKey] || {};
-    Object.keys(sources).forEach((src) => {
-      const raw = localStorage.getItem('progress:' + yearKey + ':weighted:' + src);
-      if (raw) {
-        const d = JSON.parse(raw);
-        checked += d.checked;
-        total += d.total;
-      }
-    });
-    return { checked, total };
+// "Всего" всегда известно заранее из YEAR_WEIGHTED_MAP — не зависит от того, заходил ли человек на страницу-довесок
+function getCombinedYearStats(yearKey) {
+  let checked = 0, total = 0;
+  const own = localStorage.getItem('progress:' + yearKey + ':own');
+  if (own) {
+    const d = JSON.parse(own);
+    checked += d.checked;
+    total += d.total;
   }
+  const sources = YEAR_WEIGHTED_MAP[yearKey] || {};
+  Object.keys(sources).forEach((src) => {
+    const entry = sources[src];
+    const srcTotal = Array.isArray(entry) ? entry.length : entry.weight;
+    total += srcTotal;
+    const raw = localStorage.getItem('progress:' + yearKey + ':weighted:' + src);
+    if (raw) {
+      const d = JSON.parse(raw);
+      checked += d.checked;
+    }
+  });
+  return { checked, total };
+}
 
   checkForUpdate();
