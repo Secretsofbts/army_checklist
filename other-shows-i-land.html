@@ -113,12 +113,13 @@
       document.getElementById('count-ep12').textContent = 'Отмечено: ' + checked12 + ' из ' + ep12items.length;
     }
 
-    function updateProgress() {
+       function updateProgress() {
       const all = document.querySelectorAll('input[type="checkbox"]');
       let total = 0, checked = 0;
       all.forEach(cb => { total++; if (cb.checked) checked++; });
       setProgress('other-shows-i-land', {checked, total});
-      pushWeightedContributions('other-shows-i-land');
+      pushWeightedContributions('other-shows-i-land-ep7');
+      pushWeightedContributions('other-shows-i-land-ep12');
       updateCounts();
     }
     updateProgress();
