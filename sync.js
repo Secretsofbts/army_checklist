@@ -150,7 +150,19 @@
     'other-shows-lee-hyun-manager': ["video-991","video-1032"],
     'other-shows-game-of-money': ["video-3129","video-3140"],
     'other-shows-drinking-party': ["video-3298","video-3299","video-3304","video-3305"],
-    'other-shows-useless-knowledge-dictionary': ["video-3549","video-3583","video-3709","video-3710","video-3742"]
+       'other-shows-useless-knowledge-dictionary': ["video-3549","video-3583","video-3709","video-3710","video-3742"]
+  },
+  'other-shows-2023-2024': {
+    'other-shows-useless-knowledge-dictionary': ["video-3758","video-3771","video-3775","video-3896"],
+    'other-shows-kitchen-yoon': ["video-3737","video-3757","video-3772","video-3794","video-3808","video-3828","video-3874","video-3933","video-3950","video-3985","video-4008","video-3708","video-3761","video-4270","video-4282"],
+    'other-shows-jimmy-fallon-chimin': { allOf: ["video-3801","video-3805","video-3812","video-3809"], weight: 1 },
+    'other-shows-jimmy-fallon-yoongi': { allOf: ["video-4004","video-3994","video-3999","video-4000"], weight: 1 },
+    'other-shows-spotify-taehyung': ["video-4998","video-4213"],
+    'other-shows-running-man': ["video-4224","video-4404","video-4425"],
+    'other-shows-jimmy-fallon-jungkook': { allOf: ["video-4314","video-4311","video-4312"], weight: 1 },
+    'other-shows-halfstar-hotel': ["video-4776","video-4801"],
+    'other-shows-jimmy-fallon-jin': { allOf: ["video-4891","video-59797","video-59822","video-4890","video-4961"], weight: 1 },
+    'other-shows-handsome-guys': ["video-4954","video-4958"]
   }
 };
 
