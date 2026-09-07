@@ -84,29 +84,29 @@
   <div class="app">
     <a class="back" href="all-clips.html">← Назад</a>
     <h1>📹 Клипы: 2024 – 2025 📹</h1>
-    <div id="list"></div>
-    <a class="navlink" href="clips-2026-2027.html">Продолжение (2026 – 2027 год) ↗</a>
+        <div id="list"></div>
+    <a class="footer-link" href="all-clips.html">Все клипы BTS ⬅️</a>
   </div>
 
   <script>
-    const data = [
+        const data = [
       { year: "2024", groups: [
-        { album: "Альбом Хосока:", items: [
+        { album: "Альбом Хосока:", hearts: "🤍", items: [
           { text: "NEURON", link: "https://t.me/violent_arhive/4568" }
         ]},
-        { album: "Альбом Намджуна:", items: [
+        { album: "Альбом Намджуна:", hearts: "💙", items: [
           { text: "Come back to me", link: "https://t.me/violent_arhive/4564" },
           { text: "LOST!", link: "https://t.me/violent_arhive/5074" },
           { text: "Groin", link: "https://t.me/violent_arhive/5072" },
-          { text: "Domodachi (feat. Little Simz)", link: "https://t.me/violent_arhive/5069" },
-          { text: "ㅠㅠ (Credit Roll)", link: "https://t.me/violent_arhive/5067" },
+          { text: "Domodachi", sub: "feat. Little Simz", link: "https://t.me/violent_arhive/5069" },
+          { text: "ㅠㅠ", sub: "Credit Roll", link: "https://t.me/violent_arhive/5067" },
           { text: "Around the world in a day", link: "https://t.me/violent_arhive/4934" }
         ]},
-        { album: "Альбом Чимина:", items: [
+        { album: "Альбом Чимина:", hearts: "💛", items: [
           { text: "Smeraldo Garden Marching Band", link: "https://t.me/violent_arhive/4636" },
           { text: "Who", link: "https://t.me/violent_arhive/4912" }
         ]},
-        { album: "Альбом Джина:", items: [
+        { album: "Альбом Джина:", hearts: "💕", items: [
           { text: "I'll Be There", link: "https://t.me/violent_arhive/4858" },
           { text: "Running Wild", link: "https://t.me/violent_arhive/4910" }
         ]}
@@ -120,11 +120,11 @@
       yearTitle.textContent = block.year + ' год';
       listEl.appendChild(yearTitle);
 
-      block.groups.forEach((group) => {
+           block.groups.forEach((group) => {
         if (group.album) {
           const albumTitle = document.createElement('div');
           albumTitle.className = 'album';
-          albumTitle.textContent = group.album;
+          albumTitle.textContent = (group.hearts ? group.hearts + ' ' : '') + group.album;
           listEl.appendChild(albumTitle);
         }
 
@@ -137,9 +137,15 @@
           const box = document.createElement('input');
           box.type = 'checkbox';
 
-          const span = document.createElement('span');
+                   const span = document.createElement('span');
           span.className = 'text';
           span.textContent = item.text;
+          if (item.sub) {
+            const sub = document.createElement('span');
+            sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+            sub.textContent = item.sub;
+            span.appendChild(sub);
+          }
 
           if (localStorage.getItem(id) === 'true') {
             box.checked = true;
