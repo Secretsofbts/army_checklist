@@ -162,7 +162,16 @@
     'other-shows-jimmy-fallon-jungkook': { allOf: ["video-4314","video-4311","video-4312"], weight: 1 },
     'other-shows-halfstar-hotel': ["video-4776","video-4801"],
     'other-shows-jimmy-fallon-jin': { allOf: ["video-4891","video-59797","video-59822","video-4890","video-4961"], weight: 1 },
-    'other-shows-handsome-guys': ["video-4954","video-4958"]
+      'other-shows-handsome-guys': ["video-4954","video-4958"]
+  },
+  'other-shows-2025': {
+    'other-shows-handsome-guys': ["video-4987","video-4988","video-series23"],
+    'other-shows-live-alone': ["video-5016","video-5036"],
+    'other-shows-take-care-of-my-fridge-2025': ["video-5024","video-5621"],
+    'other-shows-jimmy-fallon-hoseok': { allOf: ["video-5045","video-5046","video-5047","video-5033"], weight: 1 },
+    'other-shows-kian-guesthouse': ["video-5079","video-5084","video-5099","video-5111","video-5113","video-5117","video-5118","video-5119","video-5128"],
+    'other-shows-jimmy-fallon-jin-2025': { allOf: ["video-5132","video-5130","video-5131"], weight: 1 },
+    'other-shows-omniscient-interfering-view': ["video-5169","video-5228"]
   }
 };
 
