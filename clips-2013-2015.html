@@ -78,29 +78,29 @@
   <div class="app">
     <a class="back" href="all-clips.html">← Назад</a>
     <h1>📹 2013 – 2015 📹</h1>
-    <div id="list"></div>
-    <a class="navlink" href="clips-2016-2018.html">Продолжение (2016 – 2018 год) ↗</a>
+       <div id="list"></div>
+    <a class="footer-link" href="all-clips.html">Все клипы BTS ⬅️</a>
   </div>
 
   <script>
     const data = [
-      { year: "2013", items: [
+           { year: "2013", items: [
         { text: "No More Dream", link: "https://t.me/violent_arhive/2374" },
-        { text: "No More Dream (Choreography)", link: "https://t.me/violent_arhive/2370" },
+        { text: "No More Dream", sub: "Choreography", link: "https://t.me/violent_arhive/2370" },
         { text: "We Are Bulletproof Pt.2", link: "https://t.me/violent_arhive/2376" },
         { text: "N.O", link: "https://t.me/violent_arhive/2378" }
       ]},
       { year: "2014", items: [
         { text: "Boy in Luv", link: "https://t.me/violent_arhive/2380" },
-        { text: "Boy In Luv (Choreography)", link: "https://t.me/violent_arhive/2384" },
+        { text: "Boy In Luv", sub: "Choreography", link: "https://t.me/violent_arhive/2384" },
         { text: "Just one day", link: "https://t.me/violent_arhive/2382" },
         { text: "Danger", link: "https://t.me/violent_arhive/2385" },
         { text: "War of Hormone", link: "https://t.me/violent_arhive/2387" },
         { text: "Danger (Mo-Blue-Mix) ft. THANH", link: "https://t.me/violent_arhive/2389" }
       ]},
       { year: "2015", items: [
-        { text: "I NEED U (с цензурой)", link: "https://t.me/violent_arhive/2393" },
-        { text: "I NEED U (без цензуры)", link: "https://t.me/violent_arhive/2395" },
+        { text: "I NEED U", sub: "с цензурой", link: "https://t.me/violent_arhive/2393" },
+        { text: "I NEED U", sub: "без цензуры", link: "https://t.me/violent_arhive/2395" },
         { text: "Dope", link: "https://t.me/violent_arhive/2411" },
         { text: "The Most Beautiful Moment in Life", link: "https://t.me/violent_arhive/2416" },
         { text: "Never Mind", link: "https://t.me/violent_arhive/2418" },
@@ -124,9 +124,15 @@
         const box = document.createElement('input');
         box.type = 'checkbox';
 
-        const span = document.createElement('span');
+               const span = document.createElement('span');
         span.className = 'text';
         span.textContent = item.text;
+        if (item.sub) {
+          const sub = document.createElement('span');
+          sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+          sub.textContent = item.sub;
+          span.appendChild(sub);
+        }
 
         if (localStorage.getItem(id) === 'true') {
           box.checked = true;
