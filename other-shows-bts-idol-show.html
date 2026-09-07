@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=2"></script>
+  <script src="sync.js?v=3"></script>
   <title>BTS Idol Show</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -57,11 +57,12 @@
       row.appendChild(box); row.appendChild(span); row.appendChild(link);
       listEl.appendChild(row);
     });
-    function updateProgress() {
+        function updateProgress() {
       const all = document.querySelectorAll('input[type="checkbox"]');
       let total = 0, checked = 0;
       all.forEach(cb => { total++; if (cb.checked) checked++; });
       setProgress('other-shows-bts-idol-show', {checked, total});
+      pushWeightedContributions('other-shows-bts-idol-show');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);

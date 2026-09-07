@@ -102,4 +102,58 @@ function checkForUpdate() {
     })
     .catch(() => {});
 }
+// ===== Статистика по годам: "свои" пункты + "довески" с других страниц =====
+// Тут перечислено: для года 2013-2015 — какие страницы-довески туда входят
+// и какие именно видео (по id) из этой страницы туда считаются
+const YEAR_WEIGHTED_MAP = {
+  'other-shows-2013-2015': {
+    'other-shows-wide-open-studio': ["video-3247","video-3248"],
+    'other-shows-kiss-the-radio': ["video-1246","video-1243","video-1247","video-1249","video-1245","video-1244"],
+    'other-shows-after-school-club': ["video-3151","video-3152","video-3153","video-3156","video-3157","video-3154","video-3155","video-3158","video-3160","video-3161"],
+    'other-shows-weekly-idol': ["video-1695","video-1696","video-1697"],
+    'other-shows-yinyuetai': ["video-2257","video-2258","video-2259"],
+    'other-shows-idols-true-colors': ["video-2225","video-111"],
+    'other-shows-bts-idol-show': ["video-2265","video-2266"],
+    'other-shows-yaman-tv': ["video-1785","video-1786"],
+    'other-shows-lucky-draw': ["video-2226","video-2227","video-2228","video-2229","video-2230"],
+    'other-shows-running-man': ["video-1752"],
+    'other-shows-hello-talkshow': ["video-3229"],
+    'other-shows-cultwo': ["video-3223"],
+    'other-shows-problematic-men': ["video-4942","video-3281","video-3282","video-3283","video-3284","video-3285","video-3286","video-3287","video-3288","video-3289","video-3290"]
+  }
+};
+
+// Вызывается на "довесочной" странице (например running-man.html) —
+// пересчитывает её вклад во все года, куда она входит, и сразу шлёт в облако
+function pushWeightedContributions(sourceKey) {
+  Object.keys(YEAR_WEIGHTED_MAP).forEach((yearKey) => {
+    const ids = YEAR_WEIGHTED_MAP[yearKey][sourceKey];
+    if (!ids) return;
+    let checked = 0;
+    ids.forEach((id) => { if (localStorage.getItem(id) === 'true') checked++; });
+    setProgress(yearKey + ':weighted:' + sourceKey, { checked, total: ids.length });
+  });
+}
+
+// Считает итоговую цифру года: свои пункты + все довески
+function getCombinedYearStats(yearKey) {
+  let checked = 0, total = 0;
+  const own = localStorage.getItem('progress:' + yearKey + ':own');
+  if (own) {
+    const d = JSON.parse(own);
+    checked += d.checked;
+    total += d.total;
+  }
+  const sources = YEAR_WEIGHTED_MAP[yearKey] || {};
+  Object.keys(sources).forEach((src) => {
+    const raw = localStorage.getItem('progress:' + yearKey + ':weighted:' + src);
+    if (raw) {
+      const d = JSON.parse(raw);
+      checked += d.checked;
+      total += d.total;
+    }
+  });
+  return { checked, total };
+}
+
 checkForUpdate();

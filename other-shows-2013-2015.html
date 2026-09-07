@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=2"></script>
+  <script src="sync.js?v=3"></script>
   <title>Другие шоу с BTS: 2013-2015</title>
   <style>
     body {
@@ -221,64 +221,42 @@
       listEl.appendChild(row);
     });
 
-       // Ручной список веса для ответвлений: сколько конкретно засчитывать в статистику ЭТОГО года
-    const weightedSources = [
-      { ids: ["video-3247", "video-3248"] }, // Широко открытая студия — 2
-      { ids: ["video-1246", "video-1243", "video-1247", "video-1249", "video-1245", "video-1244"] }, // Kiss The Radio — 6 (без Jimin 2022)
-            { ids: ["video-3151", "video-3152", "video-3153", "video-3156", "video-3157", "video-3154", "video-3155", "video-3158", "video-3160", "video-3161"] }, // After School Club — 10 (63 и 64 теперь отдельные серии)
-      { ids: ["video-1695", "video-1696", "video-1697"] }, // Weekly Idol — 3
-      { ids: ["video-2257", "video-2258", "video-2259"] }, // YinYueTai — 3
-          { ids: ["video-2225", "video-111"] }, // Idol's True Colors — 2
-      { ids: ["video-2265", "video-2266"] }, // BTS Idol Show — 2
-      { ids: ["video-1785", "video-1786"] }, // Yaman TV — 2
-      { ids: ["video-2226", "video-2227", "video-2228", "video-2229", "video-2230"] }, // Lucky draw — 5
-      { ids: ["video-1752"] }, // Running Man — только 265 серия
-      { ids: ["video-3229"] }, // Ток-шоу Привет — только 223 серия
-      { ids: ["video-3223"] }, // Cultwo — только 18 серия
-      { ids: ["video-4942", "video-3281", "video-3282", "video-3283", "video-3284", "video-3285", "video-3286", "video-3287", "video-3288", "video-3289", "video-3290"] } // Проблемные мужчины — все 11
-    ];
-
-    function computeWeightedStats() {
-      let checked = 0, total = 0;
-      weightedSources.forEach((src) => {
-        if (src.ids) {
-          src.ids.forEach((id) => {
-            total++;
-            if (localStorage.getItem(id) === 'true') checked++;
-          });
-        } else if (src.id && src.weight) {
-          total += src.weight;
-          if (localStorage.getItem(src.id) === 'true') checked += src.weight;
-        }
-      });
-      return { checked, total };
-    }
-
-    function updateProgress() {
+           function updateProgress() {
       const all = document.querySelectorAll('.row input[type="checkbox"]');
       let total = 0, checked = 0;
       all.forEach(cb => {
         total++;
         if (cb.checked) checked++;
       });
-      const weighted = computeWeightedStats();
-      total += weighted.total;
-      checked += weighted.checked;
-      setProgress('other-shows-2013-2015', {checked, total});
+      // Публикуем "свою" цифру отдельно — её всегда видно точно, т.к. эти галочки прямо тут
+      setProgress('other-shows-2013-2015:own', {checked, total});
+
+      // Обновляем цифры-довески от всех страниц-источников (на случай если какая-то ещё не шлёт их сама)
+      const sources = YEAR_WEIGHTED_MAP['other-shows-2013-2015'];
+      Object.keys(sources).forEach((src) => {
+        const ids = sources[src];
+        let c = 0;
+        ids.forEach((id) => { if (localStorage.getItem(id) === 'true') c++; });
+        setProgress('other-shows-2013-2015:weighted:' + src, { checked: c, total: ids.length });
+      });
+
+      // Публикуем и общую цифру — для страниц, которые её всё ещё читают напрямую
+      const combined = getCombinedYearStats('other-shows-2013-2015');
+      setProgress('other-shows-2013-2015', combined);
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);
 
-    // Дополнительно подтягиваем состояние отмеченных видео из других страниц (ответвлений) из облака
+       // Дополнительно подтягиваем состояние отмеченных видео из других страниц (ответвлений) из облака
     if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
       fetch(`${FIREBASE_URL}/users/${ARMY_USER_ID}.json`)
         .then(res => res.json())
         .then(data => {
           if (!data) return;
           let changed = false;
-          weightedSources.forEach((src) => {
-            const ids = src.ids || [src.id];
-            ids.forEach((id) => {
+          const sources = YEAR_WEIGHTED_MAP['other-shows-2013-2015'];
+          Object.keys(sources).forEach((src) => {
+            sources[src].forEach((id) => {
               if (data[id] !== undefined && data[id] !== (localStorage.getItem(id) === 'true')) {
                 localStorage.setItem(id, data[id]);
                 changed = true;
