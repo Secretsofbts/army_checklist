@@ -131,7 +131,7 @@
     'other-shows-running-man': ["video-1753"],
     'other-shows-take-care-of-my-fridge': ["video-2240","video-2241"],
     'other-shows-cultwo': ["video-3224","video-3225","video-3226"],
-    'other-shows-james-corden': ["video-947","video-946","video-2239"]
+       'other-shows-james-corden': ["video-947"]
   }
 };
 
