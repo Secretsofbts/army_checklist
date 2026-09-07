@@ -80,7 +80,8 @@
     <h1>КОНЦЕРТЫ 2025-2026 ГОД</h1>
     <p class="intro"></p>
     <div id="list"></div>
-      <a class="navcard" href="concert-arirang-tour.html" id="arirang-card">
+           <a class="navcard" href="concert-arirang-tour.html" id="arirang-card">
+     <input type="checkbox" id="arirang-checkbox" style="pointer-events:none; display:none;">
      <span class="navcard-label" id="arirang-label">🖥 Общий пост тура ARIRANG</span>
      <span id="badge-concert-arirang-tour" style="font-size:12px; color:#999;"></span>
    </a>
@@ -140,21 +141,21 @@
       row.appendChild(link);
       listEl.appendChild(row);
     });
-    function renderBadge(elId, key) {
+       function renderBadge(elId, key) {
       var el = document.getElementById(elId);
       if (!el) return;
       var raw = localStorage.getItem('progress:' + key);
+      var checkbox = document.getElementById('arirang-checkbox');
+      var label = document.getElementById('arirang-label');
       if (!raw) { el.textContent = ''; return; }
       var data = JSON.parse(raw);
       if (data.total === 0) { el.textContent = ''; return; }
       if (data.checked === data.total) {
         el.textContent = '';
-        var checkbox = document.createElement('input');
-        checkbox.type = 'checkbox';
-        checkbox.checked = true;
-        checkbox.style.pointerEvents = 'none';
-        el.parentElement.insertBefore(checkbox, el.parentElement.firstChild);
-        var label = document.getElementById('arirang-label');
+        if (checkbox) {
+          checkbox.checked = true;
+          checkbox.style.display = '';
+        }
         if (label) label.classList.add('done');
       } else {
         el.textContent = data.checked + '/' + data.total;
