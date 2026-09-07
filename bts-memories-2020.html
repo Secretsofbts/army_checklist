@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js?v=4"></script>
+  <title>BTS Memories of 2020</title>
+  <style>
+    body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
+    .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
+    h1 { font-size: 18px; margin: 0 0 16px; }
+    .disc-title { font-size: 13px; font-weight: 600; color: #888; margin: 16px 0 4px; }
+    .sub-title { font-size: 12px; font-weight: 600; color: #aaa; margin: 8px 0 2px; }
+    .row { display: flex; align-items: center; gap: 10px; padding: 8px 4px; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .text.done { color: #bbb; text-decoration: line-through; }
+    .sub { display: block; font-size: 11px; color: #999; margin-top: 2px; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+    .footer-link { display: block; text-align: center; font-size: 13px; color: #000; text-decoration: none; margin-top: 16px; padding-top: 12px; border-top: 1px solid #eee; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="bts-memories.html">← Назад</a>
+    <h1>🔮 BTS Memories of 2020 🔮</h1>
+    <div id="list"></div>
+    <a class="footer-link" href="bts-memories.html">BTS Memories (2014 - 2020 год) ⬅️</a>
+  </div>
+
+  <script>
+    const data = [
+      { disc: "Диск 1", groups: [
+        { items: [
+          { text: "BANG BANG CON The Live", sub: "с рус. суб, качество 720, заедает", link: "https://t.me/violent_arhive/1679" },
+          { text: "BANG BANG CON The Live", sub: "с англ. суб, качество 1080", link: "https://t.me/violent_arhive/1745" }
+        ]}
+      ]},
+      { disc: "Диск 2", groups: [
+        { items: [
+          { text: "BANG BANG CON The Live VCR Making Film", link: "https://t.me/violent_arhive/1678" },
+          { text: "BANG BANG CON The Live Practice Making Film", link: "https://t.me/violent_arhive/1682" },
+          { text: "BANG BANG CON The Live Rehearsal Making Film", link: "https://t.me/violent_arhive/1681" },
+          { text: "BANG BANG CON The Live D-day Making Film", link: "https://t.me/violent_arhive/1683" }
+        ]}
+      ]},
+      { disc: "Диск 3", groups: [
+        { items: [
+          { text: "\"MAP OF THE SOUL : 7\" Dance Practice Making Film", link: "https://t.me/violent_arhive/2989" },
+          { text: "\"MAP OF THE SOUL : 7\" Jacket Making Film", link: "https://t.me/violent_arhive/1684" },
+          { text: "'Interlude: Shadow' Comeback Trailer Making Film", link: "https://t.me/violent_arhive/1686" },
+          { text: "'Outro : Ego' Comeback Trailer Making Film", link: "https://t.me/violent_arhive/1687" },
+          { text: "'Black Swan' MV Making Film", link: "https://t.me/violent_arhive/1691" },
+          { text: "'ON' Kinetic Manifesto Film : Come Prima Making Film", link: "https://t.me/violent_arhive/1689" },
+          { text: "'ON' MV Making Film", link: "https://t.me/violent_arhive/2998" },
+          { text: "The Late Late Show with James Corden & The Tonight Show Starring Jimmy Fallon Making Film", link: "https://t.me/violent_arhive/1692" },
+          { text: "SBS Inkigayo Making Film", link: "https://t.me/violent_arhive/1690" }
+        ]}
+      ]},
+      { disc: "Диск 4", groups: [
+        { items: [
+          { text: "'Dynamite' MV Making Film", link: "https://t.me/violent_arhive/1693" },
+          { text: "'Dynamite' Dance Practice MF", link: "https://t.me/violent_arhive/1694" },
+          { text: "GRAMMY Press Play & 2020 MTV Video Music Awards Making Film", link: "https://t.me/violent_arhive/1698" },
+          { text: "TODAY Citi Music Series MF", link: "https://t.me/violent_arhive/1699" },
+          { text: "2020 iHeartRadio Music Festival Making Film", link: "https://t.me/violent_arhive/1700" },
+          { text: "GRAMMY Museum – The Drop & NPR Tiny Desk Concert Making Film", link: "https://t.me/violent_arhive/1701" },
+          { text: "America's Got Talent Making Film", link: "https://t.me/violent_arhive/2991" },
+          { text: "The Tonight Show Starring Jimmy Fallon BTS WEEK Making Film", link: "https://t.me/violent_arhive/1703" },
+          { text: "Radio LIVE Making Film", link: "https://t.me/violent_arhive/2995" }
+        ]}
+      ]},
+      { disc: "Диск 5", groups: [
+        { items: [
+          { text: "\"BE\" Jacket Making Film", link: "https://t.me/violent_arhive/2999" },
+          { text: "'Life Goes On' MV Making Film", link: "https://t.me/violent_arhive/2993" },
+          { text: "American Music Awards MF", link: "https://t.me/violent_arhive/1706" },
+          { text: "Good Morning America & TIME Entertainer of the Year 2020 MF", link: "https://t.me/violent_arhive/2996" },
+          { text: "The Late Late Show with James Corden Making Film", link: "https://t.me/violent_arhive/2988" },
+          { text: "Agust D 'MIXTAPE' Record & Dance Practice Making Film", link: "https://t.me/violent_arhive/1705" },
+          { text: "Agust D 'Daechwita' MV MF", link: "https://t.me/violent_arhive/1713" }
+        ]}
+      ]},
+      { disc: "Диск 6", groups: [
+        { items: [
+          { text: "34th Golden Disc Awards MF", link: "https://t.me/violent_arhive/1708" },
+          { text: "62nd GRAMMY Awards MF", link: "https://t.me/violent_arhive/1707" },
+          { text: "TODAY & MTV Fresh Out MF", link: "https://t.me/violent_arhive/2990" },
+          { text: "Dear Class of 2020 Making Film", link: "https://t.me/violent_arhive/1714" },
+          { text: "Variety MAGAZINE Making Film", link: "https://t.me/violent_arhive/2994" },
+          { text: "2020 Billboard Music Awards Making Film", link: "https://t.me/violent_arhive/1715" },
+          { text: "Esquire MAGAZINE Making Film", link: "https://t.me/violent_arhive/2987" },
+          { text: "2020 Awards Dance Practice Making Film", link: "https://t.me/violent_arhive/2992" },
+          { text: "2020 MMA Making Film", link: "https://t.me/violent_arhive/1716" },
+          { text: "2020 MAMA Making Film", link: "https://t.me/violent_arhive/2986" },
+          { text: "NEW YEAR'S EVE LIVE POSTER & D-day Making Film", link: "https://t.me/violent_arhive/2997" }
+        ]}
+      ]},
+      { disc: "Диск 7", groups: [
+        { items: [
+          { text: "TODAY Citi Music Stage CAM", link: "https://t.me/violent_arhive/1735" },
+          { text: "GRAMMY Museum – The Drop Stage CAM", link: "https://t.me/violent_arhive/1736" }
+        ]},
+        { sub: "BANG BANG CON The Live Stage CAM", items: [
+          { text: "Black Swan", link: "https://t.me/violent_arhive/1723" },
+          { text: "Boyz With Fun", link: "https://t.me/violent_arhive/1724" },
+          { text: "Go Go", link: "https://t.me/violent_arhive/1725" },
+          { text: "Just One Day", link: "https://t.me/violent_arhive/1726" },
+          { text: "Spring Day", link: "https://t.me/violent_arhive/1727" }
+        ]},
+        { sub: "Solo Cams", items: [
+          { text: "RM", sub: "Respect", link: "https://t.me/violent_arhive/1728" },
+          { text: "Jin", sub: "Jamais Vu", link: "https://t.me/violent_arhive/1730" },
+          { text: "Suga", sub: "Respect", link: "https://t.me/violent_arhive/1729" },
+          { text: "J-Hope", sub: "Jamais Vu", link: "https://t.me/violent_arhive/1731" },
+          { text: "Jimin", sub: "Friends", link: "https://t.me/violent_arhive/1733" },
+          { text: "V", sub: "Friends", link: "https://t.me/violent_arhive/1734" },
+          { text: "JK", sub: "Jamais Vu", link: "https://t.me/violent_arhive/1732" }
+        ]},
+        { sub: "NPR Tiny Desk Concert Stage CAM", items: [
+          { text: "Save Me", link: "https://t.me/violent_arhive/1737" },
+          { text: "Spring Day", link: "https://t.me/violent_arhive/1738" }
+        ]},
+        { sub: "The Tonight Show Starring Jimmy Fallon Stage CAM", items: [
+          { text: "Black Swan", link: "https://t.me/violent_arhive/1739" },
+          { text: "Dynamite", link: "https://t.me/violent_arhive/1741" },
+          { text: "Idol", link: "https://t.me/violent_arhive/1740" }
+        ]},
+        { sub: "NEW YEAR'S EVE LIVE Stage CAM", items: [
+          { text: "Boy With Luv", link: "https://t.me/violent_arhive/1742" },
+          { text: "Life Goes On", link: "https://t.me/violent_arhive/1743" },
+          { text: "Dynamite", link: "https://t.me/violent_arhive/1744" }
+        ]}
+      ]}
+    ];
+
+    const listEl = document.getElementById('list');
+    data.forEach((disc) => {
+      const discTitle = document.createElement('div');
+      discTitle.className = 'disc-title';
+      discTitle.textContent = disc.disc + ':';
+      listEl.appendChild(discTitle);
+
+      disc.groups.forEach((group) => {
+        if (group.sub) {
+          const subTitle = document.createElement('div');
+          subTitle.className = 'sub-title';
+          subTitle.textContent = group.sub + ':';
+          listEl.appendChild(subTitle);
+        }
+
+        group.items.forEach((item) => {
+          const id = 'video-' + item.link.split('/').pop();
+          const row = document.createElement('div');
+          row.className = 'row';
+          row.dataset.id = id;
+
+          const box = document.createElement('input');
+          box.type = 'checkbox';
+
+          const span = document.createElement('span');
+          span.className = 'text';
+          span.textContent = item.text;
+          if (item.sub) {
+            const sub = document.createElement('span');
+            sub.className = 'sub';
+            sub.textContent = item.sub;
+            span.appendChild(sub);
+          }
+
+          if (localStorage.getItem(id) === 'true') {
+            box.checked = true;
+            span.classList.add('done');
+          }
+          box.addEventListener('change', () => {
+            setChecked(id, box.checked);
+            span.classList.toggle('done', box.checked);
+            updateProgress();
+          });
+          span.addEventListener('click', () => {
+            box.checked = !box.checked;
+            box.dispatchEvent(new Event('change'));
+          });
+
+          const link = document.createElement('a');
+          link.className = 'link';
+          link.href = item.link;
+          link.target = '_blank';
+          link.textContent = '🔗';
+
+          row.appendChild(box);
+          row.appendChild(span);
+          row.appendChild(link);
+          listEl.appendChild(row);
+        });
+      });
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => {
+        total++;
+        if (cb.checked) checked++;
+      });
+      setProgress('bts-memories-2020', {checked, total});
+      pushWeightedContributions('bts-memories-2020');
+    }
+    updateProgress();
+    syncChecklistFromCloud(updateProgress);
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
