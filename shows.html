@@ -115,7 +115,7 @@
 
    <script src="sync.js?v=4"></script>
   <script>
-    function applyBadgeTotal(elId, keys, getRaw) {
+       function applyBadgeTotal(elId, keys, getRaw) {
       var el = document.getElementById(elId);
       if (!el) return;
       var checked = 0, total = 0;
@@ -127,6 +127,8 @@
       if (checked === total) {
         el.textContent = '✅';
         el.style.color = '#2e9e5b';
+        var card = el.closest('.card');
+        if (card) card.style.background = '#e3f7e9';
       } else {
         el.textContent = checked + '/' + total;
       }
