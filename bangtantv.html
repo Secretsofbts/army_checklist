@@ -80,8 +80,9 @@
         <div>💣 BANGTAN BOMB 💣<div class="desc">все существующие бомбочки</div></div>
         <span class="badge" id="badge-bombs" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
-      <a class="card" href="bts-episode.html">
+           <a class="card" href="bts-episode.html">
         <div>📽 BTS EPISODE 📽<div class="desc">важные моменты из истории группы</div></div>
+        <span class="badge" id="badge-episode" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
       <a class="card" href="gcf.html">
         <div>🎥 GOLDEN CLOSET FILM 🎥<div class="desc">видео, которые создал сам Чонгук</div></div>
@@ -134,11 +135,15 @@
       }
     }
 
-       applyBadgeTotal('badge-allclips', allClipsKeys, function(key) {
+          applyBadgeTotal('badge-allclips', allClipsKeys, function(key) {
       var raw = localStorage.getItem('progress:' + key);
       return raw ? JSON.parse(raw) : null;
     });
-        applyBadgeTotal('badge-episode', episodeKeys, function(key) {
+    applyBadgeTotal('badge-bombs', bombsKeys, function(key) {
+      var raw = localStorage.getItem('progress:' + key);
+      return raw ? JSON.parse(raw) : null;
+    });
+    applyBadgeTotal('badge-episode', episodeKeys, function(key) {
       var raw = localStorage.getItem('progress:' + key);
       return raw ? JSON.parse(raw) : null;
     });
