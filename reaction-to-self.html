@@ -58,11 +58,10 @@
 
     <div id="list-main"></div>
 
-    <p class="note">Life Goes On и Butter есть в прямом эфире, отдельно видео нет. Но в реакции Butter нет картинки — на слух нужно понимать, какой момент клипа. Мне это было не сложно сделать, столько раз клип смотрела 🤣</p>
+    <p class="note">Life Goes On и Butter есть в прямом эфире, отдельно видео нет. Но в реакции Butter нет картинки — наслух нужно понимать, какой момент клипа</p>
     <div id="list-livestream"></div>
 
-    <p class="section-title">Реакции на концерты</p>
-    <p class="note">Ссылки ведут на весь пост с закадровыми и концертом — внутри найдите commentary</p>
+       <p class="section-title">Реакции на концерты</p>
     <div id="list-concerts"></div>
 
     <a class="navlink" href="documentaries.html">🎬 Реакции на документальные фильмы</a>
@@ -103,10 +102,10 @@
       { text: "Обмен альбомами МиниМони", sub: "версия \"MUSE\" Чимин", link: "https://t.me/violent_arhive/4648" }
     ];
 
-    const concertItems = [
-      { text: "✨ 2017 The Wings in Seoul", link: "https://t.me/violent_arhive/2627" },
-      { text: "✨ 2018 LY in Seoul", link: "https://t.me/violent_arhive/2663" },
-      { text: "✨ 2019 LY:SY the Final", link: "https://t.me/violent_arhive/3347" }
+       const concertItems = [
+      { text: "✨ 2017 The Wings in Seoul", link: "https://t.me/violent_arhive/2633" },
+      { text: "✨ 2018 LY in Seoul", link: "https://t.me/violent_arhive/2671" },
+      { text: "✨ 2019 LY:SY the Final", link: "https://t.me/violent_arhive/3361" }
     ];
 
     const otherItems = [
@@ -159,13 +158,13 @@
       });
     }
 
-    renderList('list-main', mainItems);
+       renderList('list-main', mainItems);
     renderList('list-livestream', livestreamItems);
-    renderExtraList('list-concerts', concertItems);
+    renderList('list-concerts', concertItems);
     renderList('list-others', otherItems);
 
     function updateProgress() {
-      const all = document.querySelectorAll('#list-main input[type="checkbox"], #list-livestream input[type="checkbox"], #list-others input[type="checkbox"]');
+      const all = document.querySelectorAll('#list-main input[type="checkbox"], #list-livestream input[type="checkbox"], #list-concerts input[type="checkbox"], #list-others input[type="checkbox"]');
       let total = 0, checked = 0;
       all.forEach(cb => { total++; if (cb.checked) checked++; });
       setProgress('reaction-to-self', {checked, total});
