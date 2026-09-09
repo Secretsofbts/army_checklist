@@ -64,7 +64,8 @@
        <p class="section-title">Реакции на концерты</p>
     <div id="list-concerts"></div>
 
-    <a class="navlink" href="documentaries.html">🎬 Реакции на документальные фильмы</a>
+       <p class="section-title">Комментарии к документальным фильмам</p>
+    <div id="list-docs"></div>
 
     <p class="section-title">Реакции от других людей</p>
     <div id="list-others"></div>
@@ -101,11 +102,17 @@
       { text: "Обмен альбомами МиниМони", sub: "версия \"RPWP\" RM", link: "https://t.me/violent_arhive/4583" },
       { text: "Обмен альбомами МиниМони", sub: "версия \"MUSE\" Чимин", link: "https://t.me/violent_arhive/4648" }
     ];
-
-       const concertItems = [
+    const concertItems = [
       { text: "✨ 2017 The Wings in Seoul", link: "https://t.me/violent_arhive/2633" },
       { text: "✨ 2018 LY in Seoul", link: "https://t.me/violent_arhive/2671" },
       { text: "✨ 2019 LY:SY the Final", link: "https://t.me/violent_arhive/3361" }
+    ];
+
+    const docsItems = [
+      { text: "Комментарии к «Bring The Soul: The Movie»", link: "https://t.me/violent_arhive/1783" },
+      { text: "Комментарии к «Break The Silence: Persona»", link: "https://t.me/violent_arhive/259" },
+      { text: "Комментарии Хосока", sub: "J-Hope IN THE BOX", link: "https://t.me/violent_arhive/3834" },
+      { text: "Комментарии Чимина", sub: "Jimin's Production Diary", link: "https://t.me/violent_arhive/4399" }
     ];
 
     const otherItems = [
@@ -158,13 +165,14 @@
       });
     }
 
-       renderList('list-main', mainItems);
+          renderList('list-main', mainItems);
     renderList('list-livestream', livestreamItems);
     renderList('list-concerts', concertItems);
+    renderList('list-docs', docsItems);
     renderList('list-others', otherItems);
 
     function updateProgress() {
-      const all = document.querySelectorAll('#list-main input[type="checkbox"], #list-livestream input[type="checkbox"], #list-concerts input[type="checkbox"], #list-others input[type="checkbox"]');
+      const all = document.querySelectorAll('#list-main input[type="checkbox"], #list-livestream input[type="checkbox"], #list-concerts input[type="checkbox"], #list-docs input[type="checkbox"], #list-others input[type="checkbox"]');
       let total = 0, checked = 0;
       all.forEach(cb => { total++; if (cb.checked) checked++; });
       setProgress('reaction-to-self', {checked, total});
