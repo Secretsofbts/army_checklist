@@ -113,7 +113,8 @@
 
   <script>
            const allClipsKeys = ['clips-2013-2015', 'clips-2016-2018', 'clips-2019-2021', 'clips-2022-2023', 'clips-2024-2025', 'clips-2026-2027', 'clips-japan', 'clips-mixtape', 'clips-standalone'];
-      const bombsKeys = ['bombs-2013-june', 'bombs-2013-july', 'bombs-2013-august', 'bombs-2013-september', 'bombs-2013-october', 'bombs-2013-november', 'bombs-2024', 'bombs-2025', 'bombs-2026'];
+          const bombsKeys = ['bombs-2013-june', 'bombs-2013-july', 'bombs-2013-august', 'bombs-2013-september', 'bombs-2013-october', 'bombs-2013-november', 'bombs-2024', 'bombs-2025', 'bombs-2026'];
+      const episodeKeys = ['bts-episode-1-50', 'bts-episode-51-100', 'bts-episode-101-150', 'bts-episode-151-194', 'bts-episode-other-jimin', 'bts-episode-other-jungkook', 'bts-episode-other-hoseok', 'bts-episode-other-yoongi', 'bts-episode-other-namjoon', 'bts-episode-other-jin', 'bts-episode-other-taehyung', 'bts-episode-other-somepeople'];
 
     function applyBadgeTotal(elId, keys, getRaw) {
       var el = document.getElementById(elId);
@@ -137,7 +138,7 @@
       var raw = localStorage.getItem('progress:' + key);
       return raw ? JSON.parse(raw) : null;
     });
-    applyBadgeTotal('badge-bombs', bombsKeys, function(key) {
+        applyBadgeTotal('badge-episode', episodeKeys, function(key) {
       var raw = localStorage.getItem('progress:' + key);
       return raw ? JSON.parse(raw) : null;
     });
@@ -151,6 +152,9 @@
             return data['progress:' + key];
           });
           applyBadgeTotal('badge-bombs', bombsKeys, function(key) {
+            return data['progress:' + key];
+          });
+                    applyBadgeTotal('badge-episode', episodeKeys, function(key) {
             return data['progress:' + key];
           });
         })
