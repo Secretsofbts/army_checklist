@@ -84,8 +84,9 @@
         <div>📽 BTS EPISODE 📽<div class="desc">важные моменты из истории bts</div></div>
         <span class="badge" id="badge-episode" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
-      <a class="card" href="gcf.html">
-        <div>🎥 GOLDEN CLOSET FILM 🎥<div class="desc">видео, которые создал сам Чонгук</div></div>
+            <a class="card" href="vlogs-bts.html">
+        <div>🌟 VLOGS BTS 🌟<div class="desc">влоги от каждого мембера</div></div>
+        <span class="badge" id="badge-vlogsbts" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
             <a class="card" href="reaction-to-self.html">
         <div>👀 РЕАКЦИЯ НА СЕБЯ 👀<div class="desc">реакция на разные клипы и видео</div></div>
@@ -180,6 +181,37 @@
         })
         .catch(() => {});
     }
+        applyBadgeTotal('badge-gcf', ['gcf'], function(key) {
+      var raw = localStorage.getItem('progress:' + key);
+      return raw ? JSON.parse(raw) : null;
+    });
+          
+
+    function renderVlogsBtsTotal() {
+      var el = document.getElementById('badge-vlogsbts');
+      if (!el) return;
+      var keys = ['vlogsbts-jimin', 'vlogsbts-jin', 'vlogsbts-taehyung', 'vlogsbts-jungkook', 'vlogsbts-namjoon', 'vlogsbts-yoongi', 'vlogsbts-hoseok'];
+      var checked = 0, total = 0;
+      keys.forEach(function(key) {
+        var raw = localStorage.getItem('progress:' + key);
+        if (raw) {
+          var data = JSON.parse(raw);
+          checked += data.checked;
+          total += data.total;
+        }
+      });
+      // "Тренировка ЧонТэХо" пересекается с GCF — вычитаем повтор
+      total -= 1;
+      if (localStorage.getItem('video-5570') === 'true') { checked -= 1; }
+      if (total === 0) { el.textContent = ''; return; }
+      if (checked === total) {
+        el.textContent = '✅';
+        el.style.color = '#2e9e5b';
+      } else {
+        el.textContent = checked + '/' + total;
+      }
+    }
+    renderVlogsBtsTotal();
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
