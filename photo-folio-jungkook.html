@@ -65,21 +65,16 @@
           if (scans) {
       const a = document.createElement('a');
       a.className = 'extra'; a.href = scans; a.target = '_blank';
-                const photoIcon = document.createElement('input');
-      photoIcon.type = 'checkbox';
-      photoIcon.disabled = true;
-      photoIcon.style.cssText = 'width:18px; height:18px; flex-shrink:0; visibility:hidden;';
-      const photoEmoji = document.createElement('span');
-      photoEmoji.style.cssText = 'position:absolute; margin-left:-2px; font-size:12px;';
-      photoEmoji.textContent = '📷';
+                  const photoIcon = document.createElement('span');
+      photoIcon.style.cssText = 'width:18px; height:18px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:14px;';
+      photoIcon.textContent = '📷';
       const label = document.createElement('span');
       label.style.flex = '1';
       label.textContent = 'Сканы фотобука';
       const icon = document.createElement('span');
       icon.className = 'link';
       icon.textContent = '🔗';
-           a.appendChild(photoIcon);
-      a.appendChild(photoEmoji);
+            a.appendChild(photoIcon);
       a.appendChild(label);
       a.appendChild(icon);
       listEl.appendChild(a);
