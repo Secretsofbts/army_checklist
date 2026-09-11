@@ -19,25 +19,49 @@
     .text { flex: 1; cursor: pointer; color: #333; }
     .text.done { color: #bbb; text-decoration: line-through; }
     .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
-            .extra { display: flex; align-items: center; gap: 10px; padding: 8px 4px; font-size: 14px; color: #333; text-decoration: none; }
-          .footer-link { display: block; text-align: center; font-size: 13px; color: #000; text-decoration: none; margin-top: 0; padding-top: 8px; border-top: 1px solid #eee; }
+    .extra { display: flex; align-items: center; gap: 10px; padding: 8px 4px; font-size: 14px; color: #333; text-decoration: none; }
+    .footer-link { display: block; text-align: center; font-size: 13px; color: #000; text-decoration: none; margin-top: 0; padding-top: 8px; border-top: 1px solid #eee; }
   </style>
 </head>
 <body>
   <div class="app">
     <a class="back" href="photo-folio.html">← Назад</a>
     <h1>🩸 Чонгук 🩸</h1>
+    <div id="extras"></div>
     <div id="list"></div>
     <a class="footer-link" href="photo-folio.html">Photo-Folio ⬅️</a>
   </div>
 
   <script>
-    const items = [
+    const extraLinks = [
       { text: "Concept Film", link: "https://t.me/violent_arhive/3603" },
+      { text: "Сканы фотобука", link: "https://telegra.ph/Skany-fotobuka-ME-MYSELF-AND-JUNG-KOOK-TIME-DIFFERENCE-09-07" }
+    ];
+
+    const items = [
       { text: "Планирование и съёмки", link: "https://t.me/violent_arhive/3010" },
       { text: "За кадром", link: "https://t.me/violent_arhive/3020" }
     ];
-    const scans = "https://telegra.ph/Skany-fotobuka-ME-MYSELF-AND-JUNG-KOOK-TIME-DIFFERENCE-09-07";
+
+    const extrasEl = document.getElementById('extras');
+    extraLinks.forEach((item) => {
+      const a = document.createElement('a');
+      a.className = 'extra'; a.href = item.link; a.target = '_blank';
+      const spacer = document.createElement('input');
+      spacer.type = 'checkbox';
+      spacer.disabled = true;
+      spacer.style.cssText = 'width:18px; height:18px; flex-shrink:0; visibility:hidden;';
+      const label = document.createElement('span');
+      label.style.flex = '1';
+      label.textContent = item.text;
+      const icon = document.createElement('span');
+      icon.className = 'link';
+      icon.textContent = '🔗';
+      a.appendChild(spacer);
+      a.appendChild(label);
+      a.appendChild(icon);
+      extrasEl.appendChild(a);
+    });
 
     const listEl = document.getElementById('list');
     items.forEach((item) => {
@@ -62,24 +86,6 @@
       row.appendChild(box); row.appendChild(span); row.appendChild(link);
       listEl.appendChild(row);
     });
-          if (scans) {
-      const a = document.createElement('a');
-      a.className = 'extra'; a.href = scans; a.target = '_blank';
-                        const photoIcon = document.createElement('input');
-      photoIcon.type = 'checkbox';
-      photoIcon.disabled = true;
-      photoIcon.style.cssText = 'width:18px; height:18px; flex-shrink:0; visibility:hidden;';
-      const label = document.createElement('span');
-      label.style.flex = '1';
-      label.textContent = 'Сканы фотобука';
-      const icon = document.createElement('span');
-      icon.className = 'link';
-      icon.textContent = '🔗';
-            a.appendChild(photoIcon);
-      a.appendChild(label);
-      a.appendChild(icon);
-      listEl.appendChild(a);
-    }
 
     function updateProgress() {
       const all = document.querySelectorAll('.row input[type="checkbox"]');
