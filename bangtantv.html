@@ -92,8 +92,9 @@
         <div>👀 РЕАКЦИЯ НА СЕБЯ 👀<div class="desc">реакция на разные клипы и видео</div></div>
         <span class="badge" id="badge-reaction" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
-      <a class="card" href="album-review.html">
+           <a class="card" href="album-review.html">
         <div>🔍 ALBUM REVIEW 🔍<div class="desc">распаковки альбомов от Suga + ver. от всех BTS</div></div>
+        <span class="badge" id="badge-albumreview" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
             <a class="card" href="vlogs-bts.html">
         <div>🌟 VLOGS BTS 🌟<div class="desc">влоги от каждого мембера</div></div>
@@ -154,7 +155,11 @@
       var raw = localStorage.getItem('progress:' + key);
       return raw ? JSON.parse(raw) : null;
     });
-    applyBadgeTotal('badge-photofolio', ['photo-folio'], function(key) {
+      applyBadgeTotal('badge-photofolio', ['photo-folio'], function(key) {
+      var raw = localStorage.getItem('progress:' + key);
+      return raw ? JSON.parse(raw) : null;
+    });
+    applyBadgeTotal('badge-albumreview', ['album-review'], function(key) {
       var raw = localStorage.getItem('progress:' + key);
       return raw ? JSON.parse(raw) : null;
     });
@@ -176,13 +181,20 @@
           applyBadgeTotal('badge-reaction', ['reaction-to-self'], function(key) {
             return data['progress:' + key];
           });
-          applyBadgeTotal('badge-photofolio', ['photo-folio'], function(key) {
+                    applyBadgeTotal('badge-photofolio', ['photo-folio'], function(key) {
             return data['progress:' + key];
           });
+          applyBadgeTotal('badge-albumreview', ['album-review'], function(key) {
+            return data['progress:' + key];
+          });
+          applyBadgeTotal('badge-gcf', ['gcf'], function(key) {
+            return data['progress:' + key];
+          });
+          renderVlogsBtsTotal();
         })
         .catch(() => {});
     }
-        applyBadgeTotal('badge-gcf', ['gcf'], function(key) {
+    applyBadgeTotal('badge-gcf', ['gcf'], function(key) {
       var raw = localStorage.getItem('progress:' + key);
       return raw ? JSON.parse(raw) : null;
     });
