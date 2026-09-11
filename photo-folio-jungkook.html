@@ -19,7 +19,7 @@
     .text { flex: 1; cursor: pointer; color: #333; }
     .text.done { color: #bbb; text-decoration: line-through; }
     .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
-           .extra { display: flex; align-items: center; gap: 8px; padding: 8px 4px; font-size: 14px; color: #333; text-decoration: none; }
+            .extra { display: flex; align-items: center; gap: 10px; padding: 8px 4px; font-size: 14px; color: #333; text-decoration: none; }
       .footer-link { display: block; text-align: center; font-size: 13px; color: #000; text-decoration: none; margin-top: 4px; padding-top: 8px; border-top: 1px solid #eee; }
   </style>
 </head>
@@ -71,7 +71,7 @@
       photoIcon.style.cssText = 'width:18px; height:18px; flex-shrink:0; visibility:hidden;';
       const label = document.createElement('span');
       label.style.flex = '1';
-      label.textContent = ' Сканы фотобука';
+      label.textContent = 'Сканы фотобука';
       const icon = document.createElement('span');
       icon.className = 'link';
       icon.textContent = '🔗';
