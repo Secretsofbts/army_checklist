@@ -57,7 +57,7 @@
           .card.row-done {
       background: #e3f7e9;
     }
-    .footer-link {
+       .footer-link {
       display: block;
       text-align: center;
       font-size: 13px;
@@ -66,7 +66,11 @@
       margin-top: 16px;
       padding-top: 12px;
       border-top: 1px solid #eee;
-     border-top: 1px solid #eee;
+    }
+    .footer-link + .footer-link {
+      margin-top: 4px;
+      padding-top: 0;
+      border-top: none;
     }
   </style>
 </head>
@@ -107,9 +111,10 @@
         <span class="badge" id="badge-eatjin" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
       <hr>
-            <a class="card" href="vlogs-bts.html">
+                     <a class="card" href="vlogs-bts.html">
         <div>📽 VLOGS BTS</div>
         <span class="badge" id="badge-vbts" style="margin-left:auto; font-size:12px; color:#999;"></span>
+      </a>
       <a class="footer-link" href="translations.html">Все трансляции BTS ⬅️</a>
       <a class="footer-link" href="bangtantv.html">BangtanTV ⬅️</a>
     </div>
