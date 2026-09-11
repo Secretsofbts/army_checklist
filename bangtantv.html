@@ -84,9 +84,9 @@
         <div>📽 BTS EPISODE 📽<div class="desc">важные моменты из истории bts</div></div>
         <span class="badge" id="badge-episode" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
-            <a class="card" href="vlogs-bts.html">
-        <div>🌟 VLOGS BTS 🌟<div class="desc">влоги от каждого мембера</div></div>
-        <span class="badge" id="badge-vlogsbts" style="margin-left:auto; font-size:12px; color:#999;"></span>
+            <a class="card" href="gcf.html">
+        <div>🎥 GOLDEN CLOSET FILM 🎥<div class="desc">видео, которые создал сам Чонгук</div></div>
+        <span class="badge" id="badge-gcf" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
             <a class="card" href="reaction-to-self.html">
         <div>👀 РЕАКЦИЯ НА СЕБЯ 👀<div class="desc">реакция на разные клипы и видео</div></div>
@@ -95,8 +95,9 @@
       <a class="card" href="album-review.html">
         <div>🔍 ALBUM REVIEW 🔍<div class="desc">распаковки альбомов от Suga + ver. от всех BTS</div></div>
       </a>
-      <a class="card" href="vlogs-bts.html">
-        <div>🎥 VLOGS BTS 🎥<div class="desc">влоги от каждого мембера</div></div>
+            <a class="card" href="vlogs-bts.html">
+        <div>🌟 VLOGS BTS 🌟<div class="desc">влоги от каждого мембера</div></div>
+        <span class="badge" id="badge-vlogsbts" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
       <a class="card" href="photo-folio.html">
         <div>📸 PHOTO-FOLIO 📸<div class="desc">всё, что связано с фотобуками, которые бантаны сами создавали</div></div>
@@ -185,7 +186,6 @@
       var raw = localStorage.getItem('progress:' + key);
       return raw ? JSON.parse(raw) : null;
     });
-          
 
     function renderVlogsBtsTotal() {
       var el = document.getElementById('badge-vlogsbts');
