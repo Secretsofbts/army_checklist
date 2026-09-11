@@ -97,18 +97,29 @@
       ]}
     ];
 
+        const slugs = ["jungkook", "namjoon", "jimin", "common", "jin", "taehyung", "hoseok", "yoongi", "extra"];
     const listEl = document.getElementById('list');
-    groups.forEach((group) => {
-      const title = document.createElement('div');
+    groups.forEach((group, gi) => {
+      const slug = slugs[gi];
+      const titleRow = document.createElement('div');
+      titleRow.style.cssText = 'display:flex; align-items:center; justify-content:space-between; margin:16px 0 4px;';
+      const title = document.createElement('span');
       title.className = 'member-title';
+      title.style.margin = '0';
       title.textContent = group.member;
-      listEl.appendChild(title);
+      const badge = document.createElement('span');
+      badge.id = 'group-badge-' + slug;
+      badge.style.cssText = 'font-size:12px; color:#999;';
+      titleRow.appendChild(title);
+      titleRow.appendChild(badge);
+      listEl.appendChild(titleRow);
 
       group.items.forEach((item) => {
         const id = 'video-' + item.link.split('/').pop();
         const row = document.createElement('div');
         row.className = 'row';
         row.dataset.id = id;
+        row.dataset.group = slug;
         const box = document.createElement('input');
         box.type = 'checkbox';
         const span = document.createElement('span');
@@ -138,10 +149,25 @@
     });
 
     function updateProgress() {
-      const all = document.querySelectorAll('.row input[type="checkbox"]');
-      let total = 0, checked = 0;
-      all.forEach(cb => { total++; if (cb.checked) checked++; });
-      setProgress('photo-folio', {checked, total});
+      let grandChecked = 0, grandTotal = 0;
+      slugs.forEach((slug) => {
+        const rows = document.querySelectorAll('.row[data-group="' + slug + '"] input[type="checkbox"]');
+        let checked = 0, total = 0;
+        rows.forEach(cb => { total++; if (cb.checked) checked++; });
+        const badge = document.getElementById('group-badge-' + slug);
+        if (badge && total > 0) {
+          if (checked === total) {
+            badge.textContent = '✅';
+            badge.style.color = '#2e9e5b';
+          } else {
+            badge.textContent = checked + '/' + total;
+          }
+        }
+        setProgress('photo-folio-' + slug, {checked, total});
+        grandChecked += checked;
+        grandTotal += total;
+      });
+      setProgress('photo-folio', {checked: grandChecked, total: grandTotal});
       pushWeightedContributions('photo-folio');
     }
     updateProgress();
