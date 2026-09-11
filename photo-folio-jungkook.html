@@ -62,18 +62,19 @@
       row.appendChild(box); row.appendChild(span); row.appendChild(link);
       listEl.appendChild(row);
     });
-       if (scans) {
+          if (scans) {
       const a = document.createElement('a');
       a.className = 'extra'; a.href = scans; a.target = '_blank';
-      const spacer = document.createElement('span');
-      spacer.style.cssText = 'width:18px; flex-shrink:0;';
+      const photoIcon = document.createElement('span');
+      photoIcon.style.cssText = 'width:18px; flex-shrink:0; font-size:14px; text-align:center;';
+      photoIcon.textContent = '📷';
       const label = document.createElement('span');
       label.style.flex = '1';
       label.textContent = 'Сканы фотобука';
       const icon = document.createElement('span');
       icon.className = 'link';
       icon.textContent = '🔗';
-      a.appendChild(spacer);
+      a.appendChild(photoIcon);
       a.appendChild(label);
       a.appendChild(icon);
       listEl.appendChild(a);
