@@ -46,20 +46,15 @@
     ];
 
     const extrasEl = document.getElementById('extras');
-    extraLinks.forEach((item) => {
+       extraLinks.forEach((item) => {
       const a = document.createElement('a');
       a.className = 'extra'; a.href = item.link; a.target = '_blank';
-      const spacer = document.createElement('input');
-      spacer.type = 'checkbox';
-      spacer.disabled = true;
-      spacer.style.cssText = 'width:18px; height:18px; flex-shrink:0; visibility:hidden;';
       const label = document.createElement('span');
       label.style.flex = '1';
       label.textContent = item.text;
       const icon = document.createElement('span');
       icon.className = 'link';
       icon.textContent = '🔗';
-      a.appendChild(spacer);
       a.appendChild(label);
       a.appendChild(icon);
       extrasEl.appendChild(a);
