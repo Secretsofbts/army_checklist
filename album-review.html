@@ -69,7 +69,7 @@
     <div id="list1"></div>
 
     <p class="section-title">Album Review by Bts 🔎</p>
-    <p class="section-desc">Распаковка от других мемберов)</p>
+    <p class="section-desc">Распаковка от других мемберов</p>
     <div id="list2"></div>
 
     <a class="footer-link" href="bangtantv.html">BangtanTV ⬅️</a>
@@ -79,18 +79,18 @@
     const list1 = [
       { text: "Maschine mk2", link: "https://t.me/violent_arhive/1778" },
       { text: "2 Cool 4 Skool", link: "https://t.me/violent_arhive/1774" },
-      { text: "The Most Beautiful In Life pt.1", link: "https://t.me/violent_arhive/1775" },
+      { text: "The Most Beautiful In Life 1", link: "https://t.me/violent_arhive/1775" },
       { text: "Skool Luv Affair", link: "https://t.me/violent_arhive/1777" },
       { text: "Dark & Wild", link: "https://t.me/violent_arhive/1776" },
       { text: "BE", link: "https://t.me/violent_arhive/208" }
     ];
 
-    const list2 = [
-      { text: "BE", sub: "все, кроме Юнги", link: "https://t.me/violent_arhive/240" },
-      { text: "Butter", sub: "все", link: "https://t.me/violent_arhive/1049" },
-      { text: "Map Of The Soul: Persona", sub: "Чимин, Гук, Хося", link: "https://t.me/violent_arhive/1780" },
-      { text: "FACE", sub: "Чимин", link: "https://t.me/violent_arhive/3819" },
-      { text: "Jack In The Box", sub: "Юнги, Намджун, Чимин, Тэхён, Чонгук", link: "https://t.me/violent_arhive/4173" }
+        const list2 = [
+      { text: "BE", sub: "все, кроме Юнги", hearts: "без 🖤", link: "https://t.me/violent_arhive/240" },
+      { text: "Butter", sub: "все", hearts: "❤️", link: "https://t.me/violent_arhive/1049" },
+      { text: "Map Of The Soul: Persona", sub: "Чимин, Гук, Хося", hearts: "💛💜🤍", link: "https://t.me/violent_arhive/1780" },
+      { text: "FACE", sub: "Чимин", hearts: "💛", link: "https://t.me/violent_arhive/3819" },
+      { text: "Jack In The Box", sub: "Юнги, Намджун, Чимин, Тэхён, Чонгук", hearts: "🖤💙💛💚💜", link: "https://t.me/violent_arhive/4173" }
     ];
 
        function renderList(containerId, items) {
@@ -129,6 +129,10 @@
           box.dispatchEvent(new Event('change'));
         });
 
+               const hearts = document.createElement('span');
+        hearts.style.cssText = 'font-size:13px; flex-shrink:0;';
+        hearts.textContent = item.hearts || '';
+
         const link = document.createElement('a');
         link.className = 'link';
         link.href = item.link;
@@ -137,6 +141,7 @@
 
         row.appendChild(box);
         row.appendChild(span);
+        row.appendChild(hearts);
         row.appendChild(link);
         listEl.appendChild(row);
       });
