@@ -104,8 +104,9 @@
         <div>📸 PHOTO-FOLIO 📸<div class="desc">всё, что связано с фотобуками, которые бантаны сами создавали</div></div>
         <span class="badge" id="badge-photofolio" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
-      <a class="card" href="youtube.html">
+            <a class="card" href="youtube.html">
         <div>📽 ТРАНСЛЯЦИИ С YOUTUBE 📽<div class="desc">онлайн или записанные эфиры и влоги + рубрика EatJin</div></div>
+        <span class="badge" id="badge-youtube" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
            <a class="card" href="message-from-jin.html">
         <div>💌 MESSAGE FROM JIN 💌<div class="desc">сообщения, записанные до армии</div></div>
@@ -196,7 +197,8 @@
                     applyBadgeTotal('badge-messagejin', ['message-from-jin'], function(key) {
             return data['progress:' + key];
           });
-          renderVlogsBtsTotal();
+                    renderVlogsBtsTotal();
+          renderYoutubeTotal();
         })
         .catch(() => {});
     }
@@ -229,7 +231,32 @@
         el.textContent = checked + '/' + total;
       }
     }
-    renderVlogsBtsTotal();
+        renderVlogsBtsTotal();
+
+    function renderYoutubeTotal() {
+      var el = document.getElementById('badge-youtube');
+      if (!el) return;
+      var keys = ['vlog-jungkook', 'vlog-v', 'vlog-jin', 'vlog-jimin', 'vlog-namjoon', 'vlog-suga', 'vlog-jhope', 'vlog-ot7', 'vlog-somepeople', 'eatjin', 'logon', 'vlogsbts-jimin', 'vlogsbts-jin', 'vlogsbts-taehyung', 'vlogsbts-jungkook', 'vlogsbts-namjoon', 'vlogsbts-yoongi', 'vlogsbts-hoseok'];
+      var checked = 0, total = 0;
+      keys.forEach(function(key) {
+        var raw = localStorage.getItem('progress:' + key);
+        if (raw) {
+          var data = JSON.parse(raw);
+          checked += data.checked;
+          total += data.total;
+        }
+      });
+      total -= 1;
+      if (localStorage.getItem('video-5570') === 'true') { checked -= 1; }
+      if (total === 0) { el.textContent = ''; return; }
+      if (checked === total) {
+        el.textContent = '✅';
+        el.style.color = '#2e9e5b';
+      } else {
+        el.textContent = checked + '/' + total;
+      }
+    }
+    renderYoutubeTotal();
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
