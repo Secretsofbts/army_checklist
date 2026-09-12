@@ -100,14 +100,16 @@
         <div>🌟 VLOGS BTS 🌟<div class="desc">влоги от каждого мембера</div></div>
         <span class="badge" id="badge-vlogsbts" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
-      <a class="card" href="photo-folio.html">
+           <a class="card" href="photo-folio.html">
         <div>📸 PHOTO-FOLIO 📸<div class="desc">всё, что связано с фотобуками, которые бантаны сами создавали</div></div>
+        <span class="badge" id="badge-photofolio" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
       <a class="card" href="youtube.html">
         <div>📽 ТРАНСЛЯЦИИ С YOUTUBE 📽<div class="desc">онлайн или записанные эфиры и влоги + рубрика EatJin</div></div>
       </a>
-      <a class="card" href="message-from-jin.html">
+           <a class="card" href="message-from-jin.html">
         <div>💌 MESSAGE FROM JIN 💌<div class="desc">сообщения, записанные до армии</div></div>
+        <span class="badge" id="badge-messagejin" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
       <a class="card" href="td-stories.html">
         <div>🗣 ИСТОРИИ ОТДЕЛА T&D 🗣</div>
@@ -163,6 +165,10 @@
       var raw = localStorage.getItem('progress:' + key);
       return raw ? JSON.parse(raw) : null;
     });
+        applyBadgeTotal('badge-messagejin', ['message-from-jin'], function(key) {
+      var raw = localStorage.getItem('progress:' + key);
+      return raw ? JSON.parse(raw) : null;
+    });
 
     if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
       fetch(`${FIREBASE_URL}/users/${ARMY_USER_ID}.json`)
@@ -188,6 +194,9 @@
             return data['progress:' + key];
           });
           applyBadgeTotal('badge-gcf', ['gcf'], function(key) {
+            return data['progress:' + key];
+          });
+                    applyBadgeTotal('badge-messagejin', ['message-from-jin'], function(key) {
             return data['progress:' + key];
           });
           renderVlogsBtsTotal();
