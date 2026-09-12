@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js?v=4"></script>
+  <title>Спецвыпуски</title>
+  <style>
+    body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
+    .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
+    h1 { font-size: 18px; margin: 0 0 16px; }
+    .card { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #f7f7fa; border-radius: 12px; padding: 12px 14px; margin-bottom: 8px; font-size: 14px; font-weight: 500; color: #333; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="index.html">← Назад</a>
+    <h1>🎁 Спецвыпуски 🎁</h1>
+    <div class="list">
+      <a class="card" href="seasons.html">Season's / Summer / Winter <span class="badge" id="badge-seasons" style="font-size:12px; color:#999;"></span></a>
+      <a class="card" href="bts-now.html">BTS Now <span class="badge" id="badge-btsnow" style="font-size:12px; color:#999;"></span></a>
+    </div>
+  </div>
+  <script>
+    function renderAllBadges() {
+      var seasonsRaw = localStorage.getItem('progress:seasons');
+      if (seasonsRaw) {
+        var d = JSON.parse(seasonsRaw);
+        var el = document.getElementById('badge-seasons');
+        if (d.total > 0) el.textContent = d.checked === d.total ? '✅' : (d.checked + '/' + d.total);
+      }
+      var nowRaw = localStorage.getItem('progress:bts-now');
+      if (nowRaw) {
+        var d2 = JSON.parse(nowRaw);
+        var el2 = document.getElementById('badge-btsnow');
+        if (d2.total > 0) el2.textContent = d2.checked === d2.total ? '✅' : (d2.checked + '/' + d2.total);
+      }
+    }
+    renderAllBadges();
+    refreshLocalStorageFromCloud(renderAllBadges);
+
+    if (window.Telegram && window.Telegram.WebApp) { Telegram.WebApp.ready(); Telegram.WebApp.expand(); }
+  </script>
+</body>
+</html>
