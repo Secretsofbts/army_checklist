@@ -74,15 +74,21 @@
         });
     });
 
+       function deleteEntry(key) {
+      if (!confirm('Удалить этот вопрос насовсем?')) return;
+      fetch(`${FIREBASE_URL}/qa/${key}.json`, { method: 'DELETE' }).then(() => loadAll());
+    }
+
     function renderPublished(data) {
       const listEl = document.getElementById('published-list');
       listEl.innerHTML = '';
-      const entries = Object.values(data || {}).filter(e => e.status === 'published').sort((a, b) => (b.answeredAt || 0) - (a.answeredAt || 0));
-      if (entries.length === 0) {
+      const keys = Object.keys(data || {}).filter(k => data[k].status === 'published').sort((a, b) => (data[b].answeredAt || 0) - (data[a].answeredAt || 0));
+      if (keys.length === 0) {
         listEl.innerHTML = '<p class="empty-note">Пока нет опубликованных вопросов</p>';
         return;
       }
-      entries.forEach((entry) => {
+      keys.forEach((key) => {
+        const entry = data[key];
         const div = document.createElement('div');
         div.className = 'qa-item';
         const q = document.createElement('p');
@@ -93,6 +99,30 @@
         a.textContent = entry.answer;
         div.appendChild(q);
         div.appendChild(a);
+
+        if (isAdmin) {
+          const controls = document.createElement('div');
+          controls.style.cssText = 'margin-top:8px; display:flex; gap:8px;';
+          const editBtn = document.createElement('button');
+          editBtn.textContent = '✏️ Изменить ответ';
+          editBtn.style.cssText = 'font-size:12px; background:#eee; border:none; border-radius:6px; padding:6px 10px; cursor:pointer;';
+          editBtn.addEventListener('click', () => {
+            const newAnswer = prompt('Изменить ответ:', entry.answer);
+            if (newAnswer === null || !newAnswer.trim()) return;
+            fetch(`${FIREBASE_URL}/qa/${key}.json`, {
+              method: 'PATCH',
+              body: JSON.stringify({ answer: newAnswer.trim() })
+            }).then(() => loadAll());
+          });
+          const delBtn = document.createElement('button');
+          delBtn.textContent = '🗑 Удалить';
+          delBtn.style.cssText = 'font-size:12px; background:#fbe4e4; border:none; border-radius:6px; padding:6px 10px; cursor:pointer; color:#c25a5a;';
+          delBtn.addEventListener('click', () => deleteEntry(key));
+          controls.appendChild(editBtn);
+          controls.appendChild(delBtn);
+          div.appendChild(controls);
+        }
+
         listEl.appendChild(div);
       });
     }
@@ -119,7 +149,7 @@
         const publishBtn = document.createElement('button');
         publishBtn.className = 'publish-btn';
         publishBtn.textContent = 'Опубликовать';
-        publishBtn.addEventListener('click', () => {
+               publishBtn.addEventListener('click', () => {
           const answer = textarea.value.trim();
           if (!answer) return;
           publishBtn.disabled = true;
@@ -130,9 +160,14 @@
             .then(() => loadAll())
             .catch(() => { publishBtn.disabled = false; });
         });
+        const rejectBtn = document.createElement('button');
+        rejectBtn.textContent = '🗑 Удалить без публикации';
+        rejectBtn.style.cssText = 'margin-top:8px; margin-left:8px; background:#fbe4e4; color:#c25a5a; border:none; border-radius:8px; padding:8px 14px; font-size:13px; cursor:pointer;';
+        rejectBtn.addEventListener('click', () => deleteEntry(key));
         box.appendChild(q);
         box.appendChild(textarea);
         box.appendChild(publishBtn);
+        box.appendChild(rejectBtn);
         adminEl.appendChild(box);
       });
     }
