@@ -57,9 +57,15 @@
       if (!text) return;
       const btn = document.getElementById('send-btn');
       btn.disabled = true;
+           let askerName = 'Неизвестный';
+      if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
+        const u = window.Telegram.WebApp.initDataUnsafe.user;
+        askerName = (u.first_name || '') + (u.last_name ? ' ' + u.last_name : '') + (u.username ? ' (@' + u.username + ')' : '');
+        if (!askerName.trim()) askerName = 'Неизвестный';
+      }
       fetch(`${FIREBASE_URL}/qa.json`, {
         method: 'POST',
-        body: JSON.stringify({ question: text, status: 'pending', askedAt: Date.now() })
+        body: JSON.stringify({ question: text, status: 'pending', askedAt: Date.now(), askerName: askerName })
       })
         .then(res => res.json())
         .then(() => {
@@ -141,9 +147,12 @@
         const entry = data[key];
         const box = document.createElement('div');
         box.className = 'admin-box';
-        const q = document.createElement('p');
+              const q = document.createElement('p');
         q.className = 'admin-question';
-               q.innerHTML = '<span style="color:#9b7fd4; font-weight:700;">?</span> ' + entry.question;
+        q.innerHTML = '<span style="color:#9b7fd4; font-weight:700;">?</span> ' + entry.question;
+        const askerLabel = document.createElement('p');
+        askerLabel.style.cssText = 'font-size:11px; color:#999; margin:-4px 0 8px;';
+        askerLabel.textContent = 'От: ' + (entry.askerName || 'Неизвестный');
         const textarea = document.createElement('textarea');
         textarea.placeholder = 'Ваш ответ...';
         const publishBtn = document.createElement('button');
@@ -164,7 +173,8 @@
         rejectBtn.textContent = '🗑 Удалить без публикации';
         rejectBtn.style.cssText = 'margin-top:8px; margin-left:8px; background:#fbe4e4; color:#c25a5a; border:none; border-radius:8px; padding:8px 14px; font-size:13px; cursor:pointer;';
         rejectBtn.addEventListener('click', () => deleteEntry(key));
-        box.appendChild(q);
+                box.appendChild(q);
+        box.appendChild(askerLabel);
         box.appendChild(textarea);
         box.appendChild(publishBtn);
         box.appendChild(rejectBtn);
