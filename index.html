@@ -154,7 +154,10 @@
         <span>❓ Вопрос-ответ</span>
         <span id="qa-pending-badge" style="display:none; background:#e74c3c; color:#fff; font-size:11px; font-weight:700; border-radius:10px; padding:2px 7px;"></span>
       </a>
-            <a href="suggestions.html" class="menu-item" style="padding: 12px 8px; font-size: 14px; color: #333; text-decoration: none; border-radius: 8px;">✍️ Ваши предложения</a>
+              <a href="suggestions.html" class="menu-item" style="padding: 12px 8px; font-size: 14px; color: #333; text-decoration: none; border-radius: 8px; display: flex; align-items: center; justify-content: space-between;">
+        <span>✍️ Ваши предложения</span>
+        <span id="suggestions-pending-badge" style="display:none; background:#e74c3c; color:#fff; font-size:11px; font-weight:700; border-radius:10px; padding:2px 7px;"></span>
+      </a>
       <a href="#" class="menu-item" style="padding: 12px 8px; font-size: 14px; color: #333; text-decoration: none; border-radius: 8px;">📊 Статистика</a>
       <a href="#" class="menu-item" style="padding: 12px 8px; font-size: 14px; color: #333; text-decoration: none; border-radius: 8px;">💜 Поддержка бота</a>
     </div>
@@ -190,7 +193,7 @@
     });
   });
 
-   const ADMIN_ID = 891936733;
+    const ADMIN_ID = 891936733;
   if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID === ADMIN_ID) {
     fetch(`${FIREBASE_URL}/qa.json`)
       .then(res => res.json())
@@ -200,6 +203,19 @@
         if (pendingCount > 0) {
           const badge = document.getElementById('qa-pending-badge');
           badge.textContent = pendingCount;
+          badge.style.display = 'inline-block';
+        }
+      })
+      .catch(() => {});
+
+    fetch(`${FIREBASE_URL}/suggestions.json`)
+      .then(res => res.json())
+      .then(data => {
+        if (!data) return;
+        const count = Object.keys(data).length;
+        if (count > 0) {
+          const badge = document.getElementById('suggestions-pending-badge');
+          badge.textContent = count;
           badge.style.display = 'inline-block';
         }
       })
