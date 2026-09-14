@@ -8,37 +8,38 @@
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="sync.js?v=4"></script>
-  <title>BTS Now</title>
+  <title>Summer Package</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
     .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
     .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
-    h1 { font-size: 18px; margin: 0 0 4px; }
-    .intro { font-size: 13px; color: #555; margin: 0 0 16px; }
+    h1 { font-size: 18px; margin: 0 0 16px; }
     .row { display: flex; align-items: center; gap: 10px; padding: 8px 4px; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
     input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
     .text { flex: 1; cursor: pointer; color: #333; }
     .text.done { color: #bbb; text-decoration: line-through; }
+    .sub { display: block; font-size: 11px; color: #999; margin-top: 2px; }
     .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 16px; }
     .footer-link { display: block; text-align: center; font-size: 13px; color: #000; text-decoration: none; margin-top: 16px; padding-top: 12px; border-top: 1px solid #eee; }
   </style>
 </head>
 <body>
   <div class="app">
-    <a class="back" href="index.html">← Назад</a>
-    <h1>📸 BTS NOW 📸</h1>
-       <p class="intro">Закадровые съёмки с фотосессиями в различных городах и странах. Просто незабываемые образы. Этот релиз выходил 3 года подряд.</p>
-    <p class="intro">Самая ранняя из подобных серий — начиналась ещё в 2014 году (первый выпуск — «BTS in Thailand»). Поездки-фотосессии в разных странах с закадровым видео, по сути предшественник и прообраз того, что потом стало официальным форматом Summer Package</p>
-    <p class="intro">Есть само видео и ссылки на фото с фотобуков ☺️💙</p>
+    <a class="back" href="specials.html">← Назад</a>
+       <h1>☀️ Summer Package ☀️</h1>
+    <p class="intro" style="font-size: 13px; color: #555; margin: 0 0 16px;">Начался как празднование 1-й годовщины дебюта в 2014 году — тогда это был скорее фотобук с переизданием материалов 2013 года и мелких вещей (значки, слоган, фотокарточки). Со следующего года формат устоялся: летний влог + фотобук — участники ездят по разным локациям для фотосессий, а на DVD показывают закадровые съёмки этих поездок и разные игры между собой</p>
     <div id="list"></div>
-    <a class="footer-link" href="index.html">На главную ⬅️</a>
+    <a class="footer-link" href="specials.html">Спецвыпуски ⬅️</a>
   </div>
 
   <script>
     const items = [
-      { text: "BTS NOW Thailand 2014", link: "https://t.me/violent_arhive/2273" },
-      { text: "BTS NOW Europe/America 2015", link: "https://t.me/violent_arhive/2274" },
-      { text: "BTS NOW Chicago 2016", link: "https://t.me/violent_arhive/2276" }
+      { text: "Summer Package in Kota Kinabalu", sub: "2015 год", link: "https://t.me/violent_arhive/1494" },
+      { text: "Summer Package in Dubai", sub: "2016 год", link: "https://t.me/violent_arhive/1495" },
+      { text: "Summer Package in Palawan", sub: "2017 год", link: "https://t.me/violent_arhive/1496" },
+      { text: "Summer Package in Saipan", sub: "2018 год", link: "https://t.me/violent_arhive/1499" },
+      { text: "Summer Package in Korea", sub: "2019 год", link: "https://t.me/violent_arhive/1497" }
     ];
 
     const listEl = document.getElementById('list');
@@ -52,6 +53,12 @@
       const span = document.createElement('span');
       span.className = 'text';
       span.textContent = item.text;
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.className = 'sub';
+        sub.textContent = item.sub;
+        span.appendChild(sub);
+      }
       if (localStorage.getItem(id) === 'true') { box.checked = true; span.classList.add('done'); }
       box.addEventListener('change', () => {
         setChecked(id, box.checked);
@@ -69,8 +76,8 @@
       const all = document.querySelectorAll('input[type="checkbox"]');
       let total = 0, checked = 0;
       all.forEach(cb => { total++; if (cb.checked) checked++; });
-      setProgress('bts-now', {checked, total});
-      pushWeightedContributions('bts-now');
+      setProgress('season-summer', {checked, total});
+      pushWeightedContributions('season-summer');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);
