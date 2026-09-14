@@ -93,7 +93,7 @@
         div.className = 'qa-item';
         const q = document.createElement('p');
         q.className = 'qa-question';
-        q.textContent = '❔ ' + entry.question;
+               q.innerHTML = '<span style="color:#9b7fd4; font-weight:700;">?</span> ' + entry.question;
         const a = document.createElement('p');
         a.className = 'qa-answer';
         a.textContent = entry.answer;
@@ -143,7 +143,7 @@
         box.className = 'admin-box';
         const q = document.createElement('p');
         q.className = 'admin-question';
-        q.textContent = '❔ ' + entry.question;
+               q.innerHTML = '<span style="color:#9b7fd4; font-weight:700;">?</span> ' + entry.question;
         const textarea = document.createElement('textarea');
         textarea.placeholder = 'Ваш ответ...';
         const publishBtn = document.createElement('button');
