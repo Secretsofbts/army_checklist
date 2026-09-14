@@ -20,24 +20,31 @@
     .send-btn:disabled { background: #ccc; cursor: default; }
     .status-msg { font-size: 12px; color: #2e9e5b; margin-top: 6px; text-align: center; }
     .section-title { font-size: 15px; font-weight: 700; margin: 24px 0 8px; }
-    .suggestion-box { background: #f7f7fa; border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
-    .suggestion-text { font-size: 14px; color: #333; margin: 0 0 6px; }
-    .suggestion-meta { font-size: 11px; color: #999; margin: 0; }
-    .del-btn { margin-top: 8px; background: #fbe4e4; color: #c25a5a; border: none; border-radius: 8px; padding: 6px 10px; font-size: 12px; cursor: pointer; }
+    .qa-item { background: #f7f7fa; border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+    .qa-question { font-size: 14px; font-weight: 600; color: #333; margin: 0 0 6px; }
+    .qa-answer { font-size: 13px; color: #555; margin: 0; }
+    .admin-box { background: #fff8e6; border: 1px solid #f0dca0; border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+    .admin-question { font-size: 14px; font-weight: 600; color: #333; margin: 0 0 8px; }
+    .admin-box textarea { min-height: 50px; }
+    .publish-btn { margin-top: 8px; background: #2e9e5b; color: white; border: none; border-radius: 8px; padding: 8px 14px; font-size: 13px; cursor: pointer; }
     .empty-note { font-size: 13px; color: #999; text-align: center; padding: 12px 0; }
+    .del-btn { margin-top: 8px; margin-left: 8px; background: #fbe4e4; color: #c25a5a; border: none; border-radius: 8px; padding: 8px 14px; font-size: 13px; cursor: pointer; }
   </style>
 </head>
 <body>
   <div class="app">
     <a class="back" href="index.html">← Назад</a>
     <h1>✍️ Ваши предложения ✍️</h1>
-    <p class="intro">Здесь вы можете оставить любые предложения по чек-листу — что добавить, что улучшить, какие видео дополнить в коллекцию или что стоит перевести. Каждое предложение я читаю лично и очень ценю ваше время и заботу о проекте 💜</p>
+    <p class="intro">Здесь вы можете оставить любые предложения по сотрудничеству и по чек-листу — что добавить, какие видео дополнить в коллекцию или может даже захотите что-то сами перевести для драгоценного архива. Каждое предложение я читаю лично, отвечаю в личные сообщения или тут. Очень ценю ваше время и заботу о проекте 💜</p>
 
     <textarea id="suggestion-input" placeholder="Ваше предложение..."></textarea>
     <button class="send-btn" id="send-btn">Отправить</button>
     <div class="status-msg" id="status-msg"></div>
 
     <div id="admin-section"></div>
+
+    <p class="section-title">Опубликованные предложения</p>
+    <div id="published-list"><p class="empty-note">Загрузка...</p></div>
   </div>
 
   <script>
@@ -61,7 +68,7 @@
 
       fetch(`${FIREBASE_URL}/suggestions.json`, {
         method: 'POST',
-        body: JSON.stringify({ text, askerName, createdAt: Date.now() })
+        body: JSON.stringify({ text, askerName, status: 'pending', createdAt: Date.now() })
       })
         .then(res => res.json())
         .then(() => {
@@ -77,46 +84,116 @@
         });
     });
 
-    function renderAdminList(data) {
-      const adminEl = document.getElementById('admin-section');
-      if (!isAdmin) { adminEl.innerHTML = ''; return; }
-      const keys = Object.keys(data || {}).sort((a, b) => (data[b].createdAt || 0) - (data[a].createdAt || 0));
+    function deleteEntry(key) {
+      if (!confirm('Удалить это предложение насовсем?')) return;
+      fetch(`${FIREBASE_URL}/suggestions/${key}.json`, { method: 'DELETE' }).then(() => loadAll());
+    }
+
+    function renderPublished(data) {
+      const listEl = document.getElementById('published-list');
+      listEl.innerHTML = '';
+      const keys = Object.keys(data || {}).filter(k => data[k].status === 'published').sort((a, b) => (data[b].answeredAt || 0) - (data[a].answeredAt || 0));
       if (keys.length === 0) {
-        adminEl.innerHTML = '<p class="section-title">Все предложения</p><p class="empty-note">Пока предложений нет</p>';
+        listEl.innerHTML = '<p class="empty-note">Пока нет опубликованных предложений</p>';
         return;
       }
-      let html = '<p class="section-title">Все предложения (' + keys.length + ')</p>';
-      adminEl.innerHTML = html;
       keys.forEach((key) => {
         const entry = data[key];
+        const div = document.createElement('div');
+        div.className = 'qa-item';
+        const q = document.createElement('p');
+        q.className = 'qa-question';
+        q.innerHTML = '<span style="color:#9b7fd4; font-weight:700;">💡</span> ' + entry.text;
+        const a = document.createElement('p');
+        a.className = 'qa-answer';
+        a.textContent = entry.answer;
+        div.appendChild(q);
+        div.appendChild(a);
+
+        if (isAdmin) {
+          const controls = document.createElement('div');
+          controls.style.cssText = 'margin-top:8px; display:flex; gap:8px;';
+          const editBtn = document.createElement('button');
+          editBtn.textContent = '✏️ Изменить ответ';
+          editBtn.style.cssText = 'font-size:12px; background:#eee; border:none; border-radius:6px; padding:6px 10px; cursor:pointer;';
+          editBtn.addEventListener('click', () => {
+            const newAnswer = prompt('Изменить ответ:', entry.answer);
+            if (newAnswer === null || !newAnswer.trim()) return;
+            fetch(`${FIREBASE_URL}/suggestions/${key}.json`, {
+              method: 'PATCH',
+              body: JSON.stringify({ answer: newAnswer.trim() })
+            }).then(() => loadAll());
+          });
+          const delBtn = document.createElement('button');
+          delBtn.textContent = '🗑 Удалить';
+          delBtn.style.cssText = 'font-size:12px; background:#fbe4e4; border:none; border-radius:6px; padding:6px 10px; cursor:pointer; color:#c25a5a;';
+          delBtn.addEventListener('click', () => deleteEntry(key));
+          controls.appendChild(editBtn);
+          controls.appendChild(delBtn);
+          div.appendChild(controls);
+        }
+
+        listEl.appendChild(div);
+      });
+    }
+
+    function renderAdminPanel(data, keys) {
+      const adminEl = document.getElementById('admin-section');
+      if (!isAdmin) { adminEl.innerHTML = ''; return; }
+      const pendingKeys = keys.filter(k => data[k].status === 'pending');
+      if (pendingKeys.length === 0) {
+        adminEl.innerHTML = '<p class="section-title">Предложения на модерации</p><p class="empty-note">Новых предложений пока нет</p>';
+        return;
+      }
+      let html = '<p class="section-title">Предложения на модерации (' + pendingKeys.length + ')</p>';
+      adminEl.innerHTML = html;
+      pendingKeys.forEach((key) => {
+        const entry = data[key];
         const box = document.createElement('div');
-        box.className = 'suggestion-box';
-        const text = document.createElement('p');
-        text.className = 'suggestion-text';
-        text.textContent = entry.text;
-        const meta = document.createElement('p');
-        meta.className = 'suggestion-meta';
-        const date = entry.createdAt ? new Date(entry.createdAt).toLocaleDateString('ru-RU') : '';
-        meta.textContent = 'От: ' + (entry.askerName || 'Неизвестный') + (date ? ' · ' + date : '');
-        const delBtn = document.createElement('button');
-        delBtn.className = 'del-btn';
-        delBtn.textContent = '🗑 Удалить';
-        delBtn.addEventListener('click', () => {
-          if (!confirm('Удалить это предложение?')) return;
-          fetch(`${FIREBASE_URL}/suggestions/${key}.json`, { method: 'DELETE' }).then(() => loadAll());
+        box.className = 'admin-box';
+        const q = document.createElement('p');
+        q.className = 'admin-question';
+        q.innerHTML = '<span style="color:#9b7fd4; font-weight:700;">💡</span> ' + entry.text;
+        const askerLabel = document.createElement('p');
+        askerLabel.style.cssText = 'font-size:11px; color:#999; margin:-4px 0 8px;';
+        askerLabel.textContent = 'От: ' + (entry.askerName || 'Неизвестный');
+        const textarea = document.createElement('textarea');
+        textarea.placeholder = 'Ваш ответ/комментарий...';
+        const publishBtn = document.createElement('button');
+        publishBtn.className = 'publish-btn';
+        publishBtn.textContent = 'Опубликовать';
+        publishBtn.addEventListener('click', () => {
+          const answer = textarea.value.trim();
+          if (!answer) return;
+          publishBtn.disabled = true;
+          fetch(`${FIREBASE_URL}/suggestions/${key}.json`, {
+            method: 'PATCH',
+            body: JSON.stringify({ answer, status: 'published', answeredAt: Date.now() })
+          })
+            .then(() => loadAll())
+            .catch(() => { publishBtn.disabled = false; });
         });
-        box.appendChild(text);
-        box.appendChild(meta);
-        box.appendChild(delBtn);
+        const rejectBtn = document.createElement('button');
+        rejectBtn.className = 'del-btn';
+        rejectBtn.textContent = '🗑 Удалить без публикации';
+        rejectBtn.addEventListener('click', () => deleteEntry(key));
+        box.appendChild(q);
+        box.appendChild(askerLabel);
+        box.appendChild(textarea);
+        box.appendChild(publishBtn);
+        box.appendChild(rejectBtn);
         adminEl.appendChild(box);
       });
     }
 
     function loadAll() {
-      if (!isAdmin) return;
       fetch(`${FIREBASE_URL}/suggestions.json`)
         .then(res => res.json())
-        .then(data => renderAdminList(data || {}))
+        .then(data => {
+          data = data || {};
+          renderPublished(data);
+          renderAdminPanel(data, Object.keys(data));
+        })
         .catch(() => {});
     }
     loadAll();
