@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js?v=4"></script>
+  <title>Вопрос-ответ</title>
+  <style>
+    body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
+    .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 16px; }
+    textarea { width: 100%; box-sizing: border-box; border: 1px solid #e0e0e0; border-radius: 10px; padding: 10px; font-size: 14px; font-family: inherit; resize: vertical; min-height: 60px; }
+    .send-btn { margin-top: 8px; background: #9b7fd4; color: white; border: none; border-radius: 10px; padding: 10px 16px; font-size: 14px; cursor: pointer; width: 100%; }
+    .send-btn:disabled { background: #ccc; cursor: default; }
+    .status-msg { font-size: 12px; color: #2e9e5b; margin-top: 6px; text-align: center; }
+    .section-title { font-size: 15px; font-weight: 700; margin: 24px 0 8px; }
+    .qa-item { background: #f7f7fa; border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+    .qa-question { font-size: 14px; font-weight: 600; color: #333; margin: 0 0 6px; }
+    .qa-answer { font-size: 13px; color: #555; margin: 0; }
+    .admin-box { background: #fff8e6; border: 1px solid #f0dca0; border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+    .admin-question { font-size: 14px; font-weight: 600; color: #333; margin: 0 0 8px; }
+    .admin-box textarea { min-height: 50px; }
+    .publish-btn { margin-top: 8px; background: #2e9e5b; color: white; border: none; border-radius: 8px; padding: 8px 14px; font-size: 13px; cursor: pointer; }
+    .empty-note { font-size: 13px; color: #999; text-align: center; padding: 12px 0; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="index.html">← Назад</a>
+    <h1>❓ Вопрос-ответ ❓</h1>
+    <p class="intro">Задайте любой вопрос об этом приложении, каналах или чём угодно ещё — я отвечу, и он появится здесь для всех)</p>
+
+    <textarea id="question-input" placeholder="Ваш вопрос..."></textarea>
+    <button class="send-btn" id="send-btn">Отправить вопрос</button>
+    <div class="status-msg" id="status-msg"></div>
+
+    <div id="admin-section"></div>
+
+    <p class="section-title">Опубликованные вопросы</p>
+    <div id="published-list"></div>
+  </div>
+
+  <script>
+    const ADMIN_ID = 891936733;
+    const isAdmin = (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID === ADMIN_ID);
+
+    document.getElementById('send-btn').addEventListener('click', () => {
+      const input = document.getElementById('question-input');
+      const text = input.value.trim();
+      const statusMsg = document.getElementById('status-msg');
+      if (!text) return;
+      const btn = document.getElementById('send-btn');
+      btn.disabled = true;
+      fetch(`${FIREBASE_URL}/qa.json`, {
+        method: 'POST',
+        body: JSON.stringify({ question: text, status: 'pending', askedAt: Date.now() })
+      })
+        .then(res => res.json())
+        .then(() => {
+          input.value = '';
+          statusMsg.textContent = 'Вопрос отправлен! Он появится здесь после ответа.';
+          btn.disabled = false;
+        })
+        .catch(() => {
+          statusMsg.textContent = 'Не получилось отправить, попробуйте ещё раз.';
+          statusMsg.style.color = '#c25a5a';
+          btn.disabled = false;
+        });
+    });
+
+    function renderPublished(data) {
+      const listEl = document.getElementById('published-list');
+      listEl.innerHTML = '';
+      const entries = Object.values(data || {}).filter(e => e.status === 'published').sort((a, b) => (b.answeredAt || 0) - (a.answeredAt || 0));
+      if (entries.length === 0) {
+        listEl.innerHTML = '<p class="empty-note">Пока нет опубликованных вопросов</p>';
+        return;
+      }
+      entries.forEach((entry) => {
+        const div = document.createElement('div');
+        div.className = 'qa-item';
+        const q = document.createElement('p');
+        q.className = 'qa-question';
+        q.textContent = '❔ ' + entry.question;
+        const a = document.createElement('p');
+        a.className = 'qa-answer';
+        a.textContent = entry.answer;
+        div.appendChild(q);
+        div.appendChild(a);
+        listEl.appendChild(div);
+      });
+    }
+
+    function renderAdminPanel(data, keys) {
+      const adminEl = document.getElementById('admin-section');
+      if (!isAdmin) { adminEl.innerHTML = ''; return; }
+      const pendingKeys = keys.filter(k => data[k].status === 'pending');
+      if (pendingKeys.length === 0) {
+        adminEl.innerHTML = '<p class="section-title">Вопросы на модерации</p><p class="empty-note">Новых вопросов пока нет</p>';
+        return;
+      }
+      let html = '<p class="section-title">Вопросы на модерации (' + pendingKeys.length + ')</p>';
+      adminEl.innerHTML = html;
+      pendingKeys.forEach((key) => {
+        const entry = data[key];
+        const box = document.createElement('div');
+        box.className = 'admin-box';
+        const q = document.createElement('p');
+        q.className = 'admin-question';
+        q.textContent = '❔ ' + entry.question;
+        const textarea = document.createElement('textarea');
+        textarea.placeholder = 'Ваш ответ...';
+        const publishBtn = document.createElement('button');
+        publishBtn.className = 'publish-btn';
+        publishBtn.textContent = 'Опубликовать';
+        publishBtn.addEventListener('click', () => {
+          const answer = textarea.value.trim();
+          if (!answer) return;
+          publishBtn.disabled = true;
+          fetch(`${FIREBASE_URL}/qa/${key}.json`, {
+            method: 'PATCH',
+            body: JSON.stringify({ answer, status: 'published', answeredAt: Date.now() })
+          })
+            .then(() => loadAll())
+            .catch(() => { publishBtn.disabled = false; });
+        });
+        box.appendChild(q);
+        box.appendChild(textarea);
+        box.appendChild(publishBtn);
+        adminEl.appendChild(box);
+      });
+    }
+
+    function loadAll() {
+      fetch(`${FIREBASE_URL}/qa.json`)
+        .then(res => res.json())
+        .then(data => {
+          data = data || {};
+          renderPublished(data);
+          renderAdminPanel(data, Object.keys(data));
+        })
+        .catch(() => {});
+    }
+    loadAll();
+
+    if (window.Telegram && window.Telegram.WebApp) { Telegram.WebApp.ready(); Telegram.WebApp.expand(); }
+  </script>
+</body>
+</html>

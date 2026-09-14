@@ -150,7 +150,7 @@
     <button id="menu-close" style="background: none; border: none; font-size: 20px; cursor: pointer; color: #888; margin-bottom: 16px;">✕</button>
     <div style="display: flex; flex-direction: column; gap: 4px;">
       <a href="#" class="menu-item" style="padding: 12px 8px; font-size: 14px; color: #333; text-decoration: none; border-radius: 8px;">📖 Инструкция по использованию</a>
-      <a href="#" class="menu-item" style="padding: 12px 8px; font-size: 14px; color: #333; text-decoration: none; border-radius: 8px;">❓ Вопрос-ответ</a>
+          <a href="qa.html" class="menu-item" style="padding: 12px 8px; font-size: 14px; color: #333; text-decoration: none; border-radius: 8px;">❓ Вопрос-ответ</a>
        <a href="#" class="menu-item" style="padding: 12px 8px; font-size: 14px; color: #333; text-decoration: none; border-radius: 8px;">✍️ Ваши предложения</a>
       <a href="#" class="menu-item" style="padding: 12px 8px; font-size: 14px; color: #333; text-decoration: none; border-radius: 8px;">📊 Статистика</a>
       <a href="#" class="menu-item" style="padding: 12px 8px; font-size: 14px; color: #333; text-decoration: none; border-radius: 8px;">💜 Поддержка бота</a>
@@ -177,10 +177,12 @@
   menuClose.addEventListener('click', closeMenu);
   menuOverlay.addEventListener('click', closeMenu);
 
-  document.querySelectorAll('.menu-item').forEach((item) => {
+   document.querySelectorAll('.menu-item').forEach((item) => {
     item.addEventListener('click', (e) => {
-      e.preventDefault();
-      alert('Скоро здесь появится содержимое!');
+      if (item.getAttribute('href') === '#') {
+        e.preventDefault();
+        alert('Скоро здесь появится содержимое!');
+      }
       closeMenu();
     });
   });
