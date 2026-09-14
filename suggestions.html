@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js?v=4"></script>
+  <title>Ваши предложения</title>
+  <style>
+    body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
+    .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 16px; line-height: 1.6; }
+    textarea { width: 100%; box-sizing: border-box; border: 1px solid #e0e0e0; border-radius: 10px; padding: 10px; font-size: 14px; font-family: inherit; resize: vertical; min-height: 80px; }
+    .send-btn { margin-top: 8px; background: #9b7fd4; color: white; border: none; border-radius: 10px; padding: 10px 16px; font-size: 14px; cursor: pointer; width: 100%; }
+    .send-btn:disabled { background: #ccc; cursor: default; }
+    .status-msg { font-size: 12px; color: #2e9e5b; margin-top: 6px; text-align: center; }
+    .section-title { font-size: 15px; font-weight: 700; margin: 24px 0 8px; }
+    .suggestion-box { background: #f7f7fa; border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+    .suggestion-text { font-size: 14px; color: #333; margin: 0 0 6px; }
+    .suggestion-meta { font-size: 11px; color: #999; margin: 0; }
+    .del-btn { margin-top: 8px; background: #fbe4e4; color: #c25a5a; border: none; border-radius: 8px; padding: 6px 10px; font-size: 12px; cursor: pointer; }
+    .empty-note { font-size: 13px; color: #999; text-align: center; padding: 12px 0; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="index.html">← Назад</a>
+    <h1>✍️ Ваши предложения ✍️</h1>
+    <p class="intro">Здесь вы можете оставить любые предложения по чек-листу — что добавить, что улучшить, какие видео дополнить в коллекцию или что стоит перевести. Каждое предложение я читаю лично и очень ценю ваше время и заботу о проекте 💜</p>
+
+    <textarea id="suggestion-input" placeholder="Ваше предложение..."></textarea>
+    <button class="send-btn" id="send-btn">Отправить</button>
+    <div class="status-msg" id="status-msg"></div>
+
+    <div id="admin-section"></div>
+  </div>
+
+  <script>
+    const ADMIN_ID = 891936733;
+    const isAdmin = (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID === ADMIN_ID);
+
+    document.getElementById('send-btn').addEventListener('click', () => {
+      const input = document.getElementById('suggestion-input');
+      const text = input.value.trim();
+      const statusMsg = document.getElementById('status-msg');
+      if (!text) return;
+      const btn = document.getElementById('send-btn');
+      btn.disabled = true;
+
+      let askerName = 'Неизвестный';
+      if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
+        const u = window.Telegram.WebApp.initDataUnsafe.user;
+        askerName = (u.first_name || '') + (u.last_name ? ' ' + u.last_name : '') + (u.username ? ' (@' + u.username + ')' : '');
+        if (!askerName.trim()) askerName = 'Неизвестный';
+      }
+
+      fetch(`${FIREBASE_URL}/suggestions.json`, {
+        method: 'POST',
+        body: JSON.stringify({ text, askerName, createdAt: Date.now() })
+      })
+        .then(res => res.json())
+        .then(() => {
+          input.value = '';
+          statusMsg.textContent = 'Спасибо! Ваше предложение отправлено 💜';
+          statusMsg.style.color = '#2e9e5b';
+          btn.disabled = false;
+        })
+        .catch(() => {
+          statusMsg.textContent = 'Не получилось отправить, попробуйте ещё раз.';
+          statusMsg.style.color = '#c25a5a';
+          btn.disabled = false;
+        });
+    });
+
+    function renderAdminList(data) {
+      const adminEl = document.getElementById('admin-section');
+      if (!isAdmin) { adminEl.innerHTML = ''; return; }
+      const keys = Object.keys(data || {}).sort((a, b) => (data[b].createdAt || 0) - (data[a].createdAt || 0));
+      if (keys.length === 0) {
+        adminEl.innerHTML = '<p class="section-title">Все предложения</p><p class="empty-note">Пока предложений нет</p>';
+        return;
+      }
+      let html = '<p class="section-title">Все предложения (' + keys.length + ')</p>';
+      adminEl.innerHTML = html;
+      keys.forEach((key) => {
+        const entry = data[key];
+        const box = document.createElement('div');
+        box.className = 'suggestion-box';
+        const text = document.createElement('p');
+        text.className = 'suggestion-text';
+        text.textContent = entry.text;
+        const meta = document.createElement('p');
+        meta.className = 'suggestion-meta';
+        const date = entry.createdAt ? new Date(entry.createdAt).toLocaleDateString('ru-RU') : '';
+        meta.textContent = 'От: ' + (entry.askerName || 'Неизвестный') + (date ? ' · ' + date : '');
+        const delBtn = document.createElement('button');
+        delBtn.className = 'del-btn';
+        delBtn.textContent = '🗑 Удалить';
+        delBtn.addEventListener('click', () => {
+          if (!confirm('Удалить это предложение?')) return;
+          fetch(`${FIREBASE_URL}/suggestions/${key}.json`, { method: 'DELETE' }).then(() => loadAll());
+        });
+        box.appendChild(text);
+        box.appendChild(meta);
+        box.appendChild(delBtn);
+        adminEl.appendChild(box);
+      });
+    }
+
+    function loadAll() {
+      if (!isAdmin) return;
+      fetch(`${FIREBASE_URL}/suggestions.json`)
+        .then(res => res.json())
+        .then(data => renderAdminList(data || {}))
+        .catch(() => {});
+    }
+    loadAll();
+
+    if (window.Telegram && window.Telegram.WebApp) { Telegram.WebApp.ready(); Telegram.WebApp.expand(); }
+  </script>
+</body>
+</html>
