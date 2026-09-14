@@ -38,9 +38,9 @@
 
   <script>
     const items = [
-      { text: "BTS NOW Thailand 2014", link: "https://t.me/violent_arhive/2273" },
-      { text: "BTS NOW Europe/America 2015", link: "https://t.me/violent_arhive/2274" },
-      { text: "BTS NOW Chicago 2016", link: "https://t.me/violent_arhive/2276" }
+           { text: "Thailand", sub: "2014", link: "https://t.me/violent_arhive/2273" },
+      { text: "Europe/America", sub: "2015", link: "https://t.me/violent_arhive/2274" },
+      { text: "Chicago", sub: "2016", link: "https://t.me/violent_arhive/2276" }
     ];
 
     const listEl = document.getElementById('list');
@@ -51,9 +51,15 @@
       row.dataset.id = id;
       const box = document.createElement('input');
       box.type = 'checkbox';
-      const span = document.createElement('span');
+          const span = document.createElement('span');
       span.className = 'text';
       span.textContent = item.text;
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+        sub.textContent = item.sub;
+        span.appendChild(sub);
+      }
       if (localStorage.getItem(id) === 'true') { box.checked = true; span.classList.add('done'); }
       box.addEventListener('change', () => {
         setChecked(id, box.checked);
