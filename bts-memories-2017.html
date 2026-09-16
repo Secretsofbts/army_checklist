@@ -124,9 +124,9 @@
         row.appendChild(box);
         row.appendChild(span);
 
-        if (item.links) {
+               if (item.links) {
           const linksWrap = document.createElement('span');
-          linksWrap.style.cssText = 'display:flex; gap:6px; flex-shrink:0;';
+          linksWrap.style.cssText = 'display:flex; flex-direction:column; gap:4px; flex-shrink:0; align-items:flex-end;';
           item.links.forEach((l) => {
             const a = document.createElement('a');
             a.href = l.link;
