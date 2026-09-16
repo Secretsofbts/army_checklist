@@ -75,15 +75,18 @@
   <script>
     const data = [
       { section: "BTS Global Fan Club A.R.M.Y 1 st Muster", items: [
-        { text: "BTS Global Fan Club A.R.M.Y 1st Muster", link: "https://t.me/violent_arhive/1501" },
-        { text: "A.R.M.Y. 1st Muster Making Film", link: "https://t.me/violent_arhive/1502" }
+        { text: "BTS Global Fan Club A.R.M.Y", sub: "1st Muster", link: "https://t.me/violent_arhive/1501" },
+        { text: "A.R.M.Y. 1st Muster", sub: "Making Film", link: "https://t.me/violent_arhive/1502" }
       ]},
       { section: "The Red Bullet in Seoul School VCR", items: [
         { text: "The Red Bullet Full", link: "https://t.me/violent_arhive/1503" },
-        { text: "RED BULLET подготовка", link: "https://t.me/violent_arhive/1507" }
+        { text: "RED BULLET подготовка", sub: "1 часть", link: "https://t.me/violent_arhive/1504" },
+        { text: "RED BULLET подготовка", sub: "2 часть", link: "https://t.me/violent_arhive/1505" },
+         { text: "RED BULLET подготовка", sub: "3 часть", link: "https://t.me/violent_arhive/1506" },
+         { text: "RED BULLET подготовка", sub: "4 часть", link: "https://t.me/violent_arhive/1507" },
       ]},
       { section: "Special Features", items: [
-        { text: "Global Fanmeeting Making Film", link: "https://t.me/violent_arhive/1508" },
+        { text: "Global Fanmeeting", sub: "Making Film", link: "https://t.me/violent_arhive/1508" },
         { text: "BTS in Russia Self Cam", link: "https://t.me/violent_arhive/1509" }
       ]}
     ];
@@ -104,9 +107,15 @@
         const box = document.createElement('input');
         box.type = 'checkbox';
 
-        const span = document.createElement('span');
+               const span = document.createElement('span');
         span.className = 'text';
         span.textContent = item.text;
+        if (item.sub) {
+          const sub = document.createElement('span');
+          sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+          sub.textContent = item.sub;
+          span.appendChild(sub);
+        }
 
         if (localStorage.getItem(id) === 'true') {
           box.checked = true;
