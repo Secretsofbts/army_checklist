@@ -85,12 +85,13 @@
           <div class="desc"></div>
         </div>
       </a>
-      <a class="card" href="fm-0613.html" style="text-decoration:none; color:inherit;">
+           <a class="card" href="fm-0613.html" style="text-decoration:none; color:inherit;">
         <div class="icon">🔈</div>
         <div class="text">
           <div class="name">FM 06.13</div>
           <div class="desc">рубрика Юнги + важные события</div>
         </div>
+        <span class="badge" id="badge-fm" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
       <a class="card" href="#" onclick="alert('Скоро здесь будет список'); return false;" style="text-decoration:none; color:inherit;">
         <div class="icon">🎵</div>
@@ -104,6 +105,8 @@
         <div class="text">
           <div class="name">Сонное интервью</div>
           <div class="desc"></div>
+                  <span class="badge" id="badge-sleepy" style="margin-left:auto; font-size:12px; color:#999;"></span>
+
         </div>
       </a>
       <a class="card" href="learn-korean.html" style="text-decoration:none; color:inherit;">
@@ -144,6 +147,25 @@
     </div>
   </div>
   <script>
+        function applyBadge(elId, key) {
+      const el = document.getElementById(elId);
+      if (!el) return;
+      const raw = localStorage.getItem('progress:' + key);
+      if (!raw) return;
+      const d = JSON.parse(raw);
+      if (d.total === 0) return;
+      if (d.checked === d.total) {
+        el.textContent = '✅';
+        el.style.color = '#2e9e5b';
+        const card = el.closest('.card');
+        if (card) card.style.background = '#e3f7e9';
+      } else {
+        el.textContent = d.checked + '/' + d.total;
+      }
+    }
+
+       applyBadge('badge-sleepy', 'sleepy-interview');
+    applyBadge('badge-fm', 'fm-0613');
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
       Telegram.WebApp.expand();
