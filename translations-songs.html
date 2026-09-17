@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js?v=4"></script>
+  <title>Переводы всех песен</title>
+  <style>
+    body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
+    .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 10px; line-height: 1.5; }
+    .navlink {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      background: #f7f7fa;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      text-decoration: none;
+    }
+    .navlink-sub { display: block; font-size: 11px; color: #999; margin-top: 2px; font-weight: 400; }
+    .pending-note { text-align: center; font-size: 12px; color: #999; padding: 6px 0; }
+    .outro { font-size: 13px; color: #555; margin-top: 16px; line-height: 1.5; }
+    .footer-link { display: block; text-align: center; font-size: 13px; color: #000; text-decoration: none; margin-top: 16px; padding-top: 12px; border-top: 1px solid #eee; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="index.html">← Назад</a>
+    <h1>🎶 ПЕРЕВОДЫ ВСЕХ ПЕСЕН 🎶</h1>
+    <p class="intro">Здесь собраны переводы всех песен и каверов BTS за всё время</p>
+    <p class="intro">Японские альбомы не будут загружены, только те песни, которые изначально были написаны на японском, и у них нет корейского варианта</p>
+    <p class="intro">Скорее всего все переводы не найду (особенно преддебютные), но хочу, чтобы у вас был весь список песен (раз я уже собрала). Если перевода не найду, то поставлю ❌, и добавлю ссылку на текстовый перевод или песню</p>
+
+    <div id="list"></div>
+
+    <p class="outro">Сама не перевожу и правильный перевод не могу знать. Тем более, когда он выполнен в сабах (а <a href="https://t.me/violent_arhive/3554" target="_blank">задумка</a> именно такая). Поэтому я загружу вам то, что смогу найти и что существует 😂 Стараюсь выбирать лучший вариант, если есть из чего выбрать)</p>
+    <p class="outro">Пост находится на стадии загрузки. Будет пополняться ❣️</p>
+
+    <a class="footer-link" href="index.html">На главную ⬅️</a>
+  </div>
+
+  <script>
+    const navItems = [
+      { text: "2 COOL 4 SKOOL", sub: "дебютный", link: "translations-2cool4skool.html", statKey: "translations-2cool4skool" },
+      { text: "O! RUL8,2?", sub: "от 11.09.2013", link: "translations-orul82.html", statKey: "translations-orul82" },
+      { text: "SKOOL LUV AFFAIR", sub: "от 12.02.14", link: "translations-skoolluvaffair.html", statKey: "translations-skoolluvaffair" },
+      { pending: true, text: "Нужно загрузить ещё" },
+      { text: "GOLDEN", sub: "сольный альбом Чонгука от 03.11.23", link: "translations-golden.html", statKey: "translations-golden" },
+      { text: "HOTS Vol.1", sub: "сольный альбом Хосока от 29.03.24", link: "translations-hots.html", statKey: "translations-hots" }
+    ];
+
+    const listEl = document.getElementById('list');
+    navItems.forEach((item) => {
+      if (item.pending) {
+        const p = document.createElement('p');
+        p.className = 'pending-note';
+        p.textContent = item.text;
+        listEl.appendChild(p);
+        return;
+      }
+
+      const a = document.createElement('a');
+      a.className = 'navlink';
+      a.href = item.link;
+
+      const label = document.createElement('span');
+      label.textContent = item.text;
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.className = 'navlink-sub';
+        sub.textContent = item.sub;
+        label.appendChild(sub);
+      }
+      a.appendChild(label);
+
+      const badge = document.createElement('span');
+      badge.id = 'badge-' + item.statKey;
+      badge.style.cssText = 'font-size:12px; color:#999; flex-shrink:0;';
+      a.appendChild(badge);
+
+      listEl.appendChild(a);
+    });
+
+    function applyBadge(key, data) {
+      const el = document.getElementById('badge-' + key);
+      if (!el || !data || data.total === 0) { if (el) el.textContent = ''; return; }
+      if (data.checked === data.total) {
+        el.textContent = '✅';
+        el.style.color = '#2e9e5b';
+      } else {
+        el.textContent = data.checked + '/' + data.total;
+      }
+    }
+
+    const navKeys = navItems.filter(i => i.statKey).map(i => i.statKey);
+    function renderAllBadges() {
+      navKeys.forEach((key) => {
+        const raw = localStorage.getItem('progress:' + key);
+        applyBadge(key, raw ? JSON.parse(raw) : null);
+      });
+    }
+    renderAllBadges();
+    refreshLocalStorageFromCloud(renderAllBadges);
+
+    if (window.Telegram && window.Telegram.WebApp) { Telegram.WebApp.ready(); Telegram.WebApp.expand(); }
+  </script>
+</body>
+</html>
