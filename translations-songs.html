@@ -57,8 +57,8 @@
       { text: "O! RUL8,2?", sub: "от 11.09.2013", link: "translations-orul82.html", statKey: "translations-orul82" },
       { text: "SKOOL LUV AFFAIR (ещё на стадии загрузки)", sub: "от 12.02.2014", link: "translations-skoolluvaffair.html", statKey: "translations-skoolluvaffair" },
       { pending: true, text: "Остальные пока не загружены" },
-      { text: "GOLDEN", sub: "сольный альбом Чонгука от 03.11.2023", link: "translations-golden.html", statKey: "translations-golden" },
-      { text: "HOTS Vol.1", sub: "сольный альбом Хосока от 29.03.2024", link: "translations-hots.html", statKey: "translations-hots" }
+            { text: "GOLDEN", sub: ["сольный альбом Чонгука", "от 03.11.2023"], link: "translations-golden.html", statKey: "translations-golden" },
+      { text: "HOTS Vol.1", sub: ["сольный альбом Хосока", "от 29.03.2024"], link: "translations-hots.html", statKey: "translations-hots" }
     ];
 
     const listEl = document.getElementById('list');
@@ -75,13 +75,16 @@
       a.className = 'navlink';
       a.href = item.link;
 
-      const label = document.createElement('span');
+          const label = document.createElement('span');
       label.textContent = item.text;
       if (item.sub) {
-        const sub = document.createElement('span');
-        sub.className = 'navlink-sub';
-        sub.textContent = item.sub;
-        label.appendChild(sub);
+        const subLines = Array.isArray(item.sub) ? item.sub : [item.sub];
+        subLines.forEach((line) => {
+          const sub = document.createElement('span');
+          sub.className = 'navlink-sub';
+          sub.textContent = line;
+          label.appendChild(sub);
+        });
       }
       a.appendChild(label);
 
