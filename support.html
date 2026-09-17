@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Поддержка бота</title>
+  <style>
+    body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
+    .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 20px; line-height: 1.6; }
+    .support-btn {
+      display: block;
+      text-align: center;
+      background: #f7f7fa;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 10px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      text-decoration: none;
+    }
+    .section-title { font-size: 13px; font-weight: 600; color: #888; margin: 20px 0 8px; }
+    .card-box { background: #f7f7fa; border-radius: 12px; padding: 14px; text-align: center; }
+    .card-number { font-size: 18px; font-weight: 700; letter-spacing: 1px; color: #333; margin-bottom: 8px; }
+    .copy-btn { background: #9b7fd4; color: white; border: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; cursor: pointer; }
+    .thanks { font-size: 13px; color: #555; text-align: center; margin-top: 20px; line-height: 1.6; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="index.html">← Назад</a>
+    <h1>💜 Поддержка бота 💜</h1>
+    <p class="intro">Этот чек-лист создан с любовью и большим количеством свободного времени 😌 Если вам нравится пользоваться приложением и вы хотите поддержать его развитие — буду очень благодарна за любую помощь. Но, конечно, это совершенно необязательно — приложение всегда останется бесплатным для всех!</p>
+
+    <a class="support-btn" href="#" id="tbank-link" target="_blank">🟡 Поддержать через Т-Банк</a>
+    <a class="support-btn" href="#" id="sber-link" target="_blank">🟢 Поддержать через Сбербанк</a>
+
+    <p class="section-title">Или переводом на карту</p>
+    <div class="card-box">
+      <div class="card-number" id="card-number">0000 0000 0000 0000</div>
+      <button class="copy-btn" id="copy-btn">Скопировать номер</button>
+    </div>
+
+    <p class="thanks">Спасибо каждому, кто поддерживает — это помогает мне продолжать 💜</p>
+  </div>
+
+  <script>
+    // Впишите сюда свои настоящие ссылки на сборы, когда создадите их в приложениях банков
+    document.getElementById('tbank-link').href = 'https://example.com';
+    document.getElementById('sber-link').href = 'https://example.com';
+
+    // Впишите сюда номер своей карты
+    document.getElementById('card-number').textContent = '0000 0000 0000 0000';
+
+    document.getElementById('copy-btn').addEventListener('click', () => {
+      const number = document.getElementById('card-number').textContent.replace(/\s/g, '');
+      navigator.clipboard.writeText(number).then(() => {
+        const btn = document.getElementById('copy-btn');
+        const oldText = btn.textContent;
+        btn.textContent = 'Скопировано!';
+        setTimeout(() => { btn.textContent = oldText; }, 1500);
+      });
+    });
+
+    if (window.Telegram && window.Telegram.WebApp) { Telegram.WebApp.ready(); Telegram.WebApp.expand(); }
+  </script>
+</body>
+</html>
