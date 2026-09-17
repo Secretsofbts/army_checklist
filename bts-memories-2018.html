@@ -132,7 +132,7 @@
           box.dispatchEvent(new Event('change'));
         });
 
-        const link = document.createElement('a');
+                 const link = document.createElement('a');
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
@@ -140,6 +140,12 @@
 
         row.appendChild(box);
         row.appendChild(span);
+        if (!item.link.includes('t.me/violent_arhive')) {
+          const sourceBadge = document.createElement('span');
+          sourceBadge.style.cssText = 'font-size:9px; color:#9b7fd4; border:1px solid #d9cdf0; border-radius:5px; padding:1px 4px; flex-shrink:0;';
+          sourceBadge.textContent = 'VK';
+          row.appendChild(sourceBadge);
+        }
         row.appendChild(link);
         listEl.appendChild(row);
       });
