@@ -36,9 +36,11 @@
   <script>
     const data = [
       { disc: "Диск 1", groups: [
-        { items: [
-          { text: "BANG BANG CON The Live", sub: "с рус. суб, качество 720, заедает", link: "https://t.me/violent_arhive/1679" },
-          { text: "BANG BANG CON The Live", sub: "с англ. суб, качество 1080", link: "https://t.me/violent_arhive/1745" }
+       { items: [
+          { text: "BANG BANG CON The Live", links: [
+            { label: "рус.суб 720 (заедает)", link: "https://t.me/violent_arhive/1679" },
+            { label: "англ.суб 1080", link: "https://t.me/violent_arhive/1745" }
+          ]}
         ]}
       ]},
       { disc: "Диск 2", groups: [
@@ -154,8 +156,9 @@
           listEl.appendChild(subTitle);
         }
 
-        group.items.forEach((item) => {
-          const id = 'video-' + item.link.split('/').pop();
+               group.items.forEach((item) => {
+          const firstLink = item.links ? item.links[0].link : item.link;
+          const id = 'video-' + firstLink.split('/').pop();
           const row = document.createElement('div');
           row.className = 'row';
           row.dataset.id = id;
@@ -187,15 +190,30 @@
             box.dispatchEvent(new Event('change'));
           });
 
-          const link = document.createElement('a');
-          link.className = 'link';
-          link.href = item.link;
-          link.target = '_blank';
-          link.textContent = '🔗';
-
           row.appendChild(box);
           row.appendChild(span);
-          row.appendChild(link);
+
+          if (item.links) {
+            const linksWrap = document.createElement('span');
+            linksWrap.style.cssText = 'display:flex; flex-direction:column; gap:4px; flex-shrink:0; align-items:flex-end;';
+            item.links.forEach((l) => {
+              const a = document.createElement('a');
+              a.href = l.link;
+              a.target = '_blank';
+              a.style.cssText = 'font-size:10px; color:#999; text-decoration:none; border:1px solid #eee; border-radius:6px; padding:2px 5px;';
+              a.textContent = l.label;
+              linksWrap.appendChild(a);
+            });
+            row.appendChild(linksWrap);
+          } else {
+            const link = document.createElement('a');
+            link.className = 'link';
+            link.href = item.link;
+            link.target = '_blank';
+            link.textContent = '🔗';
+            row.appendChild(link);
+          }
+
           listEl.appendChild(row);
         });
       });
