@@ -41,12 +41,20 @@
      <a class="footer-link" href="index.html">На главную ⬅️</a>
   </div>
   <script>
-       function applyBadge(key, elId) {
+          function applyBadge(key, elId) {
       var raw = localStorage.getItem('progress:' + key);
       if (raw) {
         var d = JSON.parse(raw);
         var el = document.getElementById(elId);
-        if (d.total > 0) el.textContent = d.checked === d.total ? '✅' : (d.checked + '/' + d.total);
+        if (d.total > 0) {
+          if (d.checked === d.total) {
+            el.textContent = '✅';
+            var card = el.closest('.card');
+            if (card) card.style.background = '#e3f7e9';
+          } else {
+            el.textContent = d.checked + '/' + d.total;
+          }
+        }
       }
     }
     function renderAllBadges() {
