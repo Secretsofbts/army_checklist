@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js?v=4"></script>
+  <title>GOLDEN</title>
+  <style>
+    body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
+    .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 16px; }
+    .section-title { font-size: 13px; font-weight: 600; color: #888; margin: 16px 0 6px; }
+    .row { display: flex; align-items: center; gap: 10px; padding: 8px 4px; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .text.done { color: #bbb; text-decoration: line-through; }
+    .sub { display: block; font-size: 11px; color: #999; margin-top: 2px; font-weight: 400; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+    .extra { display: flex; align-items: center; gap: 10px; padding: 8px 4px; font-size: 14px; color: #333; text-decoration: none; }
+    .footer-link { display: block; text-align: center; font-size: 13px; color: #000; text-decoration: none; margin-top: 16px; padding-top: 12px; border-top: 1px solid #eee; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="translations-songs.html">← Назад</a>
+    <h1>🎵 GOLDEN 🎵</h1>
+    <p class="intro">Первый сольный альбом Чонгука</p>
+    <p class="intro">Релиз альбома: 03.11.2023 🕑</p>
+    <p class="intro">Полный разнообразных жанров и настроений, «GOLDEN» воплощает в себе «золотые моменты» сольного исполнителя Чонгука. Он тщательно прорабатывал каждый трек, вкладывая всю душу в процесс создания своего первого сольного альбома, и сотрудничал с известными мировыми исполнителями, чтобы обеспечить высочайшее качество альбома</p>
+
+    <p class="section-title">Трек-лист</p>
+    <div id="list"></div>
+
+    <blockquote style="margin: 16px 0; padding: 14px 16px; background: #f7f7fa; border-radius: 12px; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 12px; color: #333; line-height: 1.5;">
+      Люби же меня в момент моей слабости. А я буду любить тебя, когда едва держишься ты. Освещая тьму своим светом. Я могу быть опорой в минуты, когда ты бессильна
+      <div style="text-align: right; font-size: 12px; color: #999; margin-top: 8px; font-style: normal;">— Closer to you</div>
+    </blockquote>
+
+    <div class="extra">
+      <span style="flex:1;">🗨 Обсуждение альбома</span>
+      <a class="link" href="https://t.me/violent_arhive/4338" target="_blank">🔗</a>
+    </div>
+
+    <p class="section-title">Дополнительное к альбому</p>
+    <div id="extra-list"></div>
+
+    <a class="footer-link" href="translations-songs.html">Переводы всех песен ⬅️</a>
+  </div>
+
+  <script>
+    const items = [
+      { text: "3D", sub: "Ft. Jack Harlow", link: "https://t.me/violent_arhive/4251" },
+      { text: "Closer to You", sub: "Ft. Major Lazer", link: "https://t.me/violent_arhive/4331" },
+      { text: "Seven", sub: "Explicit Ver. · Ft. Latto", link: "https://t.me/violent_arhive/4106", idSuffix: "-explicit" },
+      { text: "Standing Next to You", link: "https://t.me/violent_arhive/4303" },
+      { text: "Yes or No", link: "https://t.me/violent_arhive/4332" },
+      { text: "Please Don't Change", sub: "Ft. Snake", link: "https://t.me/violent_arhive/4333" },
+      { text: "Hate You", link: "https://t.me/violent_arhive/4334" },
+      { text: "Somebody", link: "https://t.me/violent_arhive/4335" },
+      { text: "Too Sad to Dance", link: "https://t.me/violent_arhive/4336" },
+      { text: "Shot Glass of Tears", link: "https://t.me/violent_arhive/4337" },
+      { text: "Seven", sub: "Clean Ver.", link: "https://t.me/violent_arhive/4106", idSuffix: "-clean" }
+    ];
+
+    const extraItems = [
+      { text: "Презентация альбома", link: "https://t.me/violent_arhive/4325" },
+      { text: "Чонгук на шоу от Spotify", link: "https://t.me/violent_arhive/4327" },
+      { text: "Съёмка Standing Next to You", link: "https://t.me/violent_arhive/4321" },
+      { text: "Первое выступление с Standing Next to You на iHeartRadio", link: "https://t.me/violent_arhive/4339" },
+      { text: "Чонгук на Таймс-сквер", link: "https://t.me/violent_arhive/4320" },
+      { text: "Выступления на TODAY", link: "https://t.me/violent_arhive/4318" },
+      { text: "На шоу \"The Tonight Show\"", link: "https://t.me/violent_arhive/4315" },
+      { text: "Фотосессия \"GOLDEN\"", link: "https://t.me/violent_arhive/4310" },
+      { text: "Шучвита", sub: "перед GOLDEN", link: "https://t.me/violent_arhive/4309" },
+      { text: "Эфир после выпуска альбома", link: "https://t.me/violent_arhive/4308" },
+      { text: "Выступление на Music Bank c 3D", link: "https://t.me/violent_arhive/4340" },
+      { text: "Съёмки клипа 3D", link: "https://t.me/violent_arhive/4254" },
+      { text: "Фотосессия для сингла 3D", link: "https://t.me/violent_arhive/4248" },
+      { text: "Чонгук для Sirius XM о 3D", link: "https://t.me/violent_arhive/4323" },
+      { text: "Выступление Чонгука на Global Citizen Festival 2023", link: "https://t.me/violent_arhive/4343" },
+      { text: "Выступление с Seven на первом концерте тура Agust D", link: "https://t.me/violent_arhive/4341" },
+      { text: "Выступления на GMA", link: "https://t.me/violent_arhive/4330", idSuffix: "-gma" },
+      { text: "Выступления на радиошоу BBC Radio 1 Live Lounge", link: "https://t.me/violent_arhive/4350" },
+      { text: "Чонгук на BBC The One Show с песней \"Seven\"", link: "https://t.me/violent_arhive/4351" },
+      { text: "«Seven» на Inkigayo", link: "https://t.me/violent_arhive/4357" },
+      { text: "Закадровые \"Seven\"", link: "https://t.me/violent_arhive/4168" },
+      { text: "Дэнс-практика \"Seven\"", link: "https://t.me/violent_arhive/4156" },
+      { text: "Фильм с записи \"Seven\"", link: "https://t.me/violent_arhive/4124" },
+      { text: "Чонгук на шоу от Spotify", sub: "перед выпуском сингла \"Seven\"", link: "https://t.me/violent_arhive/4122", idSuffix: "-seven" },
+      { text: "О Seven на Elvis Duran Show", link: "https://t.me/violent_arhive/4119" },
+      { text: "Съёмки клипа 'Seven'", link: "https://t.me/violent_arhive/4114" },
+      { text: "Эфир после выхода \"Seven\": Семь дней в неделю 💜", link: "https://t.me/violent_arhive/4109" },
+      { text: "Шучвита после выхода Seven", link: "https://t.me/violent_arhive/4143" },
+      { text: "Хореография \"Seven\"", link: "https://t.me/violent_arhive/4344" },
+      { text: "Хореография \"3D\"", link: "https://t.me/violent_arhive/4345" },
+      { text: "Хореография \"SNTY\"", link: "https://t.me/violent_arhive/4347" },
+      { text: "Клип SNTY", sub: "Choreography Ver.", link: "https://t.me/violent_arhive/4346" },
+      { text: "Чонгук на Audacy Live", link: "https://t.me/violent_arhive/4359" },
+      { text: "SNTY на M!Countdown", link: "https://t.me/violent_arhive/4364" },
+      { text: "На японском шоу CDTV Live!", link: "https://t.me/violent_arhive/4401" },
+      { text: "SNTY - Usher Remix", link: "https://t.me/violent_arhive/4444" },
+      { text: "Съёмки промо Чонгука '3D'", link: "https://t.me/violent_arhive/4447" },
+      { text: "Съёмки промо Чонгука 'SNTY'", link: "https://t.me/violent_arhive/4489" }
+    ];
+
+    function renderList(containerId, itemsArr, statKey) {
+      const listEl = document.getElementById(containerId);
+      itemsArr.forEach((item) => {
+        const id = 'video-' + item.link.split('/').pop() + (item.idSuffix || '');
+        const row = document.createElement('div');
+        row.className = 'row';
+        row.dataset.id = id;
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+        const span = document.createElement('span');
+        span.className = 'text';
+        span.textContent = item.text;
+        if (item.sub) {
+          const sub = document.createElement('span');
+          sub.className = 'sub';
+          sub.textContent = item.sub;
+          span.appendChild(sub);
+        }
+        if (localStorage.getItem(id) === 'true') { box.checked = true; span.classList.add('done'); }
+        box.addEventListener('change', () => {
+          setChecked(id, box.checked);
+          span.classList.toggle('done', box.checked);
+          updateProgress();
+        });
+        span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
+        const link = document.createElement('a');
+        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
+        row.appendChild(box); row.appendChild(span); row.appendChild(link);
+        listEl.appendChild(row);
+      });
+    }
+
+    renderList('list', items);
+    renderList('extra-list', extraItems);
+
+    function updateProgress() {
+      const all = document.querySelectorAll('.row input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => { total++; if (cb.checked) checked++; });
+      setProgress('translations-golden', {checked, total});
+      pushWeightedContributions('translations-golden');
+    }
+    updateProgress();
+    syncChecklistFromCloud(updateProgress);
+
+    if (window.Telegram && window.Telegram.WebApp) { Telegram.WebApp.ready(); Telegram.WebApp.expand(); }
+  </script>
+</body>
+</html>
