@@ -17,6 +17,7 @@
     .disc-title { font-size: 13px; font-weight: 600; color: #888; margin: 16px 0 4px; }
     .sub-title { font-size: 12px; font-weight: 600; color: #aaa; margin: 8px 0 2px; }
     .row { display: flex; align-items: center; gap: 10px; padding: 8px 4px; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+.row:has(+ div[style*="border-top"]) { border-bottom: none; }
     input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
     .text { flex: 1; cursor: pointer; color: #333; }
     .text.done { color: #bbb; text-decoration: line-through; }
