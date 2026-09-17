@@ -96,12 +96,14 @@
       listEl.appendChild(a);
     });
 
-    function applyBadge(key, data) {
+       function applyBadge(key, data) {
       const el = document.getElementById('badge-' + key);
       if (!el || !data || data.total === 0) { if (el) el.textContent = ''; return; }
       if (data.checked === data.total) {
         el.textContent = '✅';
         el.style.color = '#2e9e5b';
+        const card = el.closest('.navlink');
+        if (card) card.style.background = '#e3f7e9';
       } else {
         el.textContent = data.checked + '/' + data.total;
       }
