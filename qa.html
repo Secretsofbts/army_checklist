@@ -42,7 +42,8 @@
 
        <div id="admin-section"></div>
 
-    <p class="section-title">Опубликованные вопросы</p>
+        <p class="section-title">Опубликованные вопросы</p>
+    <input type="text" id="search-input" placeholder="🔍 Поиск по вопросам..." style="width:100%; box-sizing:border-box; border:1px solid #e0e0e0; border-radius:10px; padding:8px 10px; font-size:13px; margin-bottom:10px;">
     <div id="published-list"><p class="empty-note">Загрузка...</p></div>
   </div>
 
@@ -85,12 +86,29 @@
       fetch(`${FIREBASE_URL}/qa/${key}.json`, { method: 'DELETE' }).then(() => loadAll());
     }
 
+        let lastPublishedData = {};
+    let lastPublishedKeys = [];
+
     function renderPublished(data) {
+      lastPublishedData = data;
+      lastPublishedKeys = Object.keys(data || {}).filter(k => data[k].status === 'published').sort((a, b) => (data[b].answeredAt || 0) - (data[a].answeredAt || 0));
+      applySearchFilter();
+    }
+
+    function applySearchFilter() {
       const listEl = document.getElementById('published-list');
+      const searchTerm = document.getElementById('search-input').value.trim().toLowerCase();
       listEl.innerHTML = '';
-      const keys = Object.keys(data || {}).filter(k => data[k].status === 'published').sort((a, b) => (data[b].answeredAt || 0) - (data[a].answeredAt || 0));
+      const data = lastPublishedData;
+      let keys = lastPublishedKeys;
+      if (searchTerm) {
+        keys = keys.filter(k => {
+          const entry = data[k];
+          return (entry.question + ' ' + entry.answer).toLowerCase().includes(searchTerm);
+        });
+      }
       if (keys.length === 0) {
-        listEl.innerHTML = '<p class="empty-note">Пока нет опубликованных вопросов</p>';
+        listEl.innerHTML = '<p class="empty-note">' + (searchTerm ? 'Ничего не найдено' : 'Пока нет опубликованных вопросов') + '</p>';
         return;
       }
       keys.forEach((key) => {
@@ -181,6 +199,8 @@
         adminEl.appendChild(box);
       });
     }
+
+       document.getElementById('search-input').addEventListener('input', applySearchFilter);
 
     function loadAll() {
       fetch(`${FIREBASE_URL}/qa.json`)
