@@ -108,14 +108,19 @@
     renderList('list', items);
     renderList('extra-list', extraItems);
 
-       function applyDocBadge() {
-      const raw = localStorage.getItem('progress:documentaries-hope-on-the-street');
+         const docIds = ['video-4549', 'video-4552', 'video-4553', 'video-4555', 'video-4562', 'video-4566', 'video-4545', 'video-4558', 'video-4561', 'video-4551'];
+
+    function getDocStats() {
+      let checked = 0;
+      docIds.forEach((id) => { if (localStorage.getItem(id) === 'true') checked++; });
+      return { checked, total: docIds.length };
+    }
+
+    function applyDocBadge() {
+      const d = getDocStats();
       const badge = document.getElementById('doc-badge');
       const checkbox = document.getElementById('doc-checkbox');
       const label = document.getElementById('doc-label');
-      if (!raw) { badge.textContent = ''; return; }
-      const d = JSON.parse(raw);
-      if (d.total === 0) { badge.textContent = ''; return; }
       if (d.checked === d.total) {
         badge.textContent = '';
         checkbox.checked = true;
@@ -132,12 +137,9 @@
       let total = 0, checked = 0;
       all.forEach(cb => { total++; if (cb.checked) checked++; });
 
-      const docRaw = localStorage.getItem('progress:documentaries-hope-on-the-street');
-      if (docRaw) {
-        const d = JSON.parse(docRaw);
-        total += d.total;
-        checked += d.checked;
-      }
+      const doc = getDocStats();
+      total += doc.total;
+      checked += doc.checked;
 
       setProgress('translations-hots', {checked, total});
       pushWeightedContributions('translations-hots');
