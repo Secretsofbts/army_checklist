@@ -109,12 +109,13 @@
 
         </div>
       </a>
-      <a class="card" href="learn-korean.html" style="text-decoration:none; color:inherit;">
+            <a class="card" href="learn-korean.html" style="text-decoration:none; color:inherit;">
         <div class="icon">🇰🇷</div>
         <div class="text">
           <div class="name">Learn Korean with BTS</div>
           <div class="desc"></div>
         </div>
+        <span class="badge" id="badge-korean" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
       <a class="card" href="#" onclick="alert('Скоро здесь будет список'); return false;" style="text-decoration:none; color:inherit;">
         <div class="icon">🎃</div>
@@ -143,6 +144,7 @@
           <div class="name">Истории отдела T&D</div>
           <div class="desc"></div>
         </div>
+        <span class="badge" id="badge-td" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
     </div>
   </div>
@@ -164,8 +166,10 @@
       }
     }
 
-       applyBadge('badge-sleepy', 'sleepy-interview');
+              applyBadge('badge-sleepy', 'sleepy-interview');
     applyBadge('badge-fm', 'fm-0613');
+    applyBadge('badge-korean', 'learn-korean');
+    applyBadge('badge-td', 'td-stories');
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
       Telegram.WebApp.expand();
