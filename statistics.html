@@ -50,10 +50,22 @@
       return count;
     }
 
-    function loadStats() {
+       function loadStats() {
       const contentEl = document.getElementById('stats-content');
       const myNumber = localStorage.getItem('userNumber');
-      const myFirstSeen = localStorage.getItem('userFirstSeen');
+      let myFirstSeen = localStorage.getItem('userFirstSeen');
+
+      if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
+        fetch(`${FIREBASE_URL}/user_registry/${ARMY_USER_ID}.json`)
+          .then(res => res.json())
+          .then(entry => {
+            if (entry && entry.firstSeen) {
+              myFirstSeen = entry.firstSeen;
+              localStorage.setItem('userFirstSeen', myFirstSeen);
+            }
+          })
+          .catch(() => {});
+      }
 
       fetch(`${FIREBASE_URL}/user_count.json`)
         .then(res => res.json())
