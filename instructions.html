@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <title>Инструкция по использованию</title>
+  <style>
+    body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
+    .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
+    h1 { font-size: 18px; margin: 0 0 16px; }
+    .faq-item { border-bottom: 1px solid #f0f0f0; }
+    .faq-question {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 14px 4px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      cursor: pointer;
+    }
+    .faq-arrow {
+      font-size: 12px;
+      color: #999;
+      transition: transform 0.2s ease;
+      flex-shrink: 0;
+      margin-left: 10px;
+    }
+    .faq-item.open .faq-arrow { transform: rotate(180deg); }
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.25s ease;
+      font-size: 13px;
+      color: #555;
+      line-height: 1.6;
+    }
+    .faq-answer-inner { padding: 0 4px 14px; }
+    .faq-item.open .faq-answer { max-height: 400px; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="index.html">← Назад</a>
+    <h1>📖 Инструкция по использованию 📖</h1>
+    <div id="faq-list"></div>
+  </div>
+
+  <script>
+    const faqItems = [
+      {
+        q: "Как отмечать просмотренное?",
+        a: "Просто нажмите на квадратик (чекбокс) рядом с названием видео или на сам текст названия — отметка появится сразу, а название станет серым и зачёркнутым."
+      },
+      {
+        q: "Сохранятся ли мои отметки, если я поменяю телефон или переустановлю Telegram?",
+        a: "Да! Все ваши отметки сохраняются в облаке, привязаны к вашему аккаунту Telegram — просто откройте приложение снова, и всё будет на месте."
+      },
+      {
+        q: "Как быстро открыть приложение в следующий раз?",
+        a: "Найдите бота @army_checklist_bot в Telegram и нажмите на кнопку меню внизу экрана — приложение откроется сразу, без необходимости искать эту страницу заново."
+      }
+    ];
+
+    const listEl = document.getElementById('faq-list');
+    faqItems.forEach((item) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'faq-item';
+
+      const question = document.createElement('div');
+      question.className = 'faq-question';
+      const qText = document.createElement('span');
+      qText.textContent = item.q;
+      const arrow = document.createElement('span');
+      arrow.className = 'faq-arrow';
+      arrow.textContent = '▼';
+      question.appendChild(qText);
+      question.appendChild(arrow);
+
+      const answer = document.createElement('div');
+      answer.className = 'faq-answer';
+      const answerInner = document.createElement('div');
+      answerInner.className = 'faq-answer-inner';
+      answerInner.textContent = item.a;
+      answer.appendChild(answerInner);
+
+      question.addEventListener('click', () => {
+        wrap.classList.toggle('open');
+      });
+
+      wrap.appendChild(question);
+      wrap.appendChild(answer);
+      listEl.appendChild(wrap);
+    });
+
+    if (window.Telegram && window.Telegram.WebApp) { Telegram.WebApp.ready(); Telegram.WebApp.expand(); }
+  </script>
+</body>
+</html>
