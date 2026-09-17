@@ -7,13 +7,16 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=5"></script>
+  <script src="sync.js?v=4"></script>
   <title>Статистика</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
     .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
     .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
     h1 { font-size: 18px; margin: 0 0 16px; }
+    .badge-card { background: linear-gradient(135deg, #f0e9ff, #f7f7fa); border-radius: 14px; padding: 18px; margin-bottom: 14px; text-align: center; }
+    .badge-icon { font-size: 36px; margin-bottom: 4px; }
+    .badge-name { font-size: 16px; font-weight: 700; color: #7b5fb3; }
     .stat-card { background: #f7f7fa; border-radius: 12px; padding: 14px; margin-bottom: 10px; text-align: center; }
     .stat-number { font-size: 26px; font-weight: 700; color: #9b7fd4; }
     .stat-label { font-size: 12px; color: #888; margin-top: 4px; }
@@ -28,6 +31,25 @@
   </div>
 
   <script>
+    function getBadge(number) {
+      if (number <= 7) return { icon: '👑', name: 'Основатель(ница)' };
+      if (number <= 100) return { icon: '💜', name: 'ОГ ARMY' };
+      if (number <= 500) return { icon: '💛', name: 'Верный ARMY' };
+      if (number <= 2000) return { icon: '💚', name: 'Активный ARMY' };
+      return { icon: '🤍', name: 'ARMY' };
+    }
+
+    function countTotalChecked() {
+      let count = 0;
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if ((key.startsWith('video-') || key.startsWith('noline-')) && localStorage.getItem(key) === 'true') {
+          count++;
+        }
+      }
+      return count;
+    }
+
     function loadStats() {
       const contentEl = document.getElementById('stats-content');
       const myNumber = localStorage.getItem('userNumber');
@@ -37,31 +59,55 @@
         .then(res => res.json())
         .then(totalUsers => {
           contentEl.innerHTML = '';
-
-          const totalCard = document.createElement('div');
-          totalCard.className = 'stat-card';
-          totalCard.innerHTML = '<div class="stat-number">' + (totalUsers || 0) + '</div><div class="stat-label">Всего пользователей приложения</div>';
-          contentEl.appendChild(totalCard);
+          totalUsers = totalUsers || 0;
 
           if (myNumber) {
-            const numberCard = document.createElement('div');
-            numberCard.className = 'stat-card';
-            numberCard.innerHTML = '<div class="stat-number">№ ' + myNumber + '</div><div class="stat-label">Ваш порядковый номер</div>';
-            contentEl.appendChild(numberCard);
+            const badge = getBadge(parseInt(myNumber));
+            const badgeCard = document.createElement('div');
+            badgeCard.className = 'badge-card';
+            badgeCard.innerHTML = '<div class="badge-icon">' + badge.icon + '</div><div class="badge-name">' + badge.name + '</div>';
+            contentEl.appendChild(badgeCard);
+
+            const comboCard = document.createElement('div');
+            comboCard.className = 'stat-card';
+            comboCard.innerHTML = '<div class="stat-number">№ ' + myNumber + '</div><div class="stat-label">Вы ' + myNumber + '-й из ' + totalUsers + ' пользовател' + (totalUsers == 1 ? 'я' : 'ей') + '</div>';
+            contentEl.appendChild(comboCard);
+          } else {
+            const totalCard = document.createElement('div');
+            totalCard.className = 'stat-card';
+            totalCard.innerHTML = '<div class="stat-number">' + totalUsers + '</div><div class="stat-label">Всего пользователей приложения</div>';
+            contentEl.appendChild(totalCard);
           }
 
           if (myFirstSeen) {
-            const dateStr = new Date(parseInt(myFirstSeen)).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+            const firstSeenDate = new Date(parseInt(myFirstSeen));
+            const dateStr = firstSeenDate.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+            const daysSince = Math.floor((Date.now() - firstSeenDate.getTime()) / (1000 * 60 * 60 * 24));
+
             const dateCard = document.createElement('div');
             dateCard.className = 'stat-card';
-            dateCard.innerHTML = '<div class="stat-number" style="font-size:18px;">' + dateStr + '</div><div class="stat-label">Вы с нами с этой даты</div>';
+            dateCard.innerHTML = '<div class="stat-number" style="font-size:16px;">' + dateStr + '</div><div class="stat-label">Вы с нами уже ' + daysSince + ' ' + pluralDays(daysSince) + '</div>';
             contentEl.appendChild(dateCard);
           }
+
+          const totalChecked = countTotalChecked();
+          const checkedCard = document.createElement('div');
+          checkedCard.className = 'stat-card';
+          checkedCard.innerHTML = '<div class="stat-number">' + totalChecked + '</div><div class="stat-label">Видео отмечено вами как просмотренные</div>';
+          contentEl.appendChild(checkedCard);
         })
         .catch(() => {
           contentEl.innerHTML = '<p class="empty-note">Не удалось загрузить статистику</p>';
         });
     }
+
+    function pluralDays(n) {
+      const mod10 = n % 10, mod100 = n % 100;
+      if (mod10 === 1 && mod100 !== 11) return 'день';
+      if ([2,3,4].includes(mod10) && ![12,13,14].includes(mod100)) return 'дня';
+      return 'дней';
+    }
+
     loadStats();
 
     if (window.Telegram && window.Telegram.WebApp) { Telegram.WebApp.ready(); Telegram.WebApp.expand(); }
