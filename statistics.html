@@ -90,11 +90,19 @@
             contentEl.appendChild(dateCard);
           }
 
-          const totalChecked = countTotalChecked();
+                    const totalChecked = countTotalChecked();
           const checkedCard = document.createElement('div');
           checkedCard.className = 'stat-card';
           checkedCard.innerHTML = '<div class="stat-number">' + totalChecked + '</div><div class="stat-label">Видео отмечено вами как просмотренные</div>';
           contentEl.appendChild(checkedCard);
+
+          if (localStorage.getItem('hasDonated') === 'true') {
+            const donateBadge = document.createElement('div');
+            donateBadge.className = 'badge-card';
+            donateBadge.style.background = 'linear-gradient(135deg, #fff3cd, #f7f7fa)';
+            donateBadge.innerHTML = '<div class="badge-icon">🎁</div><div class="badge-name" style="color:#b8860b;">Ангел-хранитель проекта</div>';
+            contentEl.appendChild(donateBadge);
+          }
         })
         .catch(() => {
           contentEl.innerHTML = '<p class="empty-note">Не удалось загрузить статистику</p>';
