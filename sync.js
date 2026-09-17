@@ -4,6 +4,41 @@
   if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
     ARMY_USER_ID = window.Telegram.WebApp.initDataUnsafe.user.id;
   }
+  // Регистрация нового пользователя (один раз на каждого человека)
+function registerUserIfNeeded() {
+  if (!ARMY_USER_ID) return;
+  if (localStorage.getItem('userNumber')) return; // уже зарегистрирован раньше
+
+  fetch(`${FIREBASE_URL}/user_registry/${ARMY_USER_ID}.json`)
+    .then(res => res.json())
+    .then(existing => {
+      if (existing && existing.number) {
+        // уже был зарегистрирован с другого устройства — просто запоминаем локально
+        localStorage.setItem('userNumber', existing.number);
+        localStorage.setItem('userFirstSeen', existing.firstSeen);
+        return;
+      }
+      // новый пользователь — узнаём текущий счётчик и увеличиваем
+      fetch(`${FIREBASE_URL}/user_count.json`)
+        .then(res => res.json())
+        .then(count => {
+          const newNumber = (count || 0) + 1;
+          const firstSeen = Date.now();
+          fetch(`${FIREBASE_URL}/user_count.json`, {
+            method: 'PUT',
+            body: JSON.stringify(newNumber)
+          });
+          fetch(`${FIREBASE_URL}/user_registry/${ARMY_USER_ID}.json`, {
+            method: 'PUT',
+            body: JSON.stringify({ number: newNumber, firstSeen })
+          });
+          localStorage.setItem('userNumber', newNumber);
+          localStorage.setItem('userFirstSeen', firstSeen);
+        });
+    })
+    .catch(() => {});
+}
+registerUserIfNeeded();
 
   function saveToCloudWithRetry(path, value, attempt) {
     attempt = attempt || 1;
