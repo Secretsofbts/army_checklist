@@ -48,8 +48,12 @@
       <a class="link" href="https://t.me/violent_arhive/4577" target="_blank">🔗</a>
     </div>
 
-    <p class="section-title">Дополнительное к альбому</p>
-    <a class="navlink" href="documentaries-hope-on-the-street.html">🎬 Документальный сериал (6 серий)</a>
+        <p class="section-title">Дополнительное к альбому</p>
+    <a class="navlink" href="documentaries-hope-on-the-street.html" id="doc-navlink">
+      <input type="checkbox" id="doc-checkbox" style="pointer-events:none; display:none; margin-right:0;">
+      <span id="doc-label" style="flex:1;">🎬 Документальный сериал</span>
+      <span id="doc-badge" style="font-size:12px; color:#999;"></span>
+    </a>
     <div id="extra-list"></div>
 
     <a class="footer-link" href="translations-songs.html">Переводы всех песен ⬅️</a>
@@ -65,9 +69,7 @@
       { text: "NEURON", sub: "Gaeko, yoonmirae", link: "https://t.me/violent_arhive/4569" }
     ];
 
-    const extraItems = [
-      { text: "Закулисье записи альбома", link: "https://t.me/violent_arhive/4561" },
-      { text: "Съёмки на постер", link: "https://t.me/violent_arhive/4551" },
+        const extraItems = [
       { text: "NEURON (Visualizer)", link: "https://t.me/violent_arhive/4570" }
     ];
 
@@ -106,16 +108,44 @@
     renderList('list', items);
     renderList('extra-list', extraItems);
 
+       function applyDocBadge() {
+      const raw = localStorage.getItem('progress:documentaries-hope-on-the-street');
+      const badge = document.getElementById('doc-badge');
+      const checkbox = document.getElementById('doc-checkbox');
+      const label = document.getElementById('doc-label');
+      if (!raw) { badge.textContent = ''; return; }
+      const d = JSON.parse(raw);
+      if (d.total === 0) { badge.textContent = ''; return; }
+      if (d.checked === d.total) {
+        badge.textContent = '';
+        checkbox.checked = true;
+        checkbox.style.display = '';
+        label.style.color = '#bbb';
+        label.style.textDecoration = 'line-through';
+      } else {
+        badge.textContent = d.checked + '/' + d.total;
+      }
+    }
+
     function updateProgress() {
       const all = document.querySelectorAll('.row input[type="checkbox"]');
       let total = 0, checked = 0;
       all.forEach(cb => { total++; if (cb.checked) checked++; });
+
+      const docRaw = localStorage.getItem('progress:documentaries-hope-on-the-street');
+      if (docRaw) {
+        const d = JSON.parse(docRaw);
+        total += d.total;
+        checked += d.checked;
+      }
+
       setProgress('translations-hots', {checked, total});
       pushWeightedContributions('translations-hots');
+      applyDocBadge();
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);
-
+    refreshLocalStorageFromCloud(updateProgress);
     if (window.Telegram && window.Telegram.WebApp) { Telegram.WebApp.ready(); Telegram.WebApp.expand(); }
   </script>
 </body>
