@@ -19,18 +19,20 @@ function registerUserIfNeeded() {
         return;
       }
       // новый пользователь — узнаём текущий счётчик и увеличиваем
-      fetch(`${FIREBASE_URL}/user_count.json`)
+           fetch(`${FIREBASE_URL}/user_count.json`)
         .then(res => res.json())
         .then(count => {
           const newNumber = (count || 0) + 1;
           const firstSeen = Date.now();
           fetch(`${FIREBASE_URL}/user_count.json`, {
             method: 'PUT',
-            body: JSON.stringify(newNumber)
+            body: JSON.stringify(newNumber),
+            keepalive: true
           });
           fetch(`${FIREBASE_URL}/user_registry/${ARMY_USER_ID}.json`, {
             method: 'PUT',
-            body: JSON.stringify({ number: newNumber, firstSeen })
+            body: JSON.stringify({ number: newNumber, firstSeen }),
+            keepalive: true
           });
           localStorage.setItem('userNumber_' + ARMY_USER_ID, newNumber);
           localStorage.setItem('userFirstSeen_' + ARMY_USER_ID, firstSeen);
