@@ -78,18 +78,18 @@
     <p class="note">Серии расположены в примерном хронологическом порядке (где 1 серия — это 2013 год, а 123 серия — это 2021 год). Нумерация моя личная, для удобства </p>
     <a class="footer-link" href="bangtantv.html">BangtanTV ⬅️</a>
   </div>
-    <script>
+       <script>
     const items = [
-           { text: "1 часть (с 1 по 50 серию)", link: "bts-episode-1-50.html", internal: true, statKey: "bts-episode-1-50" },
+      { text: "1 часть (с 1 по 50 серию)", link: "bts-episode-1-50.html", internal: true, statKey: "bts-episode-1-50" },
       { text: "2 часть (с 51 по 100 серию)", link: "bts-episode-51-100.html", internal: true, statKey: "bts-episode-51-100" },
       { text: "3 часть (с 101 по 150 серию)", link: "bts-episode-101-150.html", internal: true, statKey: "bts-episode-101-150" },
       { text: "4 часть (с 151 по 194 серию)", link: "bts-episode-151-194.html", internal: true, statKey: "bts-episode-151-194" },
-            { text: "Ну вроде бы эпизоды", link: "bts-episode-other.html", internal: true, statKey: "bts-episode-other" }
+      { text: "Ну вроде бы эпизоды", link: "bts-episode-other.html", internal: true, statKey: "bts-episode-other" }
     ];
 
     const listEl = document.getElementById('list');
     items.forEach((item) => {
-           const a = document.createElement('a');
+      const a = document.createElement('a');
       a.className = 'navlink';
       a.href = item.link;
       if (item.internal) a.target = '';
@@ -108,8 +108,16 @@
       }
       listEl.appendChild(a);
     });
-       function applyBadge(key, data) {
-      var el = document.getElementById('badge-' + key);
+
+    const otherKeys = ['bts-episode-other-jimin', 'bts-episode-other-jungkook', 'bts-episode-other-hoseok', 'bts-episode-other-yoongi', 'bts-episode-other-namjoon', 'bts-episode-other-jin', 'bts-episode-other-taehyung', 'bts-episode-other-somepeople'];
+
+    function getProgress(key) {
+      const raw = localStorage.getItem('progress:' + key);
+      return raw ? JSON.parse(raw) : null;
+    }
+
+    function applyBadge(key, data) {
+      const el = document.getElementById('badge-' + key);
       if (!el || !data || data.total === 0) { if (el) el.textContent = ''; return; }
       if (data.checked === data.total) {
         el.textContent = '✅';
@@ -117,22 +125,16 @@
         el.closest('.navlink').style.background = '#e3f7e9';
       } else {
         el.textContent = data.checked + '/' + data.total;
+        el.closest('.navlink').style.background = '';
       }
     }
 
-    const partKeys = ['bts-episode-1-50', 'bts-episode-51-100', 'bts-episode-101-150', 'bts-episode-151-194'];
-    partKeys.forEach((key) => {
-      var raw = localStorage.getItem('progress:' + key);
-      applyBadge(key, raw ? JSON.parse(raw) : null);
-    });
-    syncBadgesFromCloud(partKeys, applyBadge);
-
-    function applyBadgeTotal(key, keys, getRaw) {
-      var el = document.getElementById('badge-' + key);
+    function applyBadgeTotal(key, keys) {
+      const el = document.getElementById('badge-' + key);
       if (!el) return;
-      var checked = 0, total = 0;
-      keys.forEach(function(k) {
-        var raw = getRaw(k);
+      let checked = 0, total = 0;
+      keys.forEach((k) => {
+        const raw = getProgress(k);
         if (raw) { checked += raw.checked; total += raw.total; }
       });
       if (total === 0) { el.textContent = ''; return; }
@@ -142,24 +144,19 @@
         el.closest('.navlink').style.background = '#e3f7e9';
       } else {
         el.textContent = checked + '/' + total;
+        el.closest('.navlink').style.background = '';
       }
     }
-    const otherKeys = ['bts-episode-other-jimin', 'bts-episode-other-jungkook', 'bts-episode-other-hoseok', 'bts-episode-other-yoongi', 'bts-episode-other-namjoon', 'bts-episode-other-jin', 'bts-episode-other-taehyung', 'bts-episode-other-somepeople'];
-    applyBadgeTotal('bts-episode-other', otherKeys, function(key) {
-      var raw = localStorage.getItem('progress:' + key);
-      return raw ? JSON.parse(raw) : null;
-    });
-    if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
-      fetch(`${FIREBASE_URL}/users/${ARMY_USER_ID}.json`)
-        .then(res => res.json())
-        .then(data => {
-          if (!data) return;
-          applyBadgeTotal('bts-episode-other', otherKeys, function(key) {
-            return data['progress:' + key];
-          });
-        })
-        .catch(() => {});
+
+    const partKeys = ['bts-episode-1-50', 'bts-episode-51-100', 'bts-episode-101-150', 'bts-episode-151-194'];
+
+    function renderAllBadges() {
+      partKeys.forEach((key) => applyBadge(key, getProgress(key)));
+      applyBadgeTotal('bts-episode-other', otherKeys);
     }
+
+    renderAllBadges();
+    refreshLocalStorageFromCloud(renderAllBadges);
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
