@@ -35,14 +35,14 @@
   </div>
 
   <script>
-        const items = [
-      { text: "🎵➕ 30 апр (I Need U, Lovers High)", link: "https://t.me/violent_arhive/3426" },
-      { text: "◾️ После M!countdown 1st place T_T", link: "https://t.me/violent_arhive/3430" },
+           const items = [
+      { text: "🎵➕ 30 апр", sub: "I Need U, Lovers High", link: "https://t.me/violent_arhive/3426" },
+      { text: "◾️ 1st place T_T", sub: "После M!Countdown", link: "https://t.me/violent_arhive/3430" },
       { text: "◾️ NEXT UP", link: "https://t.me/violent_arhive/3431" },
-      { text: "◾️ За кадром 22 мая", link: "https://t.me/violent_arhive/3432" },
-      { text: "◾️ За кадром 29 мая", link: "https://t.me/violent_arhive/3434" },
-      { text: "◾️ За кадром 12 июня", link: "https://t.me/violent_arhive/3433" },
-      { text: "🎵➕ 25 июня (Dope)", link: "https://t.me/violent_arhive/3435" },
+      { text: "◾️ 22 мая", sub: "закадровые", link: "https://t.me/violent_arhive/3432" },
+      { text: "◾️ 29 мая", sub: "закадровые", link: "https://t.me/violent_arhive/3434" },
+      { text: "◾️ 12 июня", sub: "закадровые", link: "https://t.me/violent_arhive/3433" },
+      { text: "🎵➕ 25 июня + Dope", link: "https://t.me/violent_arhive/3435" },
       { text: "🎵 Danger", link: "https://t.me/violent_arhive/3474" }
     ];
 
@@ -64,10 +64,16 @@
       row.dataset.id = id;
       const box = document.createElement('input');
       box.type = 'checkbox';
-      const parsed = extractIcon(item.text);
+            const parsed = extractIcon(item.text);
       const span = document.createElement('span');
       span.className = 'text';
       span.textContent = parsed.rest;
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+        sub.textContent = item.sub;
+        span.appendChild(sub);
+      }
       if (localStorage.getItem(id) === 'true') { box.checked = true; span.classList.add('done'); }
       box.addEventListener('change', () => {
         setChecked(id, box.checked);
