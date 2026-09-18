@@ -50,7 +50,13 @@
       return count;
     }
 
-        function loadStats() {
+           function loadStats() {
+      refreshLocalStorageFromCloud(() => {
+        renderStats();
+      });
+    }
+
+    function renderStats() {
       const contentEl = document.getElementById('stats-content');
       let myNumber = localStorage.getItem('userNumber_' + ARMY_USER_ID);
       let myFirstSeen = localStorage.getItem('userFirstSeen_' + ARMY_USER_ID);
