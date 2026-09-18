@@ -40,12 +40,9 @@
     <p class="section-title">Сцены «за кадром» Хваран и всякие другие видео с Wooga</p>
     <div id="list-extra"></div>
 
+       <p class="section-title">Что-то ещё</p>
     <a class="navlink" href="in-the-soop-friendcation.html">🌳 BTS IN THE SOOP: Friendcation</a>
-
-    <p class="section-title">Что-то ещё</p>
     <div id="list-more"></div>
-
-    <p class="outro">Приятного просмотра 💙</p>
 
     <a class="footer-link" href="misc.html">Всякое другое ⬅️</a>
   </div>
@@ -93,7 +90,7 @@
       { text: "Реакция на клип «FRI(END)S»", link: "https://t.me/violent_arhive/4537" }
     ];
 
-    function renderList(containerId, items) {
+        function renderList(containerId, items) {
       const listEl = document.getElementById(containerId);
       items.forEach((item) => {
         const id = 'video-' + item.link.split('/').pop();
@@ -122,10 +119,6 @@
           box.dispatchEvent(new Event('change'));
         });
 
-        const hearts = document.createElement('span');
-        hearts.style.cssText = 'font-size:13px; flex-shrink:0;';
-        hearts.textContent = item.hearts || '';
-
         const link = document.createElement('a');
         link.className = 'link';
         link.href = item.link;
@@ -134,7 +127,6 @@
 
         row.appendChild(box);
         row.appendChild(span);
-        row.appendChild(hearts);
         row.appendChild(link);
         listEl.appendChild(row);
       });
