@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js?v=6"></script>
+  <title>Отряд Хваран</title>
+  <style>
+    body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
+    .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 10px; line-height: 1.5; }
+    .section-title { font-size: 13px; font-weight: 600; color: #888; margin: 16px 0 6px; }
+    .row { display: flex; align-items: center; gap: 10px; padding: 8px 4px; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .text.done { color: #bbb; text-decoration: line-through; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+    .navlink { display: flex; align-items: center; justify-content: space-between; gap: 10px; background: #f7f7fa; border-radius: 12px; padding: 10px 12px; margin: 8px 0; font-size: 14px; color: #333; text-decoration: none; }
+    .outro { font-size: 14px; color: #333; text-align: center; margin-top: 16px; }
+    .footer-link { display: block; text-align: center; font-size: 13px; color: #000; text-decoration: none; margin-top: 16px; padding-top: 12px; border-top: 1px solid #eee; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="misc.html">← Назад</a>
+    <h1>🔵 Отряд Хваран 🟣</h1>
+    <p class="intro">Псевдоисторическая дорама о воинах эры Силла, которых называли хваранами, так как они были известны своей красотой.</p>
+    <p class="intro">В этой дораме снимался Тэхён. Роль второстепенная, но у него огромный талант. Некоторые АРМИ попали в фандом, потому что увидели его там и решили узнать, кто этот классный красавчик ахаха</p>
+    <p class="intro">После этого сериала появилась семья Wooga. Некоторые тоже актёры с этого сериала, парочка присоединилась попозже. «Wooga» — это дружная команда, состоящая из пяти талантливых артистов: Ким Тэхён, Пак Соджун, Пак Хёнсик, Чхве Усик и Peakboy. «Wooga» — это сокращение от фразы «Woori-ga gajok-inga?», что переводится как «Мы семья?»</p>
+
+    <p class="section-title">Серии</p>
+    <div id="list-episodes"></div>
+
+    <p class="section-title">Сцены «за кадром» Хваран и всякие другие видео с Wooga</p>
+    <div id="list-extra"></div>
+
+    <a class="navlink" href="in-the-soop-friendcation.html">🌳 BTS IN THE SOOP: Friendcation</a>
+
+    <p class="section-title">Что-то ещё</p>
+    <div id="list-more"></div>
+
+    <p class="outro">Приятного просмотра 💙</p>
+
+    <a class="footer-link" href="misc.html">Всякое другое ⬅️</a>
+  </div>
+
+  <script>
+    const episodes = [
+      { text: "1 серия", hearts: "💙", link: "https://t.me/violent_arhive/2829" },
+      { text: "2 серия", hearts: "💙", link: "https://t.me/violent_arhive/2830" },
+      { text: "3 серия", hearts: "💙", link: "https://t.me/violent_arhive/2831" },
+      { text: "4 серия", hearts: "💙", link: "https://t.me/violent_arhive/2832" },
+      { text: "5 серия", hearts: "💙", link: "https://t.me/violent_arhive/2833" },
+      { text: "6 серия", hearts: "💙", link: "https://t.me/violent_arhive/2834" },
+      { text: "7 серия", hearts: "💙", link: "https://t.me/violent_arhive/2835" },
+      { text: "8 серия", hearts: "💙", link: "https://t.me/violent_arhive/2836" },
+      { text: "9 серия", hearts: "💙", link: "https://t.me/violent_arhive/2837" },
+      { text: "10 серия", hearts: "💙", link: "https://t.me/violent_arhive/2838" },
+      { text: "11 серия", hearts: "💙", link: "https://t.me/violent_arhive/2839" },
+      { text: "12 серия", hearts: "💙", link: "https://t.me/violent_arhive/2840" },
+      { text: "13 серия", hearts: "💙", link: "https://t.me/violent_arhive/2841" },
+      { text: "14 серия", hearts: "💙", link: "https://t.me/violent_arhive/2842" },
+      { text: "15 серия", hearts: "💙", link: "https://t.me/violent_arhive/2843" },
+      { text: "16 серия", hearts: "💙", link: "https://t.me/violent_arhive/2844" },
+      { text: "17 серия", hearts: "💙", link: "https://t.me/violent_arhive/2845" },
+      { text: "18 серия", hearts: "💙", link: "https://t.me/violent_arhive/2846" },
+      { text: "19 серия", hearts: "💙", link: "https://t.me/violent_arhive/2847" },
+      { text: "20 серия", hearts: "💙", link: "https://t.me/violent_arhive/2848" }
+    ];
+
+    const extraItems = [
+      { text: "Behind Story", hearts: "💜", link: "https://t.me/violent_arhive/2849" },
+      { text: "Съёмка постера", hearts: "💜", link: "https://t.me/violent_arhive/2860" },
+      { text: "Яркие моменты (1)", hearts: "💜", link: "https://t.me/violent_arhive/2861" },
+      { text: "Яркие моменты (2)", hearts: "💜", link: "https://t.me/violent_arhive/2862" },
+      { text: "Создание сериала", hearts: "💜", link: "https://t.me/violent_arhive/2865" },
+      { text: "Создание сериала — Хансон", hearts: "💜", link: "https://t.me/violent_arhive/2872" },
+      { text: "Ост сериала \"Хваран\"", hearts: "💜", link: "https://t.me/violent_arhive/2863" },
+      { text: "Интервью с Хваранами", hearts: "💜", link: "https://t.me/violent_arhive/2864" },
+      { text: "Звонок Тэхену", hearts: "💜", link: "https://t.me/violent_arhive/2870" },
+      { text: "Хвараны — KBS2", hearts: "💜", link: "https://t.me/violent_arhive/2873" },
+      { text: "F4 — Binbin's Ranking Show", hearts: "💜", link: "https://t.me/violent_arhive/2871" },
+      { text: "Эпизод: Это Хансон из «Хваран»", hearts: "💜", link: "https://t.me/violent_arhive/2088" }
+    ];
+
+    const moreItems = [
+      { text: "Реакция на клип «FRI(END)S»", link: "https://t.me/violent_arhive/4537" }
+    ];
+
+    function renderList(containerId, items) {
+      const listEl = document.getElementById(containerId);
+      items.forEach((item) => {
+        const id = 'video-' + item.link.split('/').pop();
+        const row = document.createElement('div');
+        row.className = 'row';
+        row.dataset.id = id;
+
+        const box = document.createElement('input');
+        box.type = 'checkbox';
+
+        const span = document.createElement('span');
+        span.className = 'text';
+        span.textContent = item.text;
+
+        if (localStorage.getItem(id) === 'true') {
+          box.checked = true;
+          span.classList.add('done');
+        }
+        box.addEventListener('change', () => {
+          setChecked(id, box.checked);
+          span.classList.toggle('done', box.checked);
+          updateProgress();
+        });
+        span.addEventListener('click', () => {
+          box.checked = !box.checked;
+          box.dispatchEvent(new Event('change'));
+        });
+
+        const hearts = document.createElement('span');
+        hearts.style.cssText = 'font-size:13px; flex-shrink:0;';
+        hearts.textContent = item.hearts || '';
+
+        const link = document.createElement('a');
+        link.className = 'link';
+        link.href = item.link;
+        link.target = '_blank';
+        link.textContent = '🔗';
+
+        row.appendChild(box);
+        row.appendChild(span);
+        row.appendChild(hearts);
+        row.appendChild(link);
+        listEl.appendChild(row);
+      });
+    }
+
+    renderList('list-episodes', episodes);
+    renderList('list-extra', extraItems);
+    renderList('list-more', moreItems);
+
+    function updateProgress() {
+      const all = document.querySelectorAll('.row input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => { total++; if (cb.checked) checked++; });
+      setProgress('hwarang', {checked, total});
+      pushWeightedContributions('hwarang');
+    }
+    updateProgress();
+    syncChecklistFromCloud(updateProgress);
+    refreshLocalStorageFromCloud(updateProgress);
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
