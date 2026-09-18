@@ -33,7 +33,9 @@
   <script>
         function getBadge(number) {
       if (number <= 1) return { icon: '👑', name: 'Основательница' };
-      if (number <= 7) return { icon: '💜', name: 'Друг создателя' };
+      if (number <= 2) return { icon: '👀', name: 'Двойник создателя' };
+      if (number <= 3) return { icon: '💜', name: 'Бести' };
+      if (number <= 7) return { icon: '🧡', name: 'Друг создателя' };
       if (number <= 100) return { icon: '🌟', name: 'Один из первых' };
       if (number <= 1000) return { icon: '🐝', name: 'Ранний пользователь' };
       return { icon: '🤍', name: 'ARMY' };
