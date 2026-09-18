@@ -136,8 +136,8 @@
     renderList('list-extra', extraItems);
     renderList('list-more', moreItems);
 
-    function updateProgress() {
-      const all = document.querySelectorAll('.row input[type="checkbox"]');
+        function updateProgress() {
+      const all = document.querySelectorAll('#list-episodes input[type="checkbox"], #list-extra input[type="checkbox"]');
       let total = 0, checked = 0;
       all.forEach(cb => { total++; if (cb.checked) checked++; });
       setProgress('hwarang', {checked, total});
