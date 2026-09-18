@@ -7,7 +7,6 @@
   // Регистрация нового пользователя (один раз на каждого человека)
 function registerUserIfNeeded() {
   if (!ARMY_USER_ID) return;
-  if (localStorage.getItem('userNumber_' + ARMY_USER_ID)) return; // именно ЭТОТ аккаунт уже зарегистрирован раньше
 
   fetch(`${FIREBASE_URL}/user_registry/${ARMY_USER_ID}.json`)
     .then(res => res.json())
