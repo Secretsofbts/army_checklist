@@ -116,147 +116,58 @@
     <a class="footer-link" href="index.html">На главную ⬅️</a>
   </div>
 
-  <script>
-           const allClipsKeys = ['clips-2013-2015', 'clips-2016-2018', 'clips-2019-2021', 'clips-2022-2023', 'clips-2024-2025', 'clips-2026-2027', 'clips-japan', 'clips-mixtape', 'clips-standalone'];
-          const bombsKeys = ['bombs-2013-june', 'bombs-2013-july', 'bombs-2013-august', 'bombs-2013-september', 'bombs-2013-october', 'bombs-2013-november', 'bombs-2024', 'bombs-2025', 'bombs-2026'];
-      const episodeKeys = ['bts-episode-1-50', 'bts-episode-51-100', 'bts-episode-101-150', 'bts-episode-151-194', 'bts-episode-other-jimin', 'bts-episode-other-jungkook', 'bts-episode-other-hoseok', 'bts-episode-other-yoongi', 'bts-episode-other-namjoon', 'bts-episode-other-jin', 'bts-episode-other-taehyung', 'bts-episode-other-somepeople'];
+   <script>
+    const allClipsKeys = ['clips-2013-2015', 'clips-2016-2018', 'clips-2019-2021', 'clips-2022-2023', 'clips-2024-2025', 'clips-2026-2027', 'clips-japan', 'clips-mixtape', 'clips-standalone'];
+    const bombsKeys = ['bombs-2013-june', 'bombs-2013-july', 'bombs-2013-august', 'bombs-2013-september', 'bombs-2013-october', 'bombs-2013-november', 'bombs-2024', 'bombs-2025', 'bombs-2026'];
+    const episodeKeys = ['bts-episode-1-50', 'bts-episode-51-100', 'bts-episode-101-150', 'bts-episode-151-194', 'bts-episode-other-jimin', 'bts-episode-other-jungkook', 'bts-episode-other-hoseok', 'bts-episode-other-yoongi', 'bts-episode-other-namjoon', 'bts-episode-other-jin', 'bts-episode-other-taehyung', 'bts-episode-other-somepeople'];
+    const vlogsBtsKeys = ['vlogsbts-jimin', 'vlogsbts-jin', 'vlogsbts-taehyung', 'vlogsbts-jungkook', 'vlogsbts-namjoon', 'vlogsbts-yoongi', 'vlogsbts-hoseok'];
+    const youtubeKeys = ['vlog-jungkook', 'vlog-v', 'vlog-jin', 'vlog-jimin', 'vlog-namjoon', 'vlog-suga', 'vlog-jhope', 'vlog-ot7', 'vlog-somepeople', 'eatjin', 'logon', 'vlogsbts-jimin', 'vlogsbts-jin', 'vlogsbts-taehyung', 'vlogsbts-jungkook', 'vlogsbts-namjoon', 'vlogsbts-yoongi', 'vlogsbts-hoseok'];
 
-    function applyBadgeTotal(elId, keys, getRaw) {
-      var el = document.getElementById(elId);
+    function getProgress(key) {
+      const raw = localStorage.getItem('progress:' + key);
+      return raw ? JSON.parse(raw) : null;
+    }
+
+    function applyBadgeTotal(elId, keys, dedupVideoId) {
+      const el = document.getElementById(elId);
       if (!el) return;
-      var checked = 0, total = 0;
-      keys.forEach(function(key) {
-        var raw = getRaw(key);
+      let checked = 0, total = 0;
+      keys.forEach((key) => {
+        const raw = getProgress(key);
         if (raw) { checked += raw.checked; total += raw.total; }
       });
+      if (dedupVideoId) {
+        total -= 1;
+        if (localStorage.getItem(dedupVideoId) === 'true') checked -= 1;
+      }
       if (total === 0) { el.textContent = ''; return; }
       if (checked === total) {
         el.textContent = '✅';
         el.style.color = '#2e9e5b';
-        el.closest('.card').classList.add('row-done');
+        const card = el.closest('.card');
+        if (card) card.classList.add('row-done');
       } else {
         el.textContent = checked + '/' + total;
+        const card = el.closest('.card');
+        if (card) card.classList.remove('row-done');
       }
     }
 
-          applyBadgeTotal('badge-allclips', allClipsKeys, function(key) {
-      var raw = localStorage.getItem('progress:' + key);
-      return raw ? JSON.parse(raw) : null;
-    });
-    applyBadgeTotal('badge-bombs', bombsKeys, function(key) {
-      var raw = localStorage.getItem('progress:' + key);
-      return raw ? JSON.parse(raw) : null;
-    });
-       applyBadgeTotal('badge-episode', episodeKeys, function(key) {
-      var raw = localStorage.getItem('progress:' + key);
-      return raw ? JSON.parse(raw) : null;
-    });
-    applyBadgeTotal('badge-reaction', ['reaction-to-self'], function(key) {
-      var raw = localStorage.getItem('progress:' + key);
-      return raw ? JSON.parse(raw) : null;
-    });
-      applyBadgeTotal('badge-photofolio', ['photo-folio'], function(key) {
-      var raw = localStorage.getItem('progress:' + key);
-      return raw ? JSON.parse(raw) : null;
-    });
-    applyBadgeTotal('badge-albumreview', ['album-review'], function(key) {
-      var raw = localStorage.getItem('progress:' + key);
-      return raw ? JSON.parse(raw) : null;
-    });
-        applyBadgeTotal('badge-messagejin', ['message-from-jin'], function(key) {
-      var raw = localStorage.getItem('progress:' + key);
-      return raw ? JSON.parse(raw) : null;
-    });
-
-    if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
-      fetch(`${FIREBASE_URL}/users/${ARMY_USER_ID}.json`)
-        .then(res => res.json())
-        .then(data => {
-          if (!data) return;
-                    applyBadgeTotal('badge-allclips', allClipsKeys, function(key) {
-            return data['progress:' + key];
-          });
-          applyBadgeTotal('badge-bombs', bombsKeys, function(key) {
-            return data['progress:' + key];
-          });
-                    applyBadgeTotal('badge-episode', episodeKeys, function(key) {
-            return data['progress:' + key];
-          });
-          applyBadgeTotal('badge-reaction', ['reaction-to-self'], function(key) {
-            return data['progress:' + key];
-          });
-                    applyBadgeTotal('badge-photofolio', ['photo-folio'], function(key) {
-            return data['progress:' + key];
-          });
-          applyBadgeTotal('badge-albumreview', ['album-review'], function(key) {
-            return data['progress:' + key];
-          });
-          applyBadgeTotal('badge-gcf', ['gcf'], function(key) {
-            return data['progress:' + key];
-          });
-                    applyBadgeTotal('badge-messagejin', ['message-from-jin'], function(key) {
-            return data['progress:' + key];
-          });
-                    renderVlogsBtsTotal();
-          renderYoutubeTotal();
-        })
-        .catch(() => {});
+    function renderAllBadges() {
+      applyBadgeTotal('badge-allclips', allClipsKeys);
+      applyBadgeTotal('badge-bombs', bombsKeys);
+      applyBadgeTotal('badge-episode', episodeKeys);
+      applyBadgeTotal('badge-reaction', ['reaction-to-self']);
+      applyBadgeTotal('badge-photofolio', ['photo-folio']);
+      applyBadgeTotal('badge-albumreview', ['album-review']);
+      applyBadgeTotal('badge-gcf', ['gcf']);
+      applyBadgeTotal('badge-messagejin', ['message-from-jin']);
+      applyBadgeTotal('badge-vlogsbts', vlogsBtsKeys, 'video-5570');
+      applyBadgeTotal('badge-youtube', youtubeKeys, 'video-5570');
     }
-    applyBadgeTotal('badge-gcf', ['gcf'], function(key) {
-      var raw = localStorage.getItem('progress:' + key);
-      return raw ? JSON.parse(raw) : null;
-    });
 
-    function renderVlogsBtsTotal() {
-      var el = document.getElementById('badge-vlogsbts');
-      if (!el) return;
-      var keys = ['vlogsbts-jimin', 'vlogsbts-jin', 'vlogsbts-taehyung', 'vlogsbts-jungkook', 'vlogsbts-namjoon', 'vlogsbts-yoongi', 'vlogsbts-hoseok'];
-      var checked = 0, total = 0;
-      keys.forEach(function(key) {
-        var raw = localStorage.getItem('progress:' + key);
-        if (raw) {
-          var data = JSON.parse(raw);
-          checked += data.checked;
-          total += data.total;
-        }
-      });
-      // "Тренировка ЧонТэХо" пересекается с GCF — вычитаем повтор
-      total -= 1;
-      if (localStorage.getItem('video-5570') === 'true') { checked -= 1; }
-      if (total === 0) { el.textContent = ''; return; }
-      if (checked === total) {
-        el.textContent = '✅';
-        el.style.color = '#2e9e5b';
-      } else {
-        el.textContent = checked + '/' + total;
-      }
-    }
-        renderVlogsBtsTotal();
-
-    function renderYoutubeTotal() {
-      var el = document.getElementById('badge-youtube');
-      if (!el) return;
-      var keys = ['vlog-jungkook', 'vlog-v', 'vlog-jin', 'vlog-jimin', 'vlog-namjoon', 'vlog-suga', 'vlog-jhope', 'vlog-ot7', 'vlog-somepeople', 'eatjin', 'logon', 'vlogsbts-jimin', 'vlogsbts-jin', 'vlogsbts-taehyung', 'vlogsbts-jungkook', 'vlogsbts-namjoon', 'vlogsbts-yoongi', 'vlogsbts-hoseok'];
-      var checked = 0, total = 0;
-      keys.forEach(function(key) {
-        var raw = localStorage.getItem('progress:' + key);
-        if (raw) {
-          var data = JSON.parse(raw);
-          checked += data.checked;
-          total += data.total;
-        }
-      });
-      total -= 1;
-      if (localStorage.getItem('video-5570') === 'true') { checked -= 1; }
-      if (total === 0) { el.textContent = ''; return; }
-      if (checked === total) {
-        el.textContent = '✅';
-        el.style.color = '#2e9e5b';
-      } else {
-        el.textContent = checked + '/' + total;
-      }
-    }
-    renderYoutubeTotal();
+    renderAllBadges();
+    refreshLocalStorageFromCloud(renderAllBadges);
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
