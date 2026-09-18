@@ -35,10 +35,10 @@
   </div>
 
   <script>
-    const items = [
-      { text: "🎵➕ Face - Jimin", link: "https://t.me/violent_arhive/3852" },
-      { text: "🎵➕ 14 сентября (Love Me Again и Slow Dancing - V и Ким Ёнтан)", link: "https://t.me/violent_arhive/4235" },
-      { text: "🎵 Standing Next to You - Jungkook", link: "https://t.me/violent_arhive/4364" }
+      const items = [
+      { text: "🎵➕ Face", sub: "Jimin", link: "https://t.me/violent_arhive/3852" },
+      { text: "🎵➕ 14 сентября", sub: "Love Me Again и Slow Dancing - V и Ким Ёнтан", link: "https://t.me/violent_arhive/4235" },
+      { text: "🎵 Standing Next to You", sub: "Jungkook", link: "https://t.me/violent_arhive/4364" }
     ];
 
         function extractIcon(text) {
@@ -59,10 +59,16 @@
       row.dataset.id = id;
       const box = document.createElement('input');
       box.type = 'checkbox';
-      const parsed = extractIcon(item.text);
+            const parsed = extractIcon(item.text);
       const span = document.createElement('span');
       span.className = 'text';
       span.textContent = parsed.rest;
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+        sub.textContent = item.sub;
+        span.appendChild(sub);
+      }
       if (localStorage.getItem(id) === 'true') { box.checked = true; span.classList.add('done'); }
       box.addEventListener('change', () => {
         setChecked(id, box.checked);

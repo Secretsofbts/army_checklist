@@ -35,9 +35,9 @@
   </div>
 
   <script>
-    const items = [
-      { text: "🎵➕ 27 февраля (Black Swan, ON)", link: "https://t.me/violent_arhive/3534" },
-      { text: "🎵➕ 05 марта (ON)", link: "https://t.me/violent_arhive/3539" }
+       const items = [
+      { text: "🎵➕ 27 февраля", sub: "Black Swan, ON", link: "https://t.me/violent_arhive/3534" },
+      { text: "🎵➕ 05 марта", sub: "ON", link: "https://t.me/violent_arhive/3539" }
     ];
 
         function extractIcon(text) {
@@ -58,10 +58,16 @@
       row.dataset.id = id;
       const box = document.createElement('input');
       box.type = 'checkbox';
-      const parsed = extractIcon(item.text);
+           const parsed = extractIcon(item.text);
       const span = document.createElement('span');
       span.className = 'text';
       span.textContent = parsed.rest;
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+        sub.textContent = item.sub;
+        span.appendChild(sub);
+      }
       if (localStorage.getItem(id) === 'true') { box.checked = true; span.classList.add('done'); }
       box.addEventListener('change', () => {
         setChecked(id, box.checked);
