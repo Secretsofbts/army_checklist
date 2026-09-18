@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=4"></script>
+  <script src="sync.js?v=6"></script>
   <title>Статистика</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -50,18 +50,24 @@
       return count;
     }
 
-       function loadStats() {
+        function loadStats() {
       const contentEl = document.getElementById('stats-content');
-      const myNumber = localStorage.getItem('userNumber');
-      let myFirstSeen = localStorage.getItem('userFirstSeen');
+      let myNumber = localStorage.getItem('userNumber_' + ARMY_USER_ID);
+      let myFirstSeen = localStorage.getItem('userFirstSeen_' + ARMY_USER_ID);
 
       if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
         fetch(`${FIREBASE_URL}/user_registry/${ARMY_USER_ID}.json`)
           .then(res => res.json())
           .then(entry => {
-            if (entry && entry.firstSeen) {
-              myFirstSeen = entry.firstSeen;
-              localStorage.setItem('userFirstSeen', myFirstSeen);
+            if (entry) {
+              if (entry.number) {
+                myNumber = entry.number;
+                localStorage.setItem('userNumber_' + ARMY_USER_ID, myNumber);
+              }
+              if (entry.firstSeen) {
+                myFirstSeen = entry.firstSeen;
+                localStorage.setItem('userFirstSeen_' + ARMY_USER_ID, myFirstSeen);
+              }
             }
           })
           .catch(() => {});

@@ -7,15 +7,15 @@
   // Регистрация нового пользователя (один раз на каждого человека)
 function registerUserIfNeeded() {
   if (!ARMY_USER_ID) return;
-  if (localStorage.getItem('userNumber')) return; // уже зарегистрирован раньше
+  if (localStorage.getItem('userNumber_' + ARMY_USER_ID)) return; // именно ЭТОТ аккаунт уже зарегистрирован раньше
 
   fetch(`${FIREBASE_URL}/user_registry/${ARMY_USER_ID}.json`)
     .then(res => res.json())
     .then(existing => {
       if (existing && existing.number) {
-        // уже был зарегистрирован с другого устройства — просто запоминаем локально
-        localStorage.setItem('userNumber', existing.number);
-        localStorage.setItem('userFirstSeen', existing.firstSeen);
+        // уже был зарегистрирован раньше (с этого или другого устройства) — просто запоминаем локально
+        localStorage.setItem('userNumber_' + ARMY_USER_ID, existing.number);
+        localStorage.setItem('userFirstSeen_' + ARMY_USER_ID, existing.firstSeen);
         return;
       }
       // новый пользователь — узнаём текущий счётчик и увеличиваем
@@ -32,8 +32,8 @@ function registerUserIfNeeded() {
             method: 'PUT',
             body: JSON.stringify({ number: newNumber, firstSeen })
           });
-          localStorage.setItem('userNumber', newNumber);
-          localStorage.setItem('userFirstSeen', firstSeen);
+          localStorage.setItem('userNumber_' + ARMY_USER_ID, newNumber);
+          localStorage.setItem('userFirstSeen_' + ARMY_USER_ID, firstSeen);
         });
     })
     .catch(() => {});
