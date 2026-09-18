@@ -244,29 +244,16 @@
       const combined = getCombinedYearStats('other-shows-2013-2015');
       setProgress('other-shows-2013-2015', combined);
     }
-    updateProgress();
+       updateProgress();
     syncChecklistFromCloud(updateProgress);
 
-       // Дополнительно подтягиваем состояние отмеченных видео из других страниц (ответвлений) из облака
-    if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
-      fetch(`${FIREBASE_URL}/users/${ARMY_USER_ID}.json`)
-        .then(res => res.json())
-        .then(data => {
-          if (!data) return;
-          let changed = false;
-          const sources = YEAR_WEIGHTED_MAP['other-shows-2013-2015'];
-          Object.keys(sources).forEach((src) => {
-            sources[src].forEach((id) => {
-              if (data[id] !== undefined && data[id] !== (localStorage.getItem(id) === 'true')) {
-                localStorage.setItem(id, data[id]);
-                changed = true;
-              }
-            });
-          });
-          if (changed) updateProgress();
-        })
-        .catch(() => {});
-    }
+    // Подтягиваем ВСЕ сохранённые данные из облака (включая ответвления), затем пересчитываем всё и обновляем бейджи
+    refreshLocalStorageFromCloud(() => {
+      updateProgress();
+      items.forEach((item) => {
+        if (item.navlink) applyNavBadge(item.statKey);
+      });
+    });
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
