@@ -35,17 +35,17 @@
   </div>
 
   <script>
-        const items = [
-      { text: "🎵➕ 12 мая (Butterfly, Save ME, Fire)", link: "https://t.me/violent_arhive/3438" },
+           const items = [
+      { text: "🎵➕ 12 мая", sub: "Butterfly, Save ME, Fire", link: "https://t.me/violent_arhive/3438" },
       { text: "◾️ Mission Possible", link: "https://t.me/violent_arhive/3446" },
-      { text: "◾️ За кадром 29 мая", link: "https://t.me/violent_arhive/3447" },
+      { text: "◾️ 29 мая", sub: "закадровые", link: "https://t.me/violent_arhive/3447" },
       { text: "◾️ Mission Possible", link: "https://t.me/violent_arhive/3448" },
       { text: "💣 День Рождения Чимина", link: "https://t.me/violent_arhive/3449" },
       { text: "◾️ Episode \"Fire\" 1st win", link: "https://t.me/violent_arhive/2078" },
-      { text: "🎵➕ 13 октября (21st Century Girls, Am I Wrong, BST)", link: "https://t.me/violent_arhive/3450" },
-      { text: "🎵➕ 20 октября (BST)", link: "https://t.me/violent_arhive/3459" },
+      { text: "🎵➕ 13 октября", sub: "21st Century Girls, Am I Wrong, BST", link: "https://t.me/violent_arhive/3450" },
+      { text: "🎵➕ 20 октября", sub: "BST", link: "https://t.me/violent_arhive/3459" },
       { text: "◾️ Behind the scenes", link: "https://t.me/violent_arhive/3467" },
-      { text: "🎵 27 окт. (21st Century Girls, BST)", link: "https://t.me/violent_arhive/3468" },
+      { text: "🎵 27 октября", sub: "21st Century Girls, BST", link: "https://t.me/violent_arhive/3468" },
       { text: "◾️ За кадром Japan", link: "https://t.me/violent_arhive/3471" },
       { text: "💣 Как Чимин и Джин готовились к роли ведущих на M!Countdown", link: "https://t.me/violent_arhive/3477" }
     ];
@@ -68,10 +68,16 @@
       row.dataset.id = id;
       const box = document.createElement('input');
       box.type = 'checkbox';
-      const parsed = extractIcon(item.text);
+           const parsed = extractIcon(item.text);
       const span = document.createElement('span');
       span.className = 'text';
       span.textContent = parsed.rest;
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+        sub.textContent = item.sub;
+        span.appendChild(sub);
+      }
       if (localStorage.getItem(id) === 'true') { box.checked = true; span.classList.add('done'); }
       box.addEventListener('change', () => {
         setChecked(id, box.checked);
