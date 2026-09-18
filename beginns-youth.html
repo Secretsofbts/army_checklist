@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js?v=6"></script>
+  <title>Beginns ≠ Youth</title>
+  <style>
+    body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
+    .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
+    h1 { font-size: 18px; margin: 0 0 4px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 10px; line-height: 1.5; }
+    .section-title { font-size: 13px; font-weight: 600; color: #888; margin: 16px 0 6px; }
+    .row { display: flex; align-items: center; gap: 10px; padding: 8px 4px; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .text.done { color: #bbb; text-decoration: line-through; }
+    .sub { display: block; font-size: 11px; color: #999; margin-top: 2px; font-weight: 400; }
+    .links-wrap { display: flex; flex-direction: column; gap: 4px; flex-shrink: 0; align-items: flex-end; }
+    .links-wrap a { font-size: 10px; color: #999; text-decoration: none; border: 1px solid #eee; border-radius: 6px; padding: 2px 5px; }
+    .outro { font-size: 14px; color: #333; text-align: center; margin-top: 16px; }
+    .footer-link { display: block; text-align: center; font-size: 13px; color: #000; text-decoration: none; margin-top: 16px; padding-top: 12px; border-top: 1px solid #eee; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="misc.html">← Назад</a>
+    <h1>🪐 Пора юности (Begins ≠ Youth) 🪐</h1>
+    <p class="intro">Дорама о семерых парнях на их пути к взрослению</p>
+    <p class="intro">Дорама основана на вселенной BTS, с реальностью ребят никак не связана!</p>
+    <p class="intro">🗒 <a href="https://vk.com/wall-43682523_709417" target="_blank">Саммари по Вселенной BTS от группы BangTan Today</a></p>
+
+    <div id="list"></div>
+
+    <p class="intro" style="margin-top: 16px;">🗨 Озвучка от SoftBox — качество 720, в 1080 есть <a href="https://doramalive.ru/dorama/yunost_2024/" target="_blank">тут</a></p>
+
+    <p class="outro">Приятного просмотра ❤️</p>
+
+    <a class="footer-link" href="misc.html">Всякое другое ⬅️</a>
+  </div>
+
+  <script>
+    const items = [
+      { text: "1 серия", sub: "Am I wrong..?", links: [{ label: "Субтитры", link: "https://t.me/violent_arhive/4597" }, { label: "Озвучка", link: "https://t.me/violent_arhive/4585" }] },
+      { text: "2 серия", sub: "Mama", links: [{ label: "Субтитры", link: "https://t.me/violent_arhive/4598" }, { label: "Озвучка", link: "https://t.me/violent_arhive/4586" }] },
+      { text: "3 серия", sub: "Lie", links: [{ label: "Субтитры", link: "https://t.me/violent_arhive/4599" }, { label: "Озвучка", link: "https://t.me/violent_arhive/4587" }] },
+      { text: "4 серия", sub: "Anpanman", links: [{ label: "Субтитры", link: "https://t.me/violent_arhive/4604" }, { label: "Озвучка", link: "https://t.me/violent_arhive/4588" }] },
+      { text: "5 серия", sub: "Mikrocosmos", links: [{ label: "Субтитры", link: "https://t.me/violent_arhive/4638" }, { label: "Озвучка", link: "https://t.me/violent_arhive/4589" }] },
+      { text: "6 серия", sub: "Cetomimidae", links: [{ label: "Субтитры", link: "https://t.me/violent_arhive/4663" }, { label: "Озвучка", link: "https://t.me/violent_arhive/4590" }] },
+      { text: "7 серия", sub: "Man in the mirror", links: [{ label: "Озвучка", link: "https://t.me/violent_arhive/4591" }] },
+      { text: "8 серия", sub: "13th Apostle", links: [{ label: "Озвучка", link: "https://t.me/violent_arhive/4592" }] },
+      { text: "9 серия", sub: "Asteroid 2019 OK", links: [{ label: "Озвучка", link: "https://t.me/violent_arhive/4593" }] },
+      { text: "10 серия", sub: "Hide and Seek", links: [{ label: "Озвучка", link: "https://t.me/violent_arhive/4594" }] },
+      { text: "11 серия", sub: "The Note", links: [{ label: "Озвучка", link: "https://t.me/violent_arhive/4595" }] },
+      { text: "12 серия", sub: "Begins ∞ Youth", links: [{ label: "Озвучка", link: "https://t.me/violent_arhive/4596" }] }
+    ];
+
+    const listEl = document.getElementById('list');
+    items.forEach((item) => {
+      const firstLink = item.links[0].link;
+      const id = 'video-' + firstLink.split('/').pop();
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.dataset.id = id;
+
+      const box = document.createElement('input');
+      box.type = 'checkbox';
+
+      const span = document.createElement('span');
+      span.className = 'text';
+      span.textContent = item.text;
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.className = 'sub';
+        sub.textContent = item.sub;
+        span.appendChild(sub);
+      }
+
+      if (localStorage.getItem(id) === 'true') {
+        box.checked = true;
+        span.classList.add('done');
+      }
+      box.addEventListener('change', () => {
+        setChecked(id, box.checked);
+        span.classList.toggle('done', box.checked);
+        updateProgress();
+      });
+      span.addEventListener('click', () => {
+        box.checked = !box.checked;
+        box.dispatchEvent(new Event('change'));
+      });
+
+      const linksWrap = document.createElement('span');
+      linksWrap.className = 'links-wrap';
+      item.links.forEach((l) => {
+        const a = document.createElement('a');
+        a.href = l.link;
+        a.target = '_blank';
+        a.textContent = l.label;
+        linksWrap.appendChild(a);
+      });
+
+      row.appendChild(box);
+      row.appendChild(span);
+      row.appendChild(linksWrap);
+      listEl.appendChild(row);
+    });
+
+    function updateProgress() {
+      const all = document.querySelectorAll('.row input[type="checkbox"]');
+      let total = 0, checked = 0;
+      all.forEach(cb => { total++; if (cb.checked) checked++; });
+      setProgress('beginns-youth', {checked, total});
+      pushWeightedContributions('beginns-youth');
+    }
+    updateProgress();
+    syncChecklistFromCloud(updateProgress);
+    refreshLocalStorageFromCloud(updateProgress);
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
