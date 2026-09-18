@@ -116,12 +116,13 @@
         </div>
         <span class="badge" id="badge-korean" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
-      <a class="card" href="#" onclick="alert('Скоро здесь будет список'); return false;" style="text-decoration:none; color:inherit;">
+            <a class="card" href="halloween.html" style="text-decoration:none; color:inherit;">
         <div class="icon">🎃</div>
         <div class="text">
           <div class="name">Halloween</div>
           <div class="desc"></div>
         </div>
+        <span class="badge" id="badge-halloween" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
       <a class="card" href="#" onclick="alert('Скоро здесь будет список'); return false;" style="text-decoration:none; color:inherit;">
         <div class="icon">🔵</div>
@@ -165,10 +166,11 @@
       }
     }
 
-              applyBadge('badge-sleepy', 'sleepy-interview');
+                  applyBadge('badge-sleepy', 'sleepy-interview');
     applyBadge('badge-fm', 'fm-0613');
     applyBadge('badge-korean', 'learn-korean');
     applyBadge('badge-td', 'td-stories');
+    applyBadge('badge-halloween', 'halloween');
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
       Telegram.WebApp.expand();
