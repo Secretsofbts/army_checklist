@@ -35,11 +35,11 @@
   </div>
 
   <script>
-    const items = [
-      { text: "🎵➕ 31.05 (Fake Love, Airplane, Pt. 2)", link: "https://t.me/violent_arhive/3504" },
-      { text: "🎵➕ 7 июня (Fake Love)", link: "https://t.me/violent_arhive/3509" },
-      { text: "◾️ За кадром Japan 17 июня", link: "https://t.me/violent_arhive/3513" },
-      { text: "🎵➕ 30 авг. (Save ME, I'm Fine, IDOL)", link: "https://t.me/violent_arhive/3514" }
+       const items = [
+      { text: "🎵➕ 31.05", sub: "Fake Love, Airplane, Pt. 2", link: "https://t.me/violent_arhive/3504" },
+      { text: "🎵➕ 7 июня", sub: "Fake Love", link: "https://t.me/violent_arhive/3509" },
+      { text: "◾️ Japan 17 июня", sub: "закадровые", link: "https://t.me/violent_arhive/3513" },
+      { text: "🎵➕ 30 авг.", sub: "Save ME, I'm Fine, IDOL", link: "https://t.me/violent_arhive/3514" }
     ];
 
         function extractIcon(text) {
@@ -60,10 +60,16 @@
       row.dataset.id = id;
       const box = document.createElement('input');
       box.type = 'checkbox';
-      const parsed = extractIcon(item.text);
+            const parsed = extractIcon(item.text);
       const span = document.createElement('span');
       span.className = 'text';
       span.textContent = parsed.rest;
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+        sub.textContent = item.sub;
+        span.appendChild(sub);
+      }
       if (localStorage.getItem(id) === 'true') { box.checked = true; span.classList.add('done'); }
       box.addEventListener('change', () => {
         setChecked(id, box.checked);
