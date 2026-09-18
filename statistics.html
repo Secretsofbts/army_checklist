@@ -114,12 +114,26 @@
           checkedCard.innerHTML = '<div class="stat-number">' + totalChecked + '</div><div class="stat-label">Видео отмечено вами как просмотренные</div>';
           contentEl.appendChild(checkedCard);
 
-          if (localStorage.getItem('hasDonated') === 'true') {
+                   const showDonateBadge = () => {
             const donateBadge = document.createElement('div');
             donateBadge.className = 'badge-card';
             donateBadge.style.background = 'linear-gradient(135deg, #fff3cd, #f7f7fa)';
             donateBadge.innerHTML = '<div class="badge-icon">🎁</div><div class="badge-name" style="color:#b8860b;">Ангел-хранитель проекта</div>';
             contentEl.appendChild(donateBadge);
+          };
+
+          if (localStorage.getItem('hasDonated_' + ARMY_USER_ID) === 'true') {
+            showDonateBadge();
+          } else if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
+            fetch(`${FIREBASE_URL}/user_registry/${ARMY_USER_ID}.json`)
+              .then(res => res.json())
+              .then(entry => {
+                if (entry && entry.hasDonated) {
+                  localStorage.setItem('hasDonated_' + ARMY_USER_ID, 'true');
+                  showDonateBadge();
+                }
+              })
+              .catch(() => {});
           }
         })
         .catch(() => {

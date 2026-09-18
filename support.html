@@ -62,18 +62,26 @@
     // Впишите сюда номер своей карты
     document.getElementById('card-number').textContent = '0000 0000 0000 0000';
 
-       const donatedBtn = document.getElementById('donated-btn');
+          const donatedBtn = document.getElementById('donated-btn');
     const donatedStatus = document.getElementById('donated-status');
 
-    if (localStorage.getItem('hasDonated') === 'true') {
-      donatedBtn.textContent = '💜 Спасибо за поддержку!';
-      donatedBtn.disabled = true;
-      donatedBtn.style.opacity = '0.6';
+    if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
+      fetch(`${FIREBASE_URL}/user_registry/${ARMY_USER_ID}.json`)
+        .then(res => res.json())
+        .then(entry => {
+          if (entry && entry.hasDonated) {
+            localStorage.setItem('hasDonated_' + ARMY_USER_ID, 'true');
+            donatedBtn.textContent = '💜 Спасибо за поддержку!';
+            donatedBtn.disabled = true;
+            donatedBtn.style.opacity = '0.6';
+          }
+        })
+        .catch(() => {});
     }
 
     donatedBtn.addEventListener('click', () => {
       if (!confirm('Вы действительно перевели поддержку проекту? Это на доверии — просто отметка для вас самих 💜')) return;
-      localStorage.setItem('hasDonated', 'true');
+      localStorage.setItem('hasDonated_' + ARMY_USER_ID, 'true');
       if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
         fetch(`${FIREBASE_URL}/user_registry/${ARMY_USER_ID}.json`, {
           method: 'PATCH',
