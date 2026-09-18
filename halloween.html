@@ -46,8 +46,10 @@
 
     <div id="list"></div>
 
-            <p class="year-title">Дополнительный материал</p>
-    <div id="list-extra"></div>
+             <div style="border-top: 1px solid #f0f0f0; margin-top: 12px; padding-top: 12px;">
+      <p class="year-title" style="margin-top: 0;">Дополнительный материал</p>
+      <div id="list-extra"></div>
+    </div>
 
 
     <a class="footer-link" href="misc.html">Всякое другое ⬅️</a>
@@ -105,7 +107,7 @@
            {
         year: "2022",
         items: [
-          { text: "Пост в inst от Хоси", link: "https://t.me/secretsofbts/31576", noCheckbox: true }
+         { text: "Пост в inst от Хоси", link: "https://t.me/secretsofbts/31576", noCheckbox: true, icon: "🔗" }
         ]
       }
     ];
@@ -146,9 +148,9 @@
           span.className = 'text';
           span.style.cursor = 'default';
           span.textContent = item.text;
-          const link = document.createElement('span');
+                    const link = document.createElement('span');
           link.className = 'link';
-          link.textContent = '📷 🔗';
+          link.textContent = item.icon || '📷 🔗';
           a.appendChild(spacer);
           a.appendChild(span);
           a.appendChild(link);
@@ -195,7 +197,7 @@
       });
 
     const extraItems = [
-      { text: "Всякие фото, связанные с этим праздником от ребят", link: "https://telegra.ph/Vsyakie-foto-s-Hehllouina-10-29", noCheckbox: true }
+      { text: "Всякие фото, связанные с этим праздником", link: "https://telegra.ph/Vsyakie-foto-s-Hehllouina-10-29", noCheckbox: true }
     ];
     const extraListEl = document.getElementById('list-extra');
     extraItems.forEach((item) => {
