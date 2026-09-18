@@ -126,16 +126,17 @@
         return;
       }
 
-            y.items.forEach((item) => {
+                y.items.forEach((item) => {
         if (item.noCheckbox) {
           const a = document.createElement('a');
           a.className = 'row';
           a.href = item.link;
           a.target = '_blank';
           a.style.textDecoration = 'none';
-          const icon = document.createElement('span');
-          icon.style.cssText = 'width:18px; text-align:center; flex-shrink:0;';
-          icon.textContent = '📷';
+          const spacer = document.createElement('input');
+          spacer.type = 'checkbox';
+          spacer.disabled = true;
+          spacer.style.cssText = 'width:18px; height:18px; flex-shrink:0; visibility:hidden;';
           const span = document.createElement('span');
           span.className = 'text';
           span.style.cursor = 'default';
@@ -143,7 +144,7 @@
           const link = document.createElement('span');
           link.className = 'link';
           link.textContent = '🔗';
-          a.appendChild(icon);
+          a.appendChild(spacer);
           a.appendChild(span);
           a.appendChild(link);
           listEl.appendChild(a);
