@@ -49,6 +49,16 @@
       { text: "🎵 Attack on Bangtan", link: "https://t.me/violent_arhive/3391" }
     ];
 
+       function extractIcon(text) {
+      const prefixes = ['🎵➕ ', '🎵 ', '💣 ', '◾️ '];
+      for (const p of prefixes) {
+        if (text.startsWith(p)) {
+          return { icon: p.trim(), rest: text.slice(p.length) };
+        }
+      }
+      return { icon: '', rest: text };
+    }
+
     const listEl = document.getElementById('list');
     items.forEach((item) => {
       const id = 'video-' + item.link.split('/').pop();
@@ -57,9 +67,10 @@
       row.dataset.id = id;
       const box = document.createElement('input');
       box.type = 'checkbox';
+      const parsed = extractIcon(item.text);
       const span = document.createElement('span');
       span.className = 'text';
-      span.textContent = item.text;
+      span.textContent = parsed.rest;
       if (localStorage.getItem(id) === 'true') { box.checked = true; span.classList.add('done'); }
       box.addEventListener('change', () => {
         setChecked(id, box.checked);
@@ -67,9 +78,12 @@
         updateProgress();
       });
       span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
+      const icon = document.createElement('span');
+      icon.style.cssText = 'font-size:13px; flex-shrink:0;';
+      icon.textContent = parsed.icon;
       const link = document.createElement('a');
       link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
-      row.appendChild(box); row.appendChild(span); row.appendChild(link);
+      row.appendChild(box); row.appendChild(span); row.appendChild(icon); row.appendChild(link);
       listEl.appendChild(row);
     });
 
