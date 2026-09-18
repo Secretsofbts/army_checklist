@@ -122,30 +122,9 @@
       costumes.textContent = y.costumes;
       listEl.appendChild(costumes);
 
-      if (y.items.length === 0) {
+          if (y.items.length === 0) {
         return;
       }
-          const extraItems = [
-      { text: "Всякие фото, связанные с этим праздником от ребят", link: "https://telegra.ph/Vsyakie-foto-s-Hehllouina-10-29", noCheckbox: true }
-    ];
-    const extraListEl = document.getElementById('list-extra');
-    extraItems.forEach((item) => {
-      const a = document.createElement('a');
-      a.className = 'row';
-      a.href = item.link;
-      a.target = '_blank';
-      a.style.textDecoration = 'none';
-      const spacer = document.createElement('input');
-      spacer.type = 'checkbox';
-      spacer.disabled = true;
-      spacer.style.cssText = 'width:18px; height:18px; flex-shrink:0; visibility:hidden;';
-      const span = document.createElement('span');
-      span.className = 'text';
-      span.style.cursor = 'default';
-      span.textContent = item.text;
-      const link = document.createElement('span');
-      link.className = 'link';
-      link.textContent = '📷 🔗';
       a.appendChild(spacer);
       a.appendChild(span);
       a.appendChild(link);
@@ -209,14 +188,40 @@
         link.target = '_blank';
         link.textContent = '🔗';
 
-        row.appendChild(box);
+               row.appendChild(box);
         row.appendChild(span);
         row.appendChild(link);
         listEl.appendChild(row);
       });
+
+    const extraItems = [
+      { text: "Всякие фото, связанные с этим праздником от ребят", link: "https://telegra.ph/Vsyakie-foto-s-Hehllouina-10-29", noCheckbox: true }
+    ];
+    const extraListEl = document.getElementById('list-extra');
+    extraItems.forEach((item) => {
+      const a = document.createElement('a');
+      a.className = 'row';
+      a.href = item.link;
+      a.target = '_blank';
+      a.style.textDecoration = 'none';
+      const spacer = document.createElement('input');
+      spacer.type = 'checkbox';
+      spacer.disabled = true;
+      spacer.style.cssText = 'width:18px; height:18px; flex-shrink:0; visibility:hidden;';
+      const span = document.createElement('span');
+      span.className = 'text';
+      span.style.cursor = 'default';
+      span.textContent = item.text;
+      const link = document.createElement('span');
+      link.className = 'link';
+      link.textContent = '📷 🔗';
+      a.appendChild(spacer);
+      a.appendChild(span);
+      a.appendChild(link);
+      extraListEl.appendChild(a);
     });
 
-       function updateProgress() {
+    function updateProgress() {
       const all = document.querySelectorAll('.row input[type="checkbox"]:not([disabled])');
       let total = 0, checked = 0;
       all.forEach(cb => { total++; if (cb.checked) checked++; });
