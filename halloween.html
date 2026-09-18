@@ -191,8 +191,8 @@
       });
     });
 
-    function updateProgress() {
-      const all = document.querySelectorAll('.row input[type="checkbox"]');
+       function updateProgress() {
+      const all = document.querySelectorAll('.row input[type="checkbox"]:not([disabled])');
       let total = 0, checked = 0;
       all.forEach(cb => { total++; if (cb.checked) checked++; });
       setProgress('halloween', {checked, total});
