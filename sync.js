@@ -107,12 +107,12 @@ registerUserIfNeeded();
       })
       .catch(() => {});
   }
-    function refreshLocalStorageFromCloud(callback) {
+     function refreshLocalStorageFromCloud(callback) {
     if (!ARMY_USER_ID) return;
     fetch(`${FIREBASE_URL}/users/${ARMY_USER_ID}.json`)
       .then(res => res.json())
       .then(data => {
-        if (!data) return;
+        if (!data) { if (callback) callback(); return; }
         Object.keys(data).forEach(function(k) {
           if (k.indexOf('progress:') === 0) {
             localStorage.setItem(k, JSON.stringify(data[k]));
