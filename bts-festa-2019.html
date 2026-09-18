@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js?v=8"></script>
+  <title>BTS Festa 2019</title>
+  <style>
+    body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
+    .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
+    h1 { font-size: 18px; margin: 0 0 16px; }
+    .row { display: flex; align-items: center; gap: 10px; padding: 8px 4px; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+    input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
+    .text { flex: 1; cursor: pointer; color: #333; }
+    .text.done { color: #bbb; text-decoration: line-through; }
+    .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+    .icon { font-size: 13px; flex-shrink: 0; }
+    .outro { font-size: 12px; color: #999; margin-top: 16px; line-height: 1.5; }
+    .footer-link { display: block; text-align: center; font-size: 13px; color: #000; text-decoration: none; margin-top: 16px; padding-top: 12px; border-top: 1px solid #eee; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="bts-festa.html">← Назад</a>
+    <h1>🎉 BTS FESTA 2019 🎉</h1>
+
+    <div id="list"></div>
+
+    <p class="outro">Если вдруг заметили, что что-то не так, сообщите, пожалуйста 💜</p>
+
+    <a class="footer-link" href="bts-festa.html">BTS FESTA ⬅️</a>
+  </div>
+
+  <script>
+    const items = [
+      { text: "Церемония открытия", icon: "📷", link: "https://www.facebook.com/media/set/?set=a.2757867114228533&type=3", noCheckbox: true },
+      { text: "BTS Photo Collection", icon: "📷", link: "https://www.facebook.com/media/set/?set=a.2760419207306657&type=3", noCheckbox: true },
+      { text: "STAGE SELF CAM \"Anpanman\"", sub: "Нью-Йорк", icon: "🎥", link: "https://t.me/violent_arhive/1906" },
+      { text: "This Night", sub: "By Jin", icon: "🎶", links: [
+        { label: "SoundCloud", link: "https://soundcloud.com/bangtan/tonightbyjin" },
+        { label: "Перевод", link: "https://t.me/violent_arhive/1907" }
+      ]},
+      { text: "Джин записывает свою первую песню \"This Night\"", sub: "эта бомбочка не на фесту, но решила сюда добавить", icon: "💣", link: "https://t.me/violent_arhive/1908" },
+      { text: "Special Choreography", sub: "MIC Drop (MAMA dance break)", icon: "🕺", link: "https://t.me/violent_arhive/1909" },
+      { text: "Газета BANGTAN NEWS", icon: "✉️", link: "https://m.vk.com/wall-163395992_2793", noCheckbox: true },
+      { text: "Special Choreography", sub: "Spring Day (Lovely ver)", icon: "🕺", link: "https://t.me/violent_arhive/1910" },
+      { text: "Family Portrait", icon: "📷", link: "https://www.facebook.com/media/set/?set=a.2773381229343788&type=3", noCheckbox: true },
+      { text: "Euphoria", sub: "Piano ver", icon: "🎶", links: [
+        { label: "SoundCloud", link: "https://soundcloud.com/bangtan/euphoria2019festa" },
+        { label: "Перевод", link: "https://t.me/violent_arhive/1911" }
+      ]},
+      { text: "BTS Profile 2019", sub: "там много фотографий, не один пост, пролистайте ниже", icon: "✉️", link: "https://t.me/secretsofbts/16061", noCheckbox: true },
+      { text: "Чердак Бантан", sub: "6th BTS birthday", icon: "🎂", link: "https://t.me/violent_arhive/952" },
+      { text: "FAMILY PORTRAIT SPECIAL", icon: "📷", link: "https://www.facebook.com/media/set/?set=a.2781689961846248&type=3", noCheckbox: true },
+      { text: "Эпизод \"Съёмка Семейного Портрета #1\"", icon: "🎥", link: "https://t.me/violent_arhive/1914" },
+      { text: "Эпизод \"Съёмка Семейного Портрета #2\"", icon: "🎥", link: "https://t.me/violent_arhive/1915" },
+      { text: "2019 FESTA семейный портрет", sub: "за кадром — с Memories 2019", icon: "🎥", link: "https://t.me/violent_arhive/1653" }
+    ];
+
+    function renderItem(container, item) {
+      if (item.noCheckbox) {
+        const a = document.createElement('a');
+        a.className = 'row';
+        a.href = item.link;
+        a.target = '_blank';
+        a.style.textDecoration = 'none';
+        const spacer = document.createElement('input');
+        spacer.type = 'checkbox';
+        spacer.disabled = true;
+        spacer.style.cssText = 'width:18px; height:18px; flex-shrink:0; visibility:hidden;';
+        const span = document.createElement('span');
+        span.className = 'text';
+        span.style.cursor = 'default';
+        span.textContent = item.text;
+        if (item.sub) {
+          const sub = document.createElement('span');
+          sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+          sub.textContent = item.sub;
+          span.appendChild(sub);
+        }
+        const icon = document.createElement('span');
+        icon.className = 'icon';
+        icon.textContent = item.icon || '';
+        const link = document.createElement('span');
+        link.className = 'link';
+        link.textContent = '🔗';
+        a.appendChild(spacer);
+        a.appendChild(span);
+        if (icon.textContent) a.appendChild(icon);
+        a.appendChild(link);
+        container.appendChild(a);
+        return;
+      }
+
+      const firstLink = item.links ? item.links[0].link : item.link;
+      const id = 'video-' + firstLink.split('/').pop();
+      const row = document.createElement('div');
+      row.className = 'row';
+      row.dataset.id = id;
+
+      const box = document.createElement('input');
+      box.type = 'checkbox';
+
+      const span = document.createElement('span');
+      span.className = 'text';
+      span.textContent = item.text;
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+        sub.textContent = item.sub;
+        span.appendChild(sub);
+      }
+
+      if (localStorage.getItem(id) === 'true') {
+        box.checked = true;
+        span.classList.add('done');
+      }
+      box.addEventListener('change', () => {
+        setChecked(id, box.checked);
+        span.classList.toggle('done', box.checked);
+        updateProgress();
+      });
+      span.addEventListener('click', () => {
+        box.checked = !box.checked;
+        box.dispatchEvent(new Event('change'));
+      });
+
+      row.appendChild(box);
+      row.appendChild(span);
+
+      if (item.icon) {
+        const icon = document.createElement('span');
+        icon.className = 'icon';
+        icon.textContent = item.icon;
+        row.appendChild(icon);
+      }
+
+      if (item.links) {
+        const linksWrap = document.createElement('span');
+        linksWrap.style.cssText = 'display:flex; flex-direction:column; gap:4px; flex-shrink:0; align-items:flex-end;';
+        item.links.forEach((l) => {
+          const a = document.createElement('a');
+          a.href = l.link;
+          a.target = '_blank';
+          a.style.cssText = 'font-size:10px; color:#999; text-decoration:none; border:1px solid #eee; border-radius:6px; padding:2px 5px;';
+          a.textContent = l.label;
+          linksWrap.appendChild(a);
+        });
+        row.appendChild(linksWrap);
+      } else {
+        const link = document.createElement('a');
+        link.className = 'link';
+        link.href = item.link;
+        link.target = '_blank';
+        link.textContent = '🔗';
+        row.appendChild(link);
+      }
+
+      container.appendChild(row);
+    }
+
+    const listEl = document.getElementById('list');
+    items.forEach((item) => renderItem(listEl, item));
+
+    function updateProgress() {
+      const all = document.querySelectorAll('.row input[type="checkbox"]:not([disabled])');
+      let total = 0, checked = 0;
+      all.forEach(cb => { total++; if (cb.checked) checked++; });
+      setProgress('bts-festa-2019', {checked, total});
+      pushWeightedContributions('bts-festa-2019');
+    }
+    updateProgress();
+    syncChecklistFromCloud(updateProgress);
+    refreshLocalStorageFromCloud(updateProgress);
+
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
