@@ -46,8 +46,8 @@
 
     <div id="list"></div>
 
-           <p class="year-title">Дополнительный материал</p>
-    <a href="https://telegra.ph/Vsyakie-foto-s-Hehllouina-10-29" target="_blank" style="display:block; background:#f7f7fa; border-radius:10px; padding:10px 12px; margin-bottom:10px; font-size:13px; color:#333; text-decoration:none;">📷 Фото, связанные с этим праздником</a>
+            <p class="year-title">Дополнительный материал</p>
+    <div id="list-extra"></div>
 
 
     <a class="footer-link" href="misc.html">Всякое другое ⬅️</a>
@@ -125,8 +125,34 @@
       if (y.items.length === 0) {
         return;
       }
+          const extraItems = [
+      { text: "Всякие фото, связанные с этим праздником от ребят", link: "https://telegra.ph/Vsyakie-foto-s-Hehllouina-10-29", noCheckbox: true }
+    ];
+    const extraListEl = document.getElementById('list-extra');
+    extraItems.forEach((item) => {
+      const a = document.createElement('a');
+      a.className = 'row';
+      a.href = item.link;
+      a.target = '_blank';
+      a.style.textDecoration = 'none';
+      const spacer = document.createElement('input');
+      spacer.type = 'checkbox';
+      spacer.disabled = true;
+      spacer.style.cssText = 'width:18px; height:18px; flex-shrink:0; visibility:hidden;';
+      const span = document.createElement('span');
+      span.className = 'text';
+      span.style.cursor = 'default';
+      span.textContent = item.text;
+      const link = document.createElement('span');
+      link.className = 'link';
+      link.textContent = '📷 🔗';
+      a.appendChild(spacer);
+      a.appendChild(span);
+      a.appendChild(link);
+      extraListEl.appendChild(a);
+    });
 
-                y.items.forEach((item) => {
+                 y.items.forEach((item) => {
         if (item.noCheckbox) {
           const a = document.createElement('a');
           a.className = 'row';
@@ -143,7 +169,7 @@
           span.textContent = item.text;
           const link = document.createElement('span');
           link.className = 'link';
-          link.textContent = '🔗';
+          link.textContent = '📷 🔗';
           a.appendChild(spacer);
           a.appendChild(span);
           a.appendChild(link);
