@@ -120,14 +120,23 @@
       }
     }
 
-    function renderBadge(key) {
+       function renderBadge(key) {
+      var known = getStatTotal(key);
       var raw = localStorage.getItem('progress:' + key);
-      var data = raw ? JSON.parse(raw) : null;
+      var rawData = raw ? JSON.parse(raw) : null;
+      var data = { checked: rawData ? rawData.checked : 0, total: known !== null ? known : (rawData ? rawData.total : 0) };
       applyBadge(key, data);
     }
 
     Object.keys(badgeMap).forEach(renderBadge);
-    syncBadgesFromCloud(Object.keys(badgeMap), applyBadge);
+    syncBadgesFromCloud(Object.keys(badgeMap), function(key, cloudData) {
+      var known = getStatTotal(key);
+      if (known !== null) {
+        applyBadge(key, { checked: cloudData ? cloudData.checked : 0, total: known });
+      } else {
+        applyBadge(key, cloudData);
+      }
+    });
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();

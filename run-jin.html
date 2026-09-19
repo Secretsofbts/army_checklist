@@ -82,56 +82,57 @@
 
         <script>
     const navItems = [
-      { text: "1-25 эпизод", link: "run-jin-1-25.html", statKey: "run-jin-1-25" },
-      { text: "26-36 эпизод", link: "run-jin-26-36.html", statKey: "run-jin-26-36" }
-    ];
+        { text: "1-25 эпизод", link: "run-jin-1-25.html", statKey: "run-jin-1-25" },
+        { text: "26-36 эпизод", link: "run-jin-26-36.html", statKey: "run-jin-26-36" }
+      ];
 
-    const listEl = document.getElementById('list');
-    navItems.forEach((item) => {
-      const a = document.createElement('a');
-      a.className = 'navlink';
-      a.href = item.link;
-      const span = document.createElement('span');
-      span.className = 'text';
-      span.textContent = item.text;
-      const badge = document.createElement('span');
-      badge.id = 'badge-' + item.statKey;
-      badge.style.cssText = 'font-size:12px; color:#999;';
-      a.appendChild(span);
-      a.appendChild(badge);
-      listEl.appendChild(a);
-    });
+      const listEl = document.getElementById('list');
+      navItems.forEach((item) => {
+        const a = document.createElement('a');
+        a.className = 'navlink';
+        a.href = item.link;
+        const span = document.createElement('span');
+        span.className = 'text';
+        span.textContent = item.text;
+        const badge = document.createElement('span');
+        badge.id = 'badge-' + item.statKey;
+        badge.style.cssText = 'font-size:12px; color:#999;';
+        a.appendChild(span);
+        a.appendChild(badge);
+        listEl.appendChild(a);
+      });
 
-        function applyBadge(elId, data) {
-      var el = document.getElementById(elId);
-      if (!data || data.total === 0) { el.textContent = ''; return; }
-      if (data.checked === data.total) {
-        el.textContent = '✅';
-        el.style.color = '#2e9e5b';
-        var card = el.closest('.navlink');
-        if (card) card.style.background = '#e3f7e9';
-      } else {
-        el.textContent = data.checked + '/' + data.total;
+          function applyBadge(elId, data) {
+        var el = document.getElementById(elId);
+        if (!data || data.total === 0) { el.textContent = ''; return; }
+        if (data.checked === data.total) {
+          el.textContent = '✅';
+          el.style.color = '#2e9e5b';
+          var card = el.closest('.navlink');
+          if (card) card.style.background = '#e3f7e9';
+        } else {
+          el.textContent = data.checked + '/' + data.total;
+        }
       }
-    }
 
-    function renderBadge(elId, key) {
+         function renderBadge(elId, key) {
+      var known = getStatTotal(key);
       var raw = localStorage.getItem('progress:' + key);
-      var data = raw ? JSON.parse(raw) : null;
+      var rawData = raw ? JSON.parse(raw) : null;
+      var data = { checked: rawData ? rawData.checked : 0, total: known !== null ? known : (rawData ? rawData.total : 0) };
       applyBadge(elId, data);
     }
+      function renderAllBadges() {
+        renderBadge('badge-run-jin-1-25', 'run-jin-1-25');
+        renderBadge('badge-run-jin-26-36', 'run-jin-26-36');
+      }
+      renderAllBadges();
+      refreshLocalStorageFromCloud(renderAllBadges);
 
-    function renderAllBadges() {
-      renderBadge('badge-run-jin-1-25', 'run-jin-1-25');
-      renderBadge('badge-run-jin-26-36', 'run-jin-26-36');
-    }
-    renderAllBadges();
-    refreshLocalStorageFromCloud(renderAllBadges);
-
-    if (window.Telegram && window.Telegram.WebApp) {
-      Telegram.WebApp.ready();
-      Telegram.WebApp.expand();
-    }
-  </script>
-</body>
-</html>
+      if (window.Telegram && window.Telegram.WebApp) {
+        Telegram.WebApp.ready();
+        Telegram.WebApp.expand();
+      }
+    </script>
+  </body>
+  </html>

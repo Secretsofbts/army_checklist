@@ -97,10 +97,11 @@
 
   <script>
     function renderBadge(elId, key) {
-      var el = document.getElementById(elId);
-      var raw = localStorage.getItem('progress:' + key);
-      if (!raw) { el.textContent = ''; return; }
-      var data = JSON.parse(raw);
+     var el = document.getElementById(elId);
+var known = getStatTotal(key);
+var raw = localStorage.getItem('progress:' + key);
+var rawData = raw ? JSON.parse(raw) : null;
+var data = { checked: rawData ? rawData.checked : 0, total: known !== null ? known : (rawData ? rawData.total : 0) };
       var checked = data.checked, total = data.total;
       if (total === 0) { el.textContent = ''; return; }
       if (checked === total) {

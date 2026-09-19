@@ -132,12 +132,25 @@
       }
     }
 
-    const monthKeys = ['bombs-2013-june', 'bombs-2013-july', 'bombs-2013-august', 'bombs-2013-september', 'bombs-2013-october', 'bombs-2013-november'];
+       const monthKeys = ['bombs-2013-june', 'bombs-2013-july', 'bombs-2013-august', 'bombs-2013-september', 'bombs-2013-october', 'bombs-2013-november'];
     monthKeys.forEach((key) => {
+      var known = getStatTotal(key);
       var raw = localStorage.getItem('progress:' + key);
-      applyBadge(key, raw ? JSON.parse(raw) : null);
+      var data = raw ? JSON.parse(raw) : null;
+      if (known !== null) {
+        applyBadge(key, { checked: data ? data.checked : 0, total: known });
+      } else {
+        applyBadge(key, data);
+      }
     });
-    syncBadgesFromCloud(monthKeys, applyBadge);
+    syncBadgesFromCloud(monthKeys, function(key, cloudData) {
+      var known = getStatTotal(key);
+      if (known !== null) {
+        applyBadge(key, { checked: cloudData ? cloudData.checked : 0, total: known });
+      } else {
+        applyBadge(key, cloudData);
+      }
+    });
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
