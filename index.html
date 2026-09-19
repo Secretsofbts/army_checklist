@@ -171,13 +171,13 @@
         const seen = localStorage.getItem('seenContentVersion');
         const isExistingUser = !!localStorage.getItem('userNumber_' + ARMY_USER_ID);
         if (isExistingUser && (seen === null || parseInt(seen) < data.version) && data.message) {
-          const banner = document.createElement('div');
-          banner.style.cssText = 'background:#fff3cd; border:1px solid #f0dca0; border-radius:12px; padding:12px 14px; margin-bottom:14px; font-size:13px; color:#7a5c00; display:flex; justify-content:space-between; align-items:center; gap:10px;';
+                   const banner = document.createElement('div');
+          banner.style.cssText = 'background:#f0edf9; border:1px solid #d9cdf0; border-radius:12px; padding:12px 14px; margin-bottom:14px; font-size:13px; color:#5b3a8e; display:flex; justify-content:space-between; align-items:center; gap:10px;';
           const text = document.createElement('span');
-          text.textContent = '🎉 ' + data.message;
+          text.textContent = '💬 ' + data.message;
           const close = document.createElement('button');
           close.textContent = '✕';
-          close.style.cssText = 'background:none; border:none; font-size:14px; color:#7a5c00; cursor:pointer; flex-shrink:0;';
+          close.style.cssText = 'background:none; border:none; font-size:14px; color:#5b3a8e; cursor:pointer; flex-shrink:0;';
           close.addEventListener('click', () => banner.remove());
           banner.appendChild(text);
           banner.appendChild(close);
