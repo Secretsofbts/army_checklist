@@ -359,12 +359,13 @@ makeCheckRow(listEl, item, false, !!(item.subs || item.branches || (nextItem && 
       });
     });
 
-         function renderBadge(elId, key, cardClass) {
+               function renderBadge(elId, key, cardClass) {
       var el = document.getElementById(elId);
       if (!el) return;
+      var known = getStatTotal(key);
       var raw = localStorage.getItem('progress:' + key);
-      if (!raw) { el.textContent = ''; return; }
-      var data = JSON.parse(raw);
+      var rawData = raw ? JSON.parse(raw) : null;
+      var data = { checked: rawData ? rawData.checked : 0, total: known !== null ? known : (rawData ? rawData.total : 0) };
       if (data.total === 0) { el.textContent = ''; return; }
       if (data.checked === data.total) {
         el.textContent = '';
