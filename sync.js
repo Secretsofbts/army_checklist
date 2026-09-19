@@ -432,7 +432,16 @@ const YEAR_OWN_TOTALS = {
   'fm-3rd-muster': 3,
     'fm-jp-vol3': 8,
   'other-shows-star-bromance-minwoo-jungkook': 5,
-    'other-shows-star-bromance-taehyung-minche': 5
+     'other-shows-star-bromance-taehyung-minche': 5,
+  'documentaries-break-the-silence': 9,
+  'documentaries-bring-the-soul': 8,
+  'documentaries-bts-monuments': 8,
+  'documentaries-burn-the-stage': 9,
+  'documentaries-hope-on-the-street': 6,
+  'documentaries-jhope-in-the-box': 8,
+  'documentaries-jimin-production-diary': 11,
+  'documentaries-jungkook-i-am-still': 3,
+  'documentaries-suga-road-to-dday': 7
 };
   function getStatTotal(key) {
     return STAT_TOTALS.hasOwnProperty(key) ? STAT_TOTALS[key] : null;
