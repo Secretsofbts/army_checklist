@@ -128,13 +128,14 @@
       return raw ? JSON.parse(raw) : null;
     }
 
-           function applyBadgeTotal(elId, keys, dedupVideoId) {
+              function applyBadgeTotal(elId, keys, dedupVideoId) {
       const el = document.getElementById(elId);
       if (!el) return;
       let checked = 0, total = 0;
       let allKnown = true;
       keys.forEach((key) => {
-        const known = getStatTotal(key);
+        const statsKey = (key === 'vlogsbts-jungkook') ? 'vlogsbts-jungkook-with-gcf' : key;
+        const known = getStatTotal(statsKey);
         const raw = getProgress(key);
         if (known !== null) {
           total += known;
@@ -146,10 +147,6 @@
           allKnown = false;
         }
       });
-      if (dedupVideoId) {
-        total -= 1;
-        if (localStorage.getItem(dedupVideoId) === 'true') checked -= 1;
-      }
       if (total === 0) { el.textContent = ''; return; }
       if (allKnown && checked === total) {
         el.textContent = '✅';
@@ -172,7 +169,7 @@
       applyBadgeTotal('badge-albumreview', ['album-review']);
       applyBadgeTotal('badge-gcf', ['gcf']);
       applyBadgeTotal('badge-messagejin', ['message-from-jin']);
-      applyBadgeTotal('badge-vlogsbts', vlogsBtsKeys, 'video-5570');
+     applyBadgeTotal('badge-vlogsbts', vlogsBtsKeys);
       applyBadgeTotal('badge-youtube', youtubeKeys, 'video-5570');
     }
 
