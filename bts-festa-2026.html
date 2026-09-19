@@ -38,7 +38,7 @@
     const items = [
       { text: "Семейные фотографии", icon: "📷", link: "https://vk.com/album-211624546_312706342", noCheckbox: true },
       { text: "Перформанс-видео «HOOLIGAN»", icon: "🕺🏻", link: "https://t.me/violent_arhive/5517" },
-      { text: "Влоги «NORMAL LOG»", icon: "🎥", link: "https://t.me/violent_arhive/5510" },
+           { liveLink: true, text: "Влоги «NORMAL LOG»", icon: "🎥", link: "normal-log.html", statKey: "normal-log" },
       { text: "BTS 13 SIDE FILM", icon: "📷", link: "https://vk.com/album-211624546_312738460", noCheckbox: true },
       { text: "Ужин Фесты 2.0", icon: "🎂", link: "https://t.me/violent_arhive/5523" },
       { text: "Come Over", icon: "🎶", links: [
@@ -52,7 +52,39 @@
       { text: "Письмо Намджуна", icon: "✉️", link: "https://t.me/secretsofbts/76156", noCheckbox: true }
     ];
 
-    function renderItem(container, item) {
+       function renderItem(container, item) {
+      if (item.liveLink) {
+        const a = document.createElement('a');
+        a.className = 'row';
+        a.href = item.link;
+        a.style.textDecoration = 'none';
+
+        const checkbox = document.createElement('input');
+        checkbox.type = 'checkbox';
+        checkbox.id = 'normallog-checkbox';
+        checkbox.style.cssText = 'pointer-events:none; display:none;';
+
+        const span = document.createElement('span');
+        span.className = 'text';
+        span.id = 'normallog-label';
+        span.textContent = item.text;
+
+        const icon = document.createElement('span');
+        icon.className = 'icon';
+        icon.textContent = item.icon || '';
+
+        const badge = document.createElement('span');
+        badge.id = 'normallog-badge';
+        badge.style.cssText = 'font-size:12px; color:#999;';
+
+        a.appendChild(checkbox);
+        a.appendChild(span);
+        if (icon.textContent) a.appendChild(icon);
+        a.appendChild(badge);
+        container.appendChild(a);
+        return;
+      }
+
       if (item.noCheckbox) {
         const a = document.createElement('a');
         a.className = 'row';
@@ -154,8 +186,29 @@
       container.appendChild(row);
     }
 
-    const listEl = document.getElementById('list');
+       const listEl = document.getElementById('list');
     items.forEach((item) => renderItem(listEl, item));
+
+    function applyNormalLogBadge() {
+      const raw = localStorage.getItem('progress:normal-log');
+      const badge = document.getElementById('normallog-badge');
+      const checkbox = document.getElementById('normallog-checkbox');
+      const label = document.getElementById('normallog-label');
+      if (!badge) return;
+      if (!raw) { badge.textContent = ''; return; }
+      const d = JSON.parse(raw);
+      if (d.total === 0) { badge.textContent = ''; return; }
+      if (d.checked === d.total) {
+        badge.textContent = '';
+        checkbox.checked = true;
+        checkbox.style.display = '';
+        label.style.color = '#bbb';
+        label.style.textDecoration = 'line-through';
+      } else {
+        badge.textContent = d.checked + '/' + d.total;
+      }
+    }
+    applyNormalLogBadge();
 
     function updateProgress() {
       const all = document.querySelectorAll('.row input[type="checkbox"]:not([disabled])');
@@ -164,9 +217,12 @@
       setProgress('bts-festa-2026', {checked, total});
       pushWeightedContributions('bts-festa-2026');
     }
-    updateProgress();
+       updateProgress();
     syncChecklistFromCloud(updateProgress);
-    refreshLocalStorageFromCloud(updateProgress);
+    refreshLocalStorageFromCloud(() => {
+      updateProgress();
+      applyNormalLogBadge();
+    });
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
