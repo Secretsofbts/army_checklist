@@ -42,18 +42,19 @@
   </div>
   <script>
           function applyBadge(key, elId) {
+      var known = getStatTotal(key);
       var raw = localStorage.getItem('progress:' + key);
-      if (raw) {
-        var d = JSON.parse(raw);
-        var el = document.getElementById(elId);
-        if (d.total > 0) {
-          if (d.checked === d.total) {
-            el.textContent = '✅';
-            var card = el.closest('.card');
-            if (card) card.style.background = '#e3f7e9';
-          } else {
-            el.textContent = d.checked + '/' + d.total;
-          }
+      var rawData = raw ? JSON.parse(raw) : null;
+      var checked = rawData ? rawData.checked : 0;
+      var total = known !== null ? known : (rawData ? rawData.total : 0);
+      var el = document.getElementById(elId);
+      if (total > 0) {
+        if (checked === total) {
+          el.textContent = '✅';
+          var card = el.closest('.card');
+          if (card) card.style.background = '#e3f7e9';
+        } else {
+          el.textContent = checked + '/' + total;
         }
       }
     }
