@@ -187,18 +187,36 @@
         .catch(() => {});
     }
 
-    document.getElementById('nickname-save-btn').addEventListener('click', () => {
+       document.getElementById('nickname-save-btn').addEventListener('click', () => {
       const val = document.getElementById('nickname-input').value.trim();
       const status = document.getElementById('nickname-status');
+      status.style.color = '#2e9e5b';
       if (!val) return;
-      if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
-        fetch(`${FIREBASE_URL}/user_registry/${ARMY_USER_ID}.json`, {
-          method: 'PATCH',
-          body: JSON.stringify({ nickname: val })
+      if (typeof ARMY_USER_ID === 'undefined' || !ARMY_USER_ID) return;
+
+      status.textContent = 'Проверяем...';
+      fetch(`${FIREBASE_URL}/user_registry.json`)
+        .then(res => res.json())
+        .then(registry => {
+          const taken = Object.keys(registry || {}).some((uid) => {
+            return uid != ARMY_USER_ID && registry[uid].nickname && registry[uid].nickname.toLowerCase() === val.toLowerCase();
+          });
+          if (taken) {
+            status.textContent = 'Этот ник уже занят, выберите другой.';
+            status.style.color = '#c25a5a';
+            return;
+          }
+          fetch(`${FIREBASE_URL}/user_registry/${ARMY_USER_ID}.json`, {
+            method: 'PATCH',
+            body: JSON.stringify({ nickname: val })
+          })
+            .then(() => { status.textContent = 'Сохранено!'; status.style.color = '#2e9e5b'; })
+            .catch(() => { status.textContent = 'Не получилось сохранить, попробуйте ещё раз.'; status.style.color = '#c25a5a'; });
         })
-          .then(() => { status.textContent = 'Сохранено!'; })
-          .catch(() => { status.textContent = 'Не получилось сохранить, попробуйте ещё раз.'; status.style.color = '#c25a5a'; });
-      }
+        .catch(() => {
+          status.textContent = 'Не получилось проверить, попробуйте ещё раз.';
+          status.style.color = '#c25a5a';
+        });
     });
 
     loadStats();
