@@ -237,6 +237,15 @@ registerUserIfNeeded();
 
 // Вызывается на "довесочной" странице (например running-man.html) —
 // пересчитывает её вклад во все года, куда она входит, и сразу шлёт в облако
+const YEAR_OWN_TOTALS = {
+  'other-shows-2013-2015': 9,
+  'other-shows-2016-2019': 17,
+  'other-shows-2020-2022': 12,
+  'other-shows-2023-2024': 26,
+  'other-shows-2025': 10,
+  'other-shows-2026': 13
+};
+
 function getKnownTotalForKey(key) {
   for (const yearKey in YEAR_WEIGHTED_MAP) {
     const entry = YEAR_WEIGHTED_MAP[yearKey][key];
@@ -274,6 +283,8 @@ function getCombinedYearStats(yearKey) {
     const d = JSON.parse(own);
     checked += d.checked;
     total += d.total;
+  } else if (YEAR_OWN_TOTALS[yearKey]) {
+    total += YEAR_OWN_TOTALS[yearKey];
   }
   const sources = YEAR_WEIGHTED_MAP[yearKey] || {};
   Object.keys(sources).forEach((src) => {
