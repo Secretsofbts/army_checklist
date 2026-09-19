@@ -277,7 +277,27 @@ const STAT_TOTALS = {
   'somepeople-2017-2019': 12,
   'somepeople-2020-2022': 19,
   'somepeople-2023-2025': 20,
-  'somepeople-2026': 6
+   'somepeople-2026': 6,
+  'vlog-jungkook': 14,
+  'vlog-v': 13,
+  'vlog-jin': 13,
+  'vlog-jimin': 23,
+  'vlog-namjoon': 25,
+  'vlog-suga': 18,
+  'vlog-jhope': 18,
+  'vlog-ot7': 5,
+  'vlog-somepeople': 28,
+  'eatjin': 24,
+  'logon': 24,
+  'vlogsbts-jimin': 3,
+  'vlogsbts-jin': 6,
+  'vlogsbts-taehyung': 9,
+  'vlogsbts-jungkook': 15,
+  'vlogsbts-namjoon': 6,
+  'vlogsbts-yoongi': 9,
+  'vlogsbts-hoseok': 3,
+  'gcf': 9,
+  'normal-log': 7
 };
 
 function getStatTotal(key) {
