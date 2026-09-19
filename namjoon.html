@@ -96,12 +96,13 @@
   </div>
 
   <script>
-    function renderBadge(elId, key) {
+       function renderBadge(elId, key) {
       var el = document.getElementById(elId);
+      var known = getStatTotal(key);
       var raw = localStorage.getItem('progress:' + key);
-      if (!raw) { el.textContent = ''; return; }
-      var data = JSON.parse(raw);
-      var checked = data.checked, total = data.total;
+      var rawData = raw ? JSON.parse(raw) : null;
+      var checked = rawData ? rawData.checked : 0;
+      var total = known !== null ? known : (rawData ? rawData.total : 0);
       if (total === 0) { el.textContent = ''; return; }
       if (checked === total) {
         el.textContent = '✅';
