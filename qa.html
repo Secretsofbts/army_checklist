@@ -58,27 +58,35 @@
       if (!text) return;
       const btn = document.getElementById('send-btn');
       btn.disabled = true;
-           let askerName = 'Неизвестный';
+              let askerName = 'Неизвестный';
       if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
         const u = window.Telegram.WebApp.initDataUnsafe.user;
         askerName = (u.first_name || '') + (u.last_name ? ' ' + u.last_name : '') + (u.username ? ' (@' + u.username + ')' : '');
         if (!askerName.trim()) askerName = 'Неизвестный';
       }
-      fetch(`${FIREBASE_URL}/qa.json`, {
-        method: 'POST',
-        body: JSON.stringify({ question: text, status: 'pending', askedAt: Date.now(), askerName: askerName })
-      })
+
+      const getNickname = (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID)
+        ? fetch(`${FIREBASE_URL}/user_registry/${ARMY_USER_ID}.json`).then(res => res.json()).catch(() => null)
+        : Promise.resolve(null);
+
+      getNickname.then((entry) => {
+        const askerNickname = (entry && entry.nickname) ? entry.nickname : null;
+        fetch(`${FIREBASE_URL}/qa.json`, {
+          method: 'POST',
+          body: JSON.stringify({ question: text, status: 'pending', askedAt: Date.now(), askerName: askerName, askerNickname: askerNickname })
+        })
         .then(res => res.json())
         .then(() => {
           input.value = '';
           statusMsg.textContent = 'Вопрос отправлен! Он появится здесь после ответа.';
           btn.disabled = false;
         })
-        .catch(() => {
+                .catch(() => {
           statusMsg.textContent = 'Не получилось отправить, попробуйте ещё раз.';
           statusMsg.style.color = '#c25a5a';
           btn.disabled = false;
         });
+      });
     });
 
        function deleteEntry(key) {
@@ -118,11 +126,18 @@
         const q = document.createElement('p');
         q.className = 'qa-question';
                q.innerHTML = '<span style="color:#9b7fd4; font-weight:700;">?</span> ' + entry.question;
-        const a = document.createElement('p');
+               const a = document.createElement('p');
         a.className = 'qa-answer';
         a.textContent = entry.answer;
         div.appendChild(q);
         div.appendChild(a);
+
+        if (entry.askerNickname) {
+          const nick = document.createElement('p');
+          nick.style.cssText = 'font-size:11px; color:#9b7fd4; margin:6px 0 0; font-weight:600;';
+          nick.textContent = '💜 ' + entry.askerNickname;
+          div.appendChild(nick);
+        }
 
         if (isAdmin) {
           const controls = document.createElement('div');
