@@ -165,11 +165,12 @@
 
 </body>
 <script>
-      fetch('content-log.json?t=' + Date.now())
+         fetch('content-log.json?t=' + Date.now())
       .then(res => res.json())
       .then(data => {
         const seen = localStorage.getItem('seenContentVersion');
-        if (seen !== null && parseInt(seen) < data.version && data.message) {
+        const isExistingUser = !!localStorage.getItem('userNumber_' + ARMY_USER_ID);
+        if (isExistingUser && (seen === null || parseInt(seen) < data.version) && data.message) {
           const banner = document.createElement('div');
           banner.style.cssText = 'background:#fff3cd; border:1px solid #f0dca0; border-radius:12px; padding:12px 14px; margin-bottom:14px; font-size:13px; color:#7a5c00; display:flex; justify-content:space-between; align-items:center; gap:10px;';
           const text = document.createElement('span');
