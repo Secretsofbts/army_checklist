@@ -89,7 +89,8 @@
         { text: "от 24.01 \"После\"", link: "https://t.me/violent_arhive/4986" },
         { text: "от 18.02 \"HAPPY HOPEDAY\"", link: "https://t.me/violent_arhive/5008" },
         { text: "от 01.03 \"Сладкий лайв\"", link: "https://t.me/violent_arhive/5030" },
-        { text: "от 06.03 12-часовой эфир перед релизом Sweet Dreams (пока нет на канале)", link: null },
+               { text: "от 06.03 \"Comeback Live: Sweet Dreams\"", sub: "засыпаем с j-hope — озвучка вк", link: "https://vkvideo.ru/video-218570243_456240169" },
+        { text: "от 07.03 \"Comeback Live: Sweet Dreams\"", sub: "просыпаемся с j-hope — озвучка вк", link: "https://vkvideo.ru/video-218570243_456240170" },
         { text: "от 08.03 \"Едуу 😶‍🌫️🚗\"", link: "https://t.me/violent_arhive/5034" },
         { text: "от 11.03 \"J здесь! 🤗\"", link: "https://t.me/violent_arhive/5048" },
         { text: "от 15.03 \"Бруклин - всё!!!!\"", link: "https://t.me/violent_arhive/5049" },
@@ -102,13 +103,13 @@
         { text: "от 13.04 \"Манила — всё!!!!\"", link: "https://t.me/violent_arhive/5225" },
         { text: "от 20.04 \"Сайтама всё!!!!\"", link: "https://t.me/violent_arhive/5427" },
         { text: "от 27.04 \"Сингапур, до свидания!!!\"", link: "https://t.me/violent_arhive/5508" },
-        { text: "от 04.05 (пока нет на канале)", link: null },
+              { text: "от 04.05 \"Джакарта — всё!!!\"", link: "https://t.me/violent_arhive/5632" },
         { text: "от 07.05 \"ФИНАЛ!! ХАХА\"", link: "https://t.me/violent_arhive/5115" },
-        { text: "от 13.05 (пока нет на канале)", link: null },
+               { text: "от 13.05 \"Таиланд — всё!!!\"", link: "https://t.me/violent_arhive/5633" },
         { text: "от 18.05 \"Макао — всё!!!!!\"", link: "https://t.me/violent_arhive/5137" },
-        { text: "от 25.05 (пока нет на канале)", link: null },
-        { text: "от 29.05 (пока нет на канале)", link: null },
-        { text: "от 01.06 (пока нет на канале)", link: null },
+               { text: "от 25.05 \"Тайбэй — всё!!\"", link: "https://t.me/violent_arhive/5634" },
+               { text: "от 29.05 \"Чам-чам-чам\"", link: "https://t.me/violent_arhive/5635" },
+              { text: "от 01.06 \"Осака — всё!!!!! Тур — всё!!!\"", link: "https://t.me/violent_arhive/5636" },
         { text: "от 15.06 \"Тур HOS — всё!!!!!\"", link: "https://t.me/violent_arhive/5177" },
         { text: "от 14.07 \"Хобипалуза — всё!!!\"", link: "https://t.me/violent_arhive/5233" },
         { text: "от 26.07 \"Как поживаете?\"", link: "https://t.me/violent_arhive/5214" },
@@ -137,9 +138,15 @@
         const box = document.createElement('input');
         box.type = 'checkbox';
 
-        const span = document.createElement('span');
+                const span = document.createElement('span');
         span.className = 'text';
         span.textContent = item.text;
+        if (item.sub) {
+          const sub = document.createElement('span');
+          sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+          sub.textContent = item.sub;
+          span.appendChild(sub);
+        }
 
         let saved = localStorage.getItem(id);
         if (saved === null && item.link && oldId !== id) {
@@ -162,10 +169,16 @@
           box.dispatchEvent(new Event('change'));
         });
 
-        row.appendChild(box);
+               row.appendChild(box);
         row.appendChild(span);
 
         if (item.link) {
+          if (!item.link.includes('t.me/violent_arhive')) {
+            const sourceBadge = document.createElement('span');
+            sourceBadge.style.cssText = 'font-size:9px; color:#9b7fd4; border:1px solid #d9cdf0; border-radius:5px; padding:1px 4px; flex-shrink:0;';
+            sourceBadge.textContent = 'VK';
+            row.appendChild(sourceBadge);
+          }
           const link = document.createElement('a');
           link.className = 'link';
           link.href = item.link;
