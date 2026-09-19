@@ -153,22 +153,23 @@
   </div>
   <script>
         function applyBadge(elId, key) {
-      const el = document.getElementById(elId);
+       const el = document.getElementById(elId);
       if (!el) return;
+      const known = getStatTotal(key);
       const raw = localStorage.getItem('progress:' + key);
-      if (!raw) return;
-      const d = JSON.parse(raw);
-      if (d.total === 0) return;
-      if (d.checked === d.total) {
+      const d = raw ? JSON.parse(raw) : null;
+      const checked = d ? d.checked : 0;
+      const total = known !== null ? known : (d ? d.total : 0);
+      if (total === 0) return;
+      if (checked === total) {
         el.textContent = '✅';
         el.style.color = '#2e9e5b';
         const card = el.closest('.card');
         if (card) card.style.background = '#e3f7e9';
       } else {
-        el.textContent = d.checked + '/' + d.total;
+        el.textContent = checked + '/' + total;
       }
     }
-
                   applyBadge('badge-sleepy', 'sleepy-interview');
     applyBadge('badge-fm', 'fm-0613');
     applyBadge('badge-korean', 'learn-korean');
@@ -178,17 +179,21 @@
          applyBadge('badge-beginns', 'beginns-youth');
 
     const mcountdownKeys = ['mcountdown-2013', 'mcountdown-2014', 'mcountdown-2015', 'mcountdown-2016', 'mcountdown-2017', 'mcountdown-2018', 'mcountdown-2019', 'mcountdown-2020', 'mcountdown-2022', 'mcountdown-2023', 'mcountdown-2025'];
-       function applyBadgeTotalMisc(elId, keys) {
+           function applyBadgeTotalMisc(elId, keys) {
       const el = document.getElementById(elId);
       if (!el) return;
       let checked = 0, total = 0;
       let allKnown = true;
       keys.forEach((key) => {
+        const known = getStatTotal(key);
         const raw = localStorage.getItem('progress:' + key);
-        if (raw) {
-          const d = JSON.parse(raw);
-          checked += d.checked;
+        const d = raw ? JSON.parse(raw) : null;
+        if (known !== null) {
+          total += known;
+          checked += d ? d.checked : 0;
+        } else if (d) {
           total += d.total;
+          checked += d.checked;
         } else {
           allKnown = false;
         }
