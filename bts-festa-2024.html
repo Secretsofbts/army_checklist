@@ -33,34 +33,32 @@
 
     <div id="list"></div>
 
-    <p class="outro">Если вдруг заметили, что что-то не так, сообщите, пожалуйста 💜</p>
-
     <a class="footer-link" href="bts-festa.html">BTS FESTA ⬅️</a>
   </div>
 
   <script>
     const items = [
-      { text: "Фото «FESTA 2013-2023»", icon: "📷", link: "https://telegra.ph/Fotokollekciya-FESTA-2013-2023-06-09", noCheckbox: true },
+      { text: "«FESTA 2013-2023»", icon: "📷", link: "https://telegra.ph/Fotokollekciya-FESTA-2013-2023-06-09", noCheckbox: true },
       { text: "Never Let Go", sub: "by JK", icon: "🎶", links: [
         { label: "Spotify", link: "https://open.spotify.com/album/6zXydimgenc15N3LWmf0cn" },
         { label: "Перевод", link: "https://t.me/violent_arhive/4603" }
       ]},
       { text: "BANG BANG CON 2024", icon: "🖥", link: "https://t.me/violent_arhive/4605" },
-      { text: "За кулисами «ЧиДжинЧона»", icon: "💣", link: "https://t.me/violent_arhive/4611" },
+      { text: "За кулисами радио «ЧиДжинЧона»", icon: "💣", link: "https://t.me/violent_arhive/4611" },
       { text: "Скетч с записи скита №1 Billboard Hot 100", icon: "💣", link: "https://t.me/violent_arhive/4612" },
-      { text: "BTS на Today Citi Music Series", icon: "🎥", link: "https://t.me/violent_arhive/4613" },
-      { text: "Спец. клип «Life Goes On»", icon: "🎥", link: "https://t.me/violent_arhive/4614" },
-      { text: "Послания от BTS к АРМИ", icon: "✉️", link: "https://vk.com/bangtan?w=wall-43682523_719851", noCheckbox: true },
+      { text: "Today Citi Music Series", icon: "🎥", link: "https://t.me/violent_arhive/4613" },
+      { text: "«Life Goes On»", icon: "🎥", link: "https://t.me/violent_arhive/4614" },
+      { text: "Послания от BTS", icon: "✉️", link: "https://vk.com/bangtan?w=wall-43682523_719851", noCheckbox: true },
       { text: "Песня от Арми для BTS", icon: "🎶", link: "https://youtu.be/GTlQeWqULEM" },
       { text: "Демобилизация Джина", icon: "🫡", link: "https://t.me/secretsofbts/56104", noCheckbox: true },
-      { text: "Эфир Джина после армии", icon: "🎥", link: "https://t.me/violent_arhive/4623" },
-      { text: "Письма от руки для Арми", icon: "✉️", link: "https://t.me/secretsofbts/56178", noCheckbox: true },
-      { text: "1000 обнимашек Джина", empty: true, icon: "🫂" },
-      { text: "Message from Jin: June 13", icon: "🖥", link: "https://t.me/violent_arhive/4625" }
+      { text: "Джин после армии", icon: "🎥", link: "https://t.me/violent_arhive/4623" },
+      { text: "Письма от руки", sub: "для Арми", icon: "✉️", link: "https://t.me/secretsofbts/56178", noCheckbox: true },
+     { text: "1000 обнимашек Джина", empty: true },
+      { text: "Message from Jin", icon: "🖥", link: "https://t.me/violent_arhive/4625" }
     ];
 
     function renderItem(container, item) {
-      if (item.empty) {
+            if (item.empty) {
         const row = document.createElement('div');
         row.className = 'empty-row';
         const x = document.createElement('span');
@@ -70,15 +68,11 @@
         span.style.flex = '1';
         span.style.textDecoration = 'line-through';
         span.textContent = item.text;
-        const icon = document.createElement('span');
-        icon.className = 'icon';
-        icon.textContent = item.icon || '';
         const note = document.createElement('span');
         note.style.cssText = 'font-size:11px; color:#ccc;';
         note.textContent = 'нет видео';
         row.appendChild(x);
         row.appendChild(span);
-        row.appendChild(icon);
         row.appendChild(note);
         container.appendChild(row);
         return;
