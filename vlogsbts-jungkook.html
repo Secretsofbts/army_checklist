@@ -134,18 +134,20 @@
       row.appendChild(link);
       listEl.appendChild(row);
     });
-    function renderBadge(elId, key) {
+        function renderBadge(elId, key) {
       var el = document.getElementById(elId);
+      var known = getStatTotal(key);
       var raw = localStorage.getItem('progress:' + key);
-      if (!raw) { el.textContent = ''; return; }
-      var data = JSON.parse(raw);
-      if (data.total === 0) { el.textContent = ''; return; }
-      if (data.checked === data.total) {
+      var data = raw ? JSON.parse(raw) : null;
+      var total = known !== null ? known : (data ? data.total : 0);
+      var checked = data ? data.checked : 0;
+      if (total === 0) { el.textContent = ''; return; }
+      if (checked === total) {
         el.textContent = '✅';
         el.style.color = '#2e9e5b';
         document.getElementById('gcf-card').style.background = '#e3f7e9';
       } else {
-        el.textContent = data.checked + '/' + data.total;
+        el.textContent = checked + '/' + total;
       }
     }
 function renderAllBadges() {
