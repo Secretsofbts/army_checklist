@@ -48,8 +48,10 @@
       <button class="copy-btn" id="copy-btn">Скопировать номер</button>
     </div>
 
-       <button id="donated-btn" style="width:100%; margin-top:16px; background:#fff3cd; border:1px solid #f0dca0; border-radius:12px; padding:12px; font-size:14px; color:#7a5c00; cursor:pointer;">💜 Я поддержал(а) проект</button>
+         <button id="donated-btn" style="width:100%; margin-top:16px; background:#fff3cd; border:1px solid #f0dca0; border-radius:12px; padding:12px; font-size:14px; color:#7a5c00; cursor:pointer;">💜 Я поддержал(а) проект</button>
     <div id="donated-status" style="text-align:center; font-size:12px; color:#2e9e5b; margin-top:8px;"></div>
+
+    <div id="angels-section"></div>
 
     <p class="thanks">Спасибо каждому, кто поддерживает — это помогает мне продолжать 💜</p>
   </div>
@@ -79,20 +81,35 @@
         .catch(() => {});
     }
 
-    donatedBtn.addEventListener('click', () => {
+        donatedBtn.addEventListener('click', () => {
       if (!confirm('Вы действительно перевели поддержку проекту? Это на доверии — просто отметка для вас самих 💜')) return;
       localStorage.setItem('hasDonated_' + ARMY_USER_ID, 'true');
       if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
         fetch(`${FIREBASE_URL}/user_registry/${ARMY_USER_ID}.json`, {
           method: 'PATCH',
           body: JSON.stringify({ hasDonated: true, donatedAt: Date.now() })
-        });
+        }).then(() => loadAngels());
       }
       donatedBtn.textContent = '💜 Спасибо за поддержку!';
       donatedBtn.disabled = true;
       donatedBtn.style.opacity = '0.6';
       donatedStatus.textContent = 'Отмечено! Теперь на странице статистики появится ваша благодарственная медаль 🎁';
     });
+
+    function loadAngels() {
+      fetch(`${FIREBASE_URL}/user_registry.json`)
+        .then(res => res.json())
+        .then(registry => {
+          const angelsEl = document.getElementById('angels-section');
+          const names = Object.values(registry || {})
+            .filter((entry) => entry.hasDonated && entry.nickname)
+            .map((entry) => entry.nickname);
+          if (names.length === 0) { angelsEl.innerHTML = ''; return; }
+          angelsEl.innerHTML = '<p style="font-size:13px; color:#333; text-align:center; margin-top:20px; line-height:1.6;">🎁 Спасибо этим ангелам-хранителям:<br><span style="color:#9b7fd4; font-weight:600;">' + names.join(', ') + '</span></p>';
+        })
+        .catch(() => {});
+    }
+    loadAngels();
 
     document.getElementById('copy-btn').addEventListener('click', () => {
       const number = document.getElementById('card-number').textContent.replace(/\s/g, '');
