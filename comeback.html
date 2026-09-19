@@ -93,7 +93,9 @@
       { text: "SUGA 'D-DAY' Live 🖤", sub: "от 25.04.2023", link: "https://t.me/violent_arhive/3987" },
       { text: "Семь дней в неделю 💜", sub: "(Seven) от 14.07.2023", link: "https://t.me/violent_arhive/4109" },
       { text: "GOLDEN ✨💜", sub: "от 04.11.2023", link: "https://t.me/violent_arhive/4308" },
-      { text: "Что такое \"Happy\"? 💞", sub: "от 15.11.2024", link: "https://t.me/violent_arhive/4894" },
+            { text: "Что такое \"Happy\"? 💞", sub: "от 15.11.2024", link: "https://t.me/violent_arhive/4894" },
+      { text: "Comeback Live: Sweet Dreams with j-hope", sub: "засыпаем с j-hope — от 06.03.2025, озвучка вк", link: "https://vkvideo.ru/video-218570243_456240169" },
+      { text: "Comeback Live: Sweet Dreams with j-hope", sub: "просыпаемся с j-hope — от 07.03.2025, озвучка вк", link: "https://vkvideo.ru/video-218570243_456240170" },
       { text: "Джин 'Echo' камбек лайв 💞", sub: "от 16.05.2025", link: "https://t.me/violent_arhive/5146" },
       { text: "STUDIO NOTES ARIRANG 👑", sub: "(ARIRANG) от 20.03.2026", link: "https://t.me/violent_arhive/5426" }
     ];
@@ -108,9 +110,15 @@
       const box = document.createElement('input');
       box.type = 'checkbox';
 
-      const span = document.createElement('span');
+           const span = document.createElement('span');
       span.className = 'text';
       span.textContent = item.text;
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+        sub.textContent = item.sub;
+        span.appendChild(sub);
+      }
 
       if (localStorage.getItem(id) === 'true') {
         box.checked = true;
@@ -126,15 +134,23 @@
         box.dispatchEvent(new Event('change'));
       });
 
+      row.appendChild(box);
+      row.appendChild(span);
+
+      if (!item.link.includes('t.me/violent_arhive')) {
+        const sourceBadge = document.createElement('span');
+        sourceBadge.style.cssText = 'font-size:9px; color:#9b7fd4; border:1px solid #d9cdf0; border-radius:5px; padding:1px 4px; flex-shrink:0;';
+        sourceBadge.textContent = 'VK';
+        row.appendChild(sourceBadge);
+      }
+
       const link = document.createElement('a');
       link.className = 'link';
       link.href = item.link;
       link.target = '_blank';
       link.textContent = '🔗';
-
-      row.appendChild(box);
-      row.appendChild(span);
       row.appendChild(link);
+
       listEl.appendChild(row);
     });
 
