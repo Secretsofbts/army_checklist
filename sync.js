@@ -370,7 +370,19 @@ const YEAR_OWN_TOTALS = {
   'photo-folio-extra': 2,
     'album-review': 11,
   'message-from-jin': 15,
-  'td-stories': 5,
+    'td-stories': 5,
+  'bts-memories-2014': 9,
+  'bts-memories-2015': 13,
+  'bts-memories-2016': 16,
+  'bts-memories-2017': 22,
+  'bts-memories-2018': 36,
+  'bts-memories-2019': 35,
+  'bts-memories-2020': 48,
+    'bts-memories-7moments': 8,
+  'season-summer': 5,
+  'season-winter': 2,
+  'season-greeting': 8,
+  'bts-now': 3,
 
   function getStatTotal(key) {
     return STAT_TOTALS.hasOwnProperty(key) ? STAT_TOTALS[key] : null;
