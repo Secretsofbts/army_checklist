@@ -115,14 +115,18 @@
 
    <script src="sync.js?v=15"></script>
   <script>
-          function applyBadgeTotal(elId, keys, getRaw) {
+           function applyBadgeTotal(elId, keys, getRaw) {
       var el = document.getElementById(elId);
       if (!el) return;
       var checked = 0, total = 0;
       var allKnown = true;
       keys.forEach(function(key) {
+        var known = getStatTotal(key);
         var raw = getRaw(key);
-        if (raw) {
+        if (known !== null) {
+          total += known;
+          checked += raw ? raw.checked : 0;
+        } else if (raw) {
           checked += raw.checked;
           total += raw.total;
         } else {

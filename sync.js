@@ -246,74 +246,103 @@ const YEAR_OWN_TOTALS = {
   'other-shows-2026': 13
 };
 
-const STAT_TOTALS = {
-  'jungkook-2016-2022': 19,
-  'jungkook-2023-2024': 34,
-  'jungkook-2025-2026': 27,
-  'taehyung-2015-2022': 25,
-  'taehyung-2023-2024': 33,
-  'taehyung-2025': 25,
-  'taehyung-2026': 6,
-  'comeback': 28,
-  'jin-2015-2022': 29,
-  'jin-2023-2025': 18,
-  'jin-2026-HB': 1,
-  'namjoon-2015-2022': 30,
-  'namjoon-2023-2025': 17,
-  'namjoon-2026-HB': 2,
-  'hoseok-2015-2022': 24,
-  'hoseok-2023-2025': 41,
-  'hoseok-2026-HB': 4,
-  'radio': 11,
-  'jimin-2015-2022': 23,
-  'jimin-2023-2026': 17,
-  'yoongi-2015-2022': 25,
-  'yoongi-2023-2026': 15,
-  'ot7-2015-2017': 32,
-  'ot7-2018-2022': 27,
-  'ot7-2023-2026': 12,
-  'somepeople-2015': 16,
-  'somepeople-2016': 16,
-  'somepeople-2017-2019': 12,
-  'somepeople-2020-2022': 19,
-  'somepeople-2023-2025': 20,
-   'somepeople-2026': 6,
-  'vlog-jungkook': 14,
-  'vlog-v': 13,
-  'vlog-jin': 13,
-  'vlog-jimin': 23,
-  'vlog-namjoon': 25,
-  'vlog-suga': 18,
-  'vlog-jhope': 18,
-  'vlog-ot7': 5,
-  'vlog-somepeople': 28,
-  'eatjin': 24,
-  'logon': 24,
-  'vlogsbts-jimin': 3,
-  'vlogsbts-jin': 6,
-  'vlogsbts-taehyung': 9,
-     'vlogsbts-jungkook': 7,
-  'vlogsbts-jungkook-with-gcf': 15,
-  'vlogsbts-namjoon': 6,
-  'vlogsbts-yoongi': 9,
-  'vlogsbts-hoseok': 3,
-  'gcf': 9,
-  'normal-log': 7
+  const STAT_TOTALS = {
+    'jungkook-2016-2022': 19,
+    'jungkook-2023-2024': 34,
+    'jungkook-2025-2026': 27,
+    'taehyung-2015-2022': 25,
+    'taehyung-2023-2024': 33,
+    'taehyung-2025': 25,
+    'taehyung-2026': 6,
+    'comeback': 28,
+    'jin-2015-2022': 29,
+    'jin-2023-2025': 18,
+    'jin-2026-HB': 1,
+    'namjoon-2015-2022': 30,
+    'namjoon-2023-2025': 17,
+    'namjoon-2026-HB': 2,
+    'hoseok-2015-2022': 24,
+    'hoseok-2023-2025': 41,
+    'hoseok-2026-HB': 4,
+    'radio': 11,
+    'jimin-2015-2022': 23,
+    'jimin-2023-2026': 17,
+    'yoongi-2015-2022': 25,
+    'yoongi-2023-2026': 15,
+    'ot7-2015-2017': 32,
+    'ot7-2018-2022': 27,
+    'ot7-2023-2026': 12,
+    'somepeople-2015': 16,
+    'somepeople-2016': 16,
+    'somepeople-2017-2019': 12,
+    'somepeople-2020-2022': 19,
+    'somepeople-2023-2025': 20,
+    'somepeople-2026': 6,
+    'vlog-jungkook': 14,
+    'vlog-v': 13,
+    'vlog-jin': 13,
+    'vlog-jimin': 23,
+    'vlog-namjoon': 25,
+    'vlog-suga': 18,
+    'vlog-jhope': 18,
+    'vlog-ot7': 5,
+    'vlog-somepeople': 28,
+    'eatjin': 24,
+    'logon': 24,
+    'vlogsbts-jimin': 3,
+    'vlogsbts-jin': 6,
+    'vlogsbts-taehyung': 9,
+      'vlogsbts-jungkook': 7,
+    'vlogsbts-jungkook-with-gcf': 15,
+    'vlogsbts-namjoon': 6,
+    'vlogsbts-yoongi': 9,
+    'vlogsbts-hoseok': 3,
+    'gcf': 9,
+      'normal-log': 7,
+  'run-bts-1-25': 26,
+  'run-bts-26-50': 25,
+  'run-bts-51-80': 30,
+  'run-bts-81-111': 32,
+  'run-bts-112-135': 24,
+  'run-bts-136-155': 22,
+  'run-bts-156-165': 10,
+  'run-jin-1-25': 25,
+  'run-jin-26-36': 11,
+  'run-bts-2-0-1-25': 5,
+  'bon-voyage-s1': 9,
+  'bon-voyage-s2': 8,
+  'bon-voyage-s3': 10,
+  'bon-voyage-s4': 9,
+  'in-the-soop-s1': 16,
+  'in-the-soop-s2': 11,
+  'in-the-soop-friendcation': 4,
+  'are-you-sure-s1': 11,
+  'are-you-sure-s2': 14,
+  'bts-gayo': 15,
+  'american-hustle-life-episodes': 8,
+  'rookie-king': 8,
+  'suchwita': 27,
+  'universe-bt21-s1': 13,
+  'universe-bt21-s2': 9,
+  'universe-bt21-s2-animation': 10,
+  'universe-bt21-s3': 11,
+  'universe-bt21-s3-animation': 8,
+  'universe-bt21-inside-manga': 15
 };
 
-function getStatTotal(key) {
-  return STAT_TOTALS.hasOwnProperty(key) ? STAT_TOTALS[key] : null;
-}
-
-function getKnownTotalForKey(key) {
-  for (const yearKey in YEAR_WEIGHTED_MAP) {
-    const entry = YEAR_WEIGHTED_MAP[yearKey][key];
-    if (entry) {
-      return Array.isArray(entry) ? entry.length : entry.weight;
-    }
+  function getStatTotal(key) {
+    return STAT_TOTALS.hasOwnProperty(key) ? STAT_TOTALS[key] : null;
   }
-  return null;
-}
+
+  function getKnownTotalForKey(key) {
+    for (const yearKey in YEAR_WEIGHTED_MAP) {
+      const entry = YEAR_WEIGHTED_MAP[yearKey][key];
+      if (entry) {
+        return Array.isArray(entry) ? entry.length : entry.weight;
+      }
+    }
+    return null;
+  }
 
 function pushWeightedContributions(sourceKey) {
   Object.keys(YEAR_WEIGHTED_MAP).forEach((yearKey) => {
