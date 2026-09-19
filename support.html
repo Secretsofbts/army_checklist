@@ -6,7 +6,8 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js?v=11"></script>
   <title>Поддержка бота</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -81,9 +82,11 @@
         .catch(() => {});
     }
 
-        donatedBtn.addEventListener('click', () => {
+           donatedBtn.addEventListener('click', () => {
       if (!confirm('Вы действительно перевели поддержку проекту? Это на доверии — просто отметка для вас самих 💜')) return;
-      localStorage.setItem('hasDonated_' + ARMY_USER_ID, 'true');
+      if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
+        localStorage.setItem('hasDonated_' + ARMY_USER_ID, 'true');
+      }
       if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
         fetch(`${FIREBASE_URL}/user_registry/${ARMY_USER_ID}.json`, {
           method: 'PATCH',
