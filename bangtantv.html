@@ -128,14 +128,18 @@
       return raw ? JSON.parse(raw) : null;
     }
 
-        function applyBadgeTotal(elId, keys, dedupVideoId) {
+           function applyBadgeTotal(elId, keys, dedupVideoId) {
       const el = document.getElementById(elId);
       if (!el) return;
       let checked = 0, total = 0;
       let allKnown = true;
       keys.forEach((key) => {
+        const known = getStatTotal(key);
         const raw = getProgress(key);
-        if (raw) {
+        if (known !== null) {
+          total += known;
+          checked += raw ? raw.checked : 0;
+        } else if (raw) {
           checked += raw.checked;
           total += raw.total;
         } else {
