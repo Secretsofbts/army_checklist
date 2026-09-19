@@ -58,22 +58,25 @@
     ];
 
     function renderItem(container, item) {
-            if (item.empty) {
+           if (item.empty) {
         const row = document.createElement('div');
-        row.className = 'empty-row';
-        const x = document.createElement('span');
-        x.className = 'empty-x';
-        x.textContent = '✕';
+        row.className = 'row';
+        const spacer = document.createElement('span');
+        spacer.style.cssText = 'width:18px; height:18px; flex-shrink:0;';
         const span = document.createElement('span');
-        span.style.flex = '1';
-        span.style.textDecoration = 'line-through';
+        span.className = 'text';
+        span.style.color = '#bbb';
         span.textContent = item.text;
         const note = document.createElement('span');
-        note.style.cssText = 'font-size:11px; color:#ccc;';
-        note.textContent = 'нет видео';
-        row.appendChild(x);
+        note.style.cssText = 'display:block; font-size:11px; color:#ccc; margin-top:2px; font-weight:400;';
+        note.textContent = 'видео оттуда нет';
+        span.appendChild(note);
+        const x = document.createElement('span');
+        x.style.cssText = 'color:#ddd; font-size:13px; flex-shrink:0;';
+        x.textContent = '✕';
+        row.appendChild(spacer);
         row.appendChild(span);
-        row.appendChild(note);
+        row.appendChild(x);
         container.appendChild(row);
         return;
       }
