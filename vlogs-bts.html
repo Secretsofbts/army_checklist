@@ -108,12 +108,15 @@
         function renderBadgeJungkook() {
   var el = document.getElementById('badge-vb-jungkook');
   var checked = 0, total = 0;
+  var allKnown = true;
   ['vlogsbts-jungkook', 'gcf'].forEach(function(key) {
     var raw = localStorage.getItem('progress:' + key);
     if (raw) {
       var data = JSON.parse(raw);
       checked += data.checked;
       total += data.total;
+    } else {
+      allKnown = false;
     }
   });
   // "Тренировка ЧонТэХо" (video-5570) учтена в обоих списках — вычитаем повтор
@@ -122,7 +125,7 @@
     checked -= 1;
   }
   if (total === 0) { el.textContent = ''; return; }
-  if (checked === total) {
+  if (allKnown && checked === total) {
     el.textContent = '✅';
     el.style.color = '#2e9e5b';
     el.closest('.card').classList.add('row-done');

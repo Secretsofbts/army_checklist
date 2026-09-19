@@ -178,20 +178,23 @@
          applyBadge('badge-beginns', 'beginns-youth');
 
     const mcountdownKeys = ['mcountdown-2013', 'mcountdown-2014', 'mcountdown-2015', 'mcountdown-2016', 'mcountdown-2017', 'mcountdown-2018', 'mcountdown-2019', 'mcountdown-2020', 'mcountdown-2022', 'mcountdown-2023', 'mcountdown-2025'];
-    function applyBadgeTotalMisc(elId, keys) {
+       function applyBadgeTotalMisc(elId, keys) {
       const el = document.getElementById(elId);
       if (!el) return;
       let checked = 0, total = 0;
+      let allKnown = true;
       keys.forEach((key) => {
         const raw = localStorage.getItem('progress:' + key);
         if (raw) {
           const d = JSON.parse(raw);
           checked += d.checked;
           total += d.total;
+        } else {
+          allKnown = false;
         }
       });
       if (total === 0) { el.textContent = ''; return; }
-      if (checked === total) {
+      if (allKnown && checked === total) {
         el.textContent = '✅';
         el.style.color = '#2e9e5b';
         const card = el.closest('.card');
