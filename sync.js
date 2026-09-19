@@ -430,8 +430,10 @@ const YEAR_OWN_TOTALS = {
   'concert-lysy-seoul-final-dvd': 12,
   'concert-arirang-tour': 10,
   'fm-3rd-muster': 3,
-  'fm-jp-vol3': 8,
-
+    'fm-jp-vol3': 8,
+  'other-shows-star-bromance-minwoo-jungkook': 5,
+    'other-shows-star-bromance-taehyung-minche': 5
+};
   function getStatTotal(key) {
     return STAT_TOTALS.hasOwnProperty(key) ? STAT_TOTALS[key] : null;
   }
