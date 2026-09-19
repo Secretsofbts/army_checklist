@@ -165,6 +165,26 @@
 
 </body>
 <script>
+      fetch('content-log.json?t=' + Date.now())
+      .then(res => res.json())
+      .then(data => {
+        const seen = localStorage.getItem('seenContentVersion');
+        if (seen !== null && parseInt(seen) < data.version && data.message) {
+          const banner = document.createElement('div');
+          banner.style.cssText = 'background:#fff3cd; border:1px solid #f0dca0; border-radius:12px; padding:12px 14px; margin-bottom:14px; font-size:13px; color:#7a5c00; display:flex; justify-content:space-between; align-items:center; gap:10px;';
+          const text = document.createElement('span');
+          text.textContent = '🎉 ' + data.message;
+          const close = document.createElement('button');
+          close.textContent = '✕';
+          close.style.cssText = 'background:none; border:none; font-size:14px; color:#7a5c00; cursor:pointer; flex-shrink:0;';
+          close.addEventListener('click', () => banner.remove());
+          banner.appendChild(text);
+          banner.appendChild(close);
+          document.querySelector('.app').insertBefore(banner, document.querySelector('.app').firstChild.nextSibling);
+        }
+        localStorage.setItem('seenContentVersion', data.version);
+      })
+      .catch(() => {});
   const menuBtn = document.getElementById('menu-btn');
   const menuOverlay = document.getElementById('menu-overlay');
   const sideMenu = document.getElementById('side-menu');
