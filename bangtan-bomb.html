@@ -130,20 +130,23 @@
       }
     });
 
-    function renderBadgeTotal(elId, keys) {
+        function renderBadgeTotal(elId, keys) {
       const el = document.getElementById(elId);
       if (!el) return;
       let checked = 0, total = 0;
+      let allKnown = true;
       keys.forEach((key) => {
         const raw = localStorage.getItem('progress:' + key);
         if (raw) {
           const data = JSON.parse(raw);
           checked += data.checked;
           total += data.total;
+        } else {
+          allKnown = false;
         }
       });
       if (total === 0) { el.textContent = ''; return; }
-      if (checked === total) {
+      if (allKnown && checked === total) {
         el.textContent = '✅';
         el.style.color = '#2e9e5b';
         el.closest('.card').classList.add('row-done');
