@@ -109,7 +109,7 @@
             .filter((entry) => entry.hasDonated && entry.nickname)
             .map((entry) => entry.nickname);
           if (names.length === 0) { angelsEl.innerHTML = ''; return; }
-          angelsEl.innerHTML = '<p style="font-size:13px; color:#333; text-align:center; margin-top:20px; line-height:1.6;">🎁 Спасибо этим ангелам-хранителям:<br><span style="color:#9b7fd4; font-weight:600;">' + names.join(', ') + '</span></p>';
+          angelsEl.innerHTML = '<p style="font-size:13px; color:#333; text-align:center; margin-top:20px; line-height:1.6;">🎁 Спасибо этим ангелам-хранителям (в список пишется, если есть ник):<br><span style="color:#9b7fd4; font-weight:600;">' + names.join(', ') + '</span></p>';
         })
         .catch(() => {});
     }
