@@ -118,16 +118,20 @@
     </div>
   </div>
   <script>
-      function renderBadgeTotal(elId, keys) {
+        function renderBadgeTotal(elId, keys) {
   var el = document.getElementById(elId);
   var checked = 0, total = 0;
   var allKnown = true;
   keys.forEach(function(key) {
+    var known = getStatTotal(key);
     var raw = localStorage.getItem('progress:' + key);
-    if (raw) {
-      var data = JSON.parse(raw);
-      checked += data.checked;
+    var data = raw ? JSON.parse(raw) : null;
+    if (known !== null) {
+      total += known;
+      checked += data ? data.checked : 0;
+    } else if (data) {
       total += data.total;
+      checked += data.checked;
     } else {
       allKnown = false;
     }
