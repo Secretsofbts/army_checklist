@@ -128,20 +128,26 @@
       return raw ? JSON.parse(raw) : null;
     }
 
-    function applyBadgeTotal(elId, keys, dedupVideoId) {
+        function applyBadgeTotal(elId, keys, dedupVideoId) {
       const el = document.getElementById(elId);
       if (!el) return;
       let checked = 0, total = 0;
+      let allKnown = true;
       keys.forEach((key) => {
         const raw = getProgress(key);
-        if (raw) { checked += raw.checked; total += raw.total; }
+        if (raw) {
+          checked += raw.checked;
+          total += raw.total;
+        } else {
+          allKnown = false;
+        }
       });
       if (dedupVideoId) {
         total -= 1;
         if (localStorage.getItem(dedupVideoId) === 'true') checked -= 1;
       }
       if (total === 0) { el.textContent = ''; return; }
-      if (checked === total) {
+      if (allKnown && checked === total) {
         el.textContent = '✅';
         el.style.color = '#2e9e5b';
         const card = el.closest('.card');
