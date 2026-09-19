@@ -436,6 +436,8 @@ const YEAR_OWN_TOTALS = {
     'other-shows-running-man': 6,
   'other-shows-kiss-the-radio': 7,
   'other-shows-hello-talkshow': 2,
+  'other-shows-useless-knowledge-dictionary': 9,
+  'other-shows-handsome-guys': 5,
   'other-shows-cultwo': 4,
   'other-shows-james-corden': 4,
   'documentaries-break-the-silence': 9,
