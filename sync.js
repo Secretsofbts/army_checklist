@@ -246,6 +246,44 @@ const YEAR_OWN_TOTALS = {
   'other-shows-2026': 13
 };
 
+const STAT_TOTALS = {
+  'jungkook-2016-2022': 19,
+  'jungkook-2023-2024': 34,
+  'jungkook-2025-2026': 27,
+  'taehyung-2015-2022': 25,
+  'taehyung-2023-2024': 33,
+  'taehyung-2025': 25,
+  'taehyung-2026': 6,
+  'comeback': 28,
+  'jin-2015-2022': 29,
+  'jin-2023-2025': 18,
+  'jin-2026-HB': 1,
+  'namjoon-2015-2022': 30,
+  'namjoon-2023-2025': 17,
+  'namjoon-2026-HB': 2,
+  'hoseok-2015-2022': 24,
+  'hoseok-2023-2025': 41,
+  'hoseok-2026-HB': 4,
+  'radio': 11,
+  'jimin-2015-2022': 23,
+  'jimin-2023-2026': 17,
+  'yoongi-2015-2022': 25,
+  'yoongi-2023-2026': 15,
+  'ot7-2015-2017': 32,
+  'ot7-2018-2022': 27,
+  'ot7-2023-2026': 12,
+  'somepeople-2015': 16,
+  'somepeople-2016': 16,
+  'somepeople-2017-2019': 12,
+  'somepeople-2020-2022': 19,
+  'somepeople-2023-2025': 20,
+  'somepeople-2026': 6
+};
+
+function getStatTotal(key) {
+  return STAT_TOTALS.hasOwnProperty(key) ? STAT_TOTALS[key] : null;
+}
+
 function getKnownTotalForKey(key) {
   for (const yearKey in YEAR_WEIGHTED_MAP) {
     const entry = YEAR_WEIGHTED_MAP[yearKey][key];
