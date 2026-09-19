@@ -237,6 +237,16 @@ registerUserIfNeeded();
 
 // Вызывается на "довесочной" странице (например running-man.html) —
 // пересчитывает её вклад во все года, куда она входит, и сразу шлёт в облако
+function getKnownTotalForKey(key) {
+  for (const yearKey in YEAR_WEIGHTED_MAP) {
+    const entry = YEAR_WEIGHTED_MAP[yearKey][key];
+    if (entry) {
+      return Array.isArray(entry) ? entry.length : entry.weight;
+    }
+  }
+  return null;
+}
+
 function pushWeightedContributions(sourceKey) {
   Object.keys(YEAR_WEIGHTED_MAP).forEach((yearKey) => {
     const entry = YEAR_WEIGHTED_MAP[yearKey][sourceKey];

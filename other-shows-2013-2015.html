@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=10"></script>
+  <script src="sync.js?v=11"></script>
   <title>Другие шоу с BTS: 2013-2015</title>
   <style>
     body {
@@ -112,23 +112,27 @@
     const listEl = document.getElementById('list');
 
       function applyNavBadge(key) {
-      var checkbox = document.getElementById('checkbox-' + key);
-      var label = document.getElementById('label-' + key);
-      var badge = document.getElementById('badge-' + key);
-      var raw = localStorage.getItem('progress:' + key);
-      if (!raw) return;
-      var data = JSON.parse(raw);
-      if (data.total === 0) return;
-      if (data.checked === data.total) {
-        if (checkbox) {
-          checkbox.checked = true;
-          checkbox.style.display = '';
-        }
-        if (label) label.classList.add('done');
-      } else if (badge) {
-        badge.textContent = data.checked + '/' + data.total;
-      }
+  var checkbox = document.getElementById('checkbox-' + key);
+  var label = document.getElementById('label-' + key);
+  var badge = document.getElementById('badge-' + key);
+  var raw = localStorage.getItem('progress:' + key);
+  if (!raw) {
+    var knownTotal = getKnownTotalForKey(key);
+    if (knownTotal && badge) { badge.textContent = '0/' + knownTotal; }
+    return;
+  }
+  var data = JSON.parse(raw);
+  if (data.total === 0) return;
+  if (data.checked === data.total) {
+    if (checkbox) {
+      checkbox.checked = true;
+      checkbox.style.display = '';
     }
+    if (label) label.classList.add('done');
+  } else if (badge) {
+    badge.textContent = data.checked + '/' + data.total;
+  }
+}
 
     items.forEach((item) => {
           if (item.navlink) {
