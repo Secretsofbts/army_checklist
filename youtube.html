@@ -123,6 +123,18 @@
   var checked = 0, total = 0;
   var allKnown = true;
   keys.forEach(function(key) {
+    if (key === 'vlogsbts-jungkook') {
+      var known = getStatTotal('vlogsbts-jungkook-with-gcf');
+      var ownRaw = localStorage.getItem('progress:vlogsbts-jungkook');
+      var gcfRaw = localStorage.getItem('progress:gcf');
+      var ownData = ownRaw ? JSON.parse(ownRaw) : null;
+      var gcfData = gcfRaw ? JSON.parse(gcfRaw) : null;
+      var jkChecked = (ownData ? ownData.checked : 0) + (gcfData ? gcfData.checked : 0);
+      if (localStorage.getItem('video-5570') === 'true') jkChecked -= 1;
+      total += known;
+      checked += jkChecked;
+      return;
+    }
     var known = getStatTotal(key);
     var raw = localStorage.getItem('progress:' + key);
     var data = raw ? JSON.parse(raw) : null;

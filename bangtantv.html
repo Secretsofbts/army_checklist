@@ -128,14 +128,23 @@
       return raw ? JSON.parse(raw) : null;
     }
 
-              function applyBadgeTotal(elId, keys, dedupVideoId) {
+                          function applyBadgeTotal(elId, keys, dedupVideoId) {
       const el = document.getElementById(elId);
       if (!el) return;
       let checked = 0, total = 0;
       let allKnown = true;
       keys.forEach((key) => {
-        const statsKey = (key === 'vlogsbts-jungkook') ? 'vlogsbts-jungkook-with-gcf' : key;
-        const known = getStatTotal(statsKey);
+        if (key === 'vlogsbts-jungkook') {
+          const known = getStatTotal('vlogsbts-jungkook-with-gcf');
+          const ownRaw = getProgress('vlogsbts-jungkook');
+          const gcfRaw = getProgress('gcf');
+          let jkChecked = (ownRaw ? ownRaw.checked : 0) + (gcfRaw ? gcfRaw.checked : 0);
+          if (localStorage.getItem('video-5570') === 'true') jkChecked -= 1;
+          total += known;
+          checked += jkChecked;
+          return;
+        }
+        const known = getStatTotal(key);
         const raw = getProgress(key);
         if (known !== null) {
           total += known;
