@@ -243,7 +243,7 @@ const YEAR_OWN_TOTALS = {
   'other-shows-2020-2022': 12,
   'other-shows-2023-2024': 26,
   'other-shows-2025': 10,
-  'other-shows-2026': 13
+   'other-shows-2026': 12
 };
 
   const STAT_TOTALS = {
