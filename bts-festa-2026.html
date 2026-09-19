@@ -20,6 +20,22 @@
     .text.done { color: #bbb; text-decoration: line-through; }
     .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
     .icon { font-size: 13px; flex-shrink: 0; }
+        .navlink {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: #f7f7fa;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      font-weight: 500;
+      color: #333;
+      text-decoration: none;
+    }
+    .navlink input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; margin-left: -6px; }
+    .navlink-label { flex: 1; }
+    .navlink-label.done { color: #bbb; text-decoration: line-through; }
     .outro { font-size: 12px; color: #999; margin-top: 16px; line-height: 1.5; }
     .footer-link { display: block; text-align: center; font-size: 13px; color: #000; text-decoration: none; margin-top: 16px; padding-top: 12px; border-top: 1px solid #eee; }
   </style>
@@ -53,38 +69,39 @@
     ];
 
        function renderItem(container, item) {
-      if (item.liveLink) {
+            if (item.liveLink) {
         const a = document.createElement('a');
-        a.className = 'row';
+        a.className = 'navlink';
         a.href = item.link;
-        a.style.textDecoration = 'none';
 
         const checkbox = document.createElement('input');
         checkbox.type = 'checkbox';
-        checkbox.id = 'normallog-checkbox';
-        checkbox.style.cssText = 'pointer-events:none; display:none;';
+        checkbox.style.pointerEvents = 'none';
+        checkbox.id = 'checkbox-' + item.statKey;
+        checkbox.style.display = 'none';
+        a.appendChild(checkbox);
 
-        const span = document.createElement('span');
-        span.className = 'text';
-        span.id = 'normallog-label';
-        span.textContent = item.text;
+        const label = document.createElement('span');
+        label.className = 'navlink-label';
+        label.id = 'label-' + item.statKey;
+        label.textContent = item.text;
+        a.appendChild(label);
 
-        const icon = document.createElement('span');
-        icon.className = 'icon';
-        icon.textContent = item.icon || '';
+        if (item.icon) {
+          const icon = document.createElement('span');
+          icon.style.cssText = 'font-size:13px; flex-shrink:0;';
+          icon.textContent = item.icon;
+          a.appendChild(icon);
+        }
 
         const badge = document.createElement('span');
-        badge.id = 'normallog-badge';
-        badge.style.cssText = 'font-size:12px; color:#999;';
-
-        a.appendChild(checkbox);
-        a.appendChild(span);
-        if (icon.textContent) a.appendChild(icon);
+        badge.id = 'badge-' + item.statKey;
+        badge.style.cssText = 'font-size:12px; color:#999; flex-shrink:0;';
         a.appendChild(badge);
+
         container.appendChild(a);
         return;
       }
-
       if (item.noCheckbox) {
         const a = document.createElement('a');
         a.className = 'row';
@@ -189,24 +206,22 @@
        const listEl = document.getElementById('list');
     items.forEach((item) => renderItem(listEl, item));
 
-    function applyNormalLogBadge() {
+        function applyNormalLogBadge() {
       const raw = localStorage.getItem('progress:normal-log');
-      const badge = document.getElementById('normallog-badge');
-      const checkbox = document.getElementById('normallog-checkbox');
-      const label = document.getElementById('normallog-label');
+      const badge = document.getElementById('badge-normal-log');
+      const checkbox = document.getElementById('checkbox-normal-log');
+      const label = document.getElementById('label-normal-log');
       if (!badge) return;
       if (!raw) { badge.textContent = ''; return; }
       const d = JSON.parse(raw);
       if (d.total === 0) { badge.textContent = ''; return; }
       if (d.checked === d.total) {
         badge.textContent = '';
-        checkbox.checked = true;
-        checkbox.style.display = '';
-        label.style.color = '#bbb';
-        label.style.textDecoration = 'line-through';
+        if (checkbox) { checkbox.checked = true; checkbox.style.display = ''; }
+        if (label) label.classList.add('done');
       } else {
         badge.textContent = d.checked + '/' + d.total;
-           }
+      }
     }
 
     function updateProgress() {
