@@ -71,18 +71,7 @@
   </style>
 </head>
 <body>
-     <div id="nickname-modal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.5); z-index:100; align-items:center; justify-content:center;">
-    <div style="background:white; border-radius:16px; padding:24px 20px; width:280px; text-align:center;">
-      <div style="font-size:32px; margin-bottom:10px;">💜</div>
-      <h2 style="font-size:16px; margin:0 0 8px;">Добро пожаловать!</h2>
-      <p style="font-size:13px; color:#555; margin:0 0 16px; line-height:1.5;">Прежде чем начать, придумайте себе ник — он понадобится, если захотите задать вопрос или оставить след в приложении. Ник будет виден другим пользователям.</p>
-      <input type="text" id="modal-nickname-input" placeholder="Ваш ник" maxlength="30" style="width:100%; box-sizing:border-box; border:1px solid #e0e0e0; border-radius:8px; padding:10px; font-size:14px; margin-bottom:8px;">
-      <button id="modal-nickname-save" style="width:100%; background:#9b7fd4; color:white; border:none; border-radius:8px; padding:10px; font-size:14px; cursor:pointer;">Продолжить</button>
-      <p id="modal-nickname-status" style="font-size:12px; color:#c25a5a; margin:8px 0 0; min-height:14px;"></p>
-    </div>
-  </div>
-
-  <div class="app">
+      <div class="app">
               <div style="position: relative; width: 100%; margin: 0 auto 16px; border-radius: 12px; overflow: hidden;">
             <button id="menu-btn" style="position: absolute; top: 2px; right: 2px; background: rgba(255,255,255,0.5); border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; cursor: pointer; z-index: 10; padding: 0;">💜</button>
       <img src="inn2.jpg" alt="BTS" style="width: 100%; display: block;">
@@ -176,6 +165,7 @@
 
 </body>
 <script>
+    
          fetch('content-log.json?t=' + Date.now())
       .then(res => res.json())
       .then(data => {
