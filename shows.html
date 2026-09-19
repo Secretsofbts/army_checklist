@@ -115,16 +115,22 @@
 
    <script src="sync.js?v=12"></script>
   <script>
-       function applyBadgeTotal(elId, keys, getRaw) {
+          function applyBadgeTotal(elId, keys, getRaw) {
       var el = document.getElementById(elId);
       if (!el) return;
       var checked = 0, total = 0;
+      var allKnown = true;
       keys.forEach(function(key) {
         var raw = getRaw(key);
-        if (raw) { checked += raw.checked; total += raw.total; }
+        if (raw) {
+          checked += raw.checked;
+          total += raw.total;
+        } else {
+          allKnown = false;
+        }
       });
       if (total === 0) { el.textContent = ''; return; }
-      if (checked === total) {
+      if (allKnown && checked === total) {
         el.textContent = '✅';
         el.style.color = '#2e9e5b';
         var card = el.closest('.card');
