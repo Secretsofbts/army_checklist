@@ -83,7 +83,7 @@
     }
 
            donatedBtn.addEventListener('click', () => {
-      if (!confirm('Вы действительно перевели поддержку проекту? Это на доверии — просто отметка для вас самих 💜')) return;
+      if (!confirm('Вы действительно перевели поддержку проекту? Это на доверии — отметка для вас самих 💜')) return;
       if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
         localStorage.setItem('hasDonated_' + ARMY_USER_ID, 'true');
       }
