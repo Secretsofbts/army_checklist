@@ -206,23 +206,28 @@
         label.style.textDecoration = 'line-through';
       } else {
         badge.textContent = d.checked + '/' + d.total;
-      }
+           }
     }
-    applyNormalLogBadge();
 
     function updateProgress() {
       const all = document.querySelectorAll('.row input[type="checkbox"]:not([disabled])');
       let total = 0, checked = 0;
       all.forEach(cb => { total++; if (cb.checked) checked++; });
+
+      const normalLogRaw = localStorage.getItem('progress:normal-log');
+      if (normalLogRaw) {
+        const d = JSON.parse(normalLogRaw);
+        total += d.total;
+        checked += d.checked;
+      }
+
       setProgress('bts-festa-2026', {checked, total});
       pushWeightedContributions('bts-festa-2026');
-    }
-       updateProgress();
-    syncChecklistFromCloud(updateProgress);
-    refreshLocalStorageFromCloud(() => {
-      updateProgress();
       applyNormalLogBadge();
-    });
+    }
+         updateProgress();
+    syncChecklistFromCloud(updateProgress);
+    refreshLocalStorageFromCloud(updateProgress);
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
