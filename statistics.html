@@ -176,12 +176,17 @@
       return 'дней';
     }
 
-       if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
+         function showNicknameConfirmed(nickname) {
+      const box = document.getElementById('nickname-input').closest('div').parentElement;
+      box.innerHTML = '<p style="font-size:12px; color:#888; margin:0 0 4px;">Ваш ник</p><p style="font-size:15px; font-weight:600; color:#333; margin:0;">💜 ' + nickname + '</p>';
+    }
+
+    if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
       fetch(`${FIREBASE_URL}/user_registry/${ARMY_USER_ID}.json`)
         .then(res => res.json())
         .then(entry => {
           if (entry && entry.nickname) {
-            document.getElementById('nickname-input').value = entry.nickname;
+            showNicknameConfirmed(entry.nickname);
           }
         })
         .catch(() => {});
@@ -206,11 +211,15 @@
             status.style.color = '#c25a5a';
             return;
           }
-          fetch(`${FIREBASE_URL}/user_registry/${ARMY_USER_ID}.json`, {
+                   fetch(`${FIREBASE_URL}/user_registry/${ARMY_USER_ID}.json`, {
             method: 'PATCH',
             body: JSON.stringify({ nickname: val })
           })
-            .then(() => { status.textContent = 'Сохранено!'; status.style.color = '#2e9e5b'; })
+            .then(() => {
+              status.textContent = 'Ник сохранён: ' + val;
+              status.style.color = '#2e9e5b';
+              showNicknameConfirmed(val);
+            })
             .catch(() => { status.textContent = 'Не получилось сохранить, попробуйте ещё раз.'; status.style.color = '#c25a5a'; });
         })
         .catch(() => {
