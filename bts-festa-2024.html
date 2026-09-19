@@ -53,29 +53,34 @@
       { text: "Демобилизация Джина", icon: "🫡", link: "https://t.me/secretsofbts/56104", noCheckbox: true },
       { text: "Джин после армии", icon: "🎥", link: "https://t.me/violent_arhive/4623" },
       { text: "Письма от руки", sub: "для Арми", icon: "✉️", link: "https://t.me/secretsofbts/56178", noCheckbox: true },
-     { text: "1000 обнимашек Джина", empty: true },
+    { text: "1000 обнимашек Джина", empty: true, icon: "🫂" },
       { text: "Message from Jin", icon: "🖥", link: "https://t.me/violent_arhive/4625" }
     ];
 
     function renderItem(container, item) {
-           if (item.empty) {
+                if (item.empty) {
         const row = document.createElement('div');
         row.className = 'row';
-        const spacer = document.createElement('span');
-        spacer.style.cssText = 'width:18px; height:18px; flex-shrink:0;';
+        const spacer = document.createElement('input');
+        spacer.type = 'checkbox';
+        spacer.disabled = true;
+        spacer.style.cssText = 'width:18px; height:18px; flex-shrink:0; visibility:hidden;';
         const span = document.createElement('span');
         span.className = 'text';
-        span.style.color = '#bbb';
         span.textContent = item.text;
         const note = document.createElement('span');
-        note.style.cssText = 'display:block; font-size:11px; color:#ccc; margin-top:2px; font-weight:400;';
+        note.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
         note.textContent = 'видео оттуда нет';
         span.appendChild(note);
+        const icon = document.createElement('span');
+        icon.className = 'icon';
+        icon.textContent = item.icon || '';
         const x = document.createElement('span');
-        x.style.cssText = 'color:#ddd; font-size:13px; flex-shrink:0;';
+        x.className = 'link';
         x.textContent = '✕';
         row.appendChild(spacer);
         row.appendChild(span);
+        if (icon.textContent) row.appendChild(icon);
         row.appendChild(x);
         container.appendChild(row);
         return;
