@@ -107,12 +107,25 @@
       }
     }
 
-    const memberKeys = members.map(m => m.key);
+       const memberKeys = members.map(m => m.key);
     memberKeys.forEach((key) => {
+      var known = getStatTotal(key);
       var raw = localStorage.getItem('progress:' + key);
-      applyBadge(key, raw ? JSON.parse(raw) : null);
+      var data = raw ? JSON.parse(raw) : null;
+      if (known !== null) {
+        applyBadge(key, { checked: data ? data.checked : 0, total: known });
+      } else {
+        applyBadge(key, data);
+      }
     });
-    syncBadgesFromCloud(memberKeys, applyBadge);
+    syncBadgesFromCloud(memberKeys, function(key, cloudData) {
+      var known = getStatTotal(key);
+      if (known !== null) {
+        applyBadge(key, { checked: cloudData ? cloudData.checked : 0, total: known });
+      } else {
+        applyBadge(key, cloudData);
+      }
+    });
 
     if (window.Telegram && window.Telegram.WebApp) {
       Telegram.WebApp.ready();
