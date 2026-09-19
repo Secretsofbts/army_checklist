@@ -42,19 +42,21 @@
   <script>
     const slugs = ["jungkook", "namjoon", "jimin", "common", "jin", "taehyung", "hoseok", "yoongi", "extra"];
 
-    function renderAllBadges() {
+        function renderAllBadges() {
       let grandChecked = 0, grandTotal = 0;
       slugs.forEach((slug) => {
+        const key = 'photo-folio-' + slug;
         const el = document.getElementById('badge-' + slug);
-        const raw = localStorage.getItem('progress:photo-folio-' + slug);
-        if (raw) {
-          const data = JSON.parse(raw);
-          grandChecked += data.checked;
-          grandTotal += data.total;
-          if (el && data.total > 0) {
-            el.textContent = data.checked === data.total ? '✅' : (data.checked + '/' + data.total);
-            if (data.checked === data.total) { el.style.color = '#2e9e5b'; el.closest('.card').style.background = '#e3f7e9'; }
-          }
+        const known = getStatTotal(key);
+        const raw = localStorage.getItem('progress:' + key);
+        const data = raw ? JSON.parse(raw) : null;
+        const checked = data ? data.checked : 0;
+        const total = known !== null ? known : (data ? data.total : 0);
+        grandChecked += checked;
+        grandTotal += total;
+        if (el && total > 0) {
+          el.textContent = checked === total ? '✅' : (checked + '/' + total);
+          if (checked === total) { el.style.color = '#2e9e5b'; el.closest('.card').style.background = '#e3f7e9'; }
         }
       });
       setProgress('photo-folio', { checked: grandChecked, total: grandTotal });
