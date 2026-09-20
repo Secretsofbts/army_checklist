@@ -71,12 +71,12 @@
   </div>
 
   <script>
-    const data = [
+       const data = [
       { year: "2026", items: [
-        { text: "от 18.02 \"С др с др ХоБи Хэпи Бёрздэй 🎂\"", link: "https://t.me/violent_arhive/5420" },
-        { text: "от 29.05 \"3 эфира: 'Как-то вот так и прошло всё… я счастлив~', 'что стряслось-то', 'ну что ж такое'\"", link: "https://t.me/violent_arhive/5532" },
-        { text: "от 08.07 \"Лон-дон-всё\"", link: "https://t.me/violent_arhive/5550" },
-        { text: "от 23.08 \"ТоронТоронто 🌧☂️\"", link: "https://t.me/violent_arhive/5645" }
+        { text: "С др с др ХоБи Хэпи Бёрздэй 🎂", sub: "от 18.02", link: "https://t.me/violent_arhive/5420" },
+        { text: "3 эфира: 'Как-то вот так и прошло всё… я счастлив~', 'что стряслось-то', 'ну что ж такое'", sub: "от 29.05", link: "https://t.me/violent_arhive/5532" },
+        { text: "Лон-дон-всё", sub: "от 08.07", link: "https://t.me/violent_arhive/5550" },
+        { text: "ТоронТоронто 🌧☂️", sub: "от 23.08", link: "https://t.me/violent_arhive/5645" }
       ]}
     ];
 
@@ -96,9 +96,15 @@
         const box = document.createElement('input');
         box.type = 'checkbox';
 
-        const span = document.createElement('span');
+               const span = document.createElement('span');
         span.className = 'text';
         span.textContent = item.text;
+        if (item.sub) {
+          const sub = document.createElement('span');
+          sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+          sub.textContent = item.sub;
+          span.appendChild(sub);
+        }
 
         if (localStorage.getItem(id) === 'true') {
           box.checked = true;
