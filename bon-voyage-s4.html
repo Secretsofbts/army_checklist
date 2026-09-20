@@ -137,19 +137,18 @@
       row.appendChild(box);
       row.appendChild(span);
 
-      if (item.links) {
+           if (item.links) {
+        const linksWrap = document.createElement('span');
+        linksWrap.style.cssText = 'display:flex; flex-direction:column; gap:4px; flex-shrink:0; align-items:flex-end;';
         item.links.forEach((l) => {
-          const label = document.createElement('span');
-          label.className = 'link-label';
-          label.textContent = l.label;
-          const link = document.createElement('a');
-          link.className = 'link';
-          link.href = l.link;
-          link.target = '_blank';
-          link.textContent = '🔗';
-          row.appendChild(label);
-          row.appendChild(link);
+          const a = document.createElement('a');
+          a.href = l.link;
+          a.target = '_blank';
+          a.style.cssText = 'font-size:10px; color:#999; text-decoration:none; border:1px solid #eee; border-radius:6px; padding:2px 5px;';
+          a.textContent = l.label;
+          linksWrap.appendChild(a);
         });
+        row.appendChild(linksWrap);
       } else {
         const link = document.createElement('a');
         link.className = 'link';
