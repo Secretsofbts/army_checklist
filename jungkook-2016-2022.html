@@ -74,13 +74,13 @@
   <script>
         const data = [
       { year: "2016", items: [
-        { text: "\"JK\"", sub: "от 30.11", link: "https://t.me/violent_arhive/880" }
+        { text: "JK", sub: "от 30.11", link: "https://t.me/violent_arhive/880" }
       ]},
       { year: "2017", items: [
         { text: "Лайв мечты", sub: "от 22.04", link: "https://t.me/violent_arhive/835" }
       ]},
       { year: "2018", items: [
-        { text: "\"JK\"", sub: "от 20.04", link: "https://t.me/violent_arhive/791" },
+        { text: "JK", sub: "от 20.04", link: "https://t.me/violent_arhive/791" },
         { text: "Хвастаюсь тёмными волосами в прямом эфире 😍", sub: "от 06.09", link: "https://t.me/violent_arhive/774" },
         { text: "Я пришёл на минутку", sub: "от 28.09", link: "https://t.me/violent_arhive/756" },
         { text: "JK 🐰", sub: "от 17.10", link: "https://t.me/violent_arhive/753" }
@@ -132,9 +132,18 @@
         const box = document.createElement('input');
         box.type = 'checkbox';
 
-               const span = document.createElement('span');
+                     function extractTrailingIcon(text) {
+          const match = text.match(/(\s*[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]+)+\s*$/u);
+          if (match) {
+            return { rest: text.slice(0, match.index).trim(), icon: match[0].trim() };
+          }
+          return { rest: text, icon: '' };
+        }
+        const parsed = extractTrailingIcon(item.text);
+
+        const span = document.createElement('span');
         span.className = 'text';
-        span.textContent = item.text;
+        span.textContent = parsed.rest;
         if (item.sub) {
           const sub = document.createElement('span');
           sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
@@ -157,7 +166,7 @@
           box.dispatchEvent(new Event('change'));
         });
 
-        const link = document.createElement('a');
+               const link = document.createElement('a');
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
@@ -165,6 +174,12 @@
 
         row.appendChild(box);
         row.appendChild(span);
+        if (parsed.icon) {
+          const icon = document.createElement('span');
+          icon.style.cssText = 'font-size:13px; flex-shrink:0;';
+          icon.textContent = parsed.icon;
+          row.appendChild(icon);
+        }
         row.appendChild(link);
         listEl.appendChild(row);
       });
