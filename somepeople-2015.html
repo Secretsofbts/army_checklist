@@ -72,25 +72,24 @@
   </div>
 
   <script>
-    const items = [
-      { text: "от 01.08 \"Live in Brazil\"", hearts: "💛💜💕", link: "https://t.me/violent_arhive/114" },
-      { text: "от 03.08 \"Rap Monster '1 минута английского' (1 часть)\"", hearts: "💜💙", link: "https://t.me/violent_arhive/1106" },
-      { text: "от 06.08 \"Live в аэропорту 🛫\"", hearts: "💛🖤💜", link: "https://t.me/violent_arhive/1105" },
-      { text: "от 07.08 \"Live #1\"", hearts: "💜💚💙", link: "https://t.me/violent_arhive/1103" },
-      { text: "от 07.08 \"Live #2\"", hearts: "🤍💛🖤💕", link: "https://t.me/violent_arhive/4072" },
-      { text: "от 13.08 \"Live in Tokio\"", hearts: "💛💚", link: "https://t.me/violent_arhive/1102" },
-      { text: "от 30.08 \"Rap Monster '1 минута английского (2 часть)'\"", hearts: "💜💙", link: "https://t.me/violent_arhive/1100" },
-      { text: "от 03.09 \"Ви и Чимин говорят на диалекте\"", hearts: "💛💚", link: "https://t.me/violent_arhive/1098" },
-      { text: "от 10.09 \"Live on the way out\"", hearts: "💛💚🤍💙", link: "https://t.me/violent_arhive/1097" },
-      { text: "от 20.09 \"RM&SUGA&J-HOPE\"", hearts: "🖤🤍💙", link: "https://t.me/violent_arhive/1095" },
-      { text: "от 25.09 \"Ви и Чимин говорят на сатури\"", hearts: "💚💛", link: "https://t.me/violent_arhive/1089" },
-      { text: "от 18.10 \"Район Мандакко\"", hearts: "💚💛🤍💜", link: "https://t.me/violent_arhive/1086" },
-      { text: "от 23.10 \"BTS Vlive\"", hearts: "🤍💚", link: "https://t.me/violent_arhive/1085" },
-      { text: "от 25.10 \"BTS Vlive\"", hearts: "💕💜", link: "https://t.me/violent_arhive/1082" },
-      { text: "от 24.11 \"BTS Vlive\"", hearts: "💙💛", link: "https://t.me/violent_arhive/1084" },
-      { text: "от 14.12 \"Новости музыкального фестиваля KBS\"", hearts: "💜💛🤍", link: "https://t.me/violent_arhive/1057" }
+       const items = [
+      { text: "Live in Brazil", sub: "от 01.08", hearts: "💛💜💕", link: "https://t.me/violent_arhive/114" },
+      { text: "Rap Monster '1 минута английского' (1 часть)", sub: "от 03.08", hearts: "💜💙", link: "https://t.me/violent_arhive/1106" },
+      { text: "Live в аэропорту 🛫", sub: "от 06.08", hearts: "💛🖤💜", link: "https://t.me/violent_arhive/1105" },
+      { text: "Live #1", sub: "от 07.08", hearts: "💜💚💙", link: "https://t.me/violent_arhive/1103" },
+      { text: "Live #2", sub: "от 07.08", hearts: "🤍💛🖤💕", link: "https://t.me/violent_arhive/4072" },
+      { text: "Live in Tokio", sub: "от 13.08", hearts: "💛💚", link: "https://t.me/violent_arhive/1102" },
+      { text: "Rap Monster '1 минута английского (2 часть)'", sub: "от 30.08", hearts: "💜💙", link: "https://t.me/violent_arhive/1100" },
+      { text: "Ви и Чимин говорят на диалекте", sub: "от 03.09", hearts: "💛💚", link: "https://t.me/violent_arhive/1098" },
+      { text: "Live on the way out", sub: "от 10.09", hearts: "💛💚🤍💙", link: "https://t.me/violent_arhive/1097" },
+      { text: "RM&SUGA&J-HOPE", sub: "от 20.09", hearts: "🖤🤍💙", link: "https://t.me/violent_arhive/1095" },
+      { text: "Ви и Чимин говорят на сатури", sub: "от 25.09", hearts: "💚💛", link: "https://t.me/violent_arhive/1089" },
+      { text: "Район Мандакко", sub: "от 18.10", hearts: "💚💛🤍💜", link: "https://t.me/violent_arhive/1086" },
+      { text: "BTS Vlive", sub: "от 23.10", hearts: "🤍💚", link: "https://t.me/violent_arhive/1085" },
+      { text: "BTS Vlive", sub: "от 25.10", hearts: "💕💜", link: "https://t.me/violent_arhive/1082" },
+      { text: "BTS Vlive", sub: "от 24.11", hearts: "💙💛", link: "https://t.me/violent_arhive/1084" },
+      { text: "Новости музыкального фестиваля KBS", sub: "от 14.12", hearts: "💜💛🤍", link: "https://t.me/violent_arhive/1057" }
     ];
-
     const listEl = document.getElementById('list');
     items.forEach((item) => {
       const id = 'video-' + item.link.split('/').pop();
@@ -101,9 +100,15 @@
       const box = document.createElement('input');
       box.type = 'checkbox';
 
-      const span = document.createElement('span');
+           const span = document.createElement('span');
       span.className = 'text';
       span.textContent = item.text;
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+        sub.textContent = item.sub;
+        span.appendChild(sub);
+      }
 
       if (localStorage.getItem(id) === 'true') {
         box.checked = true;

@@ -72,30 +72,30 @@
   </div>
 
   <script>
-    const data = [
+       const data = [
       { year: "2023", items: [
-        { text: "от 03.02 \"Ребята, я услышал вас и пришёл ненадолго\"", link: "https://t.me/violent_arhive/3663" },
-        { text: "от 10.02 \"Кхм\"", link: "https://t.me/violent_arhive/3688" },
-        { text: "от 06.03 \"Трехцветый кот\"", link: "https://t.me/violent_arhive/3767" },
-        { text: "от 24.03 \"Я здесь!\"", link: "https://t.me/violent_arhive/3806" },
-        { text: "от 26.03 \"Запись на сегодня окончена!\"", link: "https://t.me/violent_arhive/3811" },
-        { text: "от 28.03 \"Спасибо\"", link: "https://t.me/violent_arhive/3827" },
-        { text: "от 29.03 \"Jimin FACE Live\"", link: "https://t.me/violent_arhive/3867" },
-        { text: "от 04.04 \"Спасибо от всего сердца 🥇\"", link: "https://t.me/violent_arhive/3845" },
-        { text: "от 15.06 \"Ха\"", link: "https://t.me/violent_arhive/4081" },
-        { text: "от 01.09 \"Хью\"", link: "https://t.me/violent_arhive/4195" },
-        { text: "от 13.10 \"13-е 🎂\"", link: "https://t.me/violent_arhive/4271" },
-        { text: "от 30.10 \"Просмотр фильма Jimin's Production Diary\"", link: "https://t.me/violent_arhive/4322" },
-        { text: "от 11.12 \"Вернусь целым и невредимым\"", link: "https://t.me/violent_arhive/4422" }
+        { text: "Ребята, я услышал вас и пришёл ненадолго", sub: "от 03.02", link: "https://t.me/violent_arhive/3663" },
+        { text: "Кхм", sub: "от 10.02", link: "https://t.me/violent_arhive/3688" },
+        { text: "Трехцветый кот", sub: "от 06.03", link: "https://t.me/violent_arhive/3767" },
+        { text: "Я здесь!", sub: "от 24.03", link: "https://t.me/violent_arhive/3806" },
+        { text: "Запись на сегодня окончена!", sub: "от 26.03", link: "https://t.me/violent_arhive/3811" },
+        { text: "Спасибо", sub: "от 28.03", link: "https://t.me/violent_arhive/3827" },
+        { text: "Jimin FACE Live", sub: "от 29.03", link: "https://t.me/violent_arhive/3867" },
+        { text: "Спасибо от всего сердца 🥇", sub: "от 04.04", link: "https://t.me/violent_arhive/3845" },
+        { text: "Ха", sub: "от 15.06", link: "https://t.me/violent_arhive/4081" },
+        { text: "Хью", sub: "от 01.09", link: "https://t.me/violent_arhive/4195" },
+        { text: "13-е 🎂", sub: "от 13.10", link: "https://t.me/violent_arhive/4271" },
+        { text: "Просмотр фильма Jimin's Production Diary", sub: "от 30.10", link: "https://t.me/violent_arhive/4322" },
+        { text: "Вернусь целым и невредимым", sub: "от 11.12", link: "https://t.me/violent_arhive/4422" }
       ]},
       { year: "2024", items: [] },
       { year: "2025", items: [
-        { text: "от 01.10 \"2 эфира: 'Сколько лет, сколько зим 😂' и '😔'\"", link: "https://t.me/violent_arhive/5273" },
-        { text: "от 13.10 \"Всем привет, это Чимин 🎂\"", link: "https://t.me/violent_arhive/5280" },
-        { text: "от 01.11 \"😆\"", link: "https://t.me/violent_arhive/5282" }
+        { text: "2 эфира: 'Сколько лет, сколько зим 😂' и '😔'", sub: "от 01.10", link: "https://t.me/violent_arhive/5273" },
+        { text: "Всем привет, это Чимин 🎂", sub: "от 13.10", link: "https://t.me/violent_arhive/5280" },
+        { text: "😆", sub: "от 01.11", link: "https://t.me/violent_arhive/5282" }
       ]},
       { year: "2026", items: [
-        { text: "от 09.04 \"АРМИ, вы сегодня такие умнички!\"", link: "https://t.me/violent_arhive/5479" }
+        { text: "АРМИ, вы сегодня такие умнички!", sub: "от 09.04", link: "https://t.me/violent_arhive/5479" }
       ]}
     ];
 
@@ -123,9 +123,15 @@
         const box = document.createElement('input');
         box.type = 'checkbox';
 
-        const span = document.createElement('span');
+              const span = document.createElement('span');
         span.className = 'text';
         span.textContent = item.text;
+        if (item.sub) {
+          const sub = document.createElement('span');
+          sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+          sub.textContent = item.sub;
+          span.appendChild(sub);
+        }
 
         if (localStorage.getItem(id) === 'true') {
           box.checked = true;

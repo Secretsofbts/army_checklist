@@ -72,23 +72,23 @@
   </div>
 
   <script>
-    const items = [
-      { text: "от 31.01 \"Чимин & Тэхен\"", hearts: "💛💚", link: "https://t.me/violent_arhive/1053" },
-      { text: "от 26.02 \"Вы не голодны? 🍜\"", hearts: "💕🖤", link: "https://t.me/violent_arhive/999" },
-      { text: "от 02,03.03 \"Hwagae Market\"", hearts: "🤍🖤", link: "https://t.me/violent_arhive/998" },
-      { text: "от 23.03 \"Live in Kobe: Скрытая камера\"", hearts: "💛💚", link: "https://t.me/violent_arhive/994" },
-      { text: "от 13.04 \"Hope On The Street 🕺\"", hearts: "🤍💛💚", link: "https://t.me/violent_arhive/990" },
-      { text: "от 07.05 \"Эпилог 1\"", hearts: "💛💜", link: "https://t.me/violent_arhive/985" },
-      { text: "от 08.05 \"Эпилог 2\"", hearts: "💜💚🤍💕", link: "https://t.me/violent_arhive/984" },
-      { text: "от 22.05 \"Привет с Бон Вояжа!\"", hearts: "💛🤍", link: "https://t.me/violent_arhive/937" },
-      { text: "от 23.05 \"Привет с Бон Вояжа!\"", hearts: "💜🖤", link: "https://t.me/violent_arhive/936" },
-      { text: "от 13.06 \"Bts Live\"", hearts: "💛🖤🤍", link: "https://t.me/violent_arhive/906" },
-      { text: "от 21.06 \"Соупы. Лайв из Китая\"", hearts: "🤍🖤", link: "https://t.me/violent_arhive/904" },
-      { text: "от 13.07 \"Лайв из Осако 🥰\"", hearts: "💚💜", link: "https://t.me/violent_arhive/903" },
-      { text: "от 13.07 \"Лайв из Осако + Eat Jin\"", hearts: "💜💛💚💕", link: "https://t.me/violent_arhive/902" },
-      { text: "от 13.08 \"Live in Tokyo\"", hearts: "🤍💛", link: "https://t.me/violent_arhive/894" },
-      { text: "от 30.11 \"SOPE\"", hearts: "🖤🤍", link: "https://t.me/violent_arhive/879" },
-      { text: "от 16.12 \"Eat Jin +chimchim + kook\"", hearts: "💛💜💕", link: "https://t.me/violent_arhive/139" }
+       const items = [
+      { text: "Чимин & Тэхен", sub: "от 31.01", hearts: "💛💚", link: "https://t.me/violent_arhive/1053" },
+      { text: "Вы не голодны? 🍜", sub: "от 26.02", hearts: "💕🖤", link: "https://t.me/violent_arhive/999" },
+      { text: "Hwagae Market", sub: "от 02,03.03", hearts: "🤍🖤", link: "https://t.me/violent_arhive/998" },
+      { text: "Live in Kobe: Скрытая камера", sub: "от 23.03", hearts: "💛💚", link: "https://t.me/violent_arhive/994" },
+      { text: "Hope On The Street 🕺", sub: "от 13.04", hearts: "🤍💛💚", link: "https://t.me/violent_arhive/990" },
+      { text: "Эпилог 1", sub: "от 07.05", hearts: "💛💜", link: "https://t.me/violent_arhive/985" },
+      { text: "Эпилог 2", sub: "от 08.05", hearts: "💜💚🤍💕", link: "https://t.me/violent_arhive/984" },
+      { text: "Привет с Бон Вояжа!", sub: "от 22.05", hearts: "💛🤍", link: "https://t.me/violent_arhive/937" },
+      { text: "Привет с Бон Вояжа!", sub: "от 23.05", hearts: "💜🖤", link: "https://t.me/violent_arhive/936" },
+      { text: "Bts Live", sub: "от 13.06", hearts: "💛🖤🤍", link: "https://t.me/violent_arhive/906" },
+      { text: "Соупы. Лайв из Китая", sub: "от 21.06", hearts: "🤍🖤", link: "https://t.me/violent_arhive/904" },
+      { text: "Лайв из Осако 🥰", sub: "от 13.07", hearts: "💚💜", link: "https://t.me/violent_arhive/903" },
+      { text: "Лайв из Осако + Eat Jin", sub: "от 13.07", hearts: "💜💛💚💕", link: "https://t.me/violent_arhive/902" },
+      { text: "Live in Tokyo", sub: "от 13.08", hearts: "🤍💛", link: "https://t.me/violent_arhive/894" },
+      { text: "SOPE", sub: "от 30.11", hearts: "🖤🤍", link: "https://t.me/violent_arhive/879" },
+      { text: "Eat Jin +chimchim + kook", sub: "от 16.12", hearts: "💛💜💕", link: "https://t.me/violent_arhive/139" }
     ];
 
     const listEl = document.getElementById('list');
@@ -101,9 +101,15 @@
       const box = document.createElement('input');
       box.type = 'checkbox';
 
-      const span = document.createElement('span');
+           const span = document.createElement('span');
       span.className = 'text';
       span.textContent = item.text;
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+        sub.textContent = item.sub;
+        span.appendChild(sub);
+      }
 
       if (localStorage.getItem(id) === 'true') {
         box.checked = true;

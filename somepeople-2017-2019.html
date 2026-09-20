@@ -78,24 +78,24 @@
   </div>
 
   <script>
-    const data = [
+       const data = [
       { year: "2017", items: [
-        { text: "от 23.04 \"EatJin +JM&JK\"", hearts: "💜💛💕", link: "https://t.me/violent_arhive/832" },
-        { text: "от 05.05 \"Филиппины\"", hearts: "🤍🖤", link: "https://t.me/violent_arhive/831" },
-        { text: "от 23.06 \"Косметические процедуры Юнсоков\"", hearts: "🤍🖤", link: "https://t.me/violent_arhive/282" },
-        { text: "от 16.10 \"R&V Live\"", hearts: "💙💚", link: "https://t.me/violent_arhive/803" },
-        { text: "от 08.12 \"JM & JK Live!\"", hearts: "💛💜", link: "https://t.me/violent_arhive/797" }
+        { text: "EatJin +JM&JK", sub: "от 23.04", hearts: "💜💛💕", link: "https://t.me/violent_arhive/832" },
+        { text: "Филиппины", sub: "от 05.05", hearts: "🤍🖤", link: "https://t.me/violent_arhive/831" },
+        { text: "Косметические процедуры Юнсоков", sub: "от 23.06", hearts: "🤍🖤", link: "https://t.me/violent_arhive/282" },
+        { text: "R&V Live", sub: "от 16.10", hearts: "💙💚", link: "https://t.me/violent_arhive/803" },
+        { text: "JM & JK Live!", sub: "от 08.12", hearts: "💛💜", link: "https://t.me/violent_arhive/797" }
       ]},
       { year: "2018", items: [
-        { text: "от 21.11 \"Парижская ночь\"", hearts: "💚🤍", link: "https://t.me/violent_arhive/752" },
-        { text: "от 06.12 \"Тэхён, Тани и Чимин\"", hearts: "💛💚🤎", link: "https://t.me/violent_arhive/748" }
+        { text: "Парижская ночь", sub: "от 21.11", hearts: "💚🤍", link: "https://t.me/violent_arhive/752" },
+        { text: "Тэхён, Тани и Чимин", sub: "от 06.12", hearts: "💛💚🤎", link: "https://t.me/violent_arhive/748" }
       ]},
       { year: "2019", items: [
-        { text: "от 20.02 \"Экскурсия по студии Мона 1 часть\" (2 часть в трансляциях - Намджун)", hearts: "💙💚💛", link: "https://t.me/violent_arhive/738" },
-        { text: "от 01.04 \"SOPE: о распаде\"", hearts: "🖤🤍", link: "https://t.me/violent_arhive/731" },
-        { text: "от 19.05 \"EatJin с Чимином\"", hearts: "💛💕", link: "https://t.me/violent_arhive/724" },
-        { text: "от 07.06 \"МиниМони\"", hearts: "💛💙", link: "https://t.me/violent_arhive/713" },
-        { text: "от 09.06 \"VOPE\"", hearts: "💚🤍", link: "https://t.me/violent_arhive/711" }
+        { text: "Экскурсия по студии Мона 1 часть", sub: "от 20.02 (2 часть в трансляциях - Намджун)", hearts: "💙💚💛", link: "https://t.me/violent_arhive/738" },
+        { text: "SOPE: о распаде", sub: "от 01.04", hearts: "🖤🤍", link: "https://t.me/violent_arhive/731" },
+        { text: "EatJin с Чимином", sub: "от 19.05", hearts: "💛💕", link: "https://t.me/violent_arhive/724" },
+        { text: "МиниМони", sub: "от 07.06", hearts: "💛💙", link: "https://t.me/violent_arhive/713" },
+        { text: "VOPE", sub: "от 09.06", hearts: "💚🤍", link: "https://t.me/violent_arhive/711" }
       ]}
     ];
 
@@ -115,9 +115,15 @@
         const box = document.createElement('input');
         box.type = 'checkbox';
 
-        const span = document.createElement('span');
+                const span = document.createElement('span');
         span.className = 'text';
         span.textContent = item.text;
+        if (item.sub) {
+          const sub = document.createElement('span');
+          sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+          sub.textContent = item.sub;
+          span.appendChild(sub);
+        }
 
         if (localStorage.getItem(id) === 'true') {
           box.checked = true;

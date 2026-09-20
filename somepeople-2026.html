@@ -78,14 +78,14 @@
   </div>
 
   <script>
-    const data = [
+        const data = [
       { year: "2026", items: [
-        { text: "от 29.04 \"Тампа, дайте шума~\"", hearts: "💚💛🤍🖤", link: "https://t.me/violent_arhive/5494" },
-        { text: "от 03.05 \"Добро пожаловать\"", hearts: "💙💚💕", link: "https://t.me/violent_arhive/5499" },
-        { text: "от 20.05 \"Нам.Чи.Тэ.Хо\"", hearts: "💚💛🤍💙", link: "https://t.me/violent_arhive/5503" },
-        { text: "от 12.06 \"Амии, пошумитее 😁\"", hearts: "💜💛", link: "https://t.me/violent_arhive/5534" },
-        { text: "от 27.06 \"Хай\"", hearts: "💕💛💙💚", link: "https://t.me/violent_arhive/5547" },
-        { text: "от 12.08 \"Здратуте\"", hearts: "💚💜", link: "https://t.me/violent_arhive/5578" }
+        { text: "Тампа, дайте шума~", sub: "от 29.04", hearts: "💚💛🤍🖤", link: "https://t.me/violent_arhive/5494" },
+        { text: "Добро пожаловать", sub: "от 03.05", hearts: "💙💚💕", link: "https://t.me/violent_arhive/5499" },
+        { text: "Нам.Чи.Тэ.Хо", sub: "от 20.05", hearts: "💚💛🤍💙", link: "https://t.me/violent_arhive/5503" },
+        { text: "Амии, пошумитее 😁", sub: "от 12.06", hearts: "💜💛", link: "https://t.me/violent_arhive/5534" },
+        { text: "Хай", sub: "от 27.06", hearts: "💕💛💙💚", link: "https://t.me/violent_arhive/5547" },
+        { text: "Здратуте", sub: "от 12.08", hearts: "💚💜", link: "https://t.me/violent_arhive/5578" }
       ]}
     ];
 
@@ -105,9 +105,15 @@
         const box = document.createElement('input');
         box.type = 'checkbox';
 
-        const span = document.createElement('span');
+               const span = document.createElement('span');
         span.className = 'text';
         span.textContent = item.text;
+        if (item.sub) {
+          const sub = document.createElement('span');
+          sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+          sub.textContent = item.sub;
+          span.appendChild(sub);
+        }
 
         if (localStorage.getItem(id) === 'true') {
           box.checked = true;

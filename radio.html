@@ -90,21 +90,21 @@
   </div>
 
   <script>
-    const items1 = [
-      { text: "от 25.04 \"DJ Suga's Honey FM 06.13\"", link: "https://t.me/violent_arhive/641" },
-      { text: "от 02.05 \"DJ Suga's Honey FM 06.13 with RM\"", link: "https://t.me/violent_arhive/639" },
-      { text: "от 09.05 \"DJ Suga's Honey FM 06.13 and Jin 0613FM\"", link: "https://t.me/violent_arhive/633" },
-      { text: "от 23.05 \"DJ Suga Dj's Honey FM 06.13 c J-HOPE\"", link: "https://t.me/violent_arhive/626" },
-      { text: "от 15.05 \"DJ Suga's Honey FM 06.13 c V & 0613FM\"", link: "https://t.me/violent_arhive/631" },
-      { text: "от 30.05 \"DJ Suga's Honey FM 06.13 c JIMIN\"", link: "https://t.me/violent_arhive/625" },
-      { text: "от 06.06 \"DJ Suga's Honey FM 06.13 c JK\"", link: "https://t.me/violent_arhive/624" },
-      { text: "от 13.06 \"DJ Suga's Honey FM 06.13\"", link: "https://t.me/violent_arhive/621" },
-      { text: "от 27.07 \"FM & Jijinjung's R.A.D.I.O_FM 06.13\" 🎙🎧", link: "https://t.me/violent_arhive/616" },
-      { text: "от 28.12 \"SUGA LIVE\"", link: "https://t.me/violent_arhive/262" }
+       const items1 = [
+      { text: "DJ Suga's Honey FM 06.13", sub: "от 25.04", link: "https://t.me/violent_arhive/641" },
+      { text: "DJ Suga's Honey FM 06.13 with RM", sub: "от 02.05", link: "https://t.me/violent_arhive/639" },
+      { text: "DJ Suga's Honey FM 06.13 and Jin 0613FM", sub: "от 09.05", link: "https://t.me/violent_arhive/633" },
+      { text: "DJ Suga Dj's Honey FM 06.13 c J-HOPE", sub: "от 23.05", link: "https://t.me/violent_arhive/626" },
+      { text: "DJ Suga's Honey FM 06.13 c V & 0613FM", sub: "от 15.05", link: "https://t.me/violent_arhive/631" },
+      { text: "DJ Suga's Honey FM 06.13 c JIMIN", sub: "от 30.05", link: "https://t.me/violent_arhive/625" },
+      { text: "DJ Suga's Honey FM 06.13 c JK", sub: "от 06.06", link: "https://t.me/violent_arhive/624" },
+      { text: "DJ Suga's Honey FM 06.13", sub: "от 13.06", link: "https://t.me/violent_arhive/621" },
+      { text: "FM & Jijinjung's R.A.D.I.O_FM 06.13 🎙🎧", sub: "от 27.07", link: "https://t.me/violent_arhive/616" },
+      { text: "SUGA LIVE", sub: "от 28.12", link: "https://t.me/violent_arhive/262" }
     ];
 
     const items2 = [
-      { text: "от 07.04 \"Радиошоу Юнги\"", link: "https://t.me/violent_arhive/3943" }
+      { text: "Радиошоу Юнги", sub: "от 07.04", link: "https://t.me/violent_arhive/3943" }
     ];
 
     function renderItems(containerId, items) {
@@ -118,9 +118,15 @@
         const box = document.createElement('input');
         box.type = 'checkbox';
 
-        const span = document.createElement('span');
+               const span = document.createElement('span');
         span.className = 'text';
         span.textContent = item.text;
+        if (item.sub) {
+          const sub = document.createElement('span');
+          sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+          sub.textContent = item.sub;
+          span.appendChild(sub);
+        }
 
         if (localStorage.getItem(id) === 'true') {
           box.checked = true;

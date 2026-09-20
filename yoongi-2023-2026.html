@@ -72,28 +72,28 @@
   </div>
 
   <script>
-    const data = [
+        const data = [
       { year: "2023", items: [
-        { text: "от 14.02 \"День святого Валентина\"", link: "https://t.me/violent_arhive/3694" },
-        { text: "от 09.03 \"Мой день рождения 🎂\"", link: "https://t.me/violent_arhive/3768" },
-        { text: "от 07.04 \"Радиошоу 🎙\"", link: "https://t.me/violent_arhive/3943" },
-        { text: "от 25.04 \"SUGA 'D-DAY' Live\"", link: "https://t.me/violent_arhive/3987" },
-        { text: "от 30.04 \"Первый город — завершено 💛\"", link: "https://t.me/violent_arhive/3990" },
-        { text: "от 07.05 \"Чикаго, конец!!!\"", link: "https://t.me/violent_arhive/4007" },
-        { text: "от 18.05 \"Давайте говорить друг другу не 'пока', а 'привет'\"", link: "https://t.me/violent_arhive/4018" },
-        { text: "от 11.06 \"Последняя ночь в Бангкоке\"", link: "https://t.me/violent_arhive/4074" },
-        { text: "от 18.06 \"Зарубежный тур всё!\"", link: "https://t.me/violent_arhive/4079" },
-        { text: "от 06.08 \"Всё!\"", link: "https://t.me/violent_arhive/4153" },
-        { text: "от 17.09 \"Давно не виделись\"", link: "https://t.me/violent_arhive/4240" }
+        { text: "День святого Валентина", sub: "от 14.02", link: "https://t.me/violent_arhive/3694" },
+        { text: "Мой день рождения 🎂", sub: "от 09.03", link: "https://t.me/violent_arhive/3768" },
+        { text: "Радиошоу 🎙", sub: "от 07.04", link: "https://t.me/violent_arhive/3943" },
+        { text: "SUGA 'D-DAY' Live", sub: "от 25.04", link: "https://t.me/violent_arhive/3987" },
+        { text: "Первый город — завершено 💛", sub: "от 30.04", link: "https://t.me/violent_arhive/3990" },
+        { text: "Чикаго, конец!!!", sub: "от 07.05", link: "https://t.me/violent_arhive/4007" },
+        { text: "Давайте говорить друг другу не 'пока', а 'привет'", sub: "от 18.05", link: "https://t.me/violent_arhive/4018" },
+        { text: "Последняя ночь в Бангкоке", sub: "от 11.06", link: "https://t.me/violent_arhive/4074" },
+        { text: "Зарубежный тур всё!", sub: "от 18.06", link: "https://t.me/violent_arhive/4079" },
+        { text: "Всё!", sub: "от 06.08", link: "https://t.me/violent_arhive/4153" },
+        { text: "Давно не виделись", sub: "от 17.09", link: "https://t.me/violent_arhive/4240" }
       ]},
       { year: "2024", items: [] },
       { year: "2025", items: [
-        { text: "от 28.12 \"Ну и холодрыга\"", link: "https://t.me/violent_arhive/5371" }
+        { text: "Ну и холодрыга", sub: "от 28.12", link: "https://t.me/violent_arhive/5371" }
       ]},
       { year: "2026", items: [
-        { text: "от 09.03 \"С ДР ШУГА 🎂\"", link: "https://t.me/violent_arhive/5398" },
-        { text: "от 13.06 \"Шестьодинтри\"", link: "https://t.me/violent_arhive/5531" },
-        { text: "от 16.08 \"Приветпривет\"", link: "https://t.me/violent_arhive/5644" }
+        { text: "С ДР ШУГА 🎂", sub: "от 09.03", link: "https://t.me/violent_arhive/5398" },
+        { text: "Шестьодинтри", sub: "от 13.06", link: "https://t.me/violent_arhive/5531" },
+        { text: "Приветпривет", sub: "от 16.08", link: "https://t.me/violent_arhive/5644" }
       ]}
     ];
 
@@ -121,9 +121,15 @@
         const box = document.createElement('input');
         box.type = 'checkbox';
 
-        const span = document.createElement('span');
+               const span = document.createElement('span');
         span.className = 'text';
         span.textContent = item.text;
+        if (item.sub) {
+          const sub = document.createElement('span');
+          sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+          sub.textContent = item.sub;
+          span.appendChild(sub);
+        }
 
         if (localStorage.getItem(id) === 'true') {
           box.checked = true;
