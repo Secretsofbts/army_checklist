@@ -118,7 +118,7 @@
         { text: "Волнуюсь", sub: "от 07.04", link: "https://t.me/violent_arhive/5464" },
         { text: "Лёг спать, а тут вдруг вот", sub: "от 29.05", link: "https://t.me/violent_arhive/5533" },
         { text: "Weverse обновили? Неполадки с аккумулятором? Вылетело?", sub: "от 28.06", link: "https://t.me/violent_arhive/5559" },
-        { text: "Чуть-чуть посижу и пойду есть", sub: "от 10.07", link: "https://t.me/violent_arhive/5567" },
+        { text: "Чуть-чуть посижу и пойду", sub: "от 10.07", link: "https://t.me/violent_arhive/5567" },
         { text: "Совсем забыл затестить", sub: "от 27.07", link: "https://t.me/violent_arhive/5557" },
         { text: "Мэтча", sub: "от 28.07", link: "https://t.me/violent_arhive/5573" },
         { text: "☺️💜🎂", sub: "от 01.09", link: "https://t.me/violent_arhive/5627" }
@@ -172,23 +172,14 @@
           return;
         }
 
-                                                   const oldId = 'jk25-' + block.year + '-' + ii;
+                                           const oldId = 'jk25-' + block.year + '-' + ii;
         const oldNolineId = 'noline-jungkook-' + block.year + '-' + ii;
         const box = document.createElement('input');
         box.type = 'checkbox';
 
-        function extractTrailingIcon(text) {
-          const match = text.match(/(\s*[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]+)+\s*$/u);
-          if (match) {
-            return { rest: text.slice(0, match.index).trim(), icon: match[0].trim() };
-          }
-          return { rest: text, icon: '' };
-        }
-        const parsed = extractTrailingIcon(item.text);
-
                const span = document.createElement('span');
         span.className = 'text';
-        span.textContent = parsed.rest;
+        span.textContent = item.text;
         if (item.sub) {
           const sub = document.createElement('span');
           sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
@@ -218,7 +209,7 @@
           box.dispatchEvent(new Event('change'));
         });
 
-               const link = document.createElement('a');
+                  const link = document.createElement('a');
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
@@ -226,12 +217,6 @@
 
         row.appendChild(box);
         row.appendChild(span);
-        if (parsed.icon) {
-          const icon = document.createElement('span');
-          icon.style.cssText = 'font-size:13px; flex-shrink:0;';
-          icon.textContent = parsed.icon;
-          row.appendChild(icon);
-        }
         row.appendChild(link);
         listEl.appendChild(row);
       });
