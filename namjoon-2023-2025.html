@@ -72,28 +72,28 @@
   </div>
 
   <script>
-    const data = [
+        const data = [
       { year: "2023", items: [
-        { text: "от 16.02 \"Хай\"", link: "https://t.me/violent_arhive/3697" },
-        { text: "от 01.04 \"Выходные...\"", link: "https://t.me/violent_arhive/3843" },
-        { text: "от 17.06 \"Вечерний Ким Намджун. FESTA 2023\"", link: "https://t.me/violent_arhive/4094" },
-        { text: "от 16.07 \"Привет, привет\"", link: "https://t.me/violent_arhive/4110" },
-        { text: "от 12.08 \"Лысая головушка\"", link: "https://t.me/violent_arhive/4167" },
-        { text: "от 30.08 \"Лысый в дождик\"", link: "https://t.me/violent_arhive/4189" },
-        { text: "от 14.08 \"Запоздалый эфир на день рождения\"", link: "https://t.me/violent_arhive/4242" },
-        { text: "от 10.10 \"Хай\"", link: "https://t.me/violent_arhive/4262" },
-        { text: "от 18.10 \"Хайхай и Эй\"", link: "https://t.me/violent_arhive/4280" },
-        { text: "от 14.11 \"Хай-хай\"", link: "https://t.me/violent_arhive/4371" }
+        { text: "Хай", sub: "от 16.02", link: "https://t.me/violent_arhive/3697" },
+        { text: "Выходные...", sub: "от 01.04", link: "https://t.me/violent_arhive/3843" },
+        { text: "Вечерний Ким Намджун. FESTA 2023", sub: "от 17.06", link: "https://t.me/violent_arhive/4094" },
+        { text: "Привет, привет", sub: "от 16.07", link: "https://t.me/violent_arhive/4110" },
+        { text: "Лысая головушка", sub: "от 12.08", link: "https://t.me/violent_arhive/4167" },
+        { text: "Лысый в дождик", sub: "от 30.08", link: "https://t.me/violent_arhive/4189" },
+        { text: "Запоздалый эфир на день рождения", sub: "от 14.08", link: "https://t.me/violent_arhive/4242" },
+        { text: "Хай", sub: "от 10.10", link: "https://t.me/violent_arhive/4262" },
+        { text: "Хайхай и Эй", sub: "от 18.10", link: "https://t.me/violent_arhive/4280" },
+        { text: "Хай-хай", sub: "от 14.11", link: "https://t.me/violent_arhive/4371" }
       ]},
       { year: "2024", items: [] },
       { year: "2025", items: [
-        { text: "от 10.06 \"Давно не виделись, на связи Намджун\"", link: "https://t.me/violent_arhive/5170" },
-        { text: "от 07.07 \"Приветик\"", link: "https://t.me/violent_arhive/5196" },
-        { text: "от 12.09 \"Спасибочки 🎂\"", link: "https://t.me/violent_arhive/5263" },
-        { text: "от 05.10 \"С Чусоком!\"", link: "https://t.me/violent_arhive/5275" },
-        { text: "от 13.11 \"Хахаха\"", link: "https://t.me/violent_arhive/5319" },
-        { text: "от 06.12 \"Лайв\"", link: "https://t.me/violent_arhive/5338" },
-        { text: "от 28.12 \"yay\"", link: "https://t.me/violent_arhive/5370" }
+        { text: "Давно не виделись, на связи Намджун", sub: "от 10.06", link: "https://t.me/violent_arhive/5170" },
+        { text: "Приветик", sub: "от 07.07", link: "https://t.me/violent_arhive/5196" },
+        { text: "Спасибочки 🎂", sub: "от 12.09", link: "https://t.me/violent_arhive/5263" },
+        { text: "С Чусоком!", sub: "от 05.10", link: "https://t.me/violent_arhive/5275" },
+        { text: "Хахаха", sub: "от 13.11", link: "https://t.me/violent_arhive/5319" },
+        { text: "Лайв", sub: "от 06.12", link: "https://t.me/violent_arhive/5338" },
+        { text: "yay", sub: "от 28.12", link: "https://t.me/violent_arhive/5370" }
       ]}
     ];
 
@@ -121,9 +121,15 @@
         const box = document.createElement('input');
         box.type = 'checkbox';
 
-        const span = document.createElement('span');
+               const span = document.createElement('span');
         span.className = 'text';
         span.textContent = item.text;
+        if (item.sub) {
+          const sub = document.createElement('span');
+          sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+          sub.textContent = item.sub;
+          span.appendChild(sub);
+        }
 
         if (localStorage.getItem(id) === 'true') {
           box.checked = true;
