@@ -90,17 +90,17 @@
   </div>
 
   <script>
-       const items1 = [
-      { text: "DJ Suga's Honey FM 06.13", sub: "от 25.04", link: "https://t.me/violent_arhive/641" },
-      { text: "DJ Suga's Honey FM 06.13", sub: "от 02.05 with RM", link: "https://t.me/violent_arhive/639" },
-      { text: "DJ Suga's Honey FM 06.13", sub: "от 09.05 with Jin", link: "https://t.me/violent_arhive/633" },
-      { text: "DJ Suga's Honey FM 06.13", sub: "от 23.05 with j-hope", link: "https://t.me/violent_arhive/626" },
-      { text: "DJ Suga's Honey FM 06.13", sub: "от 15.05 with V ", link: "https://t.me/violent_arhive/631" },
-      { text: "DJ Suga's Honey FM 06.13", sub: "от 30.05 with Jimin", link: "https://t.me/violent_arhive/625" },
-      { text: "DJ Suga's Honey FM 06.13", sub: "от 06.06 with JK", link: "https://t.me/violent_arhive/624" },
+          const items1 = [
+      { text: "DJ Suga's Honey FM 06.13", sub: "от 25.04", link: "https://t.me/violent_arhive/641", },
+      { text: "DJ Suga's Honey FM 06.13", sub: "от 02.05 with RM", link: "https://t.me/violent_arhive/639", hearts: "💙" },
+      { text: "DJ Suga's Honey FM 06.13", sub: "от 09.05 with Jin", link: "https://t.me/violent_arhive/633", hearts: "💕" },
+      { text: "DJ Suga's Honey FM 06.13", sub: "от 23.05 with j-hope", link: "https://t.me/violent_arhive/626", hearts: "🤍" },
+      { text: "DJ Suga's Honey FM 06.13", sub: "от 15.05 with V ", link: "https://t.me/violent_arhive/631", hearts: "💚" },
+      { text: "DJ Suga's Honey FM 06.13", sub: "от 30.05 with Jimin", link: "https://t.me/violent_arhive/625", hearts: "💛" },
+      { text: "DJ Suga's Honey FM 06.13", sub: "от 06.06 with JK", link: "https://t.me/violent_arhive/624", hearts: "💜" },
       { text: "DJ Suga's Honey FM 06.13", sub: "от 13.06", link: "https://t.me/violent_arhive/621" },
       { text: "R.A.D.I.O_FM 06.13 🎙🎧", sub: "от 27.07 FM & Jijinjung's", link: "https://t.me/violent_arhive/616" },
-      { text: "SUGA LIVE", sub: "от 28.12", link: "https://t.me/violent_arhive/262" }
+      { text: "SUGA LIVE", sub: "от 28.12", link: "https://t.me/violent_arhive/262"}
     ];
 
     const items2 = [
@@ -142,7 +142,7 @@
           box.dispatchEvent(new Event('change'));
         });
 
-        const link = document.createElement('a');
+               const link = document.createElement('a');
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
@@ -150,6 +150,12 @@
 
         row.appendChild(box);
         row.appendChild(span);
+        if (item.hearts) {
+          const hearts = document.createElement('span');
+          hearts.style.cssText = 'font-size:13px; flex-shrink:0;';
+          hearts.textContent = item.hearts;
+          row.appendChild(hearts);
+        }
         row.appendChild(link);
         listEl.appendChild(row);
       });
