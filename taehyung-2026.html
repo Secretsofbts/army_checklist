@@ -65,13 +65,13 @@
   </div>
 
   <script>
-    const items = [
-      { text: "от 21.02 \"Йоу\"", link: "https://t.me/violent_arhive/5419" },
-      { text: "от 21.03 \"Йоу\" (🔈 arirang)", link: "https://t.me/violent_arhive/5421" },
-      { text: "от 24.06 \"Треню\"", link: "https://t.me/violent_arhive/5551" },
-      { text: "от 24.06 \"Фух\"", link: "https://t.me/violent_arhive/5538" },
-      { text: "от 07.08 \"Давно не виделись\"", link: "https://t.me/violent_arhive/5575" },
-      { text: "от 08.08 \"Гуд морнинг и еда\"", link: "https://t.me/violent_arhive/5642" },
+        const items = [
+      { text: "\"Йоу\"", sub: "от 21.02", link: "https://t.me/violent_arhive/5419" },
+      { text: "\"Йоу\" (🔈 arirang)", sub: "от 21.03", link: "https://t.me/violent_arhive/5421" },
+      { text: "Треню", sub: "от 24.06", link: "https://t.me/violent_arhive/5551" },
+      { text: "Фух", sub: "от 24.06", link: "https://t.me/violent_arhive/5538" },
+      { text: "Давно не виделись", sub: "от 07.08", link: "https://t.me/violent_arhive/5575" },
+      { text: "Гуд морнинг и еда", sub: "от 08.08", link: "https://t.me/violent_arhive/5642" }
     ];
 
     const listEl = document.getElementById('list');
@@ -85,9 +85,15 @@
       const box = document.createElement('input');
       box.type = 'checkbox';
 
-      const span = document.createElement('span');
+           const span = document.createElement('span');
       span.className = 'text';
       span.textContent = item.text;
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+        sub.textContent = item.sub;
+        span.appendChild(sub);
+      }
 
             let saved = localStorage.getItem(id);
       if (saved === null) saved = localStorage.getItem(oldId);
