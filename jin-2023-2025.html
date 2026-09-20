@@ -72,32 +72,31 @@
   </div>
 
   <script>
-    const data = [
+       const data = [
       { year: "2023", items: [] },
       { year: "2024", items: [
-        { text: "от 12.06 \"D-Day\"", link: "https://t.me/violent_arhive/4623" },
-        { text: "от 15.07 \"Сокджини\"", link: "https://t.me/violent_arhive/4652" },
-        { text: "от 21.09 \"Здравствуйте, это Джин\"", link: "https://t.me/violent_arhive/4838" },
-        { text: "от 10.10 \"С Днем Рождения, Чимин! (+ анонс выхода SuperTuna) 🐟\"", link: "https://t.me/violent_arhive/4847" },
-        { text: "от 15.11 \"Что такое \\\"Happy\\\"?\"", link: "https://t.me/violent_arhive/4894" },
-        { text: "от 21.11 \"Сокджини в Нью-Йорке\"", link: "https://t.me/violent_arhive/4930" }
+        { text: "\"D-Day\"", sub: "от 12.06", link: "https://t.me/violent_arhive/4623" },
+        { text: "Сокджини", sub: "от 15.07", link: "https://t.me/violent_arhive/4652" },
+        { text: "Здравствуйте, это Джин", sub: "от 21.09", link: "https://t.me/violent_arhive/4838" },
+        { text: "С Днем Рождения, Чимин! (+ анонс выхода SuperTuna) 🐟", sub: "от 10.10", link: "https://t.me/violent_arhive/4847" },
+        { text: "Что такое \"Happy\"?", sub: "от 15.11", link: "https://t.me/violent_arhive/4894" },
+        { text: "Сокджини в Нью-Йорке", sub: "от 21.11", link: "https://t.me/violent_arhive/4930" }
       ]},
       { year: "2025", items: [
-        { text: "от 10.03 \"WWH in the SEOM\"", link: "https://t.me/violent_arhive/5155" },
-        { text: "от 16.05 \"Джин 'Echo' камбек\"", link: "https://t.me/violent_arhive/5146" },
-        { text: "от 05.07 \"Otsukare Samadeshita\"", link: "https://t.me/violent_arhive/5204" },
-        { text: "от 12.07 \"Пуньк~\"", link: "https://t.me/violent_arhive/5235" },
-        { text: "от 18.07 \"Хай, айм Джин\"", link: "https://t.me/violent_arhive/5217" },
-        { text: "от 23.07 \"Даллас~~\"", link: "https://t.me/violent_arhive/5215" },
-        { text: "от 27.07 \"Ттамбпа~~\"", link: "https://t.me/violent_arhive/5213" },
-        { text: "от 31.07 \"Ньюарк\"", link: "https://t.me/violent_arhive/5210" },
-        { text: "от 06.08 \"Лондон, летсгоо\"", link: "https://t.me/violent_arhive/5223" },
-        { text: "от 09.08 \"ПКㅠㅜ\"", link: "https://t.me/violent_arhive/5222" },
-        { text: "от 01.11 \"Беги, Сокджин\"", link: "https://t.me/violent_arhive/5288" },
-        { text: "от 04.12 \"Хэппибёрздэй и Что-то лагает…\"", link: "https://t.me/violent_arhive/5339" }
+        { text: "WWH in the SEOM", sub: "от 10.03", link: "https://t.me/violent_arhive/5155" },
+        { text: "Джин 'Echo' камбек", sub: "от 16.05", link: "https://t.me/violent_arhive/5146" },
+        { text: "Otsukare Samadeshita", sub: "от 05.07", link: "https://t.me/violent_arhive/5204" },
+        { text: "Пуньк~", sub: "от 12.07", link: "https://t.me/violent_arhive/5235" },
+        { text: "Хай, айм Джин", sub: "от 18.07", link: "https://t.me/violent_arhive/5217" },
+        { text: "Даллас~~", sub: "от 23.07", link: "https://t.me/violent_arhive/5215" },
+        { text: "Ттамбпа~~", sub: "от 27.07", link: "https://t.me/violent_arhive/5213" },
+        { text: "Ньюарк", sub: "от 31.07", link: "https://t.me/violent_arhive/5210" },
+        { text: "Лондон, летсгоо", sub: "от 06.08", link: "https://t.me/violent_arhive/5223" },
+        { text: "ПКㅠㅜ", sub: "от 09.08", link: "https://t.me/violent_arhive/5222" },
+        { text: "Беги, Сокджин", sub: "от 01.11", link: "https://t.me/violent_arhive/5288" },
+        { text: "Хэппибёрздэй и Что-то лагает…", sub: "от 04.12", link: "https://t.me/violent_arhive/5339" }
       ]}
     ];
-
     const listEl = document.getElementById('list');
     data.forEach((block) => {
       const yearTitle = document.createElement('div');
@@ -125,6 +124,12 @@
         const span = document.createElement('span');
         span.className = 'text';
         span.textContent = item.text;
+        if (item.sub) {
+          const sub = document.createElement('span');
+          sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+          sub.textContent = item.sub;
+          span.appendChild(sub);
+        }
 
         if (localStorage.getItem(id) === 'true') {
           box.checked = true;
