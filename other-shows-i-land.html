@@ -113,11 +113,14 @@
       document.getElementById('count-ep12').textContent = 'Отмечено: ' + checked12 + ' из ' + ep12items.length;
     }
 
-       function updateProgress() {
-      const all = document.querySelectorAll('input[type="checkbox"]');
-      let total = 0, checked = 0;
-      all.forEach(cb => { total++; if (cb.checked) checked++; });
-      setProgress('other-shows-i-land', {checked, total});
+              function updateProgress() {
+      // Это шоу — "всё или ничего" для каждой части отдельно
+      const allDone7 = ep7items.every((item) => localStorage.getItem('video-' + item.link.split('/').pop()) === 'true');
+      setProgress('other-shows-i-land-ep7', { checked: allDone7 ? 1 : 0, total: 1 });
+
+      const allDone12 = ep12items.every((item) => localStorage.getItem('video-' + item.link.split('/').pop()) === 'true');
+      setProgress('other-shows-i-land-ep12', { checked: allDone12 ? 1 : 0, total: 1 });
+
       pushWeightedContributions('other-shows-i-land-ep7');
       pushWeightedContributions('other-shows-i-land-ep12');
       updateCounts();

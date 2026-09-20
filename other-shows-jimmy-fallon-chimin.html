@@ -57,25 +57,27 @@
         setChecked(id, box.checked);
         span.classList.toggle('done', box.checked);
         updateProgress();
+        });
+        span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
+        const link = document.createElement('a');
+        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
+        row.appendChild(box); row.appendChild(span); row.appendChild(link);
+        listEl.appendChild(row);
       });
-      span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
-      const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
-      row.appendChild(box); row.appendChild(span); row.appendChild(link);
-      listEl.appendChild(row);
-    });
 
-    function updateProgress() {
+          function updateProgress() {
       const all = document.querySelectorAll('input[type="checkbox"]');
       let total = 0, checked = 0;
       all.forEach(cb => { total++; if (cb.checked) checked++; });
-      setProgress('other-shows-jimmy-fallon-chimin', {checked, total});
+      // Это шоу — "всё или ничего": вклад = 1 только если ВСЕ пункты отмечены
+      const allDone = checked === total && total > 0;
+      setProgress('other-shows-jimmy-fallon-chimin', { checked: allDone ? 1 : 0, total: 1 });
       pushWeightedContributions('other-shows-jimmy-fallon-chimin');
     }
-    updateProgress();
-    syncChecklistFromCloud(updateProgress);
+      updateProgress();
+      syncChecklistFromCloud(updateProgress);
 
-    if (window.Telegram && window.Telegram.WebApp) { Telegram.WebApp.ready(); Telegram.WebApp.expand(); }
-  </script>
-</body>
-</html>
+      if (window.Telegram && window.Telegram.WebApp) { Telegram.WebApp.ready(); Telegram.WebApp.expand(); }
+    </script>
+  </body>
+  </html>
