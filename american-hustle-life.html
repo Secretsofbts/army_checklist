@@ -72,20 +72,26 @@
   </div>
 
   <script>
-    const navItems = [
-      { text: "Серии шоу", link: "american-hustle-life-episodes.html", statKey: "american-hustle-life-episodes" },
-      { text: "Вырезанные сцены", link: "american-hustle-life-deleted.html", statKey: "american-hustle-life-deleted" }
-    ];
+      const navItems = [
+        { text: "Серии шоу", link: "american-hustle-life-episodes.html", statKey: "american-hustle-life-episodes" },
+                { text: "Вырезанные сцены", sub: "не идут в статистику", link: "american-hustle-life-deleted.html", statKey: "american-hustle-life-deleted" }
+      ];
 
     const listEl = document.getElementById('list');
     navItems.forEach((item) => {
       const a = document.createElement('a');
       a.className = 'navlink';
       a.href = item.link;
-      const label = document.createElement('span');
+           const label = document.createElement('span');
       label.className = 'navlink-label';
       label.style.flex = '1';
       label.textContent = item.text;
+      if (item.sub) {
+        const sub = document.createElement('span');
+        sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+        sub.textContent = item.sub;
+        label.appendChild(sub);
+      }
       if (item.statKey) {
         const box = document.createElement('input');
         box.type = 'checkbox';
