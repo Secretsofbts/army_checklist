@@ -129,9 +129,18 @@
         const box = document.createElement('input');
         box.type = 'checkbox';
 
-               const span = document.createElement('span');
+                            function extractTrailingIcon(text) {
+          const match = text.match(/(\s*[\u{1F300}-\u{1FAFF}\u{2600}-\u{27BF}]+)+\s*$/u);
+          if (match) {
+            return { rest: text.slice(0, match.index).trim(), icon: match[0].trim() };
+          }
+          return { rest: text, icon: '' };
+        }
+        const parsed = extractTrailingIcon(item.text);
+
+        const span = document.createElement('span');
         span.className = 'text';
-        span.textContent = item.text;
+        span.textContent = parsed.rest;
         if (item.sub) {
           const sub = document.createElement('span');
           sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
@@ -155,7 +164,7 @@
           box.dispatchEvent(new Event('change'));
         });
 
-        const link = document.createElement('a');
+              const link = document.createElement('a');
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
@@ -163,6 +172,12 @@
 
         row.appendChild(box);
         row.appendChild(span);
+        if (parsed.icon) {
+          const icon = document.createElement('span');
+          icon.style.cssText = 'font-size:13px; flex-shrink:0;';
+          icon.textContent = parsed.icon;
+          row.appendChild(icon);
+        }
         row.appendChild(link);
         listEl.appendChild(row);
       });
