@@ -76,11 +76,17 @@
       }
     }
 
-    const navKeys = navItems.map(i => i.statKey);
+      const navKeys = navItems.map(i => i.statKey);
     function renderAllBadges() {
       navKeys.forEach((key) => {
+        const known = getStatTotal(key);
         const raw = localStorage.getItem('progress:' + key);
-        applyBadge(key, raw ? JSON.parse(raw) : null);
+        const data = raw ? JSON.parse(raw) : null;
+        if (known !== null) {
+          applyBadge(key, { checked: data ? data.checked : 0, total: known });
+        } else {
+          applyBadge(key, data);
+        }
       });
     }
     renderAllBadges();
