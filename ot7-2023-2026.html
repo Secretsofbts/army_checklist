@@ -72,24 +72,24 @@
   </div>
 
   <script>
-    const data = [
+       const data = [
       { year: "2023", items: [] },
       { year: "2024", items: [] },
       { year: "2025", items: [
-        { text: "от 01.07 \"БантанСонёндан вернулись\"", link: "https://t.me/violent_arhive/5171" },
-        { text: "от 17.08 \"Морюшко\"", link: "https://t.me/violent_arhive/5220" },
-        { text: "от 16.12 \"2, 3, Бантан!!\"", link: "https://t.me/violent_arhive/5349" },
-        { text: "от 21.12 \"Мы тут\"", link: "https://t.me/violent_arhive/5366" },
-        { text: "от 30.12 \"Одному было скучно\"", link: "https://t.me/violent_arhive/5383" },
-        { text: "от 30.12 \"Ещё разок 🎂\"", link: "https://t.me/violent_arhive/5384" },
-        { text: "от 30.12 \"Чо-то как-то скучно\"", link: "https://t.me/violent_arhive/5385" },
-        { text: "от 31.12 \"BTS 2026\"", link: "https://t.me/violent_arhive/5365" }
+        { text: "БантанСонёндан вернулись", sub: "от 01.07", link: "https://t.me/violent_arhive/5171" },
+        { text: "Морюшко", sub: "от 17.08", link: "https://t.me/violent_arhive/5220" },
+        { text: "2, 3, Бантан!!", sub: "от 16.12", link: "https://t.me/violent_arhive/5349" },
+        { text: "Мы тут", sub: "от 21.12", link: "https://t.me/violent_arhive/5366" },
+        { text: "Одному было скучно", sub: "от 30.12", link: "https://t.me/violent_arhive/5383" },
+        { text: "Ещё разок 🎂", sub: "от 30.12", link: "https://t.me/violent_arhive/5384" },
+        { text: "Чо-то как-то скучно", sub: "от 30.12", link: "https://t.me/violent_arhive/5385" },
+        { text: "BTS 2026", sub: "от 31.12", link: "https://t.me/violent_arhive/5365" }
       ]},
       { year: "2026", items: [
-        { text: "от 16.01 \"ARMYRANG ARIRANG\"", link: "https://t.me/violent_arhive/5372" },
-        { text: "от 20.03 \"STUDIO NOTES | ARIRANG\"", link: "https://t.me/violent_arhive/5426" },
-        { text: "от 01.04 \"№1 в Биллборд 🥇\"", link: "https://t.me/violent_arhive/5454" },
-        { text: "от 26.05 \"Наши АРМИ получили награду! 🐥\"", link: "https://t.me/violent_arhive/5504" }
+        { text: "ARMYRANG ARIRANG", sub: "от 16.01", link: "https://t.me/violent_arhive/5372" },
+        { text: "STUDIO NOTES | ARIRANG", sub: "от 20.03", link: "https://t.me/violent_arhive/5426" },
+        { text: "№1 в Биллборд 🥇", sub: "от 01.04", link: "https://t.me/violent_arhive/5454" },
+        { text: "Наши АРМИ получили награду! 🐥", sub: "от 26.05", link: "https://t.me/violent_arhive/5504" }
       ]}
     ];
 
@@ -117,9 +117,15 @@
         const box = document.createElement('input');
         box.type = 'checkbox';
 
-        const span = document.createElement('span');
+               const span = document.createElement('span');
         span.className = 'text';
         span.textContent = item.text;
+        if (item.sub) {
+          const sub = document.createElement('span');
+          sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+          sub.textContent = item.sub;
+          span.appendChild(sub);
+        }
 
         if (localStorage.getItem(id) === 'true') {
           box.checked = true;
