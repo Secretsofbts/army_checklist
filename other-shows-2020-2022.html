@@ -200,8 +200,10 @@
 
                 listEl.appendChild(a);
 
-        if (item.statKey === 'other-shows-maplestory') {
+              if (item.statKey === 'other-shows-maplestory') {
           applyNestedNavBadge(item.statKey, ['other-shows-maplestory-bts', 'other-shows-maplestory-jin']);
+        } else if (item.statKey === 'other-shows-i-land') {
+          applyNestedNavBadge(item.statKey, ['other-shows-i-land-ep7', 'other-shows-i-land-ep12']);
         } else {
           applyNavBadge(item.statKey);
         }
