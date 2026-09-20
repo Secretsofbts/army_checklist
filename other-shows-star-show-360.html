@@ -114,14 +114,16 @@
       listEl.appendChild(row);
     });
 
-    function updateProgress() {
+        function updateProgress() {
       const all = document.querySelectorAll('input[type="checkbox"]');
       let total = 0, checked = 0;
       all.forEach(cb => {
         total++;
         if (cb.checked) checked++;
       });
-      setProgress('other-shows-star-show-360', {checked, total});
+      // Это шоу — "всё или ничего": вклад = 1 только если ВСЕ пункты отмечены
+      const allDone = checked === total && total > 0;
+      setProgress('other-shows-star-show-360', { checked: allDone ? 1 : 0, total: 1 });
       pushWeightedContributions('other-shows-star-show-360');
     }
     updateProgress();
