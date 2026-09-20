@@ -206,35 +206,36 @@
        const listEl = document.getElementById('list');
     items.forEach((item) => renderItem(listEl, item));
 
-        function applyNormalLogBadge() {
+          function applyNormalLogBadge() {
+      const known = getStatTotal('normal-log');
       const raw = localStorage.getItem('progress:normal-log');
+      const rawData = raw ? JSON.parse(raw) : null;
+      const checked = rawData ? rawData.checked : 0;
+      const total = known !== null ? known : (rawData ? rawData.total : 0);
       const badge = document.getElementById('badge-normal-log');
       const checkbox = document.getElementById('checkbox-normal-log');
       const label = document.getElementById('label-normal-log');
       if (!badge) return;
-      if (!raw) { badge.textContent = ''; return; }
-      const d = JSON.parse(raw);
-      if (d.total === 0) { badge.textContent = ''; return; }
-      if (d.checked === d.total) {
+      if (total === 0) { badge.textContent = ''; return; }
+      if (checked === total) {
         badge.textContent = '';
         if (checkbox) { checkbox.checked = true; checkbox.style.display = ''; }
         if (label) label.classList.add('done');
       } else {
-        badge.textContent = d.checked + '/' + d.total;
+        badge.textContent = checked + '/' + total;
       }
     }
 
-    function updateProgress() {
+       function updateProgress() {
       const all = document.querySelectorAll('.row input[type="checkbox"]:not([disabled])');
       let total = 0, checked = 0;
       all.forEach(cb => { total++; if (cb.checked) checked++; });
 
+      const knownNormalLog = getStatTotal('normal-log');
       const normalLogRaw = localStorage.getItem('progress:normal-log');
-      if (normalLogRaw) {
-        const d = JSON.parse(normalLogRaw);
-        total += d.total;
-        checked += d.checked;
-      }
+      const normalLogData = normalLogRaw ? JSON.parse(normalLogRaw) : null;
+      total += knownNormalLog !== null ? knownNormalLog : (normalLogData ? normalLogData.total : 0);
+      checked += normalLogData ? normalLogData.checked : 0;
 
       setProgress('bts-festa-2026', {checked, total});
       pushWeightedContributions('bts-festa-2026');
