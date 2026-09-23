@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,8 +7,8 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
-  <title>Бон Вояж</title>
+  <script src="sync.js?v=21"></script>
+  <title>Р‘РѕРЅ Р’РѕСЏР¶</title>
   <style>
     body {
       background: #f2f0f7;
@@ -63,19 +63,19 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="shows.html">← Назад</a>
-    <h1>🏕 БОН ВОЯЖ 🧭</h1>
-    <p class="intro">Шоу, где BTS путешествуют по разным странам. При этом им нужно самим все спланировать и обеспечить себя всем в рамках ограниченного бюджета</p>
+    <a class="back" href="shows.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>рџЏ• Р‘РћРќ Р’РћРЇР– рџ§­</h1>
+    <p class="intro">РЁРѕСѓ, РіРґРµ BTS РїСѓС‚РµС€РµСЃС‚РІСѓСЋС‚ РїРѕ СЂР°Р·РЅС‹Рј СЃС‚СЂР°РЅР°Рј. РџСЂРё СЌС‚РѕРј РёРј РЅСѓР¶РЅРѕ СЃР°РјРёРј РІСЃРµ СЃРїР»Р°РЅРёСЂРѕРІР°С‚СЊ Рё РѕР±РµСЃРїРµС‡РёС‚СЊ СЃРµР±СЏ РІСЃРµРј РІ СЂР°РјРєР°С… РѕРіСЂР°РЅРёС‡РµРЅРЅРѕРіРѕ Р±СЋРґР¶РµС‚Р°</p>
     <div id="list"></div>
-    <a class="footer-link" href="shows.html">Пост всех шоу ⬅️</a>
+    <a class="footer-link" href="shows.html">РџРѕСЃС‚ РІСЃРµС… С€РѕСѓ в¬…пёЏ</a>
   </div>
 
   <script>
     const navItems = [
-      { text: "1 сезон", sub: "Норвегия, Финляндия, Швеция (2016)", link: "bon-voyage-s1.html", statKey: "bon-voyage-s1" },
-      { text: "2 сезон", sub: "Гавайи (2017)", link: "bon-voyage-s2.html", statKey: "bon-voyage-s2" },
-      { text: "3 сезон", sub: "Мальта (2018)", link: "bon-voyage-s3.html", statKey: "bon-voyage-s3" },
-                { text: "4 сезон", sub: "Новая Зеландия (2019)", link: "bon-voyage-s4.html", statKey: "bon-voyage-s4" },
+      { text: "1 СЃРµР·РѕРЅ", sub: "РќРѕСЂРІРµРіРёСЏ, Р¤РёРЅР»СЏРЅРґРёСЏ, РЁРІРµС†РёСЏ (2016)", link: "bon-voyage-s1.html", statKey: "bon-voyage-s1" },
+      { text: "2 СЃРµР·РѕРЅ", sub: "Р“Р°РІР°Р№Рё (2017)", link: "bon-voyage-s2.html", statKey: "bon-voyage-s2" },
+      { text: "3 СЃРµР·РѕРЅ", sub: "РњР°Р»СЊС‚Р° (2018)", link: "bon-voyage-s3.html", statKey: "bon-voyage-s3" },
+                { text: "4 СЃРµР·РѕРЅ", sub: "РќРѕРІР°СЏ Р—РµР»Р°РЅРґРёСЏ (2019)", link: "bon-voyage-s4.html", statKey: "bon-voyage-s4" },
     ];
 
     const listEl = document.getElementById('list');
@@ -113,7 +113,7 @@
       var el = document.getElementById('badge-' + key);
       if (!el || !data || data.total === 0) { if (el) el.textContent = ''; return; }
       if (data.checked === data.total) {
-        el.textContent = '✅';
+        el.textContent = 'вњ…';
         el.style.color = '#2e9e5b';
         var card = el.closest('.navlink');
         if (card) card.style.background = '#e3f7e9';

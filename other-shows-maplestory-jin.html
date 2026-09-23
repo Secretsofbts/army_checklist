@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
+  <script src="sync.js?v=21"></script>
   <title>MapleStory X Jin</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -25,18 +25,18 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="other-shows-maplestory.html">← Назад</a>
-    <h1>🎮 MapleStory X Jin 🎮</h1>
-    <p class="intro">Год выпуска: 2022</p>
-    <p class="intro">Джин из BTS стал одним из судей конкурса дизайна персонажей его любимой онлайн-игры Maple Story. Он увлекался этой игрой много лет. В одной из трансляций он рассказал: «Я начал играть в Maple Story, когда мне было 12 лет, я учился в 5-м классе»</p>
+    <a class="back" href="other-shows-maplestory.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>рџЋ® MapleStory X Jin рџЋ®</h1>
+    <p class="intro">Р“РѕРґ РІС‹РїСѓСЃРєР°: 2022</p>
+    <p class="intro">Р”Р¶РёРЅ РёР· BTS СЃС‚Р°Р» РѕРґРЅРёРј РёР· СЃСѓРґРµР№ РєРѕРЅРєСѓСЂСЃР° РґРёР·Р°Р№РЅР° РїРµСЂСЃРѕРЅР°Р¶РµР№ РµРіРѕ Р»СЋР±РёРјРѕР№ РѕРЅР»Р°Р№РЅ-РёРіСЂС‹ Maple Story. РћРЅ СѓРІР»РµРєР°Р»СЃСЏ СЌС‚РѕР№ РёРіСЂРѕР№ РјРЅРѕРіРѕ Р»РµС‚. Р’ РѕРґРЅРѕР№ РёР· С‚СЂР°РЅСЃР»СЏС†РёР№ РѕРЅ СЂР°СЃСЃРєР°Р·Р°Р»: В«РЇ РЅР°С‡Р°Р» РёРіСЂР°С‚СЊ РІ Maple Story, РєРѕРіРґР° РјРЅРµ Р±С‹Р»Рѕ 12 Р»РµС‚, СЏ СѓС‡РёР»СЃСЏ РІ 5-Рј РєР»Р°СЃСЃРµВ»</p>
     <div id="list"></div>
-    <a class="footer-link" href="other-shows-maplestory.html">MapleStory X BTS ⬅️</a>
+    <a class="footer-link" href="other-shows-maplestory.html">MapleStory X BTS в¬…пёЏ</a>
   </div>
   <script>
     const items = [
-      { text: "1 эпизод", sub: "Новый стажер", link: "https://t.me/violent_arhive/3007" },
-      { text: "2 эпизод", sub: "Идеи Джина", link: "https://t.me/violent_arhive/3011" },
-      { text: "За кадром", sub: "1204%", link: "https://t.me/violent_arhive/3017" }
+      { text: "1 СЌРїРёР·РѕРґ", sub: "РќРѕРІС‹Р№ СЃС‚Р°Р¶РµСЂ", link: "https://t.me/violent_arhive/3007" },
+      { text: "2 СЌРїРёР·РѕРґ", sub: "РРґРµРё Р”Р¶РёРЅР°", link: "https://t.me/violent_arhive/3011" },
+      { text: "Р—Р° РєР°РґСЂРѕРј", sub: "1204%", link: "https://t.me/violent_arhive/3017" }
     ];
     const listEl = document.getElementById('list');
     items.forEach((item) => {
@@ -63,7 +63,7 @@
       });
       span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
       const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = 'рџ”—';
       row.appendChild(box); row.appendChild(span); row.appendChild(link);
       listEl.appendChild(row);
     });

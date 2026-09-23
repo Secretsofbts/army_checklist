@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,8 +7,8 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
-  <title>Ну вроде бы эпизоды: ОТ7</title>
+  <script src="sync.js?v=21"></script>
+  <title>РќСѓ РІСЂРѕРґРµ Р±С‹ СЌРїРёР·РѕРґС‹: РћРў7</title>
   <style>
     body {
       background: #f2f0f7;
@@ -58,35 +58,35 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="bts-episode-other.html">← Назад</a>
-    <h1>НУ ВРОДЕ БЫ ЭПИЗОДЫ: ❣️</h1>
+    <a class="back" href="bts-episode-other.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>РќРЈ Р’Р РћР”Р• Р‘Р« Р­РџРР—РћР”Р«: вќЈпёЏ</h1>
     <div id="list"></div>
-    <a class="footer-link" href="bts-episode-other.html">Все "Ну вроде бы эпизоды" ⬅️</a>
+    <a class="footer-link" href="bts-episode-other.html">Р’СЃРµ "РќСѓ РІСЂРѕРґРµ Р±С‹ СЌРїРёР·РѕРґС‹" в¬…пёЏ</a>
   </div>
 
   <script>
     const items = [
-      { text: "Съемки и making film к фотобукам каждого мембера", link: "https://t.me/violent_arhive/3593" },
-      { text: "Челленджи Хосока и Чимина", link: "https://t.me/violent_arhive/3906" },
-      { text: "Проект \"Апобанпо 2023\"", link: "https://t.me/violent_arhive/4068" },
-      { text: "Выборы главного ведущего", link: "https://t.me/violent_arhive/5142" },
-      { text: "BTS FESTA Джин и Джей-Хоуп 613 советов для АРМИ", link: "https://t.me/violent_arhive/5153" },
-      { text: "BTS 'ARIRANG': закулисье альбомной фотосессии", link: "https://t.me/violent_arhive/5401" },
-      { text: "Съемки SWIM MV", link: "https://t.me/violent_arhive/5403" },
-      { text: "Съемки 2.0", link: "https://t.me/violent_arhive/5455" },
-      { text: "Съемки Hooligan", link: "https://t.me/violent_arhive/5480" },
-      { text: "BTS Скетч с танцевальной практики SWIM", link: "https://t.me/violent_arhive/5487" },
+      { text: "РЎСЉРµРјРєРё Рё making film Рє С„РѕС‚РѕР±СѓРєР°Рј РєР°Р¶РґРѕРіРѕ РјРµРјР±РµСЂР°", link: "https://t.me/violent_arhive/3593" },
+      { text: "Р§РµР»Р»РµРЅРґР¶Рё РҐРѕСЃРѕРєР° Рё Р§РёРјРёРЅР°", link: "https://t.me/violent_arhive/3906" },
+      { text: "РџСЂРѕРµРєС‚ \"РђРїРѕР±Р°РЅРїРѕ 2023\"", link: "https://t.me/violent_arhive/4068" },
+      { text: "Р’С‹Р±РѕСЂС‹ РіР»Р°РІРЅРѕРіРѕ РІРµРґСѓС‰РµРіРѕ", link: "https://t.me/violent_arhive/5142" },
+      { text: "BTS FESTA Р”Р¶РёРЅ Рё Р”Р¶РµР№-РҐРѕСѓРї 613 СЃРѕРІРµС‚РѕРІ РґР»СЏ РђР РњР", link: "https://t.me/violent_arhive/5153" },
+      { text: "BTS 'ARIRANG': Р·Р°РєСѓР»РёСЃСЊРµ Р°Р»СЊР±РѕРјРЅРѕР№ С„РѕС‚РѕСЃРµСЃСЃРёРё", link: "https://t.me/violent_arhive/5401" },
+      { text: "РЎСЉРµРјРєРё SWIM MV", link: "https://t.me/violent_arhive/5403" },
+      { text: "РЎСЉРµРјРєРё 2.0", link: "https://t.me/violent_arhive/5455" },
+      { text: "РЎСЉРµРјРєРё Hooligan", link: "https://t.me/violent_arhive/5480" },
+      { text: "BTS РЎРєРµС‚С‡ СЃ С‚Р°РЅС†РµРІР°Р»СЊРЅРѕР№ РїСЂР°РєС‚РёРєРё SWIM", link: "https://t.me/violent_arhive/5487" },
       { text: "THE COMEBACK LIVE l ARIRANG Sketch", link: "https://t.me/violent_arhive/5507" },
-      { text: "\"ARIRANG\" промо в Северной Америке", link: "https://t.me/violent_arhive/5500" },
-      { text: "Тур BTS \"ARIRANG\" в Гояне", link: "https://t.me/violent_arhive/5502" },
-      { text: "Скетч с репетиций хореографии BTS «Hooligan» и «2.0»", link: "https://t.me/violent_arhive/5541" },
-      { text: "Бэкстейдж со съёмок клипа BTS «Merry Go Round»", link: "https://t.me/violent_arhive/5540" },
-      { text: "TOUR 'ARIRANG' в Токио", link: "https://t.me/violent_arhive/5545" },
+      { text: "\"ARIRANG\" РїСЂРѕРјРѕ РІ РЎРµРІРµСЂРЅРѕР№ РђРјРµСЂРёРєРµ", link: "https://t.me/violent_arhive/5500" },
+      { text: "РўСѓСЂ BTS \"ARIRANG\" РІ Р“РѕСЏРЅРµ", link: "https://t.me/violent_arhive/5502" },
+      { text: "РЎРєРµС‚С‡ СЃ СЂРµРїРµС‚РёС†РёР№ С…РѕСЂРµРѕРіСЂР°С„РёРё BTS В«HooliganВ» Рё В«2.0В»", link: "https://t.me/violent_arhive/5541" },
+      { text: "Р‘СЌРєСЃС‚РµР№РґР¶ СЃРѕ СЃСЉС‘РјРѕРє РєР»РёРїР° BTS В«Merry Go RoundВ»", link: "https://t.me/violent_arhive/5540" },
+      { text: "TOUR 'ARIRANG' РІ РўРѕРєРёРѕ", link: "https://t.me/violent_arhive/5545" },
       { text: "American Music Awards 2026", link: "https://t.me/violent_arhive/5539" },
-      { text: "Закулисье \"NORMAL\"", link: "https://t.me/violent_arhive/5562" },
-      { text: "Мировой тур BTS «ARIRANG» в Северной Америке - 1 часть", link: "https://t.me/violent_arhive/5572" },
-      { text: "Скетч «ARIRANG» в Пусане", link: "https://t.me/violent_arhive/5607" },
-      { text: "На ЧМ по футболу FIFA 2026", link: "https://t.me/violent_arhive/5608" }
+      { text: "Р—Р°РєСѓР»РёСЃСЊРµ \"NORMAL\"", link: "https://t.me/violent_arhive/5562" },
+      { text: "РњРёСЂРѕРІРѕР№ С‚СѓСЂ BTS В«ARIRANGВ» РІ РЎРµРІРµСЂРЅРѕР№ РђРјРµСЂРёРєРµ - 1 С‡Р°СЃС‚СЊ", link: "https://t.me/violent_arhive/5572" },
+      { text: "РЎРєРµС‚С‡ В«ARIRANGВ» РІ РџСѓСЃР°РЅРµ", link: "https://t.me/violent_arhive/5607" },
+      { text: "РќР° Р§Рњ РїРѕ С„СѓС‚Р±РѕР»Сѓ FIFA 2026", link: "https://t.me/violent_arhive/5608" }
     ];
 
         const listEl = document.getElementById('list');
@@ -121,7 +121,7 @@
       link.className = 'link';
       link.href = item.link;
       link.target = '_blank';
-      link.textContent = '🔗';
+      link.textContent = 'рџ”—';
 
       row.appendChild(box);
       row.appendChild(span);

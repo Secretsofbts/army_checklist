@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
+  <script src="sync.js?v=21"></script>
   <title>Статистика</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -40,7 +40,7 @@
 
        <div id="stats-content"><p class="empty-note">Загрузка...</p></div>
 
-    <p class="section-title" style="font-size:15px; font-weight:700; margin:20px 0 4px;">Прогресс по разделам (в разработке)</p>
+    <p class="section-title" style="font-size:15px; font-weight:700; margin:20px 0 4px;">Прогресс по разделам</p>
     <div id="sections-progress"></div>
   </div>
 
@@ -77,9 +77,23 @@
     }
 
             function loadStats() {
-      refreshEverythingFromCloud(() => {
+      const afterCloud = () => {
         renderStats();
-      });
+        renderSectionsProgress();
+      };
+      fetch('checkbox-ids.json?v=21')
+        .then((res) => res.json())
+        .then((ids) => {
+          STAT_CHECKBOX_IDS = ids || {};
+        })
+        .catch(() => {})
+        .then(() => {
+          if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
+            refreshEverythingFromCloud(afterCloud);
+          } else {
+            afterCloud();
+          }
+        });
     }
 
     function renderStats() {
@@ -261,10 +275,10 @@
       } else {
         const percent = Math.round((stats.checked / stats.total) * 100);
         if (percent === 100) {
-          value.textContent = '✅ 100%';
+          value.textContent = stats.checked + ' из ' + stats.total + '  ✅ 100%';
           value.style.color = '#2e9e5b';
         } else {
-          value.textContent = percent + '%';
+          value.textContent = stats.checked + ' из ' + stats.total + '  ' + percent + '%';
           value.style.color = '#9b7fd4';
         }
       }
@@ -273,8 +287,6 @@
       row.appendChild(value);
       container.appendChild(row);
     }
-
-    renderSectionsProgress();
 
     loadStats();
 

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,8 +7,8 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
-  <title>Несколько человек 2026</title>
+  <script src="sync.js?v=21"></script>
+  <title>РќРµСЃРєРѕР»СЊРєРѕ С‡РµР»РѕРІРµРє 2026</title>
   <style>
     body {
       background: #f2f0f7;
@@ -66,26 +66,26 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="somepeople.html">← Назад</a>
-    <h1>Несколько: 2026 – настоящее время</h1>
-    <p class="legend">Цвет сердечек говорит вам о том, кто на трансляции (это цвета старых микрофонов):<br>
-      💜 Чонгук &nbsp; 💛 Чимин &nbsp; 💕 Джин<br>
-      💚 Тэхён &nbsp; 💙 Намджун<br>
-      🖤 Юнги &nbsp; 🤍 Хосок
+    <a class="back" href="somepeople.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>РќРµСЃРєРѕР»СЊРєРѕ: 2026 вЂ“ РЅР°СЃС‚РѕСЏС‰РµРµ РІСЂРµРјСЏ</h1>
+    <p class="legend">Р¦РІРµС‚ СЃРµСЂРґРµС‡РµРє РіРѕРІРѕСЂРёС‚ РІР°Рј Рѕ С‚РѕРј, РєС‚Рѕ РЅР° С‚СЂР°РЅСЃР»СЏС†РёРё (СЌС‚Рѕ С†РІРµС‚Р° СЃС‚Р°СЂС‹С… РјРёРєСЂРѕС„РѕРЅРѕРІ):<br>
+      рџ’њ Р§РѕРЅРіСѓРє &nbsp; рџ’› Р§РёРјРёРЅ &nbsp; рџ’• Р”Р¶РёРЅ<br>
+      рџ’љ РўСЌС…С‘РЅ &nbsp; рџ’™ РќР°РјРґР¶СѓРЅ<br>
+      рџ–¤ Р®РЅРіРё &nbsp; рџ¤Ќ РҐРѕСЃРѕРє
     </p>
     <div id="list"></div>
-    <a class="footer-link" href="somepeople.html">Все эфиры "Несколько человек" ⬅️</a>
+    <a class="footer-link" href="somepeople.html">Р’СЃРµ СЌС„РёСЂС‹ "РќРµСЃРєРѕР»СЊРєРѕ С‡РµР»РѕРІРµРє" в¬…пёЏ</a>
   </div>
 
   <script>
         const data = [
       { year: "2026", items: [
-        { text: "Тампа, дайте шума", sub: "от 29.04", hearts: "💚💛🤍🖤", link: "https://t.me/violent_arhive/5494" },
-        { text: "Добро пожаловать", sub: "от 03.05", hearts: "💙💚💕", link: "https://t.me/violent_arhive/5499" },
-        { text: "Нам.Чи.Тэ.Хо", sub: "от 20.05", hearts: "💚💛🤍💙", link: "https://t.me/violent_arhive/5503" },
-        { text: "Амии, пошумитее 😁", sub: "от 12.06", hearts: "💜💛", link: "https://t.me/violent_arhive/5534" },
-        { text: "Хай", sub: "от 27.06", hearts: "💕💛💙💚", link: "https://t.me/violent_arhive/5547" },
-        { text: "Здратуте", sub: "от 12.08", hearts: "💚💜", link: "https://t.me/violent_arhive/5578" }
+        { text: "РўР°РјРїР°, РґР°Р№С‚Рµ С€СѓРјР°", sub: "РѕС‚ 29.04", hearts: "рџ’љрџ’›рџ¤Ќрџ–¤", link: "https://t.me/violent_arhive/5494" },
+        { text: "Р”РѕР±СЂРѕ РїРѕР¶Р°Р»РѕРІР°С‚СЊ", sub: "РѕС‚ 03.05", hearts: "рџ’™рџ’љрџ’•", link: "https://t.me/violent_arhive/5499" },
+        { text: "РќР°Рј.Р§Рё.РўСЌ.РҐРѕ", sub: "РѕС‚ 20.05", hearts: "рџ’љрџ’›рџ¤Ќрџ’™", link: "https://t.me/violent_arhive/5503" },
+        { text: "РђРјРёРё, РїРѕС€СѓРјРёС‚РµРµ рџЃ", sub: "РѕС‚ 12.06", hearts: "рџ’њрџ’›", link: "https://t.me/violent_arhive/5534" },
+        { text: "РҐР°Р№", sub: "РѕС‚ 27.06", hearts: "рџ’•рџ’›рџ’™рџ’љ", link: "https://t.me/violent_arhive/5547" },
+        { text: "Р—РґСЂР°С‚СѓС‚Рµ", sub: "РѕС‚ 12.08", hearts: "рџ’љрџ’њ", link: "https://t.me/violent_arhive/5578" }
       ]}
     ];
 
@@ -93,7 +93,7 @@
     data.forEach((block) => {
       const yearTitle = document.createElement('div');
       yearTitle.className = 'year';
-      yearTitle.textContent = block.year + ' год';
+      yearTitle.textContent = block.year + ' РіРѕРґ';
       listEl.appendChild(yearTitle);
 
       block.items.forEach((item) => {
@@ -137,7 +137,7 @@
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
-        link.textContent = '🔗';
+        link.textContent = 'рџ”—';
 
         row.appendChild(box);
         row.appendChild(span);

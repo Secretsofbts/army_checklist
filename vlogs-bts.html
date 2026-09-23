@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
+  <script src="sync.js?v=21"></script>
   <title>VLOGS BTS</title>
   <style>
     body {
@@ -70,19 +70,19 @@
 </head>
 <body>
   <div class="app">
-    <h1>🌟 VLOGS BTS 🌟</h1>
-    <p class="intro">Сборный пост всех влогов</p>
+    <h1>рџЊџ VLOGS BTS рџЊџ</h1>
+    <p class="intro">РЎР±РѕСЂРЅС‹Р№ РїРѕСЃС‚ РІСЃРµС… РІР»РѕРіРѕРІ</p>
         <div class="list">
-      <a class="card" href="vlogsbts-jimin.html">💛 Чимин <span class="badge" id="badge-vb-jimin" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
-      <a class="card" href="vlogsbts-jin.html">💕 Джин <span class="badge" id="badge-vb-jin" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
-      <a class="card" href="vlogsbts-taehyung.html">💚 Тэхён <span class="badge" id="badge-vb-taehyung" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
-      <a class="card" href="vlogsbts-jungkook.html">💜 Чонгук <span class="badge" id="badge-vb-jungkook" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
-      <a class="card" href="vlogsbts-namjoon.html">💙 Намджун <span class="badge" id="badge-vb-namjoon" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
-      <a class="card" href="vlogsbts-yoongi.html">🖤 Юнги <span class="badge" id="badge-vb-yoongi" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
-            <a class="card" href="vlogsbts-hoseok.html">🤍 Хосок <span class="badge" id="badge-vb-hoseok" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
+      <a class="card" href="vlogsbts-jimin.html">рџ’› Р§РёРјРёРЅ <span class="badge" id="badge-vb-jimin" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
+      <a class="card" href="vlogsbts-jin.html">рџ’• Р”Р¶РёРЅ <span class="badge" id="badge-vb-jin" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
+      <a class="card" href="vlogsbts-taehyung.html">рџ’љ РўСЌС…С‘РЅ <span class="badge" id="badge-vb-taehyung" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
+      <a class="card" href="vlogsbts-jungkook.html">рџ’њ Р§РѕРЅРіСѓРє <span class="badge" id="badge-vb-jungkook" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
+      <a class="card" href="vlogsbts-namjoon.html">рџ’™ РќР°РјРґР¶СѓРЅ <span class="badge" id="badge-vb-namjoon" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
+      <a class="card" href="vlogsbts-yoongi.html">рџ–¤ Р®РЅРіРё <span class="badge" id="badge-vb-yoongi" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
+            <a class="card" href="vlogsbts-hoseok.html">рџ¤Ќ РҐРѕСЃРѕРє <span class="badge" id="badge-vb-hoseok" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
     </div>
-  <a class="footer-link" href="youtube.html">Все трансляции BTS ⬅️</a>
- <a class="footer-link" href="bangtantv.html" style="margin-top: 16px;">BangtanTV ⬅️</a>
+  <a class="footer-link" href="youtube.html">Р’СЃРµ С‚СЂР°РЅСЃР»СЏС†РёРё BTS в¬…пёЏ</a>
+ <a class="footer-link" href="bangtantv.html" style="margin-top: 16px;">BangtanTV в¬…пёЏ</a>
   </div>
     <script>
       function renderBadgeTotal(elId, keys) {
@@ -105,7 +105,7 @@
       });
       if (total === 0) { el.textContent = ''; return; }
       if (allKnown && checked === total) {
-        el.textContent = '✅';
+        el.textContent = 'вњ…';
         el.style.color = '#2e9e5b';
         el.closest('.card').classList.add('row-done');
       } else {
@@ -127,14 +127,14 @@
       checked += data.checked;
     }
   });
-  // "Тренировка ЧонТэХо" (video-5570) учтена в обоих списках — вычитаем повтор
+  // "РўСЂРµРЅРёСЂРѕРІРєР° Р§РѕРЅРўСЌРҐРѕ" (video-5570) СѓС‡С‚РµРЅР° РІ РѕР±РѕРёС… СЃРїРёСЃРєР°С… вЂ” РІС‹С‡РёС‚Р°РµРј РїРѕРІС‚РѕСЂ
   total -= 1;
   if (localStorage.getItem('video-5570') === 'true') {
     checked -= 1;
   }
   if (total === 0) { el.textContent = ''; return; }
   if (checked === total) {
-    el.textContent = '✅';
+    el.textContent = 'вњ…';
     el.style.color = '#2e9e5b';
     el.closest('.card').classList.add('row-done');
   } else {

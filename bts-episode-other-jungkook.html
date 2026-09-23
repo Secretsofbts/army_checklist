@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,8 +7,8 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
-  <title>Ну вроде бы эпизоды: Чонгук</title>
+  <script src="sync.js?v=21"></script>
+  <title>РќСѓ РІСЂРѕРґРµ Р±С‹ СЌРїРёР·РѕРґС‹: Р§РѕРЅРіСѓРє</title>
   <style>
     body {
       background: #f2f0f7;
@@ -58,26 +58,26 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="bts-episode-other.html">← Назад</a>
-    <h1>НУ ВРОДЕ БЫ ЭПИЗОДЫ: 💜</h1>
+    <a class="back" href="bts-episode-other.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>РќРЈ Р’Р РћР”Р• Р‘Р« Р­РџРР—РћР”Р«: рџ’њ</h1>
     <div id="list"></div>
-    <a class="footer-link" href="bts-episode-other.html">Все "Ну вроде бы эпизоды" ⬅️</a>
+    <a class="footer-link" href="bts-episode-other.html">Р’СЃРµ "РќСѓ РІСЂРѕРґРµ Р±С‹ СЌРїРёР·РѕРґС‹" в¬…пёЏ</a>
   </div>
 
   <script>
     const items = [
-      { text: "Фильм с записи \"Seven\"", link: "https://t.me/violent_arhive/4124" },
-      { text: "Закадровые дэнс-практики песни Чонгука \"Seven\"", link: "https://t.me/violent_arhive/4156" },
-      { text: "Закадровые перфоманса песни \"Seven\"", link: "https://t.me/violent_arhive/4168" },
-      { text: "Съёмка для сингла 3D", link: "https://t.me/violent_arhive/4248" },
-      { text: "Съёмки клипа 3D", link: "https://t.me/violent_arhive/4254" },
-      { text: "Съёмка для GOLDEN", link: "https://t.me/violent_arhive/4310" },
-      { text: "Съёмка клипа на песню Standing Next to You", link: "https://t.me/violent_arhive/4321" },
-      { text: "Закулисье промоушена с песней \"Seven\"", link: "https://t.me/violent_arhive/4426" },
-      { text: "Съёмки промо '3D'", link: "https://t.me/violent_arhive/4447" },
-      { text: "Съёмки промо 'SNTY'", link: "https://t.me/violent_arhive/4489" },
-      { text: "Съёмки видео к 'Standing Next to You' с Ашером", link: "https://t.me/violent_arhive/4517" },
-      { text: "Съёмки промо на музыкальных шоу", link: "https://t.me/violent_arhive/4523" }
+      { text: "Р¤РёР»СЊРј СЃ Р·Р°РїРёСЃРё \"Seven\"", link: "https://t.me/violent_arhive/4124" },
+      { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ РґСЌРЅСЃ-РїСЂР°РєС‚РёРєРё РїРµСЃРЅРё Р§РѕРЅРіСѓРєР° \"Seven\"", link: "https://t.me/violent_arhive/4156" },
+      { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ РїРµСЂС„РѕРјР°РЅСЃР° РїРµСЃРЅРё \"Seven\"", link: "https://t.me/violent_arhive/4168" },
+      { text: "РЎСЉС‘РјРєР° РґР»СЏ СЃРёРЅРіР»Р° 3D", link: "https://t.me/violent_arhive/4248" },
+      { text: "РЎСЉС‘РјРєРё РєР»РёРїР° 3D", link: "https://t.me/violent_arhive/4254" },
+      { text: "РЎСЉС‘РјРєР° РґР»СЏ GOLDEN", link: "https://t.me/violent_arhive/4310" },
+      { text: "РЎСЉС‘РјРєР° РєР»РёРїР° РЅР° РїРµСЃРЅСЋ Standing Next to You", link: "https://t.me/violent_arhive/4321" },
+      { text: "Р—Р°РєСѓР»РёСЃСЊРµ РїСЂРѕРјРѕСѓС€РµРЅР° СЃ РїРµСЃРЅРµР№ \"Seven\"", link: "https://t.me/violent_arhive/4426" },
+      { text: "РЎСЉС‘РјРєРё РїСЂРѕРјРѕ '3D'", link: "https://t.me/violent_arhive/4447" },
+      { text: "РЎСЉС‘РјРєРё РїСЂРѕРјРѕ 'SNTY'", link: "https://t.me/violent_arhive/4489" },
+      { text: "РЎСЉС‘РјРєРё РІРёРґРµРѕ Рє 'Standing Next to You' СЃ РђС€РµСЂРѕРј", link: "https://t.me/violent_arhive/4517" },
+      { text: "РЎСЉС‘РјРєРё РїСЂРѕРјРѕ РЅР° РјСѓР·С‹РєР°Р»СЊРЅС‹С… С€РѕСѓ", link: "https://t.me/violent_arhive/4523" }
     ];
 
        const listEl = document.getElementById('list');
@@ -112,7 +112,7 @@
       link.className = 'link';
       link.href = item.link;
       link.target = '_blank';
-      link.textContent = '🔗';
+      link.textContent = 'рџ”—';
 
       row.appendChild(box);
       row.appendChild(span);

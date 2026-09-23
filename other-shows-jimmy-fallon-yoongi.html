@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,8 +7,8 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
-  <title>Юнги у Джимми Фэллона</title>
+  <script src="sync.js?v=21"></script>
+  <title>Р®РЅРіРё Сѓ Р”Р¶РёРјРјРё Р¤СЌР»Р»РѕРЅР°</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
     .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -25,20 +25,20 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="other-shows-2023-2024.html">← Назад</a>
-        <h1>🖤 у Джимми Фэллона 🌙</h1>
-    <p class="intro">Дата выхода: май 2023 🕑</p>
-    <p class="intro">Юнги во время выхода своего сольного альбома и тура D-DAY посетил шоу, чтобы поболтать, снять смешные видео и подарить перфоманс Haegeum</p>
+    <a class="back" href="other-shows-2023-2024.html">в†ђ РќР°Р·Р°Рґ</a>
+        <h1>рџ–¤ Сѓ Р”Р¶РёРјРјРё Р¤СЌР»Р»РѕРЅР° рџЊ™</h1>
+    <p class="intro">Р”Р°С‚Р° РІС‹С…РѕРґР°: РјР°Р№ 2023 рџ•‘</p>
+    <p class="intro">Р®РЅРіРё РІРѕ РІСЂРµРјСЏ РІС‹С…РѕРґР° СЃРІРѕРµРіРѕ СЃРѕР»СЊРЅРѕРіРѕ Р°Р»СЊР±РѕРјР° Рё С‚СѓСЂР° D-DAY РїРѕСЃРµС‚РёР» С€РѕСѓ, С‡С‚РѕР±С‹ РїРѕР±РѕР»С‚Р°С‚СЊ, СЃРЅСЏС‚СЊ СЃРјРµС€РЅС‹Рµ РІРёРґРµРѕ Рё РїРѕРґР°СЂРёС‚СЊ РїРµСЂС„РѕРјР°РЅСЃ Haegeum</p>
     <div id="list"></div>
-    <a class="footer-link" href="other-shows-2023-2024.html">Другие шоу (2023 - 2024) ⬅️</a>
+    <a class="footer-link" href="other-shows-2023-2024.html">Р”СЂСѓРіРёРµ С€РѕСѓ (2023 - 2024) в¬…пёЏ</a>
   </div>
 
   <script>
         const items = [
-      { text: "Мини-сценки с Юнги", link: "https://t.me/violent_arhive/4004" },
-      { text: "Интервью", link: "https://t.me/violent_arhive/3994" },
-      { text: "Вычисли самозванца", link: "https://t.me/violent_arhive/3999" },
-      { text: "Выступление с Haegeum", link: "https://t.me/violent_arhive/4000" }
+      { text: "РњРёРЅРё-СЃС†РµРЅРєРё СЃ Р®РЅРіРё", link: "https://t.me/violent_arhive/4004" },
+      { text: "РРЅС‚РµСЂРІСЊСЋ", link: "https://t.me/violent_arhive/3994" },
+      { text: "Р’С‹С‡РёСЃР»Рё СЃР°РјРѕР·РІР°РЅС†Р°", link: "https://t.me/violent_arhive/3999" },
+      { text: "Р’С‹СЃС‚СѓРїР»РµРЅРёРµ СЃ Haegeum", link: "https://t.me/violent_arhive/4000" }
     ];
 
     const listEl = document.getElementById('list');
@@ -60,7 +60,7 @@
       });
         span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
         const link = document.createElement('a');
-        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
+        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = 'рџ”—';
         row.appendChild(box); row.appendChild(span); row.appendChild(link);
         listEl.appendChild(row);
       });
@@ -69,7 +69,7 @@
       const all = document.querySelectorAll('input[type="checkbox"]');
       let total = 0, checked = 0;
       all.forEach(cb => { total++; if (cb.checked) checked++; });
-      // Это шоу — "всё или ничего": вклад = 1 только если ВСЕ пункты отмечены
+      // Р­С‚Рѕ С€РѕСѓ вЂ” "РІСЃС‘ РёР»Рё РЅРёС‡РµРіРѕ": РІРєР»Р°Рґ = 1 С‚РѕР»СЊРєРѕ РµСЃР»Рё Р’РЎР• РїСѓРЅРєС‚С‹ РѕС‚РјРµС‡РµРЅС‹
       const allDone = checked === total && total > 0;
       setProgress('other-shows-jimmy-fallon-yoongi', { checked: allDone ? 1 : 0, total: 1 });
       pushWeightedContributions('other-shows-jimmy-fallon-yoongi');

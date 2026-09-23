@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
+  <script src="sync.js?v=21"></script>
   <title>RUN BTS 112-135</title>
   <style>
     body {
@@ -82,39 +82,39 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="run-btss.html">← Назад</a>
-    <h1>🏃 112-135 эпизод 🏃</h1>
-    <p class="note">Закадровые в статистику не входят</p>
+    <a class="back" href="run-btss.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>рџЏѓ 112-135 СЌРїРёР·РѕРґ рџЏѓ</h1>
+    <p class="note">Р—Р°РєР°РґСЂРѕРІС‹Рµ РІ СЃС‚Р°С‚РёСЃС‚РёРєСѓ РЅРµ РІС…РѕРґСЏС‚</p>
     <div id="list"></div>
-    <a class="footer-link" href="run-btss.html">Все серии RUN BTS ⬅️</a>
+    <a class="footer-link" href="run-btss.html">Р’СЃРµ СЃРµСЂРёРё RUN BTS в¬…пёЏ</a>
   </div>
 
   <script>
         const items = [
-      { text: "112 эпизод", desc: "\"Школа DALBANG\" 1ч", link: "https://t.me/violent_arhive/57", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/335" } },
-      { text: "113 эпизод", desc: "\"Школа DALBANG\" 2ч", link: "https://t.me/violent_arhive/67", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/68" } },
-      { text: "114 эпизод", desc: "\"Лига номер 1\" 1ч", link: "https://t.me/violent_arhive/80", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/81" } },
-      { text: "115 эпизод", desc: "\"Лига номер 1\" 2ч", link: "https://t.me/violent_arhive/104", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/123" } },
-      { text: "116 эпизод", desc: "\"Особая командная работа\" 1ч", link: "https://t.me/violent_arhive/147", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/155" } },
-      { text: "117 эпизод", desc: "\"Особая командная работа\" 2ч", link: "https://t.me/violent_arhive/202", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/212" } },
-      { text: "118 эпизод", desc: "\"Фотоистория\" 1ч", link: "https://t.me/violent_arhive/214", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/215" } },
-      { text: "119 эпизод", desc: "\"Фотоистория\" 2ч", link: "https://t.me/violent_arhive/239", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/242" } },
-      { text: "120 эпизод", desc: "\"Ответ Bts Village\" 1ч", link: "https://t.me/violent_arhive/246", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/248" } },
-      { text: "121 эпизод", desc: "\"Ответ Bts Village\" 2ч", link: "https://t.me/violent_arhive/255", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/260" } },
-      { text: "122 эпизод", desc: "\"Обратный Аватар Шеф\" 1ч", link: "https://t.me/violent_arhive/261", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/268" } },
-      { text: "123 эпизод", desc: "\"Обратный Аватар Шеф\" 2ч", link: "https://t.me/violent_arhive/270", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/272" } },
-      { text: "124 эпизод", desc: "\"Стафф Run BTS\" + закадровые", link: "https://t.me/violent_arhive/276" },
-      { text: "125 эпизод", desc: "\"Ветчина Спешл\"", link: "https://t.me/violent_arhive/278", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/281" } },
-      { text: "126 эпизод", desc: "\"777 Счастливая семёрка\" 1ч", link: "https://t.me/violent_arhive/292", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/294" } },
-      { text: "127 эпизод", desc: "\"777 Счастливая семёрка\" 2ч", link: "https://t.me/violent_arhive/295", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/297" } },
-      { text: "128 эпизод", desc: "\"Привет, 2021\"", link: "https://t.me/violent_arhive/315", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/317" } },
-      { text: "129 эпизод", desc: "\"Долгосрочный теннисный проект\"1", link: "https://t.me/violent_arhive/319", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/333" } },
-      { text: "130 эпизод", desc: "\"Долгосрочный теннисный проект\"2", link: "https://t.me/violent_arhive/371", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/429" } },
-      { text: "131 эпизод", desc: "\"77-минутные дебаты\" 1ч", link: "https://t.me/violent_arhive/537", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/545" } },
-      { text: "132 эпизод", desc: "\"77-минутные дебаты\" 2ч", link: "https://t.me/violent_arhive/566", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/568" } },
-      { text: "133 эпизод", desc: "\"2021 Мастерская Run Bts\" 1ч", link: "https://t.me/violent_arhive/579", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/580" } },
-      { text: "134 эпизод", desc: "\"2021 Мастерская Run Bts\" 2ч", link: "https://t.me/violent_arhive/582", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/648" } },
-      { text: "135 эпизод", desc: "\"2021 Мастерская Run Bts\" 3ч", link: "https://t.me/violent_arhive/636", sub: { text: "Закадровые", link: "https://t.me/violent_arhive/649" } }
+      { text: "112 СЌРїРёР·РѕРґ", desc: "\"РЁРєРѕР»Р° DALBANG\" 1С‡", link: "https://t.me/violent_arhive/57", sub: { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ", link: "https://t.me/violent_arhive/335" } },
+      { text: "113 СЌРїРёР·РѕРґ", desc: "\"РЁРєРѕР»Р° DALBANG\" 2С‡", link: "https://t.me/violent_arhive/67", sub: { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ", link: "https://t.me/violent_arhive/68" } },
+      { text: "114 СЌРїРёР·РѕРґ", desc: "\"Р›РёРіР° РЅРѕРјРµСЂ 1\" 1С‡", link: "https://t.me/violent_arhive/80", sub: { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ", link: "https://t.me/violent_arhive/81" } },
+      { text: "115 СЌРїРёР·РѕРґ", desc: "\"Р›РёРіР° РЅРѕРјРµСЂ 1\" 2С‡", link: "https://t.me/violent_arhive/104", sub: { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ", link: "https://t.me/violent_arhive/123" } },
+      { text: "116 СЌРїРёР·РѕРґ", desc: "\"РћСЃРѕР±Р°СЏ РєРѕРјР°РЅРґРЅР°СЏ СЂР°Р±РѕС‚Р°\" 1С‡", link: "https://t.me/violent_arhive/147", sub: { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ", link: "https://t.me/violent_arhive/155" } },
+      { text: "117 СЌРїРёР·РѕРґ", desc: "\"РћСЃРѕР±Р°СЏ РєРѕРјР°РЅРґРЅР°СЏ СЂР°Р±РѕС‚Р°\" 2С‡", link: "https://t.me/violent_arhive/202", sub: { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ", link: "https://t.me/violent_arhive/212" } },
+      { text: "118 СЌРїРёР·РѕРґ", desc: "\"Р¤РѕС‚РѕРёСЃС‚РѕСЂРёСЏ\" 1С‡", link: "https://t.me/violent_arhive/214", sub: { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ", link: "https://t.me/violent_arhive/215" } },
+      { text: "119 СЌРїРёР·РѕРґ", desc: "\"Р¤РѕС‚РѕРёСЃС‚РѕСЂРёСЏ\" 2С‡", link: "https://t.me/violent_arhive/239", sub: { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ", link: "https://t.me/violent_arhive/242" } },
+      { text: "120 СЌРїРёР·РѕРґ", desc: "\"РћС‚РІРµС‚ Bts Village\" 1С‡", link: "https://t.me/violent_arhive/246", sub: { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ", link: "https://t.me/violent_arhive/248" } },
+      { text: "121 СЌРїРёР·РѕРґ", desc: "\"РћС‚РІРµС‚ Bts Village\" 2С‡", link: "https://t.me/violent_arhive/255", sub: { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ", link: "https://t.me/violent_arhive/260" } },
+      { text: "122 СЌРїРёР·РѕРґ", desc: "\"РћР±СЂР°С‚РЅС‹Р№ РђРІР°С‚Р°СЂ РЁРµС„\" 1С‡", link: "https://t.me/violent_arhive/261", sub: { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ", link: "https://t.me/violent_arhive/268" } },
+      { text: "123 СЌРїРёР·РѕРґ", desc: "\"РћР±СЂР°С‚РЅС‹Р№ РђРІР°С‚Р°СЂ РЁРµС„\" 2С‡", link: "https://t.me/violent_arhive/270", sub: { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ", link: "https://t.me/violent_arhive/272" } },
+      { text: "124 СЌРїРёР·РѕРґ", desc: "\"РЎС‚Р°С„С„ Run BTS\" + Р·Р°РєР°РґСЂРѕРІС‹Рµ", link: "https://t.me/violent_arhive/276" },
+      { text: "125 СЌРїРёР·РѕРґ", desc: "\"Р’РµС‚С‡РёРЅР° РЎРїРµС€Р»\"", link: "https://t.me/violent_arhive/278", sub: { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ", link: "https://t.me/violent_arhive/281" } },
+      { text: "126 СЌРїРёР·РѕРґ", desc: "\"777 РЎС‡Р°СЃС‚Р»РёРІР°СЏ СЃРµРјС‘СЂРєР°\" 1С‡", link: "https://t.me/violent_arhive/292", sub: { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ", link: "https://t.me/violent_arhive/294" } },
+      { text: "127 СЌРїРёР·РѕРґ", desc: "\"777 РЎС‡Р°СЃС‚Р»РёРІР°СЏ СЃРµРјС‘СЂРєР°\" 2С‡", link: "https://t.me/violent_arhive/295", sub: { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ", link: "https://t.me/violent_arhive/297" } },
+      { text: "128 СЌРїРёР·РѕРґ", desc: "\"РџСЂРёРІРµС‚, 2021\"", link: "https://t.me/violent_arhive/315", sub: { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ", link: "https://t.me/violent_arhive/317" } },
+      { text: "129 СЌРїРёР·РѕРґ", desc: "\"Р”РѕР»РіРѕСЃСЂРѕС‡РЅС‹Р№ С‚РµРЅРЅРёСЃРЅС‹Р№ РїСЂРѕРµРєС‚\"1", link: "https://t.me/violent_arhive/319", sub: { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ", link: "https://t.me/violent_arhive/333" } },
+      { text: "130 СЌРїРёР·РѕРґ", desc: "\"Р”РѕР»РіРѕСЃСЂРѕС‡РЅС‹Р№ С‚РµРЅРЅРёСЃРЅС‹Р№ РїСЂРѕРµРєС‚\"2", link: "https://t.me/violent_arhive/371", sub: { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ", link: "https://t.me/violent_arhive/429" } },
+      { text: "131 СЌРїРёР·РѕРґ", desc: "\"77-РјРёРЅСѓС‚РЅС‹Рµ РґРµР±Р°С‚С‹\" 1С‡", link: "https://t.me/violent_arhive/537", sub: { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ", link: "https://t.me/violent_arhive/545" } },
+      { text: "132 СЌРїРёР·РѕРґ", desc: "\"77-РјРёРЅСѓС‚РЅС‹Рµ РґРµР±Р°С‚С‹\" 2С‡", link: "https://t.me/violent_arhive/566", sub: { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ", link: "https://t.me/violent_arhive/568" } },
+      { text: "133 СЌРїРёР·РѕРґ", desc: "\"2021 РњР°СЃС‚РµСЂСЃРєР°СЏ Run Bts\" 1С‡", link: "https://t.me/violent_arhive/579", sub: { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ", link: "https://t.me/violent_arhive/580" } },
+      { text: "134 СЌРїРёР·РѕРґ", desc: "\"2021 РњР°СЃС‚РµСЂСЃРєР°СЏ Run Bts\" 2С‡", link: "https://t.me/violent_arhive/582", sub: { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ", link: "https://t.me/violent_arhive/648" } },
+      { text: "135 СЌРїРёР·РѕРґ", desc: "\"2021 РњР°СЃС‚РµСЂСЃРєР°СЏ Run Bts\" 3С‡", link: "https://t.me/violent_arhive/636", sub: { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ", link: "https://t.me/violent_arhive/649" } }
     ];
 
        function makeRow(container, item, isSub, hasSub) {
@@ -155,7 +155,7 @@
       link.className = 'link';
       link.href = item.link;
       link.target = '_blank';
-      link.textContent = '🔗';
+      link.textContent = 'рџ”—';
 
       row.appendChild(box);
       row.appendChild(span);

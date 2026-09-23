@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,8 +7,8 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
-  <title>Ну вроде бы эпизоды</title>
+  <script src="sync.js?v=21"></script>
+  <title>РќСѓ РІСЂРѕРґРµ Р±С‹ СЌРїРёР·РѕРґС‹</title>
   <style>
     body {
       background: #f2f0f7;
@@ -60,23 +60,23 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="bts-episode.html">← Назад</a>
-    <h1>НУ ВРОДЕ БЫ ЭПИЗОДЫ</h1>
-    <p class="intro">Почему-то c 2023 стали часто выходить видео без пометки "EPISODE", но по стилю и атмосфере это будто бы они, потому что закадровые. Вынесу их в вот такой отдельный пост, чтобы не потерялись и вам было проще</p>
+    <a class="back" href="bts-episode.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>РќРЈ Р’Р РћР”Р• Р‘Р« Р­РџРР—РћР”Р«</h1>
+    <p class="intro">РџРѕС‡РµРјСѓ-С‚Рѕ c 2023 СЃС‚Р°Р»Рё С‡Р°СЃС‚Рѕ РІС‹С…РѕРґРёС‚СЊ РІРёРґРµРѕ Р±РµР· РїРѕРјРµС‚РєРё "EPISODE", РЅРѕ РїРѕ СЃС‚РёР»СЋ Рё Р°С‚РјРѕСЃС„РµСЂРµ СЌС‚Рѕ Р±СѓРґС‚Рѕ Р±С‹ РѕРЅРё, РїРѕС‚РѕРјСѓ С‡С‚Рѕ Р·Р°РєР°РґСЂРѕРІС‹Рµ. Р’С‹РЅРµСЃСѓ РёС… РІ РІРѕС‚ С‚Р°РєРѕР№ РѕС‚РґРµР»СЊРЅС‹Р№ РїРѕСЃС‚, С‡С‚РѕР±С‹ РЅРµ РїРѕС‚РµСЂСЏР»РёСЃСЊ Рё РІР°Рј Р±С‹Р»Рѕ РїСЂРѕС‰Рµ</p>
     <div id="list"></div>
-    <a class="footer-link" href="bts-episode.html">BTS Episode ⬅️</a>
+    <a class="footer-link" href="bts-episode.html">BTS Episode в¬…пёЏ</a>
   </div>
 
   <script>
               const members = [
-      { hearts: "💛", name: "ЧИМИН", link: "bts-episode-other-jimin.html", key: "bts-episode-other-jimin" },
-      { hearts: "💜", name: "ЧОНГУК", link: "bts-episode-other-jungkook.html", key: "bts-episode-other-jungkook" },
-      { hearts: "🤍", name: "ХОСОК", link: "bts-episode-other-hoseok.html", key: "bts-episode-other-hoseok" },
-      { hearts: "🖤", name: "ЮНГИ", link: "bts-episode-other-yoongi.html", key: "bts-episode-other-yoongi" },
-      { hearts: "💙", name: "НАМДЖУН", link: "bts-episode-other-namjoon.html", key: "bts-episode-other-namjoon" },
-      { hearts: "💕", name: "ДЖИН", link: "bts-episode-other-jin.html", key: "bts-episode-other-jin" },
-      { hearts: "💚", name: "ТЭХЁН", link: "bts-episode-other-taehyung.html", key: "bts-episode-other-taehyung" },
-      { hearts: "❣️", name: "ОТ7 / НЕСКОЛЬКО", link: "bts-episode-other-somepeople.html", key: "bts-episode-other-somepeople" }
+      { hearts: "рџ’›", name: "Р§РРњРРќ", link: "bts-episode-other-jimin.html", key: "bts-episode-other-jimin" },
+      { hearts: "рџ’њ", name: "Р§РћРќР“РЈРљ", link: "bts-episode-other-jungkook.html", key: "bts-episode-other-jungkook" },
+      { hearts: "рџ¤Ќ", name: "РҐРћРЎРћРљ", link: "bts-episode-other-hoseok.html", key: "bts-episode-other-hoseok" },
+      { hearts: "рџ–¤", name: "Р®РќР“Р", link: "bts-episode-other-yoongi.html", key: "bts-episode-other-yoongi" },
+      { hearts: "рџ’™", name: "РќРђРњР”Р–РЈРќ", link: "bts-episode-other-namjoon.html", key: "bts-episode-other-namjoon" },
+      { hearts: "рџ’•", name: "Р”Р–РРќ", link: "bts-episode-other-jin.html", key: "bts-episode-other-jin" },
+      { hearts: "рџ’љ", name: "РўР­РҐРЃРќ", link: "bts-episode-other-taehyung.html", key: "bts-episode-other-taehyung" },
+      { hearts: "вќЈпёЏ", name: "РћРў7 / РќР•РЎРљРћР›Р¬РљРћ", link: "bts-episode-other-somepeople.html", key: "bts-episode-other-somepeople" }
     ];
 
     const listEl = document.getElementById('list');
@@ -99,7 +99,7 @@
       var el = document.getElementById('badge-' + key);
       if (!el || !data || data.total === 0) { if (el) el.textContent = ''; return; }
       if (data.checked === data.total) {
-        el.textContent = '✅';
+        el.textContent = 'вњ…';
         el.style.color = '#2e9e5b';
         el.closest('.card').style.background = '#e3f7e9';
       } else {

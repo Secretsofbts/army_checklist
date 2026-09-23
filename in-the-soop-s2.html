@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,8 +7,8 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
-  <title>IN THE SOOP 2 сезон</title>
+  <script src="sync.js?v=21"></script>
+  <title>IN THE SOOP 2 СЃРµР·РѕРЅ</title>
   <style>
     body {
       background: #f2f0f7;
@@ -72,21 +72,21 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="in-the-soop.html">← Назад</a>
-    <h1>🌳 IN THE SOOP: 2 сезон 🌳</h1>
-    <p class="intro">Во втором сезоне BTS будут отдыхать в прекрасном доме, который был специально отстроен для них. В этот раз ребят ждут новые различные хобби, веселье и приятный отдых. А нас — много улыбок, смеха и тепла. А также в этом сезоне их будет не 7, а 8 ☺️</p>
+    <a class="back" href="in-the-soop.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>рџЊі IN THE SOOP: 2 СЃРµР·РѕРЅ рџЊі</h1>
+    <p class="intro">Р’Рѕ РІС‚РѕСЂРѕРј СЃРµР·РѕРЅРµ BTS Р±СѓРґСѓС‚ РѕС‚РґС‹С…Р°С‚СЊ РІ РїСЂРµРєСЂР°СЃРЅРѕРј РґРѕРјРµ, РєРѕС‚РѕСЂС‹Р№ Р±С‹Р» СЃРїРµС†РёР°Р»СЊРЅРѕ РѕС‚СЃС‚СЂРѕРµРЅ РґР»СЏ РЅРёС…. Р’ СЌС‚РѕС‚ СЂР°Р· СЂРµР±СЏС‚ Р¶РґСѓС‚ РЅРѕРІС‹Рµ СЂР°Р·Р»РёС‡РЅС‹Рµ С…РѕР±Р±Рё, РІРµСЃРµР»СЊРµ Рё РїСЂРёСЏС‚РЅС‹Р№ РѕС‚РґС‹С…. Рђ РЅР°СЃ вЂ” РјРЅРѕРіРѕ СѓР»С‹Р±РѕРє, СЃРјРµС…Р° Рё С‚РµРїР»Р°. Рђ С‚Р°РєР¶Рµ РІ СЌС‚РѕРј СЃРµР·РѕРЅРµ РёС… Р±СѓРґРµС‚ РЅРµ 7, Р° 8 вєпёЏ</p>
     <div id="list"></div>
-    <a class="footer-link" href="in-the-soop.html">IN THE SOOP ⬅️</a>
+    <a class="footer-link" href="in-the-soop.html">IN THE SOOP в¬…пёЏ</a>
   </div>
 
   <script>
     const items = [
-      { text: "1 серия", link: "https://t.me/violent_arhive/1487", sub: { text: "За кадром", link: "https://t.me/violent_arhive/1937" } },
-      { text: "2 серия", link: "https://t.me/violent_arhive/1562", sub: { text: "За кадром", link: "https://t.me/violent_arhive/1938" } },
-      { text: "3 серия", link: "https://t.me/violent_arhive/1607", sub: { text: "За кадром", link: "https://t.me/violent_arhive/1939" } },
-      { text: "4 серия", link: "https://t.me/violent_arhive/1644", sub: { text: "За кадром", link: "https://t.me/violent_arhive/1940" } },
-      { text: "5 серия", link: "https://t.me/violent_arhive/1807", sub: { text: "За кадром", link: "https://t.me/violent_arhive/1941" } },
-      { text: "Специальный эпизод", link: "https://t.me/violent_arhive/2691" }
+      { text: "1 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/1487", sub: { text: "Р—Р° РєР°РґСЂРѕРј", link: "https://t.me/violent_arhive/1937" } },
+      { text: "2 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/1562", sub: { text: "Р—Р° РєР°РґСЂРѕРј", link: "https://t.me/violent_arhive/1938" } },
+      { text: "3 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/1607", sub: { text: "Р—Р° РєР°РґСЂРѕРј", link: "https://t.me/violent_arhive/1939" } },
+      { text: "4 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/1644", sub: { text: "Р—Р° РєР°РґСЂРѕРј", link: "https://t.me/violent_arhive/1940" } },
+      { text: "5 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/1807", sub: { text: "Р—Р° РєР°РґСЂРѕРј", link: "https://t.me/violent_arhive/1941" } },
+      { text: "РЎРїРµС†РёР°Р»СЊРЅС‹Р№ СЌРїРёР·РѕРґ", link: "https://t.me/violent_arhive/2691" }
     ];
     function makeRow(container, item, isSub, noBorder) {
       const id = 'video-' + item.link.split('/').pop();
@@ -120,7 +120,7 @@
       link.className = 'link';
       link.href = item.link;
       link.target = '_blank';
-      link.textContent = '🔗';
+      link.textContent = 'рџ”—';
 
       row.appendChild(box);
       row.appendChild(span);

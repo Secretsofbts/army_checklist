@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
+  <script src="sync.js?v=21"></script>
   <title>GOLDEN</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -28,36 +28,36 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="translations-songs.html">← Назад</a>
-    <h1>🎵 GOLDEN 🎵</h1>
-    <p class="intro">Первый сольный альбом Чонгука</p>
-    <p class="intro">Релиз альбома: 03.11.2023 🕑</p>
-    <p class="intro">Полный разнообразных жанров и настроений, «GOLDEN» воплощает в себе «золотые моменты» сольного исполнителя Чонгука. Он тщательно прорабатывал каждый трек, вкладывая всю душу в процесс создания своего первого сольного альбома, и сотрудничал с известными мировыми исполнителями, чтобы обеспечить высочайшее качество альбома</p>
+    <a class="back" href="translations-songs.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>рџЋµ GOLDEN рџЋµ</h1>
+    <p class="intro">РџРµСЂРІС‹Р№ СЃРѕР»СЊРЅС‹Р№ Р°Р»СЊР±РѕРј Р§РѕРЅРіСѓРєР°</p>
+    <p class="intro">Р РµР»РёР· Р°Р»СЊР±РѕРјР°: 03.11.2023 рџ•‘</p>
+    <p class="intro">РџРѕР»РЅС‹Р№ СЂР°Р·РЅРѕРѕР±СЂР°Р·РЅС‹С… Р¶Р°РЅСЂРѕРІ Рё РЅР°СЃС‚СЂРѕРµРЅРёР№, В«GOLDENВ» РІРѕРїР»РѕС‰Р°РµС‚ РІ СЃРµР±Рµ В«Р·РѕР»РѕС‚С‹Рµ РјРѕРјРµРЅС‚С‹В» СЃРѕР»СЊРЅРѕРіРѕ РёСЃРїРѕР»РЅРёС‚РµР»СЏ Р§РѕРЅРіСѓРєР°. РћРЅ С‚С‰Р°С‚РµР»СЊРЅРѕ РїСЂРѕСЂР°Р±Р°С‚С‹РІР°Р» РєР°Р¶РґС‹Р№ С‚СЂРµРє, РІРєР»Р°РґС‹РІР°СЏ РІСЃСЋ РґСѓС€Сѓ РІ РїСЂРѕС†РµСЃСЃ СЃРѕР·РґР°РЅРёСЏ СЃРІРѕРµРіРѕ РїРµСЂРІРѕРіРѕ СЃРѕР»СЊРЅРѕРіРѕ Р°Р»СЊР±РѕРјР°, Рё СЃРѕС‚СЂСѓРґРЅРёС‡Р°Р» СЃ РёР·РІРµСЃС‚РЅС‹РјРё РјРёСЂРѕРІС‹РјРё РёСЃРїРѕР»РЅРёС‚РµР»СЏРјРё, С‡С‚РѕР±С‹ РѕР±РµСЃРїРµС‡РёС‚СЊ РІС‹СЃРѕС‡Р°Р№С€РµРµ РєР°С‡РµСЃС‚РІРѕ Р°Р»СЊР±РѕРјР°</p>
 
-    <p class="section-title">Трек-лист</p>
+    <p class="section-title">РўСЂРµРє-Р»РёСЃС‚</p>
     <div id="list"></div>
 
     <blockquote style="margin: 16px 0; padding: 14px 16px; background: #f7f7fa; border-radius: 12px; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 12px; color: #333; line-height: 1.5;">
-      «Люби же меня в момент моей слабости. А я буду любить тебя, когда едва держишься ты. Освещая тьму светом. Я могу быть опорой в минуты, когда ты бессильна»
-      <div style="text-align: right; font-size: 12px; color: #999; margin-top: 8px; font-style: normal;">— Closer to you</div>
+      В«Р›СЋР±Рё Р¶Рµ РјРµРЅСЏ РІ РјРѕРјРµРЅС‚ РјРѕРµР№ СЃР»Р°Р±РѕСЃС‚Рё. Рђ СЏ Р±СѓРґСѓ Р»СЋР±РёС‚СЊ С‚РµР±СЏ, РєРѕРіРґР° РµРґРІР° РґРµСЂР¶РёС€СЊСЃСЏ С‚С‹. РћСЃРІРµС‰Р°СЏ С‚СЊРјСѓ СЃРІРµС‚РѕРј. РЇ РјРѕРіСѓ Р±С‹С‚СЊ РѕРїРѕСЂРѕР№ РІ РјРёРЅСѓС‚С‹, РєРѕРіРґР° С‚С‹ Р±РµСЃСЃРёР»СЊРЅР°В»
+      <div style="text-align: right; font-size: 12px; color: #999; margin-top: 8px; font-style: normal;">вЂ” Closer to you</div>
     </blockquote>
 
     <div class="extra">
-      <span style="flex:1;">🗨 Обсуждение альбома</span>
-      <a class="link" href="https://t.me/violent_arhive/4338" target="_blank">🔗</a>
+      <span style="flex:1;">рџ—Ё РћР±СЃСѓР¶РґРµРЅРёРµ Р°Р»СЊР±РѕРјР°</span>
+      <a class="link" href="https://t.me/violent_arhive/4338" target="_blank">рџ”—</a>
     </div>
 
-    <p class="section-title">Дополнительное к альбому</p>
+    <p class="section-title">Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕРµ Рє Р°Р»СЊР±РѕРјСѓ</p>
     <div id="extra-list"></div>
 
-    <a class="footer-link" href="translations-songs.html">Переводы всех песен ⬅️</a>
+    <a class="footer-link" href="translations-songs.html">РџРµСЂРµРІРѕРґС‹ РІСЃРµС… РїРµСЃРµРЅ в¬…пёЏ</a>
   </div>
 
   <script>
     const items = [
       { text: "3D", sub: "Ft. Jack Harlow", link: "https://t.me/violent_arhive/4252" },
       { text: "Closer to You", sub: "Ft. Major Lazer", link: "https://t.me/violent_arhive/4331" },
-      { text: "Seven", sub: "Explicit Ver. · Ft. Latto", link: "https://t.me/violent_arhive/4108"},
+      { text: "Seven", sub: "Explicit Ver. В· Ft. Latto", link: "https://t.me/violent_arhive/4108"},
       { text: "Standing Next to You", link: "https://t.me/violent_arhive/4304" },
       { text: "Yes or No", link: "https://t.me/violent_arhive/4332" },
       { text: "Please Don't Change", sub: "Ft. Snake", link: "https://t.me/violent_arhive/4333" },
@@ -69,44 +69,44 @@
     ];
 
     const extraItems = [
-      { text: "Презентация альбома", link: "https://t.me/violent_arhive/4325" },
-      { text: "Чонгук на шоу от Spotify", link: "https://t.me/violent_arhive/4111" },
-      { text: "Съёмка Standing Next to You", link: "https://t.me/violent_arhive/4321" },
-      { text: "Первое выступление с Standing Next to You", link: "https://t.me/violent_arhive/4339" },
-      { text: "Чонгук на Таймс-сквер", link: "https://t.me/violent_arhive/4320" },
-      { text: "Выступления на TODAY", link: "https://t.me/violent_arhive/4318" },
+      { text: "РџСЂРµР·РµРЅС‚Р°С†РёСЏ Р°Р»СЊР±РѕРјР°", link: "https://t.me/violent_arhive/4325" },
+      { text: "Р§РѕРЅРіСѓРє РЅР° С€РѕСѓ РѕС‚ Spotify", link: "https://t.me/violent_arhive/4111" },
+      { text: "РЎСЉС‘РјРєР° Standing Next to You", link: "https://t.me/violent_arhive/4321" },
+      { text: "РџРµСЂРІРѕРµ РІС‹СЃС‚СѓРїР»РµРЅРёРµ СЃ Standing Next to You", link: "https://t.me/violent_arhive/4339" },
+      { text: "Р§РѕРЅРіСѓРє РЅР° РўР°Р№РјСЃ-СЃРєРІРµСЂ", link: "https://t.me/violent_arhive/4320" },
+      { text: "Р’С‹СЃС‚СѓРїР»РµРЅРёСЏ РЅР° TODAY", link: "https://t.me/violent_arhive/4318" },
       { text: "\"The Tonight Show\"", link: "https://t.me/violent_arhive/4315" },
-      { text: "Фотосессия \"GOLDEN\"", link: "https://t.me/violent_arhive/4310" },
-      { text: "Шучвита", sub: "перед выходом GOLDEN", link: "https://t.me/violent_arhive/4309" },
-      { text: "Эфир", sub: "после выпуска альбома", link: "https://t.me/violent_arhive/4308" },
-      { text: "3D на Music Bank", link: "https://t.me/violent_arhive/4340" },
-      { text: "Съёмки клипа 3D", link: "https://t.me/violent_arhive/4254" },
-      { text: "Фотосессия для сингла 3D", link: "https://t.me/violent_arhive/4248" },
-      { text: "Чонгук для Sirius XM о 3D", link: "https://t.me/violent_arhive/4323" },
-      { text: "Выступление Чонгука на Global Citizen Festival 2023", link: "https://t.me/violent_arhive/4343" },
-      { text: "Выступление с Seven на 1 концерте тура Agust D", link: "https://t.me/violent_arhive/4341" },
-      { text: "Выступления на GMA", link: "https://t.me/violent_arhive/4330", idSuffix: "-gma" },
-      { text: "Выступления на радиошоу BBC Radio 1 Live Lounge", link: "https://t.me/violent_arhive/4350" },
-      { text: "Чонгук на BBC The One Show с песней \"Seven\"", link: "https://t.me/violent_arhive/4351" },
-      { text: "«Seven» на Inkigayo", link: "https://t.me/violent_arhive/4357" },
-      { text: "Закадровые \"Seven\"", link: "https://t.me/violent_arhive/4168" },
-      { text: "Дэнс-практика \"Seven\"", link: "https://t.me/violent_arhive/4156" },
-      { text: "Фильм с записи \"Seven\"", link: "https://t.me/violent_arhive/4124" },
-      { text: "Приключения Чонгука в поисках монет для оплаты", sub: "от spotify", link: "https://t.me/violent_arhive/4328", idSuffix: "-seven" },
-      { text: "О Seven на Elvis Duran Show", link: "https://t.me/violent_arhive/4119" },
-      { text: "Съёмки клипа 'Seven'", link: "https://t.me/violent_arhive/4114" },
-      { text: "Эфир после выхода Seven: \"Семь дней в неделю 💜\"", link: "https://t.me/violent_arhive/4109" },
-      { text: "Шучвита", sub: "после выхода Seven", link: "https://t.me/violent_arhive/4143" },
-      { text: "Хореография \"Seven\"", link: "https://t.me/violent_arhive/4344" },
-      { text: "Хореография \"3D\"", link: "https://t.me/violent_arhive/4345" },
-      { text: "Хореография \"SNTY\"", link: "https://t.me/violent_arhive/4347" },
-      { text: "Клип SNTY", sub: "Choreography Ver.", link: "https://t.me/violent_arhive/4346" },
-      { text: "Чонгук на Audacy Live", link: "https://t.me/violent_arhive/4359" },
-      { text: "SNTY на M!Countdown", link: "https://t.me/violent_arhive/4364" },
-      { text: "На японском шоу CDTV Live!", link: "https://t.me/violent_arhive/4401" },
+      { text: "Р¤РѕС‚РѕСЃРµСЃСЃРёСЏ \"GOLDEN\"", link: "https://t.me/violent_arhive/4310" },
+      { text: "РЁСѓС‡РІРёС‚Р°", sub: "РїРµСЂРµРґ РІС‹С…РѕРґРѕРј GOLDEN", link: "https://t.me/violent_arhive/4309" },
+      { text: "Р­С„РёСЂ", sub: "РїРѕСЃР»Рµ РІС‹РїСѓСЃРєР° Р°Р»СЊР±РѕРјР°", link: "https://t.me/violent_arhive/4308" },
+      { text: "3D РЅР° Music Bank", link: "https://t.me/violent_arhive/4340" },
+      { text: "РЎСЉС‘РјРєРё РєР»РёРїР° 3D", link: "https://t.me/violent_arhive/4254" },
+      { text: "Р¤РѕС‚РѕСЃРµСЃСЃРёСЏ РґР»СЏ СЃРёРЅРіР»Р° 3D", link: "https://t.me/violent_arhive/4248" },
+      { text: "Р§РѕРЅРіСѓРє РґР»СЏ Sirius XM Рѕ 3D", link: "https://t.me/violent_arhive/4323" },
+      { text: "Р’С‹СЃС‚СѓРїР»РµРЅРёРµ Р§РѕРЅРіСѓРєР° РЅР° Global Citizen Festival 2023", link: "https://t.me/violent_arhive/4343" },
+      { text: "Р’С‹СЃС‚СѓРїР»РµРЅРёРµ СЃ Seven РЅР° 1 РєРѕРЅС†РµСЂС‚Рµ С‚СѓСЂР° Agust D", link: "https://t.me/violent_arhive/4341" },
+      { text: "Р’С‹СЃС‚СѓРїР»РµРЅРёСЏ РЅР° GMA", link: "https://t.me/violent_arhive/4330", idSuffix: "-gma" },
+      { text: "Р’С‹СЃС‚СѓРїР»РµРЅРёСЏ РЅР° СЂР°РґРёРѕС€РѕСѓ BBC Radio 1 Live Lounge", link: "https://t.me/violent_arhive/4350" },
+      { text: "Р§РѕРЅРіСѓРє РЅР° BBC The One Show СЃ РїРµСЃРЅРµР№ \"Seven\"", link: "https://t.me/violent_arhive/4351" },
+      { text: "В«SevenВ» РЅР° Inkigayo", link: "https://t.me/violent_arhive/4357" },
+      { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ \"Seven\"", link: "https://t.me/violent_arhive/4168" },
+      { text: "Р”СЌРЅСЃ-РїСЂР°РєС‚РёРєР° \"Seven\"", link: "https://t.me/violent_arhive/4156" },
+      { text: "Р¤РёР»СЊРј СЃ Р·Р°РїРёСЃРё \"Seven\"", link: "https://t.me/violent_arhive/4124" },
+      { text: "РџСЂРёРєР»СЋС‡РµРЅРёСЏ Р§РѕРЅРіСѓРєР° РІ РїРѕРёСЃРєР°С… РјРѕРЅРµС‚ РґР»СЏ РѕРїР»Р°С‚С‹", sub: "РѕС‚ spotify", link: "https://t.me/violent_arhive/4328", idSuffix: "-seven" },
+      { text: "Рћ Seven РЅР° Elvis Duran Show", link: "https://t.me/violent_arhive/4119" },
+      { text: "РЎСЉС‘РјРєРё РєР»РёРїР° 'Seven'", link: "https://t.me/violent_arhive/4114" },
+      { text: "Р­С„РёСЂ РїРѕСЃР»Рµ РІС‹С…РѕРґР° Seven: \"РЎРµРјСЊ РґРЅРµР№ РІ РЅРµРґРµР»СЋ рџ’њ\"", link: "https://t.me/violent_arhive/4109" },
+      { text: "РЁСѓС‡РІРёС‚Р°", sub: "РїРѕСЃР»Рµ РІС‹С…РѕРґР° Seven", link: "https://t.me/violent_arhive/4143" },
+      { text: "РҐРѕСЂРµРѕРіСЂР°С„РёСЏ \"Seven\"", link: "https://t.me/violent_arhive/4344" },
+      { text: "РҐРѕСЂРµРѕРіСЂР°С„РёСЏ \"3D\"", link: "https://t.me/violent_arhive/4345" },
+      { text: "РҐРѕСЂРµРѕРіСЂР°С„РёСЏ \"SNTY\"", link: "https://t.me/violent_arhive/4347" },
+      { text: "РљР»РёРї SNTY", sub: "Choreography Ver.", link: "https://t.me/violent_arhive/4346" },
+      { text: "Р§РѕРЅРіСѓРє РЅР° Audacy Live", link: "https://t.me/violent_arhive/4359" },
+      { text: "SNTY РЅР° M!Countdown", link: "https://t.me/violent_arhive/4364" },
+      { text: "РќР° СЏРїРѕРЅСЃРєРѕРј С€РѕСѓ CDTV Live!", link: "https://t.me/violent_arhive/4401" },
       { text: "SNTY - Usher Remix", link: "https://t.me/violent_arhive/4444" },
-      { text: "Съёмки промо '3D'", link: "https://t.me/violent_arhive/4447" },
-      { text: "Съёмки промо 'SNTY'", link: "https://t.me/violent_arhive/4489" }
+      { text: "РЎСЉС‘РјРєРё РїСЂРѕРјРѕ '3D'", link: "https://t.me/violent_arhive/4447" },
+      { text: "РЎСЉС‘РјРєРё РїСЂРѕРјРѕ 'SNTY'", link: "https://t.me/violent_arhive/4489" }
     ];
 
     function renderList(containerId, itemsArr, statKey) {
@@ -135,7 +135,7 @@
         });
         span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
         const link = document.createElement('a');
-        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
+        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = 'рџ”—';
         row.appendChild(box); row.appendChild(span); row.appendChild(link);
         listEl.appendChild(row);
       });

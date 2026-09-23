@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,8 +7,8 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
-  <title>Переводы всех песен</title>
+  <script src="sync.js?v=21"></script>
+  <title>РџРµСЂРµРІРѕРґС‹ РІСЃРµС… РїРµСЃРµРЅ</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
     .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -37,28 +37,28 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="misc.html">← Назад</a>
-    <h1>🎶 ПЕРЕВОДЫ ВСЕХ ПЕСЕН</h1>
-    <p class="intro">Здесь собраны переводы всех песен и каверов BTS за всё время</p>
-    <p class="intro">Японские альбомы не будут загружены, только те песни, которые изначально были написаны на японском, и у них нет корейского варианта</p>
-    <p class="intro">Скорее всего все переводы не найду (особенно преддебютные), но хочу, чтобы у вас был весь список песен (раз я уже собрала). Если перевода не найду, то поставлю ❌, и добавлю ссылку на текстовый перевод или песню</p>
+    <a class="back" href="misc.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>рџЋ¶ РџР•Р Р•Р’РћР”Р« Р’РЎР•РҐ РџР•РЎР•Рќ</h1>
+    <p class="intro">Р—РґРµСЃСЊ СЃРѕР±СЂР°РЅС‹ РїРµСЂРµРІРѕРґС‹ РІСЃРµС… РїРµСЃРµРЅ Рё РєР°РІРµСЂРѕРІ BTS Р·Р° РІСЃС‘ РІСЂРµРјСЏ</p>
+    <p class="intro">РЇРїРѕРЅСЃРєРёРµ Р°Р»СЊР±РѕРјС‹ РЅРµ Р±СѓРґСѓС‚ Р·Р°РіСЂСѓР¶РµРЅС‹, С‚РѕР»СЊРєРѕ С‚Рµ РїРµСЃРЅРё, РєРѕС‚РѕСЂС‹Рµ РёР·РЅР°С‡Р°Р»СЊРЅРѕ Р±С‹Р»Рё РЅР°РїРёСЃР°РЅС‹ РЅР° СЏРїРѕРЅСЃРєРѕРј, Рё Сѓ РЅРёС… РЅРµС‚ РєРѕСЂРµР№СЃРєРѕРіРѕ РІР°СЂРёР°РЅС‚Р°</p>
+    <p class="intro">РЎРєРѕСЂРµРµ РІСЃРµРіРѕ РІСЃРµ РїРµСЂРµРІРѕРґС‹ РЅРµ РЅР°Р№РґСѓ (РѕСЃРѕР±РµРЅРЅРѕ РїСЂРµРґРґРµР±СЋС‚РЅС‹Рµ), РЅРѕ С…РѕС‡Сѓ, С‡С‚РѕР±С‹ Сѓ РІР°СЃ Р±С‹Р» РІРµСЃСЊ СЃРїРёСЃРѕРє РїРµСЃРµРЅ (СЂР°Р· СЏ СѓР¶Рµ СЃРѕР±СЂР°Р»Р°). Р•СЃР»Рё РїРµСЂРµРІРѕРґР° РЅРµ РЅР°Р№РґСѓ, С‚Рѕ РїРѕСЃС‚Р°РІР»СЋ вќЊ, Рё РґРѕР±Р°РІР»СЋ СЃСЃС‹Р»РєСѓ РЅР° С‚РµРєСЃС‚РѕРІС‹Р№ РїРµСЂРµРІРѕРґ РёР»Рё РїРµСЃРЅСЋ</p>
 
     <div id="list"></div>
 
-    <p class="outro">Сама не перевожу и правильный перевод не могу знать. Тем более, когда он выполнен в сабах (а <a href="https://t.me/violent_arhive/3554" target="_blank" style="color: #333;">задумка</a> именно такая). Поэтому я загружу вам то, что смогу найти и что существует</p>
-    <p class="outro">Пост находится на стадии загрузки. Будет пополняться со временем ❣️</p>
+    <p class="outro">РЎР°РјР° РЅРµ РїРµСЂРµРІРѕР¶Сѓ Рё РїСЂР°РІРёР»СЊРЅС‹Р№ РїРµСЂРµРІРѕРґ РЅРµ РјРѕРіСѓ Р·РЅР°С‚СЊ. РўРµРј Р±РѕР»РµРµ, РєРѕРіРґР° РѕРЅ РІС‹РїРѕР»РЅРµРЅ РІ СЃР°Р±Р°С… (Р° <a href="https://t.me/violent_arhive/3554" target="_blank" style="color: #333;">Р·Р°РґСѓРјРєР°</a> РёРјРµРЅРЅРѕ С‚Р°РєР°СЏ). РџРѕСЌС‚РѕРјСѓ СЏ Р·Р°РіСЂСѓР¶Сѓ РІР°Рј С‚Рѕ, С‡С‚Рѕ СЃРјРѕРіСѓ РЅР°Р№С‚Рё Рё С‡С‚Рѕ СЃСѓС‰РµСЃС‚РІСѓРµС‚</p>
+    <p class="outro">РџРѕСЃС‚ РЅР°С…РѕРґРёС‚СЃСЏ РЅР° СЃС‚Р°РґРёРё Р·Р°РіСЂСѓР·РєРё. Р‘СѓРґРµС‚ РїРѕРїРѕР»РЅСЏС‚СЊСЃСЏ СЃРѕ РІСЂРµРјРµРЅРµРј вќЈпёЏ</p>
 
-    <a class="footer-link" href="misc.html">Всякое другое ⬅️</a>
+    <a class="footer-link" href="misc.html">Р’СЃСЏРєРѕРµ РґСЂСѓРіРѕРµ в¬…пёЏ</a>
   </div>
 
   <script>
     const navItems = [
-      { text: "2 COOL 4 SKOOL", sub: "дебютный", link: "translations-2cool4skool.html", statKey: "translations-2cool4skool" },
-      { text: "O! RUL8,2?", sub: "от 11.09.2013", link: "translations-orul82.html", statKey: "translations-orul82" },
-      { text: "SKOOL LUV AFFAIR (ещё на стадии загрузки)", sub: "от 12.02.2014", link: "translations-skoolluvaffair.html", statKey: "translations-skoolluvaffair" },
-      { pending: true, text: "Остальные пока не загружены" },
-            { text: "GOLDEN", sub: ["сольный альбом Чонгука", "от 03.11.2023"], link: "translations-golden.html", statKey: "translations-golden" },
-      { text: "HOTS Vol.1", sub: ["сольный альбом Хосока", "от 29.03.2024"], link: "translations-hots.html", statKey: "translations-hots" }
+      { text: "2 COOL 4 SKOOL", sub: "РґРµР±СЋС‚РЅС‹Р№", link: "translations-2cool4skool.html", statKey: "translations-2cool4skool" },
+      { text: "O! RUL8,2?", sub: "РѕС‚ 11.09.2013", link: "translations-orul82.html", statKey: "translations-orul82" },
+      { text: "SKOOL LUV AFFAIR (РµС‰С‘ РЅР° СЃС‚Р°РґРёРё Р·Р°РіСЂСѓР·РєРё)", sub: "РѕС‚ 12.02.2014", link: "translations-skoolluvaffair.html", statKey: "translations-skoolluvaffair" },
+      { pending: true, text: "РћСЃС‚Р°Р»СЊРЅС‹Рµ РїРѕРєР° РЅРµ Р·Р°РіСЂСѓР¶РµРЅС‹" },
+            { text: "GOLDEN", sub: ["СЃРѕР»СЊРЅС‹Р№ Р°Р»СЊР±РѕРј Р§РѕРЅРіСѓРєР°", "РѕС‚ 03.11.2023"], link: "translations-golden.html", statKey: "translations-golden" },
+      { text: "HOTS Vol.1", sub: ["СЃРѕР»СЊРЅС‹Р№ Р°Р»СЊР±РѕРј РҐРѕСЃРѕРєР°", "РѕС‚ 29.03.2024"], link: "translations-hots.html", statKey: "translations-hots" }
     ];
 
     const listEl = document.getElementById('list');
@@ -100,7 +100,7 @@
       const el = document.getElementById('badge-' + key);
       if (!el || !data || data.total === 0) { if (el) el.textContent = ''; return; }
       if (data.checked === data.total) {
-        el.textContent = '✅';
+        el.textContent = 'вњ…';
         el.style.color = '#2e9e5b';
         const card = el.closest('.navlink');
         if (card) card.style.background = '#e3f7e9';

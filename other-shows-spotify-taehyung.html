@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,8 +7,8 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
-  <title>Тэхён на шоу от Spotify</title>
+  <script src="sync.js?v=21"></script>
+  <title>РўСЌС…С‘РЅ РЅР° С€РѕСѓ РѕС‚ Spotify</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
     .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -25,17 +25,17 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="other-shows-2023-2024.html">← Назад</a>
-    <h1>🎧 Тэхён на шоу от Spotify 🎧</h1>
-    <p class="intro">Дата выхода: сентябрь 2023 🕑</p>
+    <a class="back" href="other-shows-2023-2024.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>рџЋ§ РўСЌС…С‘РЅ РЅР° С€РѕСѓ РѕС‚ Spotify рџЋ§</h1>
+    <p class="intro">Р”Р°С‚Р° РІС‹С…РѕРґР°: СЃРµРЅС‚СЏР±СЂСЊ 2023 рџ•‘</p>
     <div id="list"></div>
-    <a class="footer-link" href="other-shows-2023-2024.html">Другие шоу (2023 - 2024) ⬅️</a>
+    <a class="footer-link" href="other-shows-2023-2024.html">Р”СЂСѓРіРёРµ С€РѕСѓ (2023 - 2024) в¬…пёЏ</a>
   </div>
 
   <script>
     const items = [
-      { text: "от 8 сентября", link: "https://t.me/violent_arhive/4998" },
-      { text: "от 10 сентября", link: "https://t.me/violent_arhive/4213" }
+      { text: "РѕС‚ 8 СЃРµРЅС‚СЏР±СЂСЏ", link: "https://t.me/violent_arhive/4998" },
+      { text: "РѕС‚ 10 СЃРµРЅС‚СЏР±СЂСЏ", link: "https://t.me/violent_arhive/4213" }
     ];
 
     const listEl = document.getElementById('list');
@@ -57,7 +57,7 @@
       });
       span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
       const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = 'рџ”—';
       row.appendChild(box); row.appendChild(span); row.appendChild(link);
       listEl.appendChild(row);
     });

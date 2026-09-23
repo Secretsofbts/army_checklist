@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
+  <script src="sync.js?v=21"></script>
   <title>Log(ON)</title>
   <style>
     body {
@@ -75,44 +75,44 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="youtube.html">← Назад</a>
-    <h1>🎥 Log(ON) 🎥</h1>
-    <p class="intro">Записанные заранее видео и обычные трансляции на YouTube</p>
-    <p class="format-hint">123456 — цифры вначале каждой трансляции:<br>
-      первые две (12) — год,<br>
-      следующие две (34) — месяц,<br>
-      следующие (56) — число
+    <a class="back" href="youtube.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>рџЋҐ Log(ON) рџЋҐ</h1>
+    <p class="intro">Р—Р°РїРёСЃР°РЅРЅС‹Рµ Р·Р°СЂР°РЅРµРµ РІРёРґРµРѕ Рё РѕР±С‹С‡РЅС‹Рµ С‚СЂР°РЅСЃР»СЏС†РёРё РЅР° YouTube</p>
+    <p class="format-hint">123456 вЂ” С†РёС„СЂС‹ РІРЅР°С‡Р°Р»Рµ РєР°Р¶РґРѕР№ С‚СЂР°РЅСЃР»СЏС†РёРё:<br>
+      РїРµСЂРІС‹Рµ РґРІРµ (12) вЂ” РіРѕРґ,<br>
+      СЃР»РµРґСѓСЋС‰РёРµ РґРІРµ (34) вЂ” РјРµСЃСЏС†,<br>
+      СЃР»РµРґСѓСЋС‰РёРµ (56) вЂ” С‡РёСЃР»Рѕ
     </p>
     <div id="list"></div>
-    <a class="footer-link" href="youtube.html">Все эфиры и влоги с YouTube ⬅️</a>
+    <a class="footer-link" href="youtube.html">Р’СЃРµ СЌС„РёСЂС‹ Рё РІР»РѕРіРё СЃ YouTube в¬…пёЏ</a>
   </div>
 
   <script>
     const items = [
-      { date: "200417", hearts: "💙", name: "RM", note: "", link: "https://t.me/violent_arhive/612" },
-      { date: "200424", hearts: "🖤", name: "SUGA", note: "картина 1ч", link: "https://t.me/violent_arhive/611" },
-      { date: "200428", hearts: "🤍", name: "J-Hope", note: "тренировка танцев", link: "https://t.me/violent_arhive/610" },
-      { date: "200501", hearts: "💛", name: "Jimin", note: "", link: "https://t.me/violent_arhive/609" },
-      { date: "200506", hearts: "🖤", name: "SUGA", note: "картина 2ч", link: "https://t.me/violent_arhive/604" },
-      { date: "200507", hearts: "💚💙🤍", name: "V RM J-hope", note: "", link: "https://t.me/violent_arhive/597" },
-      { date: "200508", hearts: "🖤", name: "SUGA", note: "картина 3ч", link: "https://t.me/violent_arhive/605" },
-      { date: "200522", hearts: "🖤", name: "SUGA", note: "картина 4ч", link: "https://t.me/violent_arhive/600" },
-      { date: "200525", hearts: "💕", name: "Jin", note: "пианино", link: "https://t.me/violent_arhive/599" },
-      { date: "200605", hearts: "🤍", name: "J-Hope", note: "", link: "https://t.me/violent_arhive/596" },
-      { date: "200609", hearts: "💚", name: "V", note: "", link: "https://t.me/violent_arhive/598" },
-      { date: "200616", hearts: "💛", name: "Jimin", note: "", link: "https://t.me/violent_arhive/595" },
-      { date: "200927", hearts: "💙", name: "RM", note: "", link: "https://t.me/violent_arhive/589" },
-      { date: "200928", hearts: "🤍", name: "J-Hope", note: "", link: "https://t.me/violent_arhive/587" },
-      { date: "201021", hearts: "💜", name: "Jung Kook", note: "", link: "https://t.me/violent_arhive/118" },
-      { date: "201111", hearts: "💛", name: "Jimin", note: "", link: "https://t.me/violent_arhive/107" },
-      { date: "2004**", hearts: "❣️", name: "BTS", note: "от 11.05.2020", link: "https://t.me/violent_arhive/601" },
-      { date: "2007**", hearts: "🤍💙", name: "J-HOPE & RM", note: "от 09.07.2020", link: "https://t.me/violent_arhive/594" },
-      { date: "2008**", hearts: "💜", name: "Jung Kook", note: "от 19.09.2020", link: "https://t.me/violent_arhive/592" },
-      { date: "2008**", hearts: "💜", name: "Jung Kook", note: "от 20.09.2020", link: "https://t.me/violent_arhive/593" },
-      { date: "2008**", hearts: "❣️", name: "BTS", note: "от 22.09.2020", link: "https://t.me/violent_arhive/591" },
-      { date: "2008**", hearts: "💚💜", name: "V & Jung Kook", note: "от 25.09.2020", link: "https://t.me/violent_arhive/590" },
-      { date: "2009**", hearts: "💙💜", name: "RM & Jung Kook", note: "от 05.10.2020", link: "https://t.me/violent_arhive/588" },
-      { date: "2009**", hearts: "❣️", name: "BTS", note: "от 13.11.2020", link: "https://t.me/violent_arhive/115" }
+      { date: "200417", hearts: "рџ’™", name: "RM", note: "", link: "https://t.me/violent_arhive/612" },
+      { date: "200424", hearts: "рџ–¤", name: "SUGA", note: "РєР°СЂС‚РёРЅР° 1С‡", link: "https://t.me/violent_arhive/611" },
+      { date: "200428", hearts: "рџ¤Ќ", name: "J-Hope", note: "С‚СЂРµРЅРёСЂРѕРІРєР° С‚Р°РЅС†РµРІ", link: "https://t.me/violent_arhive/610" },
+      { date: "200501", hearts: "рџ’›", name: "Jimin", note: "", link: "https://t.me/violent_arhive/609" },
+      { date: "200506", hearts: "рџ–¤", name: "SUGA", note: "РєР°СЂС‚РёРЅР° 2С‡", link: "https://t.me/violent_arhive/604" },
+      { date: "200507", hearts: "рџ’љрџ’™рџ¤Ќ", name: "V RM J-hope", note: "", link: "https://t.me/violent_arhive/597" },
+      { date: "200508", hearts: "рџ–¤", name: "SUGA", note: "РєР°СЂС‚РёРЅР° 3С‡", link: "https://t.me/violent_arhive/605" },
+      { date: "200522", hearts: "рџ–¤", name: "SUGA", note: "РєР°СЂС‚РёРЅР° 4С‡", link: "https://t.me/violent_arhive/600" },
+      { date: "200525", hearts: "рџ’•", name: "Jin", note: "РїРёР°РЅРёРЅРѕ", link: "https://t.me/violent_arhive/599" },
+      { date: "200605", hearts: "рџ¤Ќ", name: "J-Hope", note: "", link: "https://t.me/violent_arhive/596" },
+      { date: "200609", hearts: "рџ’љ", name: "V", note: "", link: "https://t.me/violent_arhive/598" },
+      { date: "200616", hearts: "рџ’›", name: "Jimin", note: "", link: "https://t.me/violent_arhive/595" },
+      { date: "200927", hearts: "рџ’™", name: "RM", note: "", link: "https://t.me/violent_arhive/589" },
+      { date: "200928", hearts: "рџ¤Ќ", name: "J-Hope", note: "", link: "https://t.me/violent_arhive/587" },
+      { date: "201021", hearts: "рџ’њ", name: "Jung Kook", note: "", link: "https://t.me/violent_arhive/118" },
+      { date: "201111", hearts: "рџ’›", name: "Jimin", note: "", link: "https://t.me/violent_arhive/107" },
+      { date: "2004**", hearts: "вќЈпёЏ", name: "BTS", note: "РѕС‚ 11.05.2020", link: "https://t.me/violent_arhive/601" },
+      { date: "2007**", hearts: "рџ¤Ќрџ’™", name: "J-HOPE & RM", note: "РѕС‚ 09.07.2020", link: "https://t.me/violent_arhive/594" },
+      { date: "2008**", hearts: "рџ’њ", name: "Jung Kook", note: "РѕС‚ 19.09.2020", link: "https://t.me/violent_arhive/592" },
+      { date: "2008**", hearts: "рџ’њ", name: "Jung Kook", note: "РѕС‚ 20.09.2020", link: "https://t.me/violent_arhive/593" },
+      { date: "2008**", hearts: "вќЈпёЏ", name: "BTS", note: "РѕС‚ 22.09.2020", link: "https://t.me/violent_arhive/591" },
+      { date: "2008**", hearts: "рџ’љрџ’њ", name: "V & Jung Kook", note: "РѕС‚ 25.09.2020", link: "https://t.me/violent_arhive/590" },
+      { date: "2009**", hearts: "рџ’™рџ’њ", name: "RM & Jung Kook", note: "РѕС‚ 05.10.2020", link: "https://t.me/violent_arhive/588" },
+      { date: "2009**", hearts: "вќЈпёЏ", name: "BTS", note: "РѕС‚ 13.11.2020", link: "https://t.me/violent_arhive/115" }
     ];
 
     const listEl = document.getElementById('list');
@@ -164,7 +164,7 @@
       link.className = 'link';
       link.href = item.link;
       link.target = '_blank';
-      link.textContent = '🔗';
+      link.textContent = 'рџ”—';
 
       row.appendChild(box);
       row.appendChild(chip);

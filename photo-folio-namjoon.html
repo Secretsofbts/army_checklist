@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,8 +7,8 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
-  <title>Photo-Folio: Намджун</title>
+  <script src="sync.js?v=21"></script>
+  <title>Photo-Folio: РќР°РјРґР¶СѓРЅ</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
     .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -25,25 +25,25 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="photo-folio.html">← Назад</a>
-    <h1>🌻 Намджун 🌻</h1>
-    <p style="font-size: 13px; font-weight: 600; color: #888; margin: 0 0 4px;">Ссылки для ознакомления</p>
+    <a class="back" href="photo-folio.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>рџЊ» РќР°РјРґР¶СѓРЅ рџЊ»</h1>
+    <p style="font-size: 13px; font-weight: 600; color: #888; margin: 0 0 4px;">РЎСЃС‹Р»РєРё РґР»СЏ РѕР·РЅР°РєРѕРјР»РµРЅРёСЏ</p>
     <div id="extras"></div>
-    <p style="font-size: 13px; font-weight: 600; color: #888; margin: 16px 0 4px;">Процесс создания</p>
+    <p style="font-size: 13px; font-weight: 600; color: #888; margin: 16px 0 4px;">РџСЂРѕС†РµСЃСЃ СЃРѕР·РґР°РЅРёСЏ</p>
     <div id="list"></div>
-    <a class="footer-link" href="photo-folio.html">Photo-Folio ⬅️</a>
+    <a class="footer-link" href="photo-folio.html">Photo-Folio в¬…пёЏ</a>
   </div>
 
   <script>
     const extraLinks = [
       { text: "Concept Film", link: "https://t.me/violent_arhive/3602" },
-      { text: "Сканы фотобука", link: "https://telegra.ph/Skany-fotobuka-Namdzhuna-Me-Myself--RM-09-11" }
+      { text: "РЎРєР°РЅС‹ С„РѕС‚РѕР±СѓРєР°", link: "https://telegra.ph/Skany-fotobuka-Namdzhuna-Me-Myself--RM-09-11" }
     ];
 
     const items = [
-      { text: "Скетч", link: "https://t.me/violent_arhive/3597" },
-      { text: "Аудио-скит", link: "https://t.me/violent_arhive/3598" },
-      { text: "Съёмки фотобука", link: "https://t.me/violent_arhive/3079" }
+      { text: "РЎРєРµС‚С‡", link: "https://t.me/violent_arhive/3597" },
+      { text: "РђСѓРґРёРѕ-СЃРєРёС‚", link: "https://t.me/violent_arhive/3598" },
+      { text: "РЎСЉС‘РјРєРё С„РѕС‚РѕР±СѓРєР°", link: "https://t.me/violent_arhive/3079" }
     ];
 
     const extrasEl = document.getElementById('extras');
@@ -55,7 +55,7 @@
       label.textContent = item.text;
       const icon = document.createElement('span');
       icon.className = 'link';
-      icon.textContent = '🔗';
+      icon.textContent = 'рџ”—';
       a.appendChild(label);
       a.appendChild(icon);
       extrasEl.appendChild(a);
@@ -80,7 +80,7 @@
       });
       span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
       const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = 'рџ”—';
       row.appendChild(box); row.appendChild(span); row.appendChild(link);
       listEl.appendChild(row);
     });

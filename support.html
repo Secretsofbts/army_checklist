@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,8 +7,8 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
-  <title>Поддержка бота</title>
+  <script src="sync.js?v=21"></script>
+  <title>РџРѕРґРґРµСЂР¶РєР° Р±РѕС‚Р°</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
     .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -36,34 +36,34 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="index.html">← Назад</a>
-    <h1>💜 Поддержка бота 💜</h1>
-    <p class="intro">Этот чек-лист создан с большой любовью 😌 Если вам нравится им пользоваться и вы хотите поддержать его развитие — буду очень благодарна. Но в любом случае приложение останется бесплатным для всех!</p>
+    <a class="back" href="index.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>рџ’њ РџРѕРґРґРµСЂР¶РєР° Р±РѕС‚Р° рџ’њ</h1>
+    <p class="intro">Р­С‚РѕС‚ С‡РµРє-Р»РёСЃС‚ СЃРѕР·РґР°РЅ СЃ Р±РѕР»СЊС€РѕР№ Р»СЋР±РѕРІСЊСЋ рџЊ Р•СЃР»Рё РІР°Рј РЅСЂР°РІРёС‚СЃСЏ РёРј РїРѕР»СЊР·РѕРІР°С‚СЊСЃСЏ Рё РІС‹ С…РѕС‚РёС‚Рµ РїРѕРґРґРµСЂР¶Р°С‚СЊ РµРіРѕ СЂР°Р·РІРёС‚РёРµ вЂ” Р±СѓРґСѓ РѕС‡РµРЅСЊ Р±Р»Р°РіРѕРґР°СЂРЅР°. РќРѕ РІ Р»СЋР±РѕРј СЃР»СѓС‡Р°Рµ РїСЂРёР»РѕР¶РµРЅРёРµ РѕСЃС‚Р°РЅРµС‚СЃСЏ Р±РµСЃРїР»Р°С‚РЅС‹Рј РґР»СЏ РІСЃРµС…!</p>
 
-    <a class="support-btn" href="#" id="tbank-link" target="_blank">🟡 Поддержать через Т-Банк</a>
-    <a class="support-btn" href="#" id="sber-link" target="_blank">🟢 Поддержать через Сбербанк</a>
+    <a class="support-btn" href="#" id="tbank-link" target="_blank">рџџЎ РџРѕРґРґРµСЂР¶Р°С‚СЊ С‡РµСЂРµР· Рў-Р‘Р°РЅРє</a>
+    <a class="support-btn" href="#" id="sber-link" target="_blank">рџџў РџРѕРґРґРµСЂР¶Р°С‚СЊ С‡РµСЂРµР· РЎР±РµСЂР±Р°РЅРє</a>
 
-    <p class="section-title">Или переводом на карту</p>
+    <p class="section-title">РР»Рё РїРµСЂРµРІРѕРґРѕРј РЅР° РєР°СЂС‚Сѓ</p>
         <div class="card-box">
       <div class="card-number" id="card-number">2202 2006 1717 8395</div>
-      <p style="font-size:12px; color:#999; margin:6px 0 10px;">Сбербанк · при переводе, пожалуйста, укажите в комментарии «Подарок»</p>
-      <button class="copy-btn" id="copy-btn">Скопировать номер</button>
+      <p style="font-size:12px; color:#999; margin:6px 0 10px;">РЎР±РµСЂР±Р°РЅРє В· РїСЂРё РїРµСЂРµРІРѕРґРµ, РїРѕР¶Р°Р»СѓР№СЃС‚Р°, СѓРєР°Р¶РёС‚Рµ РІ РєРѕРјРјРµРЅС‚Р°СЂРёРё В«РџРѕРґР°СЂРѕРєВ»</p>
+      <button class="copy-btn" id="copy-btn">РЎРєРѕРїРёСЂРѕРІР°С‚СЊ РЅРѕРјРµСЂ</button>
     </div>
 
-         <button id="donated-btn" style="width:100%; margin-top:16px; background:#fff3cd; border:1px solid #f0dca0; border-radius:12px; padding:12px; font-size:14px; color:#7a5c00; cursor:pointer;">💜 Я поддержал(а) проект</button>
+         <button id="donated-btn" style="width:100%; margin-top:16px; background:#fff3cd; border:1px solid #f0dca0; border-radius:12px; padding:12px; font-size:14px; color:#7a5c00; cursor:pointer;">рџ’њ РЇ РїРѕРґРґРµСЂР¶Р°Р»(Р°) РїСЂРѕРµРєС‚</button>
     <div id="donated-status" style="text-align:center; font-size:12px; color:#2e9e5b; margin-top:8px;"></div>
 
     <div id="angels-section"></div>
 
-   <p class="thanks" style="text-align: center; background: #f7f7fa; border-radius: 12px; padding: 14px; margin-top: 16px;">Спасибо каждому, кто поддерживает — это помогает мне продолжать 💜</p>
+   <p class="thanks" style="text-align: center; background: #f7f7fa; border-radius: 12px; padding: 14px; margin-top: 16px;">РЎРїР°СЃРёР±Рѕ РєР°Р¶РґРѕРјСѓ, РєС‚Рѕ РїРѕРґРґРµСЂР¶РёРІР°РµС‚ вЂ” СЌС‚Рѕ РїРѕРјРѕРіР°РµС‚ РјРЅРµ РїСЂРѕРґРѕР»Р¶Р°С‚СЊ рџ’њ</p>
   </div>
 
   <script>
-    // Впишите сюда свои настоящие ссылки на сборы, когда создадите их в приложениях банков
+    // Р’РїРёС€РёС‚Рµ СЃСЋРґР° СЃРІРѕРё РЅР°СЃС‚РѕСЏС‰РёРµ СЃСЃС‹Р»РєРё РЅР° СЃР±РѕСЂС‹, РєРѕРіРґР° СЃРѕР·РґР°РґРёС‚Рµ РёС… РІ РїСЂРёР»РѕР¶РµРЅРёСЏС… Р±Р°РЅРєРѕРІ
     document.getElementById('tbank-link').href = 'https://tbank.ru/cf/1yZ7SKXtrb0';
     document.getElementById('sber-link').href = 'https://messenger.sbrf.ru/sl/L8WOtFqfb7hZfbRt0';
 
-    // Впишите сюда номер своей карты
+    // Р’РїРёС€РёС‚Рµ СЃСЋРґР° РЅРѕРјРµСЂ СЃРІРѕРµР№ РєР°СЂС‚С‹
     document.getElementById('card-number').textContent = '2202 2006 1717 8395';
 
           const donatedBtn = document.getElementById('donated-btn');
@@ -75,7 +75,7 @@
         .then(entry => {
           if (entry && entry.hasDonated) {
             localStorage.setItem('hasDonated_' + ARMY_USER_ID, 'true');
-            donatedBtn.textContent = '💜 Спасибо за поддержку!';
+            donatedBtn.textContent = 'рџ’њ РЎРїР°СЃРёР±Рѕ Р·Р° РїРѕРґРґРµСЂР¶РєСѓ!';
             donatedBtn.disabled = true;
             donatedBtn.style.opacity = '0.6';
           }
@@ -84,7 +84,7 @@
     }
 
            donatedBtn.addEventListener('click', () => {
-      if (!confirm('Вы правда перевели поддержку проекту? Это на доверии — отметка для вас самих 💜')) return;
+      if (!confirm('Р’С‹ РїСЂР°РІРґР° РїРµСЂРµРІРµР»Рё РїРѕРґРґРµСЂР¶РєСѓ РїСЂРѕРµРєС‚Сѓ? Р­С‚Рѕ РЅР° РґРѕРІРµСЂРёРё вЂ” РѕС‚РјРµС‚РєР° РґР»СЏ РІР°СЃ СЃР°РјРёС… рџ’њ')) return;
       if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
         localStorage.setItem('hasDonated_' + ARMY_USER_ID, 'true');
       }
@@ -94,10 +94,10 @@
           body: JSON.stringify({ hasDonated: true, donatedAt: Date.now() })
         }).then(() => loadAngels());
       }
-      donatedBtn.textContent = '💜 Спасибо за поддержку!';
+      donatedBtn.textContent = 'рџ’њ РЎРїР°СЃРёР±Рѕ Р·Р° РїРѕРґРґРµСЂР¶РєСѓ!';
       donatedBtn.disabled = true;
       donatedBtn.style.opacity = '0.6';
-      donatedStatus.textContent = 'Отмечено! Теперь на странице статистики появится ваша благодарственная медаль 🎁';
+      donatedStatus.textContent = 'РћС‚РјРµС‡РµРЅРѕ! РўРµРїРµСЂСЊ РЅР° СЃС‚СЂР°РЅРёС†Рµ СЃС‚Р°С‚РёСЃС‚РёРєРё РїРѕСЏРІРёС‚СЃСЏ РІР°С€Р° Р±Р»Р°РіРѕРґР°СЂСЃС‚РІРµРЅРЅР°СЏ РјРµРґР°Р»СЊ рџЋЃ';
     });
 
     function loadAngels() {
@@ -109,7 +109,7 @@
             .filter((entry) => entry.hasDonated && entry.nickname)
             .map((entry) => entry.nickname);
           if (names.length === 0) { angelsEl.innerHTML = ''; return; }
-             angelsEl.innerHTML = '<p style="font-size:13px; color:#333; text-align:center; margin-top:20px; line-height:1.6;">🎁 Спасибо этим ангелам-хранителям:<br><span style="color:#9b7fd4; font-weight:600;">' + names.join(', ') + '</span></p><p style="font-size:11px; color:#999; text-align:center; margin-top:4px;">(в список попадают те, у кого установлен ник)</p>';
+             angelsEl.innerHTML = '<p style="font-size:13px; color:#333; text-align:center; margin-top:20px; line-height:1.6;">рџЋЃ РЎРїР°СЃРёР±Рѕ СЌС‚РёРј Р°РЅРіРµР»Р°Рј-С…СЂР°РЅРёС‚РµР»СЏРј:<br><span style="color:#9b7fd4; font-weight:600;">' + names.join(', ') + '</span></p><p style="font-size:11px; color:#999; text-align:center; margin-top:4px;">(РІ СЃРїРёСЃРѕРє РїРѕРїР°РґР°СЋС‚ С‚Рµ, Сѓ РєРѕРіРѕ СѓСЃС‚Р°РЅРѕРІР»РµРЅ РЅРёРє)</p>';
         })
         .catch(() => {});
     }
@@ -120,7 +120,7 @@
       navigator.clipboard.writeText(number).then(() => {
         const btn = document.getElementById('copy-btn');
         const oldText = btn.textContent;
-        btn.textContent = 'Скопировано!';
+        btn.textContent = 'РЎРєРѕРїРёСЂРѕРІР°РЅРѕ!';
         setTimeout(() => { btn.textContent = oldText; }, 1500);
       });
     });

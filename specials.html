@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,8 +7,8 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
-  <title>Спецвыпуски</title>
+  <script src="sync.js?v=21"></script>
+  <title>РЎРїРµС†РІС‹РїСѓСЃРєРё</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
     .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -29,16 +29,16 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="index.html">← Назад</a>
-           <h1>🎁 Спецвыпуски 🎁</h1>
-    <p style="font-size: 13px; color: #555; margin: 4px 0 16px;">Ежегодные праздничные и сезонные наборы с поездками, фотосессиями и закадровыми видео (2014-2022)</p>
+    <a class="back" href="index.html">в†ђ РќР°Р·Р°Рґ</a>
+           <h1>рџЋЃ РЎРїРµС†РІС‹РїСѓСЃРєРё рџЋЃ</h1>
+    <p style="font-size: 13px; color: #555; margin: 4px 0 16px;">Р•Р¶РµРіРѕРґРЅС‹Рµ РїСЂР°Р·РґРЅРёС‡РЅС‹Рµ Рё СЃРµР·РѕРЅРЅС‹Рµ РЅР°Р±РѕСЂС‹ СЃ РїРѕРµР·РґРєР°РјРё, С„РѕС‚РѕСЃРµСЃСЃРёСЏРјРё Рё Р·Р°РєР°РґСЂРѕРІС‹РјРё РІРёРґРµРѕ (2014-2022)</p>
        <div class="list">
-      <a class="card" href="bts-now.html">📸 BTS Now <span class="badge" id="badge-btsnow" style="font-size:12px; color:#999;"></span></a>
-      <a class="card" href="season-summer.html">☀️ Summer Package <span class="badge" id="badge-summer" style="font-size:12px; color:#999;"></span></a>
-      <a class="card" href="season-winter.html">❄️ Winter Package <span class="badge" id="badge-winter" style="font-size:12px; color:#999;"></span></a>
-      <a class="card" href="season-greeting.html">🎄 Season's Greeting <span class="badge" id="badge-greeting" style="font-size:12px; color:#999;"></span></a>
+      <a class="card" href="bts-now.html">рџ“ё BTS Now <span class="badge" id="badge-btsnow" style="font-size:12px; color:#999;"></span></a>
+      <a class="card" href="season-summer.html">вЂпёЏ Summer Package <span class="badge" id="badge-summer" style="font-size:12px; color:#999;"></span></a>
+      <a class="card" href="season-winter.html">вќ„пёЏ Winter Package <span class="badge" id="badge-winter" style="font-size:12px; color:#999;"></span></a>
+      <a class="card" href="season-greeting.html">рџЋ„ Season's Greeting <span class="badge" id="badge-greeting" style="font-size:12px; color:#999;"></span></a>
     </div>
-     <a class="footer-link" href="index.html">На главную ⬅️</a>
+     <a class="footer-link" href="index.html">РќР° РіР»Р°РІРЅСѓСЋ в¬…пёЏ</a>
   </div>
   <script>
           function applyBadge(key, elId) {
@@ -50,7 +50,7 @@
       var el = document.getElementById(elId);
       if (total > 0) {
         if (checked === total) {
-          el.textContent = '✅';
+          el.textContent = 'вњ…';
           var card = el.closest('.card');
           if (card) card.style.background = '#e3f7e9';
         } else {

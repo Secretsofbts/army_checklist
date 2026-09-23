@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,8 +7,8 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
-  <title>Ну вроде бы эпизоды: Джин</title>
+  <script src="sync.js?v=21"></script>
+  <title>РќСѓ РІСЂРѕРґРµ Р±С‹ СЌРїРёР·РѕРґС‹: Р”Р¶РёРЅ</title>
   <style>
     body {
       background: #f2f0f7;
@@ -58,25 +58,25 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="bts-episode-other.html">← Назад</a>
-    <h1>НУ ВРОДЕ БЫ ЭПИЗОДЫ: 💕</h1>
+    <a class="back" href="bts-episode-other.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>РќРЈ Р’Р РћР”Р• Р‘Р« Р­РџРР—РћР”Р«: рџ’•</h1>
     <div id="list"></div>
-    <a class="footer-link" href="bts-episode-other.html">Все "Ну вроде бы эпизоды" ⬅️</a>
+    <a class="footer-link" href="bts-episode-other.html">Р’СЃРµ "РќСѓ РІСЂРѕРґРµ Р±С‹ СЌРїРёР·РѕРґС‹" в¬…пёЏ</a>
   </div>
 
   <script>
     const items = [
-      { text: "Съёмка для альбома \"Happy\"", link: "https://t.me/violent_arhive/4880" },
-      { text: "Съёмка \"I'll Be There\"", link: "https://t.me/violent_arhive/4883" },
-      { text: "Съёмка \"Running Wild\"", link: "https://t.me/violent_arhive/4893" },
+      { text: "РЎСЉС‘РјРєР° РґР»СЏ Р°Р»СЊР±РѕРјР° \"Happy\"", link: "https://t.me/violent_arhive/4880" },
+      { text: "РЎСЉС‘РјРєР° \"I'll Be There\"", link: "https://t.me/violent_arhive/4883" },
+      { text: "РЎСЉС‘РјРєР° \"Running Wild\"", link: "https://t.me/violent_arhive/4893" },
       { text: "\"Happy\" Special Stage Behind", link: "https://t.me/violent_arhive/4933" },
-      { text: "Закадровые «Вечернее шоу с Джимми Фэллоном»", link: "https://t.me/violent_arhive/4961" },
+      { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ В«Р’РµС‡РµСЂРЅРµРµ С€РѕСѓ СЃ Р”Р¶РёРјРјРё Р¤СЌР»Р»РѕРЅРѕРјВ»", link: "https://t.me/violent_arhive/4961" },
       { text: "Jin \"Echo\" Schoot Sketch", link: "https://t.me/violent_arhive/5124" },
       { text: "MV Don't Say You Love Me", link: "https://t.me/violent_arhive/5136" },
-      { text: "Водный путь на работу - промо Echo, полная сумасшедших выходок 🌊", link: "https://t.me/violent_arhive/5147" },
-      { text: "Cъемки \"Dingo Live\"", link: "https://t.me/violent_arhive/5154" },
-      { text: "Бэкстейдж с выступления с «Don't Say You Love Me» @ Seongsu и «Hi Seokjin»", link: "https://t.me/violent_arhive/5190" },
-      { text: "Бэкстейдж с промоушена альбома «ECHO» по Северной Америке", link: "https://t.me/violent_arhive/5236" }
+      { text: "Р’РѕРґРЅС‹Р№ РїСѓС‚СЊ РЅР° СЂР°Р±РѕС‚Сѓ - РїСЂРѕРјРѕ Echo, РїРѕР»РЅР°СЏ СЃСѓРјР°СЃС€РµРґС€РёС… РІС‹С…РѕРґРѕРє рџЊЉ", link: "https://t.me/violent_arhive/5147" },
+      { text: "CСЉРµРјРєРё \"Dingo Live\"", link: "https://t.me/violent_arhive/5154" },
+      { text: "Р‘СЌРєСЃС‚РµР№РґР¶ СЃ РІС‹СЃС‚СѓРїР»РµРЅРёСЏ СЃ В«Don't Say You Love MeВ» @ Seongsu Рё В«Hi SeokjinВ»", link: "https://t.me/violent_arhive/5190" },
+      { text: "Р‘СЌРєСЃС‚РµР№РґР¶ СЃ РїСЂРѕРјРѕСѓС€РµРЅР° Р°Р»СЊР±РѕРјР° В«ECHOВ» РїРѕ РЎРµРІРµСЂРЅРѕР№ РђРјРµСЂРёРєРµ", link: "https://t.me/violent_arhive/5236" }
     ];
 
        const listEl = document.getElementById('list');
@@ -111,7 +111,7 @@
       link.className = 'link';
       link.href = item.link;
       link.target = '_blank';
-      link.textContent = '🔗';
+      link.textContent = 'рџ”—';
 
       row.appendChild(box);
       row.appendChild(span);

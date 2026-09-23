@@ -1,5 +1,6 @@
   // sync.js — общая логика облачной синхронизации через Firebase
   const FIREBASE_URL = "https://army-checklist-default-rtdb.firebaseio.com";
+  var STAT_CHECKBOX_IDS = {};
   let ARMY_USER_ID = null;
   if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
     ARMY_USER_ID = window.Telegram.WebApp.initDataUnsafe.user.id;
@@ -126,7 +127,7 @@ registerUserIfNeeded();
   // Полностью перезаписывает ВСЮ локальную память данными этого аккаунта из облака —
   // и отдельные галочки (video-...), и итоговые цифры (progress:...)
   function refreshEverythingFromCloud(callback) {
-    if (!ARMY_USER_ID) return;
+    if (!ARMY_USER_ID) { if (callback) callback(); return; }
     fetch(`${FIREBASE_URL}/users/${ARMY_USER_ID}.json`)
       .then(res => res.json())
       .then(data => {
@@ -514,19 +515,33 @@ const YEAR_OWN_TOTALS = {
   ]
 };
 
+function countTrueIds(ids) {
+  let n = 0;
+  (ids || []).forEach((id) => { if (localStorage.getItem(id) === 'true') n++; });
+  return n;
+}
+
+function progressForKey(key) {
+  const known = getStatTotal(key);
+  const ids = (typeof STAT_CHECKBOX_IDS !== 'undefined' && STAT_CHECKBOX_IDS[key]) ? STAT_CHECKBOX_IDS[key] : null;
+  const raw = localStorage.getItem('progress:' + key);
+  const data = raw ? JSON.parse(raw) : null;
+  if (ids && ids.length) {
+    return { checked: countTrueIds(ids), total: known !== null ? known : ids.length };
+  }
+  if (known !== null) {
+    return { checked: data ? data.checked : 0, total: known };
+  }
+  if (data) return { checked: data.checked, total: data.total };
+  return { checked: 0, total: 0 };
+}
+
 function computeSectionProgress(keys) {
   let checked = 0, total = 0;
   keys.forEach((key) => {
-    const known = getStatTotal(key);
-    const raw = localStorage.getItem('progress:' + key);
-    const data = raw ? JSON.parse(raw) : null;
-    if (known !== null) {
-      total += known;
-      checked += data ? data.checked : 0;
-    } else if (data) {
-      total += data.total;
-      checked += data.checked;
-    }
+    const s = progressForKey(key);
+    checked += s.checked;
+    total += s.total;
   });
   return { checked, total };
 }
@@ -577,23 +592,28 @@ function pushWeightedContributions(sourceKey) {
 // "Всего" всегда известно заранее из YEAR_WEIGHTED_MAP — не зависит от того, заходил ли человек на страницу-довесок
 function getCombinedYearStats(yearKey) {
   let checked = 0, total = 0;
+  const ownIds = (typeof STAT_CHECKBOX_IDS !== 'undefined') ? STAT_CHECKBOX_IDS[yearKey] : null;
   const own = localStorage.getItem('progress:' + yearKey + ':own');
-  if (own) {
+  if (ownIds && ownIds.length) {
+    total += YEAR_OWN_TOTALS[yearKey] != null ? YEAR_OWN_TOTALS[yearKey] : ownIds.length;
+    checked += countTrueIds(ownIds);
+  } else if (own) {
     const d = JSON.parse(own);
     checked += d.checked;
-    total += d.total;
+    total += YEAR_OWN_TOTALS[yearKey] != null ? YEAR_OWN_TOTALS[yearKey] : d.total;
   } else if (YEAR_OWN_TOTALS[yearKey]) {
     total += YEAR_OWN_TOTALS[yearKey];
   }
   const sources = YEAR_WEIGHTED_MAP[yearKey] || {};
   Object.keys(sources).forEach((src) => {
     const entry = sources[src];
-    const srcTotal = Array.isArray(entry) ? entry.length : entry.weight;
-    total += srcTotal;
-    const raw = localStorage.getItem('progress:' + yearKey + ':weighted:' + src);
-    if (raw) {
-      const d = JSON.parse(raw);
-      checked += d.checked;
+    if (Array.isArray(entry)) {
+      total += entry.length;
+      checked += countTrueIds(entry);
+    } else if (entry && entry.allOf) {
+      total += entry.weight;
+      const allDone = entry.allOf.every((id) => localStorage.getItem(id) === 'true');
+      if (allDone) checked += entry.weight;
     }
   });
   return { checked, total };

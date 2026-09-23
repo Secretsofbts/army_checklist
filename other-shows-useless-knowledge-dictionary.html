@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,8 +7,8 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
-  <title>Словарь бесполезных человеческих знаний</title>
+  <script src="sync.js?v=21"></script>
+  <title>РЎР»РѕРІР°СЂСЊ Р±РµСЃРїРѕР»РµР·РЅС‹С… С‡РµР»РѕРІРµС‡РµСЃРєРёС… Р·РЅР°РЅРёР№</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
     .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -25,26 +25,26 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="other-shows.html">← Назад</a>
-    <h1>📕 Словарь бесполезных человеческих знаний 📕</h1>
-    <p class="intro">Год выпуска: 2022</p>
-    <p class="intro">Ким Намджун и другие ведущие каждую серию рассказывают о жизни конкретного человека вместе с группой экспертов, в которую входят писатель, физик, судмедэксперт и астроном</p>
+    <a class="back" href="other-shows.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>рџ“• РЎР»РѕРІР°СЂСЊ Р±РµСЃРїРѕР»РµР·РЅС‹С… С‡РµР»РѕРІРµС‡РµСЃРєРёС… Р·РЅР°РЅРёР№ рџ“•</h1>
+    <p class="intro">Р“РѕРґ РІС‹РїСѓСЃРєР°: 2022</p>
+    <p class="intro">РљРёРј РќР°РјРґР¶СѓРЅ Рё РґСЂСѓРіРёРµ РІРµРґСѓС‰РёРµ РєР°Р¶РґСѓСЋ СЃРµСЂРёСЋ СЂР°СЃСЃРєР°Р·С‹РІР°СЋС‚ Рѕ Р¶РёР·РЅРё РєРѕРЅРєСЂРµС‚РЅРѕРіРѕ С‡РµР»РѕРІРµРєР° РІРјРµСЃС‚Рµ СЃ РіСЂСѓРїРїРѕР№ СЌРєСЃРїРµСЂС‚РѕРІ, РІ РєРѕС‚РѕСЂСѓСЋ РІС…РѕРґСЏС‚ РїРёСЃР°С‚РµР»СЊ, С„РёР·РёРє, СЃСѓРґРјРµРґСЌРєСЃРїРµСЂС‚ Рё Р°СЃС‚СЂРѕРЅРѕРј</p>
     <div id="list"></div>
-    <a class="footer-link" href="other-shows-2020-2022.html">Другие шоу (2020 - 2022) ⬅️</a>
-    <a class="footer-link" href="other-shows-2023-2024.html">Другие шоу (2023 - 2024) ⬅️</a>
+    <a class="footer-link" href="other-shows-2020-2022.html">Р”СЂСѓРіРёРµ С€РѕСѓ (2020 - 2022) в¬…пёЏ</a>
+    <a class="footer-link" href="other-shows-2023-2024.html">Р”СЂСѓРіРёРµ С€РѕСѓ (2023 - 2024) в¬…пёЏ</a>
   </div>
 
   <script>
     const items = [
-      { text: "1 серия", link: "https://t.me/violent_arhive/3549" },
-      { text: "2 серия", link: "https://t.me/violent_arhive/3583" },
-      { text: "3 серия", link: "https://t.me/violent_arhive/3709" },
-      { text: "4 серия", link: "https://t.me/violent_arhive/3710" },
-      { text: "5 серия", link: "https://t.me/violent_arhive/3742" },
-      { text: "6 серия", link: "https://t.me/violent_arhive/3758" },
-      { text: "7 серия", link: "https://t.me/violent_arhive/3771" },
-      { text: "8 серия", link: "https://t.me/violent_arhive/3775" },
-      { text: "9 серия", link: "https://t.me/violent_arhive/3896" }
+      { text: "1 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/3549" },
+      { text: "2 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/3583" },
+      { text: "3 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/3709" },
+      { text: "4 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/3710" },
+      { text: "5 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/3742" },
+      { text: "6 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/3758" },
+      { text: "7 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/3771" },
+      { text: "8 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/3775" },
+      { text: "9 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/3896" }
     ];
 
     const listEl = document.getElementById('list');
@@ -66,7 +66,7 @@
       });
       span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
       const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = 'рџ”—';
       row.appendChild(box); row.appendChild(span); row.appendChild(link);
       listEl.appendChild(row);
     });

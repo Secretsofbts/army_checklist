@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
+  <script src="sync.js?v=21"></script>
   <title>Comeback</title>
   <style>
     body {
@@ -60,44 +60,44 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="vlive.html">← Назад</a>
-    <h1>Comeback 🎉</h1>
-    <p class="intro">Трансляции и видео, связанные с выпусками новых альбомов или песен</p>
+    <a class="back" href="vlive.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>Comeback рџЋ‰</h1>
+    <p class="intro">РўСЂР°РЅСЃР»СЏС†РёРё Рё РІРёРґРµРѕ, СЃРІСЏР·Р°РЅРЅС‹Рµ СЃ РІС‹РїСѓСЃРєР°РјРё РЅРѕРІС‹С… Р°Р»СЊР±РѕРјРѕРІ РёР»Рё РїРµСЃРµРЅ</p>
     <div id="list"></div>
-    <a class="footer-link" href="ot7.html">Все эфиры ОТ7 ⬅️</a>
-    <a class="footer-link" href="vlive.html">Все эфиры c Vlive/Weverse ⬅️</a>
+    <a class="footer-link" href="ot7.html">Р’СЃРµ СЌС„РёСЂС‹ РћРў7 в¬…пёЏ</a>
+    <a class="footer-link" href="vlive.html">Р’СЃРµ СЌС„РёСЂС‹ c Vlive/Weverse в¬…пёЏ</a>
   </div>
 
   <script>
     const items = [
-      { text: "BURNING BTS ❣️", sub: "(Young forever) от 02.05.2016", link: "https://t.me/violent_arhive/989" },
-      { text: "Камбэк с Wings 🔮", sub: "от 10.10.2016", link: "https://t.me/violent_arhive/890" },
-      { text: "Ты никогда не будешь один", sub: "(Wings. YNWA) от 13.02.2017", link: "https://t.me/violent_arhive/848" },
-      { text: "Love yourself & her 🌟", sub: "от 19.09.2017", link: "https://t.me/violent_arhive/807" },
-      { text: "Preview show BTS LA ❣️", sub: "(Love Yourself: Tear) от 19.05.2018", link: "https://t.me/violent_arhive/789" },
-      { text: "Behind the anSwer ❣️", sub: "(Love Yourself: Answer) от 30.08.2018", link: "https://t.me/violent_arhive/783" },
-      { text: "Comeback show HoneyFM", sub: "(Map of the soul: Persona) от 13.04.2019", link: "https://t.me/violent_arhive/729" },
-      { text: "Давайте сделаем видимое \"фиолетовое\" радио ❣️", sub: "(Map of the soul: 7) от 21.02.2020", link: "https://t.me/violent_arhive/730" },
-      { text: "Dynamite MV Commentary", sub: "(Dynamite) от 21.08.2020", link: "https://t.me/violent_arhive/615" },
-      { text: "Life Goes On 💫", sub: "от 20.11.2020", link: "https://t.me/violent_arhive/204" },
-      { text: "Butter Butter Bubutter 🧈", sub: "от 21.05.2021", link: "https://t.me/violent_arhive/928" },
-      { text: "\"Butter\" Special Countdown", sub: "(обратный отсчёт)", link: "https://t.me/violent_arhive/941" },
-      { text: "Масляный побег с BTS 🧈", sub: "(Butter)", link: "https://t.me/violent_arhive/1039" },
-      { text: "Come Back ❣️", sub: "(Proof) от 10.06.2022", link: "https://t.me/violent_arhive/2756" },
-      { text: "Что есть в \"Jack In The Box\"", sub: "от 15.07.2022", link: "https://t.me/violent_arhive/2856" },
-      { text: "Празднование релиза 💕", sub: "(The Astronaut) от 28.10.2022", link: "https://t.me/violent_arhive/3275" },
-      { text: "RM Indigo Live 💙", sub: "от 02.12.2022", link: "https://t.me/violent_arhive/3363" },
-      { text: "hope, on the street 🤍", sub: "от 03.03.2023", link: "https://t.me/violent_arhive/3762" },
-      { text: "Jimin FACE Live 💛", sub: "от 29.03.2023", link: "https://t.me/violent_arhive/3867" },
-      { text: "Радиошоу Юнги 🎙 🖤", sub: "(People pt.2) от 07.04.2023", link: "https://t.me/violent_arhive/3943" },
-      { text: "SUGA 'D-DAY' Live 🖤", sub: "от 25.04.2023", link: "https://t.me/violent_arhive/3987" },
-      { text: "Семь дней в неделю 💜", sub: "(Seven) от 14.07.2023", link: "https://t.me/violent_arhive/4109" },
-      { text: "GOLDEN ✨💜", sub: "от 04.11.2023", link: "https://t.me/violent_arhive/4308" },
-            { text: "Что такое \"Happy\"? 💞", sub: "от 15.11.2024", link: "https://t.me/violent_arhive/4894" },
-      { text: "Comeback Live: Sweet Dreams with j-hope", sub: "засыпаем с j-hope — от 06.03.2025, озвучка", link: "https://vkvideo.ru/video-218570243_456240169" },
-      { text: "Comeback Live: Sweet Dreams with j-hope", sub: "просыпаемся с j-hope — от 07.03.2025, озвучка", link: "https://vkvideo.ru/video-218570243_456240170" },
-      { text: "Джин 'Echo' камбек лайв 💞", sub: "от 16.05.2025", link: "https://t.me/violent_arhive/5146" },
-      { text: "STUDIO NOTES ARIRANG 👑", sub: "(ARIRANG) от 20.03.2026", link: "https://t.me/violent_arhive/5426" }
+      { text: "BURNING BTS вќЈпёЏ", sub: "(Young forever) РѕС‚ 02.05.2016", link: "https://t.me/violent_arhive/989" },
+      { text: "РљР°РјР±СЌРє СЃ Wings рџ”®", sub: "РѕС‚ 10.10.2016", link: "https://t.me/violent_arhive/890" },
+      { text: "РўС‹ РЅРёРєРѕРіРґР° РЅРµ Р±СѓРґРµС€СЊ РѕРґРёРЅ", sub: "(Wings. YNWA) РѕС‚ 13.02.2017", link: "https://t.me/violent_arhive/848" },
+      { text: "Love yourself & her рџЊџ", sub: "РѕС‚ 19.09.2017", link: "https://t.me/violent_arhive/807" },
+      { text: "Preview show BTS LA вќЈпёЏ", sub: "(Love Yourself: Tear) РѕС‚ 19.05.2018", link: "https://t.me/violent_arhive/789" },
+      { text: "Behind the anSwer вќЈпёЏ", sub: "(Love Yourself: Answer) РѕС‚ 30.08.2018", link: "https://t.me/violent_arhive/783" },
+      { text: "Comeback show HoneyFM", sub: "(Map of the soul: Persona) РѕС‚ 13.04.2019", link: "https://t.me/violent_arhive/729" },
+      { text: "Р”Р°РІР°Р№С‚Рµ СЃРґРµР»Р°РµРј РІРёРґРёРјРѕРµ \"С„РёРѕР»РµС‚РѕРІРѕРµ\" СЂР°РґРёРѕ вќЈпёЏ", sub: "(Map of the soul: 7) РѕС‚ 21.02.2020", link: "https://t.me/violent_arhive/730" },
+      { text: "Dynamite MV Commentary", sub: "(Dynamite) РѕС‚ 21.08.2020", link: "https://t.me/violent_arhive/615" },
+      { text: "Life Goes On рџ’«", sub: "РѕС‚ 20.11.2020", link: "https://t.me/violent_arhive/204" },
+      { text: "Butter Butter Bubutter рџ§€", sub: "РѕС‚ 21.05.2021", link: "https://t.me/violent_arhive/928" },
+      { text: "\"Butter\" Special Countdown", sub: "(РѕР±СЂР°С‚РЅС‹Р№ РѕС‚СЃС‡С‘С‚)", link: "https://t.me/violent_arhive/941" },
+      { text: "РњР°СЃР»СЏРЅС‹Р№ РїРѕР±РµРі СЃ BTS рџ§€", sub: "(Butter)", link: "https://t.me/violent_arhive/1039" },
+      { text: "Come Back вќЈпёЏ", sub: "(Proof) РѕС‚ 10.06.2022", link: "https://t.me/violent_arhive/2756" },
+      { text: "Р§С‚Рѕ РµСЃС‚СЊ РІ \"Jack In The Box\"", sub: "РѕС‚ 15.07.2022", link: "https://t.me/violent_arhive/2856" },
+      { text: "РџСЂР°Р·РґРЅРѕРІР°РЅРёРµ СЂРµР»РёР·Р° рџ’•", sub: "(The Astronaut) РѕС‚ 28.10.2022", link: "https://t.me/violent_arhive/3275" },
+      { text: "RM Indigo Live рџ’™", sub: "РѕС‚ 02.12.2022", link: "https://t.me/violent_arhive/3363" },
+      { text: "hope, on the street рџ¤Ќ", sub: "РѕС‚ 03.03.2023", link: "https://t.me/violent_arhive/3762" },
+      { text: "Jimin FACE Live рџ’›", sub: "РѕС‚ 29.03.2023", link: "https://t.me/violent_arhive/3867" },
+      { text: "Р Р°РґРёРѕС€РѕСѓ Р®РЅРіРё рџЋ™ рџ–¤", sub: "(People pt.2) РѕС‚ 07.04.2023", link: "https://t.me/violent_arhive/3943" },
+      { text: "SUGA 'D-DAY' Live рџ–¤", sub: "РѕС‚ 25.04.2023", link: "https://t.me/violent_arhive/3987" },
+      { text: "РЎРµРјСЊ РґРЅРµР№ РІ РЅРµРґРµР»СЋ рџ’њ", sub: "(Seven) РѕС‚ 14.07.2023", link: "https://t.me/violent_arhive/4109" },
+      { text: "GOLDEN вњЁрџ’њ", sub: "РѕС‚ 04.11.2023", link: "https://t.me/violent_arhive/4308" },
+            { text: "Р§С‚Рѕ С‚Р°РєРѕРµ \"Happy\"? рџ’ћ", sub: "РѕС‚ 15.11.2024", link: "https://t.me/violent_arhive/4894" },
+      { text: "Comeback Live: Sweet Dreams with j-hope", sub: "Р·Р°СЃС‹РїР°РµРј СЃ j-hope вЂ” РѕС‚ 06.03.2025, РѕР·РІСѓС‡РєР°", link: "https://vkvideo.ru/video-218570243_456240169" },
+      { text: "Comeback Live: Sweet Dreams with j-hope", sub: "РїСЂРѕСЃС‹РїР°РµРјСЃСЏ СЃ j-hope вЂ” РѕС‚ 07.03.2025, РѕР·РІСѓС‡РєР°", link: "https://vkvideo.ru/video-218570243_456240170" },
+      { text: "Р”Р¶РёРЅ 'Echo' РєР°РјР±РµРє Р»Р°Р№РІ рџ’ћ", sub: "РѕС‚ 16.05.2025", link: "https://t.me/violent_arhive/5146" },
+      { text: "STUDIO NOTES ARIRANG рџ‘‘", sub: "(ARIRANG) РѕС‚ 20.03.2026", link: "https://t.me/violent_arhive/5426" }
     ];
 
        const listEl = document.getElementById('list');
@@ -148,7 +148,7 @@
       link.className = 'link';
       link.href = item.link;
       link.target = '_blank';
-      link.textContent = '🔗';
+      link.textContent = 'рџ”—';
       row.appendChild(link);
 
       listEl.appendChild(row);

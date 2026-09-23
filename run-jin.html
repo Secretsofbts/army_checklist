@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
+  <script src="sync.js?v=21"></script>
   <title>RUN JIN</title>
   <style>
     body {
@@ -73,17 +73,17 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="run-bts.html">← Назад</a>
-    <h1>🌸 RUN JIN 🌸</h1>
-    <p class="intro">Пока остальные участники группы служили, один из мемберов решил создать свой ран бтс и продолжил снимать соло выпуски, куда часто приглашал разных гостей и проводил весело время с ними</p>
+    <a class="back" href="run-bts.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>рџЊё RUN JIN рџЊё</h1>
+    <p class="intro">РџРѕРєР° РѕСЃС‚Р°Р»СЊРЅС‹Рµ СѓС‡Р°СЃС‚РЅРёРєРё РіСЂСѓРїРїС‹ СЃР»СѓР¶РёР»Рё, РѕРґРёРЅ РёР· РјРµРјР±РµСЂРѕРІ СЂРµС€РёР» СЃРѕР·РґР°С‚СЊ СЃРІРѕР№ СЂР°РЅ Р±С‚СЃ Рё РїСЂРѕРґРѕР»Р¶РёР» СЃРЅРёРјР°С‚СЊ СЃРѕР»Рѕ РІС‹РїСѓСЃРєРё, РєСѓРґР° С‡Р°СЃС‚Рѕ РїСЂРёРіР»Р°С€Р°Р» СЂР°Р·РЅС‹С… РіРѕСЃС‚РµР№ Рё РїСЂРѕРІРѕРґРёР» РІРµСЃРµР»Рѕ РІСЂРµРјСЏ СЃ РЅРёРјРё</p>
     <div id="list"></div>
-    <a class="footer-link" href="run-bts.html">RUN BTS ⬅️</a>
+    <a class="footer-link" href="run-bts.html">RUN BTS в¬…пёЏ</a>
   </div>
 
         <script>
     const navItems = [
-        { text: "1-25 эпизод", link: "run-jin-1-25.html", statKey: "run-jin-1-25" },
-        { text: "26-36 эпизод", link: "run-jin-26-36.html", statKey: "run-jin-26-36" }
+        { text: "1-25 СЌРїРёР·РѕРґ", link: "run-jin-1-25.html", statKey: "run-jin-1-25" },
+        { text: "26-36 СЌРїРёР·РѕРґ", link: "run-jin-26-36.html", statKey: "run-jin-26-36" }
       ];
 
       const listEl = document.getElementById('list');
@@ -106,7 +106,7 @@
         var el = document.getElementById(elId);
         if (!data || data.total === 0) { el.textContent = ''; return; }
         if (data.checked === data.total) {
-          el.textContent = '✅';
+          el.textContent = 'вњ…';
           el.style.color = '#2e9e5b';
           var card = el.closest('.navlink');
           if (card) card.style.background = '#e3f7e9';

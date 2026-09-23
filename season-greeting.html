@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
+  <script src="sync.js?v=21"></script>
   <title>Season's Greeting</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -26,25 +26,25 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="specials.html">← Назад</a>
-          <h1>🎄 Season's Greeting 🎄</h1>
-    <p class="intro" style="font-size: 13px; color: #555; margin: 0 0 4px;">Год выхода: 2015-2022 🕑</p>
+    <a class="back" href="specials.html">в†ђ РќР°Р·Р°Рґ</a>
+          <h1>рџЋ„ Season's Greeting рџЋ„</h1>
+    <p class="intro" style="font-size: 13px; color: #555; margin: 0 0 4px;">Р“РѕРґ РІС‹С…РѕРґР°: 2015-2022 рџ•‘</p>
     <p style="margin: 8px 0;"></p>
-    <p class="intro" style="font-size: 13px; color: #555; margin: 0 0 16px;">Ежегодный официальный набор для фанатов — состоит из годового планера/календаря и DVD с закадровыми</p>
+    <p class="intro" style="font-size: 13px; color: #555; margin: 0 0 16px;">Р•Р¶РµРіРѕРґРЅС‹Р№ РѕС„РёС†РёР°Р»СЊРЅС‹Р№ РЅР°Р±РѕСЂ РґР»СЏ С„Р°РЅР°С‚РѕРІ вЂ” СЃРѕСЃС‚РѕРёС‚ РёР· РіРѕРґРѕРІРѕРіРѕ РїР»Р°РЅРµСЂР°/РєР°Р»РµРЅРґР°СЂСЏ Рё DVD СЃ Р·Р°РєР°РґСЂРѕРІС‹РјРё</p>
     <div id="list"></div>
-    <a class="footer-link" href="specials.html">Спецвыпуски ⬅️</a>
+    <a class="footer-link" href="specials.html">РЎРїРµС†РІС‹РїСѓСЃРєРё в¬…пёЏ</a>
   </div>
 
   <script>
        const items = [
-      { text: "2015 год", link: "https://t.me/violent_arhive/1477" },
-      { text: "2016 год", link: "https://t.me/violent_arhive/1479" },
-      { text: "2017 год", link: "https://t.me/violent_arhive/1478" },
-      { text: "2018 год", link: "https://t.me/violent_arhive/1480" },
-      { text: "2019 год", link: "https://t.me/violent_arhive/1481" },
-      { text: "2020 год", link: "https://t.me/violent_arhive/1482" },
-      { text: "2021 год", link: "https://t.me/violent_arhive/1484" },
-      { text: "2022 год", link: "https://t.me/violent_arhive/2143" }
+      { text: "2015 РіРѕРґ", link: "https://t.me/violent_arhive/1477" },
+      { text: "2016 РіРѕРґ", link: "https://t.me/violent_arhive/1479" },
+      { text: "2017 РіРѕРґ", link: "https://t.me/violent_arhive/1478" },
+      { text: "2018 РіРѕРґ", link: "https://t.me/violent_arhive/1480" },
+      { text: "2019 РіРѕРґ", link: "https://t.me/violent_arhive/1481" },
+      { text: "2020 РіРѕРґ", link: "https://t.me/violent_arhive/1482" },
+      { text: "2021 РіРѕРґ", link: "https://t.me/violent_arhive/1484" },
+      { text: "2022 РіРѕРґ", link: "https://t.me/violent_arhive/2143" }
     ];
 
     const listEl = document.getElementById('list');
@@ -72,7 +72,7 @@
       });
       span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
       const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = 'рџ”—';
       row.appendChild(box); row.appendChild(span); row.appendChild(link);
       listEl.appendChild(row);
     });

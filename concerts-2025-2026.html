@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,8 +7,8 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
-  <title>Концерты 2025-2026</title>
+  <script src="sync.js?v=21"></script>
+  <title>РљРѕРЅС†РµСЂС‚С‹ 2025-2026</title>
   <style>
     body {
       background: #f2f0f7;
@@ -76,26 +76,26 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="concerts.html">← Назад</a>
-    <h1>КОНЦЕРТЫ 2025-2026 ГОД</h1>
+    <a class="back" href="concerts.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>РљРћРќР¦Р•Р РўР« 2025-2026 Р“РћР”</h1>
     <p class="intro"></p>
     <div id="list"></div>
            <a class="navcard" href="concert-arirang-tour.html" id="arirang-card">
      <input type="checkbox" id="arirang-checkbox" style="pointer-events:none; display:none;">
-     <span class="navcard-label" id="arirang-label">🖥 Общий пост тура ARIRANG</span>
+     <span class="navcard-label" id="arirang-label">рџ–Ґ РћР±С‰РёР№ РїРѕСЃС‚ С‚СѓСЂР° ARIRANG</span>
      <span id="badge-concert-arirang-tour" style="font-size:12px; color:#999;"></span>
    </a>
-     <a class="footer-link" href="concerts.html">Все концерты BTS ⬅️</a>
+     <a class="footer-link" href="concerts.html">Р’СЃРµ РєРѕРЅС†РµСЂС‚С‹ BTS в¬…пёЏ</a>
   </div>
 
   <script>
     const items = [
-      { text: "Tour HOPE ON THE STAGE in Seoul D-1 (j-hope)", sub: "от 28.02.2025 — без субтитров", link: "https://t.me/violent_arhive/5018" },
-      { text: "Tour HOPE ON THE STAGE in Seoul D-2 (j-hope)", sub: "от 01.03.2025 — с англ. субтитрами", link: "https://t.me/violent_arhive/5019" },
-      { text: "Tour HOPE ON THE STAGE in Seoul D-3 (j-hope)", sub: "от 02.03.2025 — с англ. субтитрами", link: "https://t.me/violent_arhive/5022" },
-      { text: "Tour HOPE ON THE STAGE in Seoul D-1 Final (j-hope)", sub: "от 13.06.2025 — с рус. субтитрами", link: "https://t.me/violent_arhive/5165" },
-      { text: "Tour HOPE ON THE STAGE in Seoul D-2 Final (j-hope)", sub: "от 14.06.2025 — с рус. субтитрами", link: "https://t.me/violent_arhive/5168" },
-      { text: "ARIRANG Comeback Live", sub: "от 21.03.2026 — с рус. суб (2 версии)", link: "https://t.me/violent_arhive/5424" }
+      { text: "Tour HOPE ON THE STAGE in Seoul D-1 (j-hope)", sub: "РѕС‚ 28.02.2025 вЂ” Р±РµР· СЃСѓР±С‚РёС‚СЂРѕРІ", link: "https://t.me/violent_arhive/5018" },
+      { text: "Tour HOPE ON THE STAGE in Seoul D-2 (j-hope)", sub: "РѕС‚ 01.03.2025 вЂ” СЃ Р°РЅРіР». СЃСѓР±С‚РёС‚СЂР°РјРё", link: "https://t.me/violent_arhive/5019" },
+      { text: "Tour HOPE ON THE STAGE in Seoul D-3 (j-hope)", sub: "РѕС‚ 02.03.2025 вЂ” СЃ Р°РЅРіР». СЃСѓР±С‚РёС‚СЂР°РјРё", link: "https://t.me/violent_arhive/5022" },
+      { text: "Tour HOPE ON THE STAGE in Seoul D-1 Final (j-hope)", sub: "РѕС‚ 13.06.2025 вЂ” СЃ СЂСѓСЃ. СЃСѓР±С‚РёС‚СЂР°РјРё", link: "https://t.me/violent_arhive/5165" },
+      { text: "Tour HOPE ON THE STAGE in Seoul D-2 Final (j-hope)", sub: "РѕС‚ 14.06.2025 вЂ” СЃ СЂСѓСЃ. СЃСѓР±С‚РёС‚СЂР°РјРё", link: "https://t.me/violent_arhive/5168" },
+      { text: "ARIRANG Comeback Live", sub: "РѕС‚ 21.03.2026 вЂ” СЃ СЂСѓСЃ. СЃСѓР± (2 РІРµСЂСЃРёРё)", link: "https://t.me/violent_arhive/5424" }
     ];
 
     const listEl = document.getElementById('list');
@@ -134,7 +134,7 @@
       link.className = 'link';
       link.href = item.link;
       link.target = '_blank';
-      link.textContent = '🔗';
+      link.textContent = 'рџ”—';
 
       row.appendChild(box);
       row.appendChild(span);

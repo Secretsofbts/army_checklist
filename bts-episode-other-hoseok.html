@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,8 +7,8 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
-  <title>Ну вроде бы эпизоды: Хосок</title>
+  <script src="sync.js?v=21"></script>
+  <title>РќСѓ РІСЂРѕРґРµ Р±С‹ СЌРїРёР·РѕРґС‹: РҐРѕСЃРѕРє</title>
   <style>
     body {
       background: #f2f0f7;
@@ -59,25 +59,25 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="bts-episode-other.html">← Назад</a>
-    <h1>НУ ВРОДЕ БЫ ЭПИЗОДЫ: 🤍</h1>
+    <a class="back" href="bts-episode-other.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>РќРЈ Р’Р РћР”Р• Р‘Р« Р­РџРР—РћР”Р«: рџ¤Ќ</h1>
     <div id="list"></div>
-    <a class="footer-link" href="bts-episode-other.html">Все "Ну вроде бы эпизоды" ⬅️</a>
+    <a class="footer-link" href="bts-episode-other.html">Р’СЃРµ "РќСѓ РІСЂРѕРґРµ Р±С‹ СЌРїРёР·РѕРґС‹" в¬…пёЏ</a>
   </div>
 
   <script>
     const items = [
-      { text: "Бекстейдж со съёмок на постер сериала «HOPE ON THE STREET»", link: "https://t.me/violent_arhive/4551" },
-      { text: "Закулисье записи альбома к \"HOPE ON THE STREET\"", link: "https://t.me/violent_arhive/4561" },
-      { text: "Закадровые шоу Ли Хена", link: "https://t.me/violent_arhive/4922" },
-      { text: "Съемки \"Sweet Dreams\"", link: "https://t.me/violent_arhive/5028" },
-      { text: "Процесс создания \"Sweet Dreams\" & \"MONA LISA\"", link: "https://t.me/violent_arhive/5038" },
-      { text: "Процесс съёмок клипа на сингл \"MONA LISA\"", link: "https://t.me/violent_arhive/5056" },
-      { text: "\"Mona Lisa\" практика танцев", link: "https://t.me/violent_arhive/5062" },
-      { text: "Бэкстейдж со съемок фильма «Charm of HOPE»", link: "https://t.me/violent_arhive/5192" },
-      { text: "Бэкстейдж с практики «Killin' It Girl»", link: "https://t.me/violent_arhive/5178" },
-      { text: "Съемки j-hope 'Killin' It Girl' MV & Choreography ver.", link: "https://t.me/violent_arhive/5191" },
-      { text: "Скетч с промоушена «Killin' It Girl» на музыкальных шоу", link: "https://t.me/violent_arhive/5232" }
+      { text: "Р‘РµРєСЃС‚РµР№РґР¶ СЃРѕ СЃСЉС‘РјРѕРє РЅР° РїРѕСЃС‚РµСЂ СЃРµСЂРёР°Р»Р° В«HOPE ON THE STREETВ»", link: "https://t.me/violent_arhive/4551" },
+      { text: "Р—Р°РєСѓР»РёСЃСЊРµ Р·Р°РїРёСЃРё Р°Р»СЊР±РѕРјР° Рє \"HOPE ON THE STREET\"", link: "https://t.me/violent_arhive/4561" },
+      { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ С€РѕСѓ Р›Рё РҐРµРЅР°", link: "https://t.me/violent_arhive/4922" },
+      { text: "РЎСЉРµРјРєРё \"Sweet Dreams\"", link: "https://t.me/violent_arhive/5028" },
+      { text: "РџСЂРѕС†РµСЃСЃ СЃРѕР·РґР°РЅРёСЏ \"Sweet Dreams\" & \"MONA LISA\"", link: "https://t.me/violent_arhive/5038" },
+      { text: "РџСЂРѕС†РµСЃСЃ СЃСЉС‘РјРѕРє РєР»РёРїР° РЅР° СЃРёРЅРіР» \"MONA LISA\"", link: "https://t.me/violent_arhive/5056" },
+      { text: "\"Mona Lisa\" РїСЂР°РєС‚РёРєР° С‚Р°РЅС†РµРІ", link: "https://t.me/violent_arhive/5062" },
+      { text: "Р‘СЌРєСЃС‚РµР№РґР¶ СЃРѕ СЃСЉРµРјРѕРє С„РёР»СЊРјР° В«Charm of HOPEВ»", link: "https://t.me/violent_arhive/5192" },
+      { text: "Р‘СЌРєСЃС‚РµР№РґР¶ СЃ РїСЂР°РєС‚РёРєРё В«Killin' It GirlВ»", link: "https://t.me/violent_arhive/5178" },
+      { text: "РЎСЉРµРјРєРё j-hope 'Killin' It Girl' MV & Choreography ver.", link: "https://t.me/violent_arhive/5191" },
+      { text: "РЎРєРµС‚С‡ СЃ РїСЂРѕРјРѕСѓС€РµРЅР° В«Killin' It GirlВ» РЅР° РјСѓР·С‹РєР°Р»СЊРЅС‹С… С€РѕСѓ", link: "https://t.me/violent_arhive/5232" }
     ];
 
     const listEl = document.getElementById('list');
@@ -112,7 +112,7 @@
       link.className = 'link';
       link.href = item.link;
       link.target = '_blank';
-      link.textContent = '🔗';
+      link.textContent = 'рџ”—';
 
       row.appendChild(box);
       row.appendChild(span);

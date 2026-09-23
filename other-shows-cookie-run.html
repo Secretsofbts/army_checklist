@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
+  <script src="sync.js?v=21"></script>
   <title>BTS X Cookie Run: Kingdom</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -25,19 +25,19 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="other-shows-2020-2022.html">← Назад</a>
-       <h1>👑 BTS X Cookie Run: Kingdom 👑</h1>
-       <p class="intro">Год выпуска: 2022 🕑</p>
-    <p class="intro">В коллаборации будут представлены тематические карты и приключения BTS. Каждый участник привносит свой свежий вкус в королевство</p>
+    <a class="back" href="other-shows-2020-2022.html">в†ђ РќР°Р·Р°Рґ</a>
+       <h1>рџ‘‘ BTS X Cookie Run: Kingdom рџ‘‘</h1>
+       <p class="intro">Р“РѕРґ РІС‹РїСѓСЃРєР°: 2022 рџ•‘</p>
+    <p class="intro">Р’ РєРѕР»Р»Р°Р±РѕСЂР°С†РёРё Р±СѓРґСѓС‚ РїСЂРµРґСЃС‚Р°РІР»РµРЅС‹ С‚РµРјР°С‚РёС‡РµСЃРєРёРµ РєР°СЂС‚С‹ Рё РїСЂРёРєР»СЋС‡РµРЅРёСЏ BTS. РљР°Р¶РґС‹Р№ СѓС‡Р°СЃС‚РЅРёРє РїСЂРёРІРЅРѕСЃРёС‚ СЃРІРѕР№ СЃРІРµР¶РёР№ РІРєСѓСЃ РІ РєРѕСЂРѕР»РµРІСЃС‚РІРѕ</p>
     <div id="list"></div>
-    <a class="footer-link" href="other-shows-2020-2022.html">Другие шоу (2020 - 2022) ⬅️</a>
+    <a class="footer-link" href="other-shows-2020-2022.html">Р”СЂСѓРіРёРµ С€РѕСѓ (2020 - 2022) в¬…пёЏ</a>
   </div>
 
   <script>
        const items = [
-      { text: "1 эпизод", sub: "Рождение королевства BANGTAN?", link: "https://t.me/violent_arhive/3185" },
-      { text: "2 эпизод", sub: "Давайте вместе посетим королевство BTS", link: "https://t.me/violent_arhive/3187" },
-      { text: "Бонусные кадры", sub: "не идут в статистику", link: "https://t.me/violent_arhive/3214", excluded: true }
+      { text: "1 СЌРїРёР·РѕРґ", sub: "Р РѕР¶РґРµРЅРёРµ РєРѕСЂРѕР»РµРІСЃС‚РІР° BANGTAN?", link: "https://t.me/violent_arhive/3185" },
+      { text: "2 СЌРїРёР·РѕРґ", sub: "Р”Р°РІР°Р№С‚Рµ РІРјРµСЃС‚Рµ РїРѕСЃРµС‚РёРј РєРѕСЂРѕР»РµРІСЃС‚РІРѕ BTS", link: "https://t.me/violent_arhive/3187" },
+      { text: "Р‘РѕРЅСѓСЃРЅС‹Рµ РєР°РґСЂС‹", sub: "РЅРµ РёРґСѓС‚ РІ СЃС‚Р°С‚РёСЃС‚РёРєСѓ", link: "https://t.me/violent_arhive/3214", excluded: true }
     ];
 
     const listEl = document.getElementById('list');
@@ -66,7 +66,7 @@
       });
       span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
       const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = 'рџ”—';
       row.appendChild(box); row.appendChild(span); row.appendChild(link);
       listEl.appendChild(row);
     });

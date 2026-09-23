@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
+  <script src="sync.js?v=21"></script>
   <title>Halloween</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -39,52 +39,52 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="misc.html">← Назад</a>
-    <h1>🎃 HALLOWEEN 🎃</h1>
-    <p class="intro">Хэллоуин — весёлый и мистический праздник, отмечают во многих странах мира в ночь с 31 октября на 1 ноября</p>
-    <p class="intro">Вот вам небольшая подборка бантан, связанная с этим праздником</p>
+    <a class="back" href="misc.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>рџЋѓ HALLOWEEN рџЋѓ</h1>
+    <p class="intro">РҐСЌР»Р»РѕСѓРёРЅ вЂ” РІРµСЃС‘Р»С‹Р№ Рё РјРёСЃС‚РёС‡РµСЃРєРёР№ РїСЂР°Р·РґРЅРёРє, РѕС‚РјРµС‡Р°СЋС‚ РІРѕ РјРЅРѕРіРёС… СЃС‚СЂР°РЅР°С… РјРёСЂР° РІ РЅРѕС‡СЊ СЃ 31 РѕРєС‚СЏР±СЂСЏ РЅР° 1 РЅРѕСЏР±СЂСЏ</p>
+    <p class="intro">Р’РѕС‚ РІР°Рј РЅРµР±РѕР»СЊС€Р°СЏ РїРѕРґР±РѕСЂРєР° Р±Р°РЅС‚Р°РЅ, СЃРІСЏР·Р°РЅРЅР°СЏ СЃ СЌС‚РёРј РїСЂР°Р·РґРЅРёРєРѕРј</p>
 
     <div id="list"></div>
 
              <div style="border-top: 1px solid #f0f0f0; margin-top: 12px; padding-top: 12px;">
-      <p class="year-title" style="margin-top: 0;">Дополнительный материал</p>
+      <p class="year-title" style="margin-top: 0;">Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Р№ РјР°С‚РµСЂРёР°Р»</p>
       <div id="list-extra"></div>
     </div>
 
 
-    <a class="footer-link" href="misc.html">Всякое другое ⬅️</a>
+    <a class="footer-link" href="misc.html">Р’СЃСЏРєРѕРµ РґСЂСѓРіРѕРµ в¬…пёЏ</a>
   </div>
 
    <script>
     const years = [
       {
         year: "2014",
-        costumes: "Дракула, Джек Воробей, Чаки, заключённый, Чарли Чаплин, Джокер и Мрачный Жнец",
+        costumes: "Р”СЂР°РєСѓР»Р°, Р”Р¶РµРє Р’РѕСЂРѕР±РµР№, Р§Р°РєРё, Р·Р°РєР»СЋС‡С‘РЅРЅС‹Р№, Р§Р°СЂР»Рё Р§Р°РїР»РёРЅ, Р”Р¶РѕРєРµСЂ Рё РњСЂР°С‡РЅС‹Р№ Р–РЅРµС†",
         items: [
           { text: "War of hormone", link: "https://t.me/violent_arhive/3259" },
-          { text: "Бомбочка", link: "https://t.me/violent_arhive/3260" },
-          { text: "Фотографии", link: "https://telegra.ph/Halloween-2014-10-29-4", noCheckbox: true }
+          { text: "Р‘РѕРјР±РѕС‡РєР°", link: "https://t.me/violent_arhive/3260" },
+          { text: "Р¤РѕС‚РѕРіСЂР°С„РёРё", link: "https://telegra.ph/Halloween-2014-10-29-4", noCheckbox: true }
         ]
       },
       {
         year: "2015",
-        costumes: "Гудетама, тыква, Наруто, Дарт Вейдер, Микки Маус, Вампир и Детектив Конан",
+        costumes: "Р“СѓРґРµС‚Р°РјР°, С‚С‹РєРІР°, РќР°СЂСѓС‚Рѕ, Р”Р°СЂС‚ Р’РµР№РґРµСЂ, РњРёРєРєРё РњР°СѓСЃ, Р’Р°РјРїРёСЂ Рё Р”РµС‚РµРєС‚РёРІ РљРѕРЅР°РЅ",
         items: [
-          { text: "Разбор костюмов", link: "https://t.me/violent_arhive/3261" },
+          { text: "Р Р°Р·Р±РѕСЂ РєРѕСЃС‚СЋРјРѕРІ", link: "https://t.me/violent_arhive/3261" },
           { text: "Halloween Party With BTS", link: "https://t.me/violent_arhive/1092" },
-          { text: "Фотографии", link: "https://telegra.ph/Halloween-2015-10-29-2", noCheckbox: true }
+          { text: "Р¤РѕС‚РѕРіСЂР°С„РёРё", link: "https://telegra.ph/Halloween-2015-10-29-2", noCheckbox: true }
         ]
       },
       {
         year: "2016",
-        costumes: "Райан из \"Kakao Friends\", ковбой, кореец в традиционном наряде, скелет, капуста, Сяоран Ли из Cardcaptor Sakura и Банни",
+        costumes: "Р Р°Р№Р°РЅ РёР· \"Kakao Friends\", РєРѕРІР±РѕР№, РєРѕСЂРµРµС† РІ С‚СЂР°РґРёС†РёРѕРЅРЅРѕРј РЅР°СЂСЏРґРµ, СЃРєРµР»РµС‚, РєР°РїСѓСЃС‚Р°, РЎСЏРѕСЂР°РЅ Р›Рё РёР· Cardcaptor Sakura Рё Р‘Р°РЅРЅРё",
         items: [
           { text: "21st Century Girl", link: "https://t.me/violent_arhive/3262" }
         ]
       },
       {
         year: "2017",
-        costumes: "Бантаны придумали групповой костюм! Они выбрали роль Белоснежки и 6-ти гномов",
+        costumes: "Р‘Р°РЅС‚Р°РЅС‹ РїСЂРёРґСѓРјР°Р»Рё РіСЂСѓРїРїРѕРІРѕР№ РєРѕСЃС‚СЋРј! РћРЅРё РІС‹Р±СЂР°Р»Рё СЂРѕР»СЊ Р‘РµР»РѕСЃРЅРµР¶РєРё Рё 6-С‚Рё РіРЅРѕРјРѕРІ",
         items: [
           { text: "GoGo", link: "https://t.me/violent_arhive/3265" },
           { text: "GoGo behind", link: "https://t.me/violent_arhive/3266" }
@@ -92,22 +92,22 @@
       },
       {
         year: "2019",
-        costumes: "Были видео в тиктоке",
+        costumes: "Р‘С‹Р»Рё РІРёРґРµРѕ РІ С‚РёРєС‚РѕРєРµ",
         items: [
-          { text: "Эти самые видео", link: "https://t.me/violent_arhive/3267" }
+          { text: "Р­С‚Рё СЃР°РјС‹Рµ РІРёРґРµРѕ", link: "https://t.me/violent_arhive/3267" }
         ]
       },
       {
         year: "2020",
-        costumes: "Бантаны решили повторить тренд TikTok в качестве своих костюмов, где они накинули простыни на головы",
+        costumes: "Р‘Р°РЅС‚Р°РЅС‹ СЂРµС€РёР»Рё РїРѕРІС‚РѕСЂРёС‚СЊ С‚СЂРµРЅРґ TikTok РІ РєР°С‡РµСЃС‚РІРµ СЃРІРѕРёС… РєРѕСЃС‚СЋРјРѕРІ, РіРґРµ РѕРЅРё РЅР°РєРёРЅСѓР»Рё РїСЂРѕСЃС‚С‹РЅРё РЅР° РіРѕР»РѕРІС‹",
         items: [
-          { text: "Фотосессия", link: "https://telegra.ph/Halloween-2020-10-29-2", noCheckbox: true }
+          { text: "Р¤РѕС‚РѕСЃРµСЃСЃРёСЏ", link: "https://telegra.ph/Halloween-2020-10-29-2", noCheckbox: true }
         ]
       },
       {
         year: "2022",
         items: [
-          { text: "Пост в inst от Хоси", link: "https://t.me/secretsofbts/31576", noCheckbox: true, icon: "🔗" }
+          { text: "РџРѕСЃС‚ РІ inst РѕС‚ РҐРѕСЃРё", link: "https://t.me/secretsofbts/31576", noCheckbox: true, icon: "рџ”—" }
         ]
       }
     ];
@@ -128,7 +128,7 @@
       span.textContent = item.text;
       const link = document.createElement('span');
       link.className = 'link';
-      link.textContent = item.icon || '📷 🔗';
+      link.textContent = item.icon || 'рџ“· рџ”—';
       a.appendChild(spacer);
       a.appendChild(span);
       a.appendChild(link);
@@ -139,7 +139,7 @@
     years.forEach((y) => {
       const yearTitle = document.createElement('div');
       yearTitle.className = 'year-title';
-      yearTitle.textContent = y.year + ' год';
+      yearTitle.textContent = y.year + ' РіРѕРґ';
       listEl.appendChild(yearTitle);
 
       if (y.costumes) {
@@ -189,7 +189,7 @@
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
-        link.textContent = '🔗';
+        link.textContent = 'рџ”—';
 
         row.appendChild(box);
         row.appendChild(span);
@@ -199,7 +199,7 @@
     });
 
     const extraItems = [
-      { text: "Всякие фото, связанные с этим праздником", link: "https://telegra.ph/Vsyakie-foto-s-Hehllouina-10-29", noCheckbox: true }
+      { text: "Р’СЃСЏРєРёРµ С„РѕС‚Рѕ, СЃРІСЏР·Р°РЅРЅС‹Рµ СЃ СЌС‚РёРј РїСЂР°Р·РґРЅРёРєРѕРј", link: "https://telegra.ph/Vsyakie-foto-s-Hehllouina-10-29", noCheckbox: true }
     ];
     const extraListEl = document.getElementById('list-extra');
     extraItems.forEach((item) => renderNoCheckboxRow(extraListEl, item));

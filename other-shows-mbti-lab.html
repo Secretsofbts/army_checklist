@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,8 +7,8 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
-  <title>Лаборатория MBTI</title>
+  <script src="sync.js?v=21"></script>
+  <title>Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ MBTI</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
     .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -25,23 +25,23 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="other-shows-2020-2022.html">← Назад</a>
-    <h1>📚 Лаборатория MBTI 📚</h1>
-    <p class="intro">Год выпуска: 2022 🕑</p>
-    <p class="intro">Тест на определение типа личности Майерс-Бриггс (MBTI) стал одним из самых популярных в мире. Люди по всему миру проходят тест, чтобы определить, к какому из 16 типов личности они относятся</p>
-    <p class="intro">Бантаны впервые прошли тест в 2017 году, и с тех пор результаты изменились</p>
+    <a class="back" href="other-shows-2020-2022.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>рџ“љ Р›Р°Р±РѕСЂР°С‚РѕСЂРёСЏ MBTI рџ“љ</h1>
+    <p class="intro">Р“РѕРґ РІС‹РїСѓСЃРєР°: 2022 рџ•‘</p>
+    <p class="intro">РўРµСЃС‚ РЅР° РѕРїСЂРµРґРµР»РµРЅРёРµ С‚РёРїР° Р»РёС‡РЅРѕСЃС‚Рё РњР°Р№РµСЂСЃ-Р‘СЂРёРіРіСЃ (MBTI) СЃС‚Р°Р» РѕРґРЅРёРј РёР· СЃР°РјС‹С… РїРѕРїСѓР»СЏСЂРЅС‹С… РІ РјРёСЂРµ. Р›СЋРґРё РїРѕ РІСЃРµРјСѓ РјРёСЂСѓ РїСЂРѕС…РѕРґСЏС‚ С‚РµСЃС‚, С‡С‚РѕР±С‹ РѕРїСЂРµРґРµР»РёС‚СЊ, Рє РєР°РєРѕРјСѓ РёР· 16 С‚РёРїРѕРІ Р»РёС‡РЅРѕСЃС‚Рё РѕРЅРё РѕС‚РЅРѕСЃСЏС‚СЃСЏ</p>
+    <p class="intro">Р‘Р°РЅС‚Р°РЅС‹ РІРїРµСЂРІС‹Рµ РїСЂРѕС€Р»Рё С‚РµСЃС‚ РІ 2017 РіРѕРґСѓ, Рё СЃ С‚РµС… РїРѕСЂ СЂРµР·СѓР»СЊС‚Р°С‚С‹ РёР·РјРµРЅРёР»РёСЃСЊ</p>
     <div class="row">
-      <span class="text" style="cursor:default;">Ссылка на сам тест</span>
-      <a class="link" href="https://www.16personalities.com/ru/test-lichnosti" target="_blank">🔗</a>
+      <span class="text" style="cursor:default;">РЎСЃС‹Р»РєР° РЅР° СЃР°Рј С‚РµСЃС‚</span>
+      <a class="link" href="https://www.16personalities.com/ru/test-lichnosti" target="_blank">рџ”—</a>
     </div>
     <div id="list"></div>
-    <a class="footer-link" href="other-shows-2020-2022.html">Другие шоу (2020 - 2022) ⬅️</a>
+    <a class="footer-link" href="other-shows-2020-2022.html">Р”СЂСѓРіРёРµ С€РѕСѓ (2020 - 2022) в¬…пёЏ</a>
   </div>
 
   <script>
     const items = [
-      { text: "1 эпизод", link: "https://t.me/violent_arhive/2655" },
-      { text: "2 эпизод", link: "https://t.me/violent_arhive/2688" }
+      { text: "1 СЌРїРёР·РѕРґ", link: "https://t.me/violent_arhive/2655" },
+      { text: "2 СЌРїРёР·РѕРґ", link: "https://t.me/violent_arhive/2688" }
     ];
 
     const listEl = document.getElementById('list');
@@ -63,7 +63,7 @@
       });
       span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
       const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = 'рџ”—';
       row.appendChild(box); row.appendChild(span); row.appendChild(link);
       listEl.appendChild(row);
     });

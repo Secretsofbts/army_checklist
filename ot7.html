@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,8 +7,8 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
-  <title>Трансляции ОТ7</title>
+  <script src="sync.js?v=21"></script>
+  <title>РўСЂР°РЅСЃР»СЏС†РёРё РћРў7</title>
   <style>
     body {
       background: #f2f0f7;
@@ -75,27 +75,27 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="vlive.html">← Назад</a>
-    <h1>Трансляции ОТ7  ❣️</h1>
+    <a class="back" href="vlive.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>РўСЂР°РЅСЃР»СЏС†РёРё РћРў7  вќЈпёЏ</h1>
     <hr>
     <div class="list">
       <a class="card" href="ot7-2015-2017.html">
-        <span>🔴 2015 – 2017 год</span>
+        <span>рџ”ґ 2015 вЂ“ 2017 РіРѕРґ</span>
         <span class="badge" id="badge-2015-2017"></span>
       </a>
       <a class="card" href="ot7-2018-2022.html">
-        <span>🔴 2018 – 2022 год</span>
+        <span>рџ”ґ 2018 вЂ“ 2022 РіРѕРґ</span>
         <span class="badge" id="badge-2018-2022"></span>
       </a>
       <a class="card" href="ot7-2023-2026.html">
-        <span>🔴 2023 – 2026 год</span>
+        <span>рџ”ґ 2023 вЂ“ 2026 РіРѕРґ</span>
         <span class="badge" id="badge-2023-2026"></span>
      </a>
     </div>
     <hr>
-    <p style="font-size:13px; color:#555; margin:0 0 10px;">Трансляции, связанные с камбэками:</p>
-    <a class="card" href="comeback.html">🎉 Comeback</a>
-    <a class="footer-link" href="vlive.html">Все эфиры с Vlive/Weverse ⬅️</a>
+    <p style="font-size:13px; color:#555; margin:0 0 10px;">РўСЂР°РЅСЃР»СЏС†РёРё, СЃРІСЏР·Р°РЅРЅС‹Рµ СЃ РєР°РјР±СЌРєР°РјРё:</p>
+    <a class="card" href="comeback.html">рџЋ‰ Comeback</a>
+    <a class="footer-link" href="vlive.html">Р’СЃРµ СЌС„РёСЂС‹ СЃ Vlive/Weverse в¬…пёЏ</a>
 
   <script>
        function renderBadge(elId, key) {
@@ -107,7 +107,7 @@
       var total = known !== null ? known : (rawData ? rawData.total : 0);
       if (total === 0) { el.textContent = ''; return; }
       if (checked === total) {
-        el.textContent = '✅';
+        el.textContent = 'вњ…';
         el.classList.add('done');
         el.closest('.card').classList.add('row-done');
       } else {

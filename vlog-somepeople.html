@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,8 +7,8 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
-  <title>VLOGs Несколько человек</title>
+  <script src="sync.js?v=21"></script>
+  <title>VLOGs РќРµСЃРєРѕР»СЊРєРѕ С‡РµР»РѕРІРµРє</title>
   <style>
     body {
       background: #f2f0f7;
@@ -73,48 +73,48 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="youtube.html">← Назад</a>
-    <h1>VLOG несколько человек 🧑‍🤝‍🧑</h1>
-    <p class="intro">Коротенькие видео, несколько минут мыслей. Ребята выходили в YouTube ещё до создания Vlive. Тут влоги начались ещё до дебюта.</p>
-    <p class="format-hint">123456 — цифры вначале каждой трансляции:<br>
-      первые две (12) — год,<br>
-      следующие две (34) — месяц,<br>
-      следующие (56) — число
+    <a class="back" href="youtube.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>VLOG РЅРµСЃРєРѕР»СЊРєРѕ С‡РµР»РѕРІРµРє рџ§‘вЂЌрџ¤ќвЂЌрџ§‘</h1>
+    <p class="intro">РљРѕСЂРѕС‚РµРЅСЊРєРёРµ РІРёРґРµРѕ, РЅРµСЃРєРѕР»СЊРєРѕ РјРёРЅСѓС‚ РјС‹СЃР»РµР№. Р РµР±СЏС‚Р° РІС‹С…РѕРґРёР»Рё РІ YouTube РµС‰С‘ РґРѕ СЃРѕР·РґР°РЅРёСЏ Vlive. РўСѓС‚ РІР»РѕРіРё РЅР°С‡Р°Р»РёСЃСЊ РµС‰С‘ РґРѕ РґРµР±СЋС‚Р°.</p>
+    <p class="format-hint">123456 вЂ” С†РёС„СЂС‹ РІРЅР°С‡Р°Р»Рµ РєР°Р¶РґРѕР№ С‚СЂР°РЅСЃР»СЏС†РёРё:<br>
+      РїРµСЂРІС‹Рµ РґРІРµ (12) вЂ” РіРѕРґ,<br>
+      СЃР»РµРґСѓСЋС‰РёРµ РґРІРµ (34) вЂ” РјРµСЃСЏС†,<br>
+      СЃР»РµРґСѓСЋС‰РёРµ (56) вЂ” С‡РёСЃР»Рѕ
     </p>
     <div id="list"></div>
-    <a class="footer-link" href="youtube.html">Все эфиры и влоги с YouTube ⬅️</a>
+    <a class="footer-link" href="youtube.html">Р’СЃРµ СЌС„РёСЂС‹ Рё РІР»РѕРіРё СЃ YouTube в¬…пёЏ</a>
   </div>
 
   <script>
     const items = [
-      { date: "130212", hearts: "💜💛", name: "Jimin & Jungkook", link: "https://t.me/violent_arhive/1331" },
-      { date: "130214", hearts: "💜💛", name: "Jimin & Jungkook", link: "https://t.me/violent_arhive/1329" },
-      { date: "130224", hearts: "💜💛", name: "Jimin & Jungkook", link: "https://t.me/violent_arhive/1317" },
-      { date: "130227", hearts: "💜🤍", name: "Jungkook & J-Hope", link: "https://t.me/violent_arhive/1350" },
-      { date: "130304", hearts: "💙🤍", name: "J-Hope & Namjoon", link: "https://t.me/violent_arhive/1325" },
-      { date: "130319", hearts: "💜💛", name: "Jimin & Jungkook", link: "https://t.me/violent_arhive/1346" },
-      { date: "130508", hearts: "💜🤍", name: "J-Hope & Jungkook", link: "https://t.me/violent_arhive/1310" },
-      { date: "130514", hearts: "🖤💛", name: "Jimin & Suga", link: "https://t.me/violent_arhive/1309" },
-      { date: "130514", hearts: "💙💜", name: "Namjoon & Jungkook", link: "https://t.me/violent_arhive/1308" },
-      { date: "130619", hearts: "💛💚", name: "Jimin & V", link: "https://t.me/violent_arhive/1304" },
-      { date: "130620", hearts: "💜💛", name: "Jimin & Jungkook", link: "https://t.me/violent_arhive/1303" },
-      { date: "130726", hearts: "💛💕", name: "Jimin & Jin", link: "https://t.me/violent_arhive/1291" },
-      { date: "130907", hearts: "💙💜", name: "Jungkook & Namjoon", link: "https://t.me/violent_arhive/1283" },
-      { date: "131013", hearts: "💛🤍", name: "Jimin & J-Hope", link: "https://t.me/violent_arhive/1280" },
-      { date: "131014", hearts: "💙💚", name: "V & Namjoon", link: "https://t.me/violent_arhive/1347" },
-      { date: "131103", hearts: "💜💕", name: "Jungkook & Jin", link: "https://t.me/violent_arhive/1272" },
-      { date: "131116", hearts: "💙🤍", name: "Namjoon & J-Hope", link: "https://t.me/violent_arhive/1271" },
-      { date: "131119", hearts: "💛🖤", name: "Jimin & Suga", link: "https://t.me/violent_arhive/1270" },
-      { date: "131122", hearts: "💚💕", name: "Jin & V", link: "https://t.me/violent_arhive/1269" },
-      { date: "140118", hearts: "💜🤍", name: "J-Hope & Jungkook", link: "https://t.me/violent_arhive/1242" },
-      { date: "140224", hearts: "💛💜", name: "Jimin & Jungkook", link: "https://t.me/violent_arhive/1233" },
-      { date: "140404", hearts: "🤍💕", name: "Jin & J-Hope", link: "https://t.me/violent_arhive/1230" },
-      { date: "140421", hearts: "💛🤍", name: "Jimin & J-Hope", link: "https://t.me/violent_arhive/1223" },
-      { date: "140515", hearts: "💛💜", name: "Jimin & Jungkook", link: "https://t.me/violent_arhive/1222" },
-      { date: "140602", hearts: "💛🖤💜", name: "Jimin & Suga & Jungkook", link: "https://t.me/violent_arhive/1220" },
-      { date: "140910", hearts: "💛💜", name: "Jimin & Jungkook", link: "https://t.me/violent_arhive/1212" },
-      { date: "140913", hearts: "💙💕", name: "Jin & Namjoon", link: "https://t.me/violent_arhive/1211" },
-      { date: "150514", hearts: "💛💜", name: "Jimin & Jungkook", link: "https://t.me/violent_arhive/1186" }
+      { date: "130212", hearts: "рџ’њрџ’›", name: "Jimin & Jungkook", link: "https://t.me/violent_arhive/1331" },
+      { date: "130214", hearts: "рџ’њрџ’›", name: "Jimin & Jungkook", link: "https://t.me/violent_arhive/1329" },
+      { date: "130224", hearts: "рџ’њрџ’›", name: "Jimin & Jungkook", link: "https://t.me/violent_arhive/1317" },
+      { date: "130227", hearts: "рџ’њрџ¤Ќ", name: "Jungkook & J-Hope", link: "https://t.me/violent_arhive/1350" },
+      { date: "130304", hearts: "рџ’™рџ¤Ќ", name: "J-Hope & Namjoon", link: "https://t.me/violent_arhive/1325" },
+      { date: "130319", hearts: "рџ’њрџ’›", name: "Jimin & Jungkook", link: "https://t.me/violent_arhive/1346" },
+      { date: "130508", hearts: "рџ’њрџ¤Ќ", name: "J-Hope & Jungkook", link: "https://t.me/violent_arhive/1310" },
+      { date: "130514", hearts: "рџ–¤рџ’›", name: "Jimin & Suga", link: "https://t.me/violent_arhive/1309" },
+      { date: "130514", hearts: "рџ’™рџ’њ", name: "Namjoon & Jungkook", link: "https://t.me/violent_arhive/1308" },
+      { date: "130619", hearts: "рџ’›рџ’љ", name: "Jimin & V", link: "https://t.me/violent_arhive/1304" },
+      { date: "130620", hearts: "рџ’њрџ’›", name: "Jimin & Jungkook", link: "https://t.me/violent_arhive/1303" },
+      { date: "130726", hearts: "рџ’›рџ’•", name: "Jimin & Jin", link: "https://t.me/violent_arhive/1291" },
+      { date: "130907", hearts: "рџ’™рџ’њ", name: "Jungkook & Namjoon", link: "https://t.me/violent_arhive/1283" },
+      { date: "131013", hearts: "рџ’›рџ¤Ќ", name: "Jimin & J-Hope", link: "https://t.me/violent_arhive/1280" },
+      { date: "131014", hearts: "рџ’™рџ’љ", name: "V & Namjoon", link: "https://t.me/violent_arhive/1347" },
+      { date: "131103", hearts: "рџ’њрџ’•", name: "Jungkook & Jin", link: "https://t.me/violent_arhive/1272" },
+      { date: "131116", hearts: "рџ’™рџ¤Ќ", name: "Namjoon & J-Hope", link: "https://t.me/violent_arhive/1271" },
+      { date: "131119", hearts: "рџ’›рџ–¤", name: "Jimin & Suga", link: "https://t.me/violent_arhive/1270" },
+      { date: "131122", hearts: "рџ’љрџ’•", name: "Jin & V", link: "https://t.me/violent_arhive/1269" },
+      { date: "140118", hearts: "рџ’њрџ¤Ќ", name: "J-Hope & Jungkook", link: "https://t.me/violent_arhive/1242" },
+      { date: "140224", hearts: "рџ’›рџ’њ", name: "Jimin & Jungkook", link: "https://t.me/violent_arhive/1233" },
+      { date: "140404", hearts: "рџ¤Ќрџ’•", name: "Jin & J-Hope", link: "https://t.me/violent_arhive/1230" },
+      { date: "140421", hearts: "рџ’›рџ¤Ќ", name: "Jimin & J-Hope", link: "https://t.me/violent_arhive/1223" },
+      { date: "140515", hearts: "рџ’›рџ’њ", name: "Jimin & Jungkook", link: "https://t.me/violent_arhive/1222" },
+      { date: "140602", hearts: "рџ’›рџ–¤рџ’њ", name: "Jimin & Suga & Jungkook", link: "https://t.me/violent_arhive/1220" },
+      { date: "140910", hearts: "рџ’›рџ’њ", name: "Jimin & Jungkook", link: "https://t.me/violent_arhive/1212" },
+      { date: "140913", hearts: "рџ’™рџ’•", name: "Jin & Namjoon", link: "https://t.me/violent_arhive/1211" },
+      { date: "150514", hearts: "рџ’›рџ’њ", name: "Jimin & Jungkook", link: "https://t.me/violent_arhive/1186" }
     ];
 
     const listEl = document.getElementById('list');
@@ -160,7 +160,7 @@
       link.className = 'link';
       link.href = item.link;
       link.target = '_blank';
-      link.textContent = '🔗';
+      link.textContent = 'рџ”—';
 
             row.appendChild(box);
       row.appendChild(chip);

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
+  <script src="sync.js?v=21"></script>
   <title>RUN BTS 2.0</title>
   <style>
     body {
@@ -63,16 +63,16 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="run-bts.html">← Назад</a>
-    <h1>💜 RUN BTS 2.0 💜</h1>
-    <p class="intro">Возвращение легендарного шоу, по которому мы скучали!! Пока неизвестно, в каком формате оно будет снято. Это как раз обсуждалось в 0 эпизоде</p>
+    <a class="back" href="run-bts.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>рџ’њ RUN BTS 2.0 рџ’њ</h1>
+    <p class="intro">Р’РѕР·РІСЂР°С‰РµРЅРёРµ Р»РµРіРµРЅРґР°СЂРЅРѕРіРѕ С€РѕСѓ, РїРѕ РєРѕС‚РѕСЂРѕРјСѓ РјС‹ СЃРєСѓС‡Р°Р»Рё!! РџРѕРєР° РЅРµРёР·РІРµСЃС‚РЅРѕ, РІ РєР°РєРѕРј С„РѕСЂРјР°С‚Рµ РѕРЅРѕ Р±СѓРґРµС‚ СЃРЅСЏС‚Рѕ. Р­С‚Рѕ РєР°Рє СЂР°Р· РѕР±СЃСѓР¶РґР°Р»РѕСЃСЊ РІ 0 СЌРїРёР·РѕРґРµ</p>
     <div id="list"></div>
-    <a class="footer-link" href="run-bts.html">RUN BTS ⬅️</a>
+    <a class="footer-link" href="run-bts.html">RUN BTS в¬…пёЏ</a>
   </div>
 
   <script>
     const navItems = [
-      { text: "С 1 по 25 эпизод", link: "run-bts-2-0-1-25.html", statKey: "run-bts-2-0-1-25" }
+      { text: "РЎ 1 РїРѕ 25 СЌРїРёР·РѕРґ", link: "run-bts-2-0-1-25.html", statKey: "run-bts-2-0-1-25" }
     ];
 
     const listEl = document.getElementById('list');
@@ -104,7 +104,7 @@
       var el = document.getElementById('badge-' + key);
       if (!el || !data || data.total === 0) { if (el) el.textContent = ''; return; }
       if (data.checked === data.total) {
-        el.textContent = '✅';
+        el.textContent = 'вњ…';
         el.style.color = '#2e9e5b';
         var card = el.closest('.navlink');
         if (card) card.style.background = '#e3f7e9';

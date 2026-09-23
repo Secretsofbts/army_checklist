@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,8 +7,8 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
-  <title>Шучвита</title>
+  <script src="sync.js?v=21"></script>
+  <title>РЁСѓС‡РІРёС‚Р°</title>
   <style>
     body {
       background: #f2f0f7;
@@ -59,43 +59,43 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="shows.html">← Назад</a>
-    <h1>🥃 ШУЧВИТА 🥃</h1>
-    <p class="intro">Год выпуска: 2022-2023 🕑</p>
-    <p class="intro">Это первое шоу Юнги на ютубе, куда он приглашал различных интересных людей, выпивал с ними и разговаривал на разные темы. Гости кстати сами приносили алкоголь 😂 Каждую серию приходил новый человек</p>
+    <a class="back" href="shows.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>рџҐѓ РЁРЈР§Р’РРўРђ рџҐѓ</h1>
+    <p class="intro">Р“РѕРґ РІС‹РїСѓСЃРєР°: 2022-2023 рџ•‘</p>
+    <p class="intro">Р­С‚Рѕ РїРµСЂРІРѕРµ С€РѕСѓ Р®РЅРіРё РЅР° СЋС‚СѓР±Рµ, РєСѓРґР° РѕРЅ РїСЂРёРіР»Р°С€Р°Р» СЂР°Р·Р»РёС‡РЅС‹С… РёРЅС‚РµСЂРµСЃРЅС‹С… Р»СЋРґРµР№, РІС‹РїРёРІР°Р» СЃ РЅРёРјРё Рё СЂР°Р·РіРѕРІР°СЂРёРІР°Р» РЅР° СЂР°Р·РЅС‹Рµ С‚РµРјС‹. Р“РѕСЃС‚Рё РєСЃС‚Р°С‚Рё СЃР°РјРё РїСЂРёРЅРѕСЃРёР»Рё Р°Р»РєРѕРіРѕР»СЊ рџ‚ РљР°Р¶РґСѓСЋ СЃРµСЂРёСЋ РїСЂРёС…РѕРґРёР» РЅРѕРІС‹Р№ С‡РµР»РѕРІРµРє</p>
     <div id="list"></div>
-    <a class="footer-link" href="shows.html">Пост всех шоу ⬅️</a>
+    <a class="footer-link" href="shows.html">РџРѕСЃС‚ РІСЃРµС… С€РѕСѓ в¬…пёЏ</a>
   </div>
 
   <script>
     const items = [
-      { text: "1 эпизод", sub: "Намджун 💙", link: "https://t.me/violent_arhive/3343" },
-      { text: "2 эпизод", sub: "Шин Донёп", link: "https://t.me/violent_arhive/3605" },
-      { text: "3 эпизод", sub: "Тэян", link: "https://t.me/violent_arhive/3628" },
-      { text: "4 эпизод", sub: "Хоши", link: "https://t.me/violent_arhive/3678" },
-      { text: "5 эпизод", sub: "Tablo из Epik High", link: "https://t.me/violent_arhive/3734" },
-      { text: "6 эпизод", sub: "актёр Ли Сон Мин", link: "https://t.me/violent_arhive/3756" },
-      { text: "7 эпизод", sub: "Чимин~и 💛", link: "https://t.me/violent_arhive/3817" },
-      { text: "8 эпизод", sub: "Енджун и Тэхён из TXT", link: "https://t.me/violent_arhive/3902" },
-      { text: "9 эпизод", sub: "ведущий Намджун 💙", link: "https://t.me/violent_arhive/3972" },
-      { text: "10 эпизод", sub: "Уджи из Seventeen", link: "https://t.me/violent_arhive/4005" },
-      { text: "11 эпизод", sub: "Ли Наён", link: "https://t.me/violent_arhive/4028" },
-      { text: "12 эпизод", sub: "Джин 💕 и Хосок 🤍", link: "https://t.me/violent_arhive/4078" },
-      { text: "13 эпизод", sub: "Чо Сэхо", link: "https://t.me/violent_arhive/4101" },
-      { text: "14 эпизод", sub: "Хосок 🤍", link: "https://t.me/violent_arhive/4118" },
-      { text: "15 эпизод", sub: "Чонгук 💜", link: "https://t.me/violent_arhive/4143" },
-      { text: "16 эпизод", sub: "Хван Минхён", link: "https://t.me/violent_arhive/4158" },
-      { text: "17 эпизод", sub: "Ли Канин", link: "https://t.me/violent_arhive/4191" },
-      { text: "18 эпизод", sub: "Ким Тэхён 💚", link: "https://t.me/violent_arhive/4212" },
-      { text: "19 эпизод", sub: "Ким Чонван", link: "https://t.me/violent_arhive/4284" },
-      { text: "20 эпизод", sub: "Тэмин и Чимин 💛", link: "https://t.me/violent_arhive/4305" },
-      { text: "21 эпизод", sub: "Чонгук 💜 и Тэхён 💚", link: "https://t.me/violent_arhive/4309" },
-      { text: "22 эпизод", sub: "Ом Чонхва", link: "https://t.me/violent_arhive/4386" },
-      { text: "23 эпизод", sub: "Ким Намгиль", link: "https://t.me/violent_arhive/4416" },
-      { text: "24 эпизод", sub: "Айю", link: "https://t.me/violent_arhive/4481" },
-      { text: "25 эпизод", sub: "Чон Ёнхва", link: "https://t.me/violent_arhive/4500" },
-      { text: "26 эпизод", sub: "И Сонгён", link: "https://t.me/violent_arhive/4524" },
-      { text: "27 эпизод", sub: "EL CAPITXN", link: "https://t.me/violent_arhive/4534" }
+      { text: "1 СЌРїРёР·РѕРґ", sub: "РќР°РјРґР¶СѓРЅ рџ’™", link: "https://t.me/violent_arhive/3343" },
+      { text: "2 СЌРїРёР·РѕРґ", sub: "РЁРёРЅ Р”РѕРЅС‘Рї", link: "https://t.me/violent_arhive/3605" },
+      { text: "3 СЌРїРёР·РѕРґ", sub: "РўСЌСЏРЅ", link: "https://t.me/violent_arhive/3628" },
+      { text: "4 СЌРїРёР·РѕРґ", sub: "РҐРѕС€Рё", link: "https://t.me/violent_arhive/3678" },
+      { text: "5 СЌРїРёР·РѕРґ", sub: "Tablo РёР· Epik High", link: "https://t.me/violent_arhive/3734" },
+      { text: "6 СЌРїРёР·РѕРґ", sub: "Р°РєС‚С‘СЂ Р›Рё РЎРѕРЅ РњРёРЅ", link: "https://t.me/violent_arhive/3756" },
+      { text: "7 СЌРїРёР·РѕРґ", sub: "Р§РёРјРёРЅ~Рё рџ’›", link: "https://t.me/violent_arhive/3817" },
+      { text: "8 СЌРїРёР·РѕРґ", sub: "Р•РЅРґР¶СѓРЅ Рё РўСЌС…С‘РЅ РёР· TXT", link: "https://t.me/violent_arhive/3902" },
+      { text: "9 СЌРїРёР·РѕРґ", sub: "РІРµРґСѓС‰РёР№ РќР°РјРґР¶СѓРЅ рџ’™", link: "https://t.me/violent_arhive/3972" },
+      { text: "10 СЌРїРёР·РѕРґ", sub: "РЈРґР¶Рё РёР· Seventeen", link: "https://t.me/violent_arhive/4005" },
+      { text: "11 СЌРїРёР·РѕРґ", sub: "Р›Рё РќР°С‘РЅ", link: "https://t.me/violent_arhive/4028" },
+      { text: "12 СЌРїРёР·РѕРґ", sub: "Р”Р¶РёРЅ рџ’• Рё РҐРѕСЃРѕРє рџ¤Ќ", link: "https://t.me/violent_arhive/4078" },
+      { text: "13 СЌРїРёР·РѕРґ", sub: "Р§Рѕ РЎСЌС…Рѕ", link: "https://t.me/violent_arhive/4101" },
+      { text: "14 СЌРїРёР·РѕРґ", sub: "РҐРѕСЃРѕРє рџ¤Ќ", link: "https://t.me/violent_arhive/4118" },
+      { text: "15 СЌРїРёР·РѕРґ", sub: "Р§РѕРЅРіСѓРє рџ’њ", link: "https://t.me/violent_arhive/4143" },
+      { text: "16 СЌРїРёР·РѕРґ", sub: "РҐРІР°РЅ РњРёРЅС…С‘РЅ", link: "https://t.me/violent_arhive/4158" },
+      { text: "17 СЌРїРёР·РѕРґ", sub: "Р›Рё РљР°РЅРёРЅ", link: "https://t.me/violent_arhive/4191" },
+      { text: "18 СЌРїРёР·РѕРґ", sub: "РљРёРј РўСЌС…С‘РЅ рџ’љ", link: "https://t.me/violent_arhive/4212" },
+      { text: "19 СЌРїРёР·РѕРґ", sub: "РљРёРј Р§РѕРЅРІР°РЅ", link: "https://t.me/violent_arhive/4284" },
+      { text: "20 СЌРїРёР·РѕРґ", sub: "РўСЌРјРёРЅ Рё Р§РёРјРёРЅ рџ’›", link: "https://t.me/violent_arhive/4305" },
+      { text: "21 СЌРїРёР·РѕРґ", sub: "Р§РѕРЅРіСѓРє рџ’њ Рё РўСЌС…С‘РЅ рџ’љ", link: "https://t.me/violent_arhive/4309" },
+      { text: "22 СЌРїРёР·РѕРґ", sub: "РћРј Р§РѕРЅС…РІР°", link: "https://t.me/violent_arhive/4386" },
+      { text: "23 СЌРїРёР·РѕРґ", sub: "РљРёРј РќР°РјРіРёР»СЊ", link: "https://t.me/violent_arhive/4416" },
+      { text: "24 СЌРїРёР·РѕРґ", sub: "РђР№СЋ", link: "https://t.me/violent_arhive/4481" },
+      { text: "25 СЌРїРёР·РѕРґ", sub: "Р§РѕРЅ РЃРЅС…РІР°", link: "https://t.me/violent_arhive/4500" },
+      { text: "26 СЌРїРёР·РѕРґ", sub: "Р РЎРѕРЅРіС‘РЅ", link: "https://t.me/violent_arhive/4524" },
+      { text: "27 СЌРїРёР·РѕРґ", sub: "EL CAPITXN", link: "https://t.me/violent_arhive/4534" }
     ];
 
     const listEl = document.getElementById('list');
@@ -136,7 +136,7 @@
       link.className = 'link';
       link.href = item.link;
       link.target = '_blank';
-      link.textContent = '🔗';
+      link.textContent = 'рџ”—';
 
       row.appendChild(box);
       row.appendChild(span);

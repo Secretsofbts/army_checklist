@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
+  <script src="sync.js?v=21"></script>
   <title>BTS GAYO</title>
   <style>
     body {
@@ -65,34 +65,34 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="shows.html">← Назад</a>
-    <h1>⭐️ BTS GAYO ⭐️</h1>
-    <p class="intro">В шоу парни соревнуются, кто лучше знает корейскую музыку, а заодно знакомят нас с ней</p>
-    <p class="intro">По атмосфере похоже на Run BTS, особенно на первые серии. Эта передача и Run начали выходить в августе 2015 года</p>
+    <a class="back" href="shows.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>в­ђпёЏ BTS GAYO в­ђпёЏ</h1>
+    <p class="intro">Р’ С€РѕСѓ РїР°СЂРЅРё СЃРѕСЂРµРІРЅСѓСЋС‚СЃСЏ, РєС‚Рѕ Р»СѓС‡С€Рµ Р·РЅР°РµС‚ РєРѕСЂРµР№СЃРєСѓСЋ РјСѓР·С‹РєСѓ, Р° Р·Р°РѕРґРЅРѕ Р·РЅР°РєРѕРјСЏС‚ РЅР°СЃ СЃ РЅРµР№</p>
+    <p class="intro">РџРѕ Р°С‚РјРѕСЃС„РµСЂРµ РїРѕС…РѕР¶Рµ РЅР° Run BTS, РѕСЃРѕР±РµРЅРЅРѕ РЅР° РїРµСЂРІС‹Рµ СЃРµСЂРёРё. Р­С‚Р° РїРµСЂРµРґР°С‡Р° Рё Run РЅР°С‡Р°Р»Рё РІС‹С…РѕРґРёС‚СЊ РІ Р°РІРіСѓСЃС‚Рµ 2015 РіРѕРґР°</p>
     <div id="list"></div>
-    <a class="footer-link" href="shows.html">Пост всех шоу ⬅️</a>
+    <a class="footer-link" href="shows.html">РџРѕСЃС‚ РІСЃРµС… С€РѕСѓ в¬…пёЏ</a>
   </div>
 
   <script>
     const data = [
-      { season: "1 сезон", items: [
-        { text: "1 серия", sub: "\"Узнаем песни женских групп через танцы\"", link: "https://t.me/violent_arhive/856" },
-        { text: "2 серия", sub: "\"Угадай текст песни\"", link: "https://t.me/violent_arhive/857" },
-        { text: "3 серия", sub: "\"Узнаем больше об ОСТах\"", link: "https://t.me/violent_arhive/858" },
-        { text: "4 серия", sub: "\"BTS караоке\"", link: "https://t.me/violent_arhive/859" },
-        { text: "5 серия", sub: "\"Викторина ассоциаций\"", link: "https://t.me/violent_arhive/860" },
-        { text: "6 серия", sub: "\"ТОП-5 хореографий BTS\"", link: "https://t.me/violent_arhive/861" },
-        { text: "7 серия", sub: "\"Узнаем песни мужских групп через танцы\"", link: "https://t.me/violent_arhive/862" },
-        { text: "8 серия", sub: "\"Уроки трота от V\"", link: "https://t.me/violent_arhive/863" },
-        { text: "9 серия", sub: "\"ТОП-5 лучших песен BTS\"", link: "https://t.me/violent_arhive/864" }
+      { season: "1 СЃРµР·РѕРЅ", items: [
+        { text: "1 СЃРµСЂРёСЏ", sub: "\"РЈР·РЅР°РµРј РїРµСЃРЅРё Р¶РµРЅСЃРєРёС… РіСЂСѓРїРї С‡РµСЂРµР· С‚Р°РЅС†С‹\"", link: "https://t.me/violent_arhive/856" },
+        { text: "2 СЃРµСЂРёСЏ", sub: "\"РЈРіР°РґР°Р№ С‚РµРєСЃС‚ РїРµСЃРЅРё\"", link: "https://t.me/violent_arhive/857" },
+        { text: "3 СЃРµСЂРёСЏ", sub: "\"РЈР·РЅР°РµРј Р±РѕР»СЊС€Рµ РѕР± РћРЎРўР°С…\"", link: "https://t.me/violent_arhive/858" },
+        { text: "4 СЃРµСЂРёСЏ", sub: "\"BTS РєР°СЂР°РѕРєРµ\"", link: "https://t.me/violent_arhive/859" },
+        { text: "5 СЃРµСЂРёСЏ", sub: "\"Р’РёРєС‚РѕСЂРёРЅР° Р°СЃСЃРѕС†РёР°С†РёР№\"", link: "https://t.me/violent_arhive/860" },
+        { text: "6 СЃРµСЂРёСЏ", sub: "\"РўРћРџ-5 С…РѕСЂРµРѕРіСЂР°С„РёР№ BTS\"", link: "https://t.me/violent_arhive/861" },
+        { text: "7 СЃРµСЂРёСЏ", sub: "\"РЈР·РЅР°РµРј РїРµСЃРЅРё РјСѓР¶СЃРєРёС… РіСЂСѓРїРї С‡РµСЂРµР· С‚Р°РЅС†С‹\"", link: "https://t.me/violent_arhive/862" },
+        { text: "8 СЃРµСЂРёСЏ", sub: "\"РЈСЂРѕРєРё С‚СЂРѕС‚Р° РѕС‚ V\"", link: "https://t.me/violent_arhive/863" },
+        { text: "9 СЃРµСЂРёСЏ", sub: "\"РўРћРџ-5 Р»СѓС‡С€РёС… РїРµСЃРµРЅ BTS\"", link: "https://t.me/violent_arhive/864" }
       ]},
-      { season: "2 сезон", items: [
-        { text: "10 серия", sub: "\"Подводим итоги 2016 года\"", link: "https://t.me/violent_arhive/865" },
-        { text: "11 серия", sub: "\"Эстафета изображений песен\"", link: "https://t.me/violent_arhive/866" },
-        { text: "12 серия", sub: "\"Учим детские песни\"", link: "https://t.me/violent_arhive/867" },
-        { text: "13 серия", sub: "\"Время K-popa\"", link: "https://t.me/violent_arhive/868" },
-        { text: "14 серия", sub: "\"Играем в игры и изучаем OSTы известных фильмов\"", link: "https://t.me/violent_arhive/869" },
-        { text: "15 серия", sub: "\"Съёмка собственного клипа\"", link: "https://t.me/violent_arhive/870" }
+      { season: "2 СЃРµР·РѕРЅ", items: [
+        { text: "10 СЃРµСЂРёСЏ", sub: "\"РџРѕРґРІРѕРґРёРј РёС‚РѕРіРё 2016 РіРѕРґР°\"", link: "https://t.me/violent_arhive/865" },
+        { text: "11 СЃРµСЂРёСЏ", sub: "\"Р­СЃС‚Р°С„РµС‚Р° РёР·РѕР±СЂР°Р¶РµРЅРёР№ РїРµСЃРµРЅ\"", link: "https://t.me/violent_arhive/866" },
+        { text: "12 СЃРµСЂРёСЏ", sub: "\"РЈС‡РёРј РґРµС‚СЃРєРёРµ РїРµСЃРЅРё\"", link: "https://t.me/violent_arhive/867" },
+        { text: "13 СЃРµСЂРёСЏ", sub: "\"Р’СЂРµРјСЏ K-popa\"", link: "https://t.me/violent_arhive/868" },
+        { text: "14 СЃРµСЂРёСЏ", sub: "\"РРіСЂР°РµРј РІ РёРіСЂС‹ Рё РёР·СѓС‡Р°РµРј OSTС‹ РёР·РІРµСЃС‚РЅС‹С… С„РёР»СЊРјРѕРІ\"", link: "https://t.me/violent_arhive/869" },
+        { text: "15 СЃРµСЂРёСЏ", sub: "\"РЎСЉС‘РјРєР° СЃРѕР±СЃС‚РІРµРЅРЅРѕРіРѕ РєР»РёРїР°\"", link: "https://t.me/violent_arhive/870" }
       ]}
     ];
 
@@ -140,7 +140,7 @@
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
-        link.textContent = '🔗';
+        link.textContent = 'рџ”—';
 
         row.appendChild(box);
         row.appendChild(span);

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
+  <script src="sync.js?v=21"></script>
   <title>After School Club</title>
   <style>
     body {
@@ -72,26 +72,26 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="other-shows-2013-2015.html">← Назад</a>
-    <h1>📚 After School Club 📚</h1>
-       <p class="intro">Год выпуска: 2013 - 2015</p>
-    <p class="intro">Удивительное к-поп шоу, где любой желающий со всего мира может задать вопросы гостям шоу в прямом эфире. Ребята много раз участвовали в нём</p>
+    <a class="back" href="other-shows-2013-2015.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>рџ“љ After School Club рџ“љ</h1>
+       <p class="intro">Р“РѕРґ РІС‹РїСѓСЃРєР°: 2013 - 2015</p>
+    <p class="intro">РЈРґРёРІРёС‚РµР»СЊРЅРѕРµ Рє-РїРѕРї С€РѕСѓ, РіРґРµ Р»СЋР±РѕР№ Р¶РµР»Р°СЋС‰РёР№ СЃРѕ РІСЃРµРіРѕ РјРёСЂР° РјРѕР¶РµС‚ Р·Р°РґР°С‚СЊ РІРѕРїСЂРѕСЃС‹ РіРѕСЃС‚СЏРј С€РѕСѓ РІ РїСЂСЏРјРѕРј СЌС„РёСЂРµ. Р РµР±СЏС‚Р° РјРЅРѕРіРѕ СЂР°Р· СѓС‡Р°СЃС‚РІРѕРІР°Р»Рё РІ РЅС‘Рј</p>
     <div id="list"></div>
-    <a class="footer-link" href="other-shows-2013-2015.html">Другие шоу (2013 - 2015) ⬅️</a>
+    <a class="footer-link" href="other-shows-2013-2015.html">Р”СЂСѓРіРёРµ С€РѕСѓ (2013 - 2015) в¬…пёЏ</a>
   </div>
 
   <script>
        const items = [
-      { text: "24 серия", hearts: "❤️", link: "https://t.me/violent_arhive/3151" },
-      { text: "46 серия", hearts: "❤️", link: "https://t.me/violent_arhive/3152" },
-      { text: "56 серия", hearts: "💙💛", link: "https://t.me/violent_arhive/3153" },
-      { text: "63 серия", hearts: "💙", link: "https://t.me/violent_arhive/3156" }, 
-      { text: "64 серия", hearts: "💙", link: "https://t.me/violent_arhive/3157" },
-      { text: "68 серия", hearts: "💙💜💛", link: "https://t.me/violent_arhive/3154" },
-      { text: "70 серия", hearts: "💙💜💛", link: "https://t.me/violent_arhive/3155" },
-      { text: "95 серия", hearts: "❤️", link: "https://t.me/violent_arhive/3158", subItem: { text: "Backstage 95s", link: "https://t.me/violent_arhive/3159", excluded: true } },
-      { text: "158 серия", hearts: "❤️", link: "https://t.me/violent_arhive/3160" },
-      { text: "191 серия", hearts: "❤️", link: "https://t.me/violent_arhive/3161", subItem: { text: "Behind the Scenes 191s", link: "https://t.me/violent_arhive/3162", excluded: true } }
+      { text: "24 СЃРµСЂРёСЏ", hearts: "вќ¤пёЏ", link: "https://t.me/violent_arhive/3151" },
+      { text: "46 СЃРµСЂРёСЏ", hearts: "вќ¤пёЏ", link: "https://t.me/violent_arhive/3152" },
+      { text: "56 СЃРµСЂРёСЏ", hearts: "рџ’™рџ’›", link: "https://t.me/violent_arhive/3153" },
+      { text: "63 СЃРµСЂРёСЏ", hearts: "рџ’™", link: "https://t.me/violent_arhive/3156" }, 
+      { text: "64 СЃРµСЂРёСЏ", hearts: "рџ’™", link: "https://t.me/violent_arhive/3157" },
+      { text: "68 СЃРµСЂРёСЏ", hearts: "рџ’™рџ’њрџ’›", link: "https://t.me/violent_arhive/3154" },
+      { text: "70 СЃРµСЂРёСЏ", hearts: "рџ’™рџ’њрџ’›", link: "https://t.me/violent_arhive/3155" },
+      { text: "95 СЃРµСЂРёСЏ", hearts: "вќ¤пёЏ", link: "https://t.me/violent_arhive/3158", subItem: { text: "Backstage 95s", link: "https://t.me/violent_arhive/3159", excluded: true } },
+      { text: "158 СЃРµСЂРёСЏ", hearts: "вќ¤пёЏ", link: "https://t.me/violent_arhive/3160" },
+      { text: "191 СЃРµСЂРёСЏ", hearts: "вќ¤пёЏ", link: "https://t.me/violent_arhive/3161", subItem: { text: "Behind the Scenes 191s", link: "https://t.me/violent_arhive/3162", excluded: true } }
     ];
 
         function makeRow(container, item, isSub) {
@@ -130,7 +130,7 @@
       link.className = 'link';
       link.href = item.link;
       link.target = '_blank';
-      link.textContent = '🔗';
+      link.textContent = 'рџ”—';
 
       row.appendChild(box);
       row.appendChild(span);

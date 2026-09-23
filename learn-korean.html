@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
+  <script src="sync.js?v=21"></script>
   <title>Learn! Korean with BTS</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -27,40 +27,40 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="misc.html">← Назад</a>
-    <h1>🇰🇷 Learn! Korean with BTS 🇰🇷</h1>
-    <p class="intro">Год выпуска: 2020</p>
-    <p class="intro">20 уроков об изучении корейского языка вместе с бантанами 😌 화이팅 👊🏻</p>
+    <a class="back" href="misc.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>рџ‡°рџ‡· Learn! Korean with BTS рџ‡°рџ‡·</h1>
+    <p class="intro">Р“РѕРґ РІС‹РїСѓСЃРєР°: 2020</p>
+    <p class="intro">20 СѓСЂРѕРєРѕРІ РѕР± РёР·СѓС‡РµРЅРёРё РєРѕСЂРµР№СЃРєРѕРіРѕ СЏР·С‹РєР° РІРјРµСЃС‚Рµ СЃ Р±Р°РЅС‚Р°РЅР°РјРё рџЊ н™”мќґнЊ… рџ‘ЉрџЏ»</p>
     <div id="list"></div>
        <blockquote style="margin: 16px 0 0; padding: 14px 16px; background: #f7f7fa; border-radius: 12px; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 13px; color: #333; line-height: 1.5; text-align: center;">
-      «Учить язык, значит открыть новое окно в мир»
-      <div style="text-align: right; font-size: 12px; color: #999; margin-top: 8px; font-style: normal;">— китайская пословица</div>
+      В«РЈС‡РёС‚СЊ СЏР·С‹Рє, Р·РЅР°С‡РёС‚ РѕС‚РєСЂС‹С‚СЊ РЅРѕРІРѕРµ РѕРєРЅРѕ РІ РјРёСЂВ»
+      <div style="text-align: right; font-size: 12px; color: #999; margin-top: 8px; font-style: normal;">вЂ” РєРёС‚Р°Р№СЃРєР°СЏ РїРѕСЃР»РѕРІРёС†Р°</div>
     </blockquote>
-    <a class="footer-link" href="misc.html">Всякое другое ⬅️</a>
+    <a class="footer-link" href="misc.html">Р’СЃСЏРєРѕРµ РґСЂСѓРіРѕРµ в¬…пёЏ</a>
   </div>
 
   <script>
     const items = [
-      { text: "1 эпизод", sub: "BTS ㄱ to ㅎ", link: "https://t.me/violent_arhive/2798" },
-      { text: "2 эпизод", sub: "Привет, мы BTS", link: "https://t.me/violent_arhive/2799" },
-      { text: "3 эпизод", sub: "Как у тебя дела?", link: "https://t.me/violent_arhive/2800" },
-      { text: "4 эпизод", sub: "Спасибо", link: "https://t.me/violent_arhive/2801" },
-      { text: "5 эпизод", sub: "1,2,3", link: "https://t.me/violent_arhive/2802" },
-      { text: "6 эпизод", sub: "ARMY-ya", link: "https://t.me/violent_arhive/2803" },
-      { text: "7 эпизод", sub: "Время, дни", link: "https://t.me/violent_arhive/2804" },
-      { text: "8 эпизод", sub: "Один, два, три", link: "https://t.me/violent_arhive/2805" },
-      { text: "9 эпизод", sub: "Наши Арми", link: "https://t.me/violent_arhive/2806" },
-      { text: "10 эпизод", sub: "I purple you", link: "https://t.me/violent_arhive/2807" },
-      { text: "11 эпизод", sub: "Глаза, нос, рот", link: "https://t.me/violent_arhive/2808" },
-      { text: "12 эпизод", sub: "Наречие", link: "https://t.me/violent_arhive/2809" },
-      { text: "13 эпизод", sub: "Вопросы", link: "https://t.me/violent_arhive/2810" },
-      { text: "14 эпизод", sub: "Глаголы", link: "https://t.me/violent_arhive/2811" },
-      { text: "15 эпизод", sub: "Дни рождения", link: "https://t.me/violent_arhive/2813" },
-      { text: "16 эпизод", sub: "Отрицание", link: "https://t.me/violent_arhive/2814" },
-      { text: "17 эпизод", sub: "Счастливый", link: "https://t.me/violent_arhive/2815" },
-      { text: "18 эпизод", sub: "Родные города BTS", link: "https://t.me/violent_arhive/2816" },
-      { text: "19 эпизод", sub: "Холодно, жарко", link: "https://t.me/violent_arhive/2817" },
-      { text: "20 эпизод", sub: "Хорошо выглядит", link: "https://t.me/violent_arhive/2818" }
+      { text: "1 СЌРїРёР·РѕРґ", sub: "BTS г„± to г…Ћ", link: "https://t.me/violent_arhive/2798" },
+      { text: "2 СЌРїРёР·РѕРґ", sub: "РџСЂРёРІРµС‚, РјС‹ BTS", link: "https://t.me/violent_arhive/2799" },
+      { text: "3 СЌРїРёР·РѕРґ", sub: "РљР°Рє Сѓ С‚РµР±СЏ РґРµР»Р°?", link: "https://t.me/violent_arhive/2800" },
+      { text: "4 СЌРїРёР·РѕРґ", sub: "РЎРїР°СЃРёР±Рѕ", link: "https://t.me/violent_arhive/2801" },
+      { text: "5 СЌРїРёР·РѕРґ", sub: "1,2,3", link: "https://t.me/violent_arhive/2802" },
+      { text: "6 СЌРїРёР·РѕРґ", sub: "ARMY-ya", link: "https://t.me/violent_arhive/2803" },
+      { text: "7 СЌРїРёР·РѕРґ", sub: "Р’СЂРµРјСЏ, РґРЅРё", link: "https://t.me/violent_arhive/2804" },
+      { text: "8 СЌРїРёР·РѕРґ", sub: "РћРґРёРЅ, РґРІР°, С‚СЂРё", link: "https://t.me/violent_arhive/2805" },
+      { text: "9 СЌРїРёР·РѕРґ", sub: "РќР°С€Рё РђСЂРјРё", link: "https://t.me/violent_arhive/2806" },
+      { text: "10 СЌРїРёР·РѕРґ", sub: "I purple you", link: "https://t.me/violent_arhive/2807" },
+      { text: "11 СЌРїРёР·РѕРґ", sub: "Р“Р»Р°Р·Р°, РЅРѕСЃ, СЂРѕС‚", link: "https://t.me/violent_arhive/2808" },
+      { text: "12 СЌРїРёР·РѕРґ", sub: "РќР°СЂРµС‡РёРµ", link: "https://t.me/violent_arhive/2809" },
+      { text: "13 СЌРїРёР·РѕРґ", sub: "Р’РѕРїСЂРѕСЃС‹", link: "https://t.me/violent_arhive/2810" },
+      { text: "14 СЌРїРёР·РѕРґ", sub: "Р“Р»Р°РіРѕР»С‹", link: "https://t.me/violent_arhive/2811" },
+      { text: "15 СЌРїРёР·РѕРґ", sub: "Р”РЅРё СЂРѕР¶РґРµРЅРёСЏ", link: "https://t.me/violent_arhive/2813" },
+      { text: "16 СЌРїРёР·РѕРґ", sub: "РћС‚СЂРёС†Р°РЅРёРµ", link: "https://t.me/violent_arhive/2814" },
+      { text: "17 СЌРїРёР·РѕРґ", sub: "РЎС‡Р°СЃС‚Р»РёРІС‹Р№", link: "https://t.me/violent_arhive/2815" },
+      { text: "18 СЌРїРёР·РѕРґ", sub: "Р РѕРґРЅС‹Рµ РіРѕСЂРѕРґР° BTS", link: "https://t.me/violent_arhive/2816" },
+      { text: "19 СЌРїРёР·РѕРґ", sub: "РҐРѕР»РѕРґРЅРѕ, Р¶Р°СЂРєРѕ", link: "https://t.me/violent_arhive/2817" },
+      { text: "20 СЌРїРёР·РѕРґ", sub: "РҐРѕСЂРѕС€Рѕ РІС‹РіР»СЏРґРёС‚", link: "https://t.me/violent_arhive/2818" }
     ];
 
     const listEl = document.getElementById('list');
@@ -88,7 +88,7 @@
       });
       span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
       const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = 'рџ”—';
       row.appendChild(box); row.appendChild(span); row.appendChild(link);
       listEl.appendChild(row);
     });

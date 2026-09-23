@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
+  <script src="sync.js?v=21"></script>
   <title>BTS Episode</title>
   <style>
     body {
@@ -71,20 +71,20 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="bangtantv.html">← Назад</a>
-    <h1>📽 BTS EPISODE 📽</h1>
-    <p class="intro">Самые важные и интересные моменты из истории группы в эпизодах</p>
+    <a class="back" href="bangtantv.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>рџ“Ѕ BTS EPISODE рџ“Ѕ</h1>
+    <p class="intro">РЎР°РјС‹Рµ РІР°Р¶РЅС‹Рµ Рё РёРЅС‚РµСЂРµСЃРЅС‹Рµ РјРѕРјРµРЅС‚С‹ РёР· РёСЃС‚РѕСЂРёРё РіСЂСѓРїРїС‹ РІ СЌРїРёР·РѕРґР°С…</p>
     <div id="list"></div>
-    <p class="note">Серии расположены в примерном хронологическом порядке (где 1 серия — это 2013 год, а 123 серия — это 2021 год). Нумерация моя личная, для удобства </p>
-    <a class="footer-link" href="bangtantv.html">BangtanTV ⬅️</a>
+    <p class="note">РЎРµСЂРёРё СЂР°СЃРїРѕР»РѕР¶РµРЅС‹ РІ РїСЂРёРјРµСЂРЅРѕРј С…СЂРѕРЅРѕР»РѕРіРёС‡РµСЃРєРѕРј РїРѕСЂСЏРґРєРµ (РіРґРµ 1 СЃРµСЂРёСЏ вЂ” СЌС‚Рѕ 2013 РіРѕРґ, Р° 123 СЃРµСЂРёСЏ вЂ” СЌС‚Рѕ 2021 РіРѕРґ). РќСѓРјРµСЂР°С†РёСЏ РјРѕСЏ Р»РёС‡РЅР°СЏ, РґР»СЏ СѓРґРѕР±СЃС‚РІР° </p>
+    <a class="footer-link" href="bangtantv.html">BangtanTV в¬…пёЏ</a>
   </div>
        <script>
     const items = [
-      { text: "1 часть (с 1 по 50 серию)", link: "bts-episode-1-50.html", internal: true, statKey: "bts-episode-1-50" },
-      { text: "2 часть (с 51 по 100 серию)", link: "bts-episode-51-100.html", internal: true, statKey: "bts-episode-51-100" },
-      { text: "3 часть (с 101 по 150 серию)", link: "bts-episode-101-150.html", internal: true, statKey: "bts-episode-101-150" },
-      { text: "4 часть (с 151 по 194 серию)", link: "bts-episode-151-194.html", internal: true, statKey: "bts-episode-151-194" },
-      { text: "Ну вроде бы эпизоды", link: "bts-episode-other.html", internal: true, statKey: "bts-episode-other" }
+      { text: "1 С‡Р°СЃС‚СЊ (СЃ 1 РїРѕ 50 СЃРµСЂРёСЋ)", link: "bts-episode-1-50.html", internal: true, statKey: "bts-episode-1-50" },
+      { text: "2 С‡Р°СЃС‚СЊ (СЃ 51 РїРѕ 100 СЃРµСЂРёСЋ)", link: "bts-episode-51-100.html", internal: true, statKey: "bts-episode-51-100" },
+      { text: "3 С‡Р°СЃС‚СЊ (СЃ 101 РїРѕ 150 СЃРµСЂРёСЋ)", link: "bts-episode-101-150.html", internal: true, statKey: "bts-episode-101-150" },
+      { text: "4 С‡Р°СЃС‚СЊ (СЃ 151 РїРѕ 194 СЃРµСЂРёСЋ)", link: "bts-episode-151-194.html", internal: true, statKey: "bts-episode-151-194" },
+      { text: "РќСѓ РІСЂРѕРґРµ Р±С‹ СЌРїРёР·РѕРґС‹", link: "bts-episode-other.html", internal: true, statKey: "bts-episode-other" }
     ];
 
     const listEl = document.getElementById('list');
@@ -120,7 +120,7 @@
       const el = document.getElementById('badge-' + key);
       if (!el || !data || data.total === 0) { if (el) el.textContent = ''; return; }
       if (data.checked === data.total) {
-        el.textContent = '✅';
+        el.textContent = 'вњ…';
         el.style.color = '#2e9e5b';
         el.closest('.navlink').style.background = '#e3f7e9';
       } else {
@@ -145,7 +145,7 @@
       });
       if (total === 0) { el.textContent = ''; return; }
       if (allKnown && checked === total) {
-        el.textContent = '✅';
+        el.textContent = 'вњ…';
         el.style.color = '#2e9e5b';
         el.closest('.navlink').style.background = '#e3f7e9';
       } else {

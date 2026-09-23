@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,8 +7,8 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
-  <title>Клипы BTS 2019-2021</title>
+  <script src="sync.js?v=21"></script>
+  <title>РљР»РёРїС‹ BTS 2019-2021</title>
   <style>
     body {
       background: #f2f0f7;
@@ -76,29 +76,29 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="all-clips.html">← Назад</a>
-    <h1>📹 Клипы: 2019 – 2021 📹</h1>
+    <a class="back" href="all-clips.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>рџ“№ РљР»РёРїС‹: 2019 вЂ“ 2021 рџ“№</h1>
         <div id="list"></div>
-    <a class="footer-link" href="all-clips.html">Все клипы BTS ⬅️</a>
+    <a class="footer-link" href="all-clips.html">Р’СЃРµ РєР»РёРїС‹ BTS в¬…пёЏ</a>
   </div>
 
   <script>
         const data = [
       { year: "2019", items: [
-        { text: "Persona", hearts: "💙", link: "https://t.me/violent_arhive/2500" },
+        { text: "Persona", hearts: "рџ’™", link: "https://t.me/violent_arhive/2500" },
         { text: "Boy With Luv", sub: "feat. Halsey", link: "https://t.me/violent_arhive/2502" },
         { text: "Boy With Luv", sub: "ARMY With Luv ver", link: "https://t.me/violent_arhive/2504" },
         { text: "Make It Right", sub: "feat. Lauv", link: "https://t.me/violent_arhive/2508" }
       ]},
       { year: "2020", items: [
-        { text: "Interlude: Shadow", hearts: "🖤", link: "https://t.me/violent_arhive/2510" },
-        { text: "Outro: Ego", hearts: "🤍", link: "https://t.me/violent_arhive/2512" },
+        { text: "Interlude: Shadow", hearts: "рџ–¤", link: "https://t.me/violent_arhive/2510" },
+        { text: "Outro: Ego", hearts: "рџ¤Ќ", link: "https://t.me/violent_arhive/2512" },
         { text: "ON", sub: "Kinetic Manifesto Film", link: "https://t.me/violent_arhive/2514" },
         { text: "ON", link: "https://t.me/violent_arhive/2516" },
         { text: "Black Swan", link: "https://t.me/violent_arhive/2518" },
         { text: "Dynamite", link: "https://t.me/violent_arhive/2524" },
         { text: "Dynamite", sub: "B-side", link: "https://t.me/violent_arhive/2526" },
-        { text: "Dynamite", sub: "сhoreography ver.", link: "https://t.me/violent_arhive/2528" },
+        { text: "Dynamite", sub: "СЃhoreography ver.", link: "https://t.me/violent_arhive/2528" },
         { text: "Life Goes On", link: "https://t.me/violent_arhive/2529" },
         { text: "Life Goes On", sub: "on my pillow", link: "https://t.me/violent_arhive/2555" },
         { text: "Life Goes On", sub: "in the forest", link: "https://t.me/violent_arhive/2531" }
@@ -116,7 +116,7 @@
     data.forEach((block) => {
       const yearTitle = document.createElement('div');
       yearTitle.className = 'year';
-      yearTitle.textContent = block.year + ' год';
+      yearTitle.textContent = block.year + ' РіРѕРґ';
       listEl.appendChild(yearTitle);
 
             block.items.forEach((item) => {
@@ -160,7 +160,7 @@
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
-        link.textContent = '🔗';
+        link.textContent = 'рџ”—';
 
         row.appendChild(box);
         row.appendChild(span);

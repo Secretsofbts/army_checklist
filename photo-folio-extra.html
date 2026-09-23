@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,8 +7,8 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
-  <title>Photo-Folio: Что-то другое</title>
+  <script src="sync.js?v=21"></script>
+  <title>Photo-Folio: Р§С‚Рѕ-С‚Рѕ РґСЂСѓРіРѕРµ</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
     .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -25,16 +25,16 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="photo-folio.html">← Назад</a>
-    <h1>👀 Реакция на фотобуки 👀</h1>
+    <a class="back" href="photo-folio.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>рџ‘Ђ Р РµР°РєС†РёСЏ РЅР° С„РѕС‚РѕР±СѓРєРё рџ‘Ђ</h1>
     <div id="list"></div>
-    <a class="footer-link" href="photo-folio.html">Photo-Folio ⬅️</a>
+    <a class="footer-link" href="photo-folio.html">Photo-Folio в¬…пёЏ</a>
   </div>
 
   <script>
     const items = [
-      { text: "1 эпизод", link: "https://t.me/violent_arhive/3295" },
-      { text: "2 эпизод", link: "https://t.me/violent_arhive/3781" }
+      { text: "1 СЌРїРёР·РѕРґ", link: "https://t.me/violent_arhive/3295" },
+      { text: "2 СЌРїРёР·РѕРґ", link: "https://t.me/violent_arhive/3781" }
     ];
 
     const listEl = document.getElementById('list');
@@ -62,7 +62,7 @@
       });
       span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
       const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = 'рџ”—';
       row.appendChild(box); row.appendChild(span); row.appendChild(link);
       listEl.appendChild(row);
     });

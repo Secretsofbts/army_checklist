@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
+  <script src="sync.js?v=21"></script>
   <title>BTS Memories of 2019</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -28,90 +28,90 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="bts-memories.html">← Назад</a>
-    <h1>🔮 BTS Memories of 2019 🔮</h1>
-    <p class="intro">Для части видео будут указаны ссылки на первоисточник, как в memories 2018. Часть загружена на канал</p>
+    <a class="back" href="bts-memories.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>рџ”® BTS Memories of 2019 рџ”®</h1>
+    <p class="intro">Р”Р»СЏ С‡Р°СЃС‚Рё РІРёРґРµРѕ Р±СѓРґСѓС‚ СѓРєР°Р·Р°РЅС‹ СЃСЃС‹Р»РєРё РЅР° РїРµСЂРІРѕРёСЃС‚РѕС‡РЅРёРє, РєР°Рє РІ memories 2018. Р§Р°СЃС‚СЊ Р·Р°РіСЂСѓР¶РµРЅР° РЅР° РєР°РЅР°Р»</p>
     <div id="list"></div>
-    <a class="footer-link" href="bts-memories.html">BTS Memories (2014 - 2020 год) ⬅️</a>
+    <a class="footer-link" href="bts-memories.html">BTS Memories (2014 - 2020 РіРѕРґ) в¬…пёЏ</a>
   </div>
 
   <script>
     const data = [
-      { disc: "Диск 1", groups: [
+      { disc: "Р”РёСЃРє 1", groups: [
         { items: [
-          { text: "'LY: Speak Yourself' в ЛА", sub: "часть 1", link: "https://t.me/violent_arhive/1648" }
+          { text: "'LY: Speak Yourself' РІ Р›Рђ", sub: "С‡Р°СЃС‚СЊ 1", link: "https://t.me/violent_arhive/1648" }
         ]}
       ]},
-      { disc: "Диск 2", groups: [
+      { disc: "Р”РёСЃРє 2", groups: [
         { items: [
-          { text: "'LY: Speak Yourself' в ЛА", sub: "часть 2", link: "https://t.me/violent_arhive/1639" },
-          { text: "'LY: Speak Yourself' в ЛА", sub: "За кадром", link: "https://t.me/violent_arhive/1670" }
+          { text: "'LY: Speak Yourself' РІ Р›Рђ", sub: "С‡Р°СЃС‚СЊ 2", link: "https://t.me/violent_arhive/1639" },
+          { text: "'LY: Speak Yourself' РІ Р›Рђ", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://t.me/violent_arhive/1670" }
         ]}
       ]},
-      { disc: "Диск 3", groups: [
-        { month: "Январь", items: [
-          { text: "33 Golden Disc Awards", sub: "За кадром", link: "https://vk.com/video-182432566_456239672" },
-          { text: "'LY' Japan Edition MD", sub: "За кадром", link: "https://vk.com/video-182432566_456239645" },
-          { text: "Map of the Soul: Persona", sub: "Съёмки обложки альбома", link: "https://t.me/violent_arhive/1649" },
-          { text: "28 Seoul Music Awards", sub: "За кадром", link: "https://vk.com/video-182432566_456239667" }
+      { disc: "Р”РёСЃРє 3", groups: [
+        { month: "РЇРЅРІР°СЂСЊ", items: [
+          { text: "33 Golden Disc Awards", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://vk.com/video-182432566_456239672" },
+          { text: "'LY' Japan Edition MD", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://vk.com/video-182432566_456239645" },
+          { text: "Map of the Soul: Persona", sub: "РЎСЉС‘РјРєРё РѕР±Р»РѕР¶РєРё Р°Р»СЊР±РѕРјР°", link: "https://t.me/violent_arhive/1649" },
+          { text: "28 Seoul Music Awards", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://vk.com/video-182432566_456239667" }
         ]},
-        { month: "Февраль", items: [
-          { text: "2019 Грэмми", sub: "За кадром", link: "https://vk.com/video-182432566_456239668" },
-          { text: "5th Muster: Magic Shop", sub: "Съёмки постера и MD", link: "https://vk.com/video-182432566_456239680" }
+        { month: "Р¤РµРІСЂР°Р»СЊ", items: [
+          { text: "2019 Р“СЂСЌРјРјРё", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://vk.com/video-182432566_456239668" },
+          { text: "5th Muster: Magic Shop", sub: "РЎСЉС‘РјРєРё РїРѕСЃС‚РµСЂР° Рё MD", link: "https://vk.com/video-182432566_456239680" }
         ]},
-        { month: "Март", items: [
-          { text: "RM Map of the Soul: Persona Trailer", sub: "За кадром", link: "https://vk.com/video-182432566_456239664" },
-          { text: "Boy With Luv (Halsey)", sub: "За кадром", link: "https://vk.com/video-182432566_456239659" }
+        { month: "РњР°СЂС‚", items: [
+          { text: "RM Map of the Soul: Persona Trailer", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://vk.com/video-182432566_456239664" },
+          { text: "Boy With Luv (Halsey)", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://vk.com/video-182432566_456239659" }
         ]}
       ]},
-      { disc: "Диск 4", groups: [
-        { month: "Апрель", items: [
-          { text: "'LY' Открывающий VCR", sub: "За кадром", link: "https://t.me/violent_arhive/1650" },
-          { text: "'LY' Брифинг и практика", sub: "За кадром", link: "https://vk.com/video-182432566_456239665" },
-          { text: "Saturday Night Live", sub: "За кадром", link: "https://t.me/violent_arhive/1651" },
-          { text: "Пресс-конференция Map of the Soul: Persona и музыкальная трансляция", sub: "За кадром", link: "https://t.me/violent_arhive/1652" },
-          { text: "FESTA семейный портрет", sub: "За кадром", link: "https://t.me/violent_arhive/1653" }
+      { disc: "Р”РёСЃРє 4", groups: [
+        { month: "РђРїСЂРµР»СЊ", items: [
+          { text: "'LY' РћС‚РєСЂС‹РІР°СЋС‰РёР№ VCR", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://t.me/violent_arhive/1650" },
+          { text: "'LY' Р‘СЂРёС„РёРЅРі Рё РїСЂР°РєС‚РёРєР°", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://vk.com/video-182432566_456239665" },
+          { text: "Saturday Night Live", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://t.me/violent_arhive/1651" },
+          { text: "РџСЂРµСЃСЃ-РєРѕРЅС„РµСЂРµРЅС†РёСЏ Map of the Soul: Persona Рё РјСѓР·С‹РєР°Р»СЊРЅР°СЏ С‚СЂР°РЅСЃР»СЏС†РёСЏ", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://t.me/violent_arhive/1652" },
+          { text: "FESTA СЃРµРјРµР№РЅС‹Р№ РїРѕСЂС‚СЂРµС‚", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://t.me/violent_arhive/1653" }
         ]},
-        { month: "Май", items: [
-          { text: "2019 Billboard Music Awards", sub: "За кадром", link: "https://t.me/violent_arhive/1654" },
-          { text: "The Voice / GMA Summer Concert Series 2019 / The Late Show with Stephen Colbert / iHeartRadio Live", sub: "За кадром", link: "https://t.me/violent_arhive/1655" }
+        { month: "РњР°Р№", items: [
+          { text: "2019 Billboard Music Awards", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://t.me/violent_arhive/1654" },
+          { text: "The Voice / GMA Summer Concert Series 2019 / The Late Show with Stephen Colbert / iHeartRadio Live", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://t.me/violent_arhive/1655" }
         ]}
       ]},
-      { disc: "Диск 5", groups: [
-        { month: "Май", items: [
-          { text: "'LY' Чикаго", sub: "За кадром", link: "https://t.me/violent_arhive/1656" },
-          { text: "'LY' Нью-Джерси", sub: "За кадром", link: "https://vkvideo.ru/video-204941475_456239425?pl=-204941475_7" }
+      { disc: "Р”РёСЃРє 5", groups: [
+        { month: "РњР°Р№", items: [
+          { text: "'LY' Р§РёРєР°РіРѕ", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://t.me/violent_arhive/1656" },
+          { text: "'LY' РќСЊСЋ-Р”Р¶РµСЂСЃРё", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://vkvideo.ru/video-204941475_456239425?pl=-204941475_7" }
         ]},
-        { month: "Июнь", items: [
-          { text: "'LY' Париж", sub: "За кадром", link: "https://vkvideo.ru/video-204941475_456239426?pl=-204941475_7" }
+        { month: "РСЋРЅСЊ", items: [
+          { text: "'LY' РџР°СЂРёР¶", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://vkvideo.ru/video-204941475_456239426?pl=-204941475_7" }
         ]},
-        { month: "Июль", items: [
-          { text: "'LY' Осака", sub: "За кадром", link: "https://t.me/violent_arhive/1657" },
-          { text: "'LY' Финал в Сеуле MD", sub: "За кадром", link: "https://t.me/violent_arhive/1658" },
-          { text: "'LY' Сидзуока", sub: "За кадром", link: "https://vkvideo.ru/video-204941475_456239428?pl=-204941475_7" },
-          { text: "2019 Summer Package", sub: "За кадром", link: "https://vk.com/video-182432566_456239638" }
+        { month: "РСЋР»СЊ", items: [
+          { text: "'LY' РћСЃР°РєР°", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://t.me/violent_arhive/1657" },
+          { text: "'LY' Р¤РёРЅР°Р» РІ РЎРµСѓР»Рµ MD", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://t.me/violent_arhive/1658" },
+          { text: "'LY' РЎРёРґР·СѓРѕРєР°", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://vkvideo.ru/video-204941475_456239428?pl=-204941475_7" },
+          { text: "2019 Summer Package", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://vk.com/video-182432566_456239638" }
         ]},
-        { month: "Август", items: [
-          { text: "'Chicken Noodle Soup (feat. Becky G)'", sub: "За кадром", link: "https://vkvideo.ru/video-204941475_456239431?pl=-204941475_7" }
+        { month: "РђРІРіСѓСЃС‚", items: [
+          { text: "'Chicken Noodle Soup (feat. Becky G)'", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://vkvideo.ru/video-204941475_456239431?pl=-204941475_7" }
         ]},
-        { month: "Сентябрь", items: [
-          { text: "Финал в Сеуле VCR #1", sub: "За кадром", link: "https://vk.com/video-182432566_456239666" }
+        { month: "РЎРµРЅС‚СЏР±СЂСЊ", items: [
+          { text: "Р¤РёРЅР°Р» РІ РЎРµСѓР»Рµ VCR #1", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://vk.com/video-182432566_456239666" }
         ]}
       ]},
-      { disc: "Диск 6", groups: [
-        { month: "Октябрь", items: [
-          { text: "'Финал в Сеуле VCR #2", sub: "За кадром", link: "https://t.me/violent_arhive/1666" },
-          { text: "'LY' Саудовская Аравия", sub: "За кадром", link: "https://t.me/violent_arhive/1663" }
+      { disc: "Р”РёСЃРє 6", groups: [
+        { month: "РћРєС‚СЏР±СЂСЊ", items: [
+          { text: "'Р¤РёРЅР°Р» РІ РЎРµСѓР»Рµ VCR #2", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://t.me/violent_arhive/1666" },
+          { text: "'LY' РЎР°СѓРґРѕРІСЃРєР°СЏ РђСЂР°РІРёСЏ", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://t.me/violent_arhive/1663" }
         ]},
-        { month: "Ноябрь", items: [
-          { text: "2020 Winter Package", sub: "За кадром", link: "https://t.me/violent_arhive/1673" },
-          { text: "MMA/MAMA VCR и практика", sub: "За кадром", link: "https://t.me/violent_arhive/1664" },
-          { text: "2019 MMA", sub: "За кадром", link: "https://t.me/violent_arhive/1667" }
+        { month: "РќРѕСЏР±СЂСЊ", items: [
+          { text: "2020 Winter Package", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://t.me/violent_arhive/1673" },
+          { text: "MMA/MAMA VCR Рё РїСЂР°РєС‚РёРєР°", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://t.me/violent_arhive/1664" },
+          { text: "2019 MMA", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://t.me/violent_arhive/1667" }
         ]},
-        { month: "Декабрь", items: [
-          { text: "2019 MAMA", sub: "За кадром", link: "https://t.me/violent_arhive/1665" },
-          { text: "2019 iHeartRadio Jingle Ball и Variety Hitmaker Awards", sub: "За кадром", link: "https://t.me/violent_arhive/1669" },
-          { text: "Dick Clark's New Year's Rockin' Eve", sub: "За кадром", link: "https://t.me/violent_arhive/1668" }
+        { month: "Р”РµРєР°Р±СЂСЊ", items: [
+          { text: "2019 MAMA", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://t.me/violent_arhive/1665" },
+          { text: "2019 iHeartRadio Jingle Ball Рё Variety Hitmaker Awards", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://t.me/violent_arhive/1669" },
+          { text: "Dick Clark's New Year's Rockin' Eve", sub: "Р—Р° РєР°РґСЂРѕРј", link: "https://t.me/violent_arhive/1668" }
         ]}
       ]}
     ];
@@ -182,7 +182,7 @@
           link.className = 'link';
           link.href = item.link;
           link.target = '_blank';
-          link.textContent = '🔗';
+          link.textContent = 'рџ”—';
           row.appendChild(link);
 
           listEl.appendChild(row);

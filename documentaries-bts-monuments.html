@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=20"></script>
+  <script src="sync.js?v=21"></script>
   <title>BTS Monuments: Beyond The Star</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -25,24 +25,24 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="documentaries.html">← Назад</a>
-    <h1>⭐️ Beyond The Star ⭐️</h1>
-    <p class="intro">Год: конец 2023 - начало 2024</p>
-    <p class="intro">Фильм отражает прошлое, настоящее и будущее BTS на протяжении почти 9 лет, а также содержит подробные интервью с каждым из участников об их мыслях относительно второй главы их карьеры</p>
+    <a class="back" href="documentaries.html">в†ђ РќР°Р·Р°Рґ</a>
+    <h1>в­ђпёЏ Beyond The Star в­ђпёЏ</h1>
+    <p class="intro">Р“РѕРґ: РєРѕРЅРµС† 2023 - РЅР°С‡Р°Р»Рѕ 2024</p>
+    <p class="intro">Р¤РёР»СЊРј РѕС‚СЂР°Р¶Р°РµС‚ РїСЂРѕС€Р»РѕРµ, РЅР°СЃС‚РѕСЏС‰РµРµ Рё Р±СѓРґСѓС‰РµРµ BTS РЅР° РїСЂРѕС‚СЏР¶РµРЅРёРё РїРѕС‡С‚Рё 9 Р»РµС‚, Р° С‚Р°РєР¶Рµ СЃРѕРґРµСЂР¶РёС‚ РїРѕРґСЂРѕР±РЅС‹Рµ РёРЅС‚РµСЂРІСЊСЋ СЃ РєР°Р¶РґС‹Рј РёР· СѓС‡Р°СЃС‚РЅРёРєРѕРІ РѕР± РёС… РјС‹СЃР»СЏС… РѕС‚РЅРѕСЃРёС‚РµР»СЊРЅРѕ РІС‚РѕСЂРѕР№ РіР»Р°РІС‹ РёС… РєР°СЂСЊРµСЂС‹</p>
     <div id="list"></div>
-    <a class="footer-link" href="documentaries.html">Документальные проекты ⬅️</a>
+    <a class="footer-link" href="documentaries.html">Р”РѕРєСѓРјРµРЅС‚Р°Р»СЊРЅС‹Рµ РїСЂРѕРµРєС‚С‹ в¬…пёЏ</a>
   </div>
 
   <script>
     const items = [
-      { text: "1 серия", sub: "Начало", link: "https://t.me/violent_arhive/4491" },
-      { text: "2 серия", sub: "Юность", link: "https://t.me/violent_arhive/4497" },
-      { text: "3 серия", sub: "В поисках счастья", link: "https://t.me/violent_arhive/4498" },
-      { text: "4 серия", sub: "Разъединение", link: "https://t.me/violent_arhive/4501" },
-      { text: "5 серия", sub: "С возвращением!", link: "https://t.me/violent_arhive/4507" },
-      { text: "6 серия", sub: "Новое начало", link: "https://t.me/violent_arhive/4512" },
-      { text: "7 серия", sub: "Всё ещё фиолетовлю", link: "https://t.me/violent_arhive/4520" },
-      { text: "8 серия", sub: "О лучшем завтра", link: "https://t.me/violent_arhive/4521" }
+      { text: "1 СЃРµСЂРёСЏ", sub: "РќР°С‡Р°Р»Рѕ", link: "https://t.me/violent_arhive/4491" },
+      { text: "2 СЃРµСЂРёСЏ", sub: "Р®РЅРѕСЃС‚СЊ", link: "https://t.me/violent_arhive/4497" },
+      { text: "3 СЃРµСЂРёСЏ", sub: "Р’ РїРѕРёСЃРєР°С… СЃС‡Р°СЃС‚СЊСЏ", link: "https://t.me/violent_arhive/4498" },
+      { text: "4 СЃРµСЂРёСЏ", sub: "Р Р°Р·СЉРµРґРёРЅРµРЅРёРµ", link: "https://t.me/violent_arhive/4501" },
+      { text: "5 СЃРµСЂРёСЏ", sub: "РЎ РІРѕР·РІСЂР°С‰РµРЅРёРµРј!", link: "https://t.me/violent_arhive/4507" },
+      { text: "6 СЃРµСЂРёСЏ", sub: "РќРѕРІРѕРµ РЅР°С‡Р°Р»Рѕ", link: "https://t.me/violent_arhive/4512" },
+      { text: "7 СЃРµСЂРёСЏ", sub: "Р’СЃС‘ РµС‰С‘ С„РёРѕР»РµС‚РѕРІР»СЋ", link: "https://t.me/violent_arhive/4520" },
+      { text: "8 СЃРµСЂРёСЏ", sub: "Рћ Р»СѓС‡С€РµРј Р·Р°РІС‚СЂР°", link: "https://t.me/violent_arhive/4521" }
     ];
 
     const listEl = document.getElementById('list');
@@ -70,7 +70,7 @@
       });
       span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
       const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = 'рџ”—';
       row.appendChild(box); row.appendChild(span); row.appendChild(link);
       listEl.appendChild(row);
     });
