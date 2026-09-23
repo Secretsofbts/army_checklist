@@ -467,9 +467,7 @@ const YEAR_OWN_TOTALS = {
   ],
   'Трансляции с YouTube': [
     'vlog-jungkook','vlog-v','vlog-jin','vlog-jimin','vlog-namjoon','vlog-suga','vlog-jhope','vlog-ot7','vlog-somepeople',
-    'eatjin','logon',
-    'vlogsbts-jimin','vlogsbts-jin','vlogsbts-taehyung','vlogsbts-jungkook','vlogsbts-namjoon','vlogsbts-yoongi','vlogsbts-hoseok',
-    'gcf','normal-log'
+    'eatjin','logon'
   ],
   'Концерты BTS': [
     'concert-hyyh-on-stage','concert-hyyh-epilogue','concert-hyyh-epilogue-japan',
@@ -494,7 +492,9 @@ const YEAR_OWN_TOTALS = {
     'bts-episode-other-jimin','bts-episode-other-jungkook','bts-episode-other-hoseok','bts-episode-other-yoongi','bts-episode-other-namjoon','bts-episode-other-jin','bts-episode-other-taehyung','bts-episode-other-somepeople',
     'reaction-to-self',
     'photo-folio-jungkook','photo-folio-namjoon','photo-folio-jimin','photo-folio-common','photo-folio-jin','photo-folio-taehyung','photo-folio-hoseok','photo-folio-yoongi','photo-folio-extra',
-    'album-review','message-from-jin'
+    'album-review','message-from-jin',
+    'vlogsbts-jimin','vlogsbts-jin','vlogsbts-taehyung','vlogsbts-jungkook','vlogsbts-namjoon','vlogsbts-yoongi','vlogsbts-hoseok',
+    'gcf','normal-log'
   ],
   'BTS Memories': [
     'bts-memories-2014','bts-memories-2015','bts-memories-2016','bts-memories-2017','bts-memories-2018','bts-memories-2019','bts-memories-2020','bts-memories-7moments'
