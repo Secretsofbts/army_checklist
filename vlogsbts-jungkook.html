@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="sync.js?v=21"></script>
-  <title>VLOGS BTS: Р§РѕРЅРіСѓРє</title>
+  <title>VLOGS BTS: Чонгук</title>
   <style>
     body {
       background: #f2f0f7;
@@ -62,25 +62,25 @@
 </head>
 <body>
   <div class="app">
-        <a class="back" href="vlogs-bts.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1> VLOGS Р§РѕРЅРіСѓРє рџ’њ</h1>
+        <a class="back" href="vlogs-bts.html">← Назад</a>
+    <h1> VLOGS Чонгук 💜</h1>
         <a href="gcf.html" id="gcf-card" style="display:flex; justify-content:space-between; align-items:center; background:#f7f7fa; border-radius:12px; padding:12px 14px; text-decoration:none; color:#333; font-size:14px; font-weight:500; margin-bottom:8px;">
-      <div>рџЋҐ Golden Closet Film by JK<div style="font-size:11px; color:#999; margin-top:2px; font-weight:400;">РІРёРґРµРѕ, СЃРЅСЏС‚С‹Рµ Р§РѕРЅРіСѓРєРѕРј</div></div>
+      <div>🎥 Golden Closet Film by JK<div style="font-size:11px; color:#999; margin-top:2px; font-weight:400;">видео, снятые Чонгуком</div></div>
       <span class="badge" id="badge-gcf" style="font-size:12px; color:#999; font-weight:400;"></span>
     </a>
     <div id="list"></div>
-        <a class="footer-link" href="vlogs-bts.html">Р’СЃРµ СЌС„РёСЂС‹ Рё РІР»РѕРіРё СЃ YouTube в¬…пёЏ</a>
+        <a class="footer-link" href="vlogs-bts.html">Все эфиры и влоги с YouTube ⬅️</a>
   </div>
 
   <script>
     const items = [
-      { icon: "рџ’Є", name: "РЈРїСЂР°Р¶РЅРµРЅРёСЏ РґР»СЏ РјС‹С€С†", note: "РѕС‚ 11.10.2019", link: "https://t.me/violent_arhive/5597" },
-      { icon: "рџЏ•", name: "РљРµРјРїРёРЅРі", note: "РѕС‚ 06.08.2022", link: "https://t.me/violent_arhive/2928" },
-      { icon: "рџ’њ", name: "NORMAL LOG", note: "РѕС‚ 07.06.2026", link: "https://t.me/violent_arhive/5516" },
-      { icon: "рџђ°", name: "Р’ Р›Р°СЃ Р’РµРіР°СЃРµ РёР· in", note: "РѕС‚ 23.05.2026", link: "https://t.me/violent_arhive/5518" },
-      { icon: "рџЊџ", name: "Р’Р»РѕРі Р§РѕРЅРіСѓРєР° РёР· in", note: "РѕС‚ 24.05.2026", link: "https://t.me/violent_arhive/5565" },
-      { icon: "рџЋµ", name: "РџРµСЃРЅСЏ СЃ РЅР°РјРё РІ РјР°С€РёРЅРµ", note: "РѕС‚ 11.07.2026", link: "https://t.me/violent_arhive/5604" },
-      { icon: "вњЁ", name: "РўСЂРµРЅРёСЂРѕРІРєР° Р§РѕРЅРўСЌРҐРѕ", note: "РѕС‚ 07.08.2026", link: "https://t.me/violent_arhive/5570" }
+      { icon: "💪", name: "Упражнения для мышц", note: "от 11.10.2019", link: "https://t.me/violent_arhive/5597" },
+      { icon: "🏕", name: "Кемпинг", note: "от 06.08.2022", link: "https://t.me/violent_arhive/2928" },
+      { icon: "💜", name: "NORMAL LOG", note: "от 07.06.2026", link: "https://t.me/violent_arhive/5516" },
+      { icon: "🐰", name: "В Лас Вегасе из in", note: "от 23.05.2026", link: "https://t.me/violent_arhive/5518" },
+      { icon: "🌟", name: "Влог Чонгука из in", note: "от 24.05.2026", link: "https://t.me/violent_arhive/5565" },
+      { icon: "🎵", name: "Песня с нами в машине", note: "от 11.07.2026", link: "https://t.me/violent_arhive/5604" },
+      { icon: "✨", name: "Тренировка ЧонТэХо", note: "от 07.08.2026", link: "https://t.me/violent_arhive/5570" }
     ];
 
     const listEl = document.getElementById('list');
@@ -126,7 +126,7 @@
       link.className = 'link';
       link.href = item.link;
       link.target = '_blank';
-      link.textContent = 'рџ”—';
+      link.textContent = '🔗';
 
       row.appendChild(box);
       row.appendChild(span);
@@ -143,7 +143,7 @@
       var checked = data ? data.checked : 0;
       if (total === 0) { el.textContent = ''; return; }
       if (checked === total) {
-        el.textContent = 'вњ…';
+        el.textContent = '✅';
         el.style.color = '#2e9e5b';
         document.getElementById('gcf-card').style.background = '#e3f7e9';
       } else {

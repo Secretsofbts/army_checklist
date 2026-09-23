@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="sync.js?v=21"></script>
-  <title>Р’Р°С€Рё РїСЂРµРґР»РѕР¶РµРЅРёСЏ</title>
+  <title>Ваши предложения</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
     .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -33,19 +33,19 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="index.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>вњЌпёЏ Р’Р°С€Рё РїСЂРµРґР»РѕР¶РµРЅРёСЏ вњЌпёЏ</h1>
-    <p class="intro">Р—РґРµСЃСЊ РІС‹ РјРѕР¶РµС‚Рµ РѕСЃС‚Р°РІРёС‚СЊ Р»СЋР±С‹Рµ РїСЂРµРґР»РѕР¶РµРЅРёСЏ РїРѕ СЃРѕС‚СЂСѓРґРЅРёС‡РµСЃС‚РІСѓ Рё РїРѕ С‡РµРє-Р»РёСЃС‚Сѓ вЂ” С‡С‚Рѕ РїРѕРїСЂР°РІРёС‚СЊ, РєР°РєРёРµ РІРёРґРµРѕ РґРѕРїРѕР»РЅРёС‚СЊ РІ РєРѕР»Р»РµРєС†РёСЋ РёР»Рё РјРѕР¶РµС‚ РґР°Р¶Рµ Р·Р°С…РѕС‚РёС‚Рµ С‡С‚Рѕ-С‚Рѕ СЃР°РјРё РїРµСЂРµРІРµСЃС‚Рё РґР»СЏ РґСЂР°РіРѕС†РµРЅРЅРѕРіРѕ Р°СЂС…РёРІР°. РљР°Р¶РґРѕРµ РїСЂРµРґР»РѕР¶РµРЅРёРµ СЏ С‡РёС‚Р°СЋ Р»РёС‡РЅРѕ, РѕС‚РІРµС‡Р°СЋ РІ Р»РёС‡РЅС‹Рµ СЃРѕРѕР±С‰РµРЅРёСЏ РёР»Рё С‚СѓС‚. РћС‡РµРЅСЊ С†РµРЅСЋ РІР°С€Рµ РІСЂРµРјСЏ Рё Р·Р°Р±РѕС‚Сѓ Рѕ РїСЂРѕРµРєС‚Рµ рџ’њ</p>
+    <a class="back" href="index.html">← Назад</a>
+    <h1>✍️ Ваши предложения ✍️</h1>
+    <p class="intro">Здесь вы можете оставить любые предложения по сотрудничеству и по чек-листу — что поправить, какие видео дополнить в коллекцию или может даже захотите что-то сами перевести для драгоценного архива. Каждое предложение я читаю лично, отвечаю в личные сообщения или тут. Очень ценю ваше время и заботу о проекте 💜</p>
 
-    <textarea id="suggestion-input" placeholder="Р’Р°С€Рµ РїСЂРµРґР»РѕР¶РµРЅРёРµ..."></textarea>
-    <button class="send-btn" id="send-btn">РћС‚РїСЂР°РІРёС‚СЊ</button>
+    <textarea id="suggestion-input" placeholder="Ваше предложение..."></textarea>
+    <button class="send-btn" id="send-btn">Отправить</button>
     <div class="status-msg" id="status-msg"></div>
 
     <div id="admin-section"></div>
 
-        <p class="section-title">РћРїСѓР±Р»РёРєРѕРІР°РЅРЅС‹Рµ РїСЂРµРґР»РѕР¶РµРЅРёСЏ</p>
-    <input type="text" id="search-input" placeholder="рџ”Ќ РџРѕРёСЃРє РїРѕ РїСЂРµРґР»РѕР¶РµРЅРёСЏРј..." style="width:100%; box-sizing:border-box; border:1px solid #e0e0e0; border-radius:10px; padding:8px 10px; font-size:13px; margin-bottom:10px;">
-    <div id="published-list"><p class="empty-note">Р—Р°РіСЂСѓР·РєР°...</p></div>
+        <p class="section-title">Опубликованные предложения</p>
+    <input type="text" id="search-input" placeholder="🔍 Поиск по предложениям..." style="width:100%; box-sizing:border-box; border:1px solid #e0e0e0; border-radius:10px; padding:8px 10px; font-size:13px; margin-bottom:10px;">
+    <div id="published-list"><p class="empty-note">Загрузка...</p></div>
   </div>
 
   <script>
@@ -60,11 +60,11 @@
       const btn = document.getElementById('send-btn');
       btn.disabled = true;
 
-      let askerName = 'РќРµРёР·РІРµСЃС‚РЅС‹Р№';
+      let askerName = 'Неизвестный';
       if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
         const u = window.Telegram.WebApp.initDataUnsafe.user;
         askerName = (u.first_name || '') + (u.last_name ? ' ' + u.last_name : '') + (u.username ? ' (@' + u.username + ')' : '');
-        if (!askerName.trim()) askerName = 'РќРµРёР·РІРµСЃС‚РЅС‹Р№';
+        if (!askerName.trim()) askerName = 'Неизвестный';
       }
 
       fetch(`${FIREBASE_URL}/suggestions.json`, {
@@ -74,19 +74,19 @@
         .then(res => res.json())
         .then(() => {
           input.value = '';
-          statusMsg.textContent = 'РЎРїР°СЃРёР±Рѕ! Р’Р°С€Рµ РїСЂРµРґР»РѕР¶РµРЅРёРµ РѕС‚РїСЂР°РІР»РµРЅРѕ рџ’њ';
+          statusMsg.textContent = 'Спасибо! Ваше предложение отправлено 💜';
           statusMsg.style.color = '#2e9e5b';
           btn.disabled = false;
         })
         .catch(() => {
-          statusMsg.textContent = 'РќРµ РїРѕР»СѓС‡РёР»РѕСЃСЊ РѕС‚РїСЂР°РІРёС‚СЊ, РїРѕРїСЂРѕР±СѓР№С‚Рµ РµС‰С‘ СЂР°Р·.';
+          statusMsg.textContent = 'Не получилось отправить, попробуйте ещё раз.';
           statusMsg.style.color = '#c25a5a';
           btn.disabled = false;
         });
     });
 
     function deleteEntry(key) {
-      if (!confirm('РЈРґР°Р»РёС‚СЊ СЌС‚Рѕ РїСЂРµРґР»РѕР¶РµРЅРёРµ РЅР°СЃРѕРІСЃРµРј?')) return;
+      if (!confirm('Удалить это предложение насовсем?')) return;
       fetch(`${FIREBASE_URL}/suggestions/${key}.json`, { method: 'DELETE' }).then(() => loadAll());
     }
 
@@ -112,7 +112,7 @@
         });
       }
       if (keys.length === 0) {
-        listEl.innerHTML = '<p class="empty-note">' + (searchTerm ? 'РќРёС‡РµРіРѕ РЅРµ РЅР°Р№РґРµРЅРѕ' : 'РџРѕРєР° РЅРµС‚ РѕРїСѓР±Р»РёРєРѕРІР°РЅРЅС‹С… РїСЂРµРґР»РѕР¶РµРЅРёР№') + '</p>';
+        listEl.innerHTML = '<p class="empty-note">' + (searchTerm ? 'Ничего не найдено' : 'Пока нет опубликованных предложений') + '</p>';
         return;
       }
       keys.forEach((key) => {
@@ -121,7 +121,7 @@
         div.className = 'qa-item';
         const q = document.createElement('p');
         q.className = 'qa-question';
-        q.innerHTML = '<span style="color:#9b7fd4; font-weight:700;">рџ’Ў</span> ' + entry.text;
+        q.innerHTML = '<span style="color:#9b7fd4; font-weight:700;">💡</span> ' + entry.text;
         const a = document.createElement('p');
         a.className = 'qa-answer';
         a.textContent = entry.answer;
@@ -132,10 +132,10 @@
           const controls = document.createElement('div');
           controls.style.cssText = 'margin-top:8px; display:flex; gap:8px;';
           const editBtn = document.createElement('button');
-          editBtn.textContent = 'вњЏпёЏ РР·РјРµРЅРёС‚СЊ РѕС‚РІРµС‚';
+          editBtn.textContent = '✏️ Изменить ответ';
           editBtn.style.cssText = 'font-size:12px; background:#eee; border:none; border-radius:6px; padding:6px 10px; cursor:pointer;';
           editBtn.addEventListener('click', () => {
-            const newAnswer = prompt('РР·РјРµРЅРёС‚СЊ РѕС‚РІРµС‚:', entry.answer);
+            const newAnswer = prompt('Изменить ответ:', entry.answer);
             if (newAnswer === null || !newAnswer.trim()) return;
             fetch(`${FIREBASE_URL}/suggestions/${key}.json`, {
               method: 'PATCH',
@@ -143,7 +143,7 @@
             }).then(() => loadAll());
           });
           const delBtn = document.createElement('button');
-          delBtn.textContent = 'рџ—‘ РЈРґР°Р»РёС‚СЊ';
+          delBtn.textContent = '🗑 Удалить';
           delBtn.style.cssText = 'font-size:12px; background:#fbe4e4; border:none; border-radius:6px; padding:6px 10px; cursor:pointer; color:#c25a5a;';
           delBtn.addEventListener('click', () => deleteEntry(key));
           controls.appendChild(editBtn);
@@ -160,10 +160,10 @@
       if (!isAdmin) { adminEl.innerHTML = ''; return; }
       const pendingKeys = keys.filter(k => data[k].status === 'pending');
       if (pendingKeys.length === 0) {
-        adminEl.innerHTML = '<p class="section-title">РџСЂРµРґР»РѕР¶РµРЅРёСЏ РЅР° РјРѕРґРµСЂР°С†РёРё</p><p class="empty-note">РќРѕРІС‹С… РїСЂРµРґР»РѕР¶РµРЅРёР№ РїРѕРєР° РЅРµС‚</p>';
+        adminEl.innerHTML = '<p class="section-title">Предложения на модерации</p><p class="empty-note">Новых предложений пока нет</p>';
         return;
       }
-      let html = '<p class="section-title">РџСЂРµРґР»РѕР¶РµРЅРёСЏ РЅР° РјРѕРґРµСЂР°С†РёРё (' + pendingKeys.length + ')</p>';
+      let html = '<p class="section-title">Предложения на модерации (' + pendingKeys.length + ')</p>';
       adminEl.innerHTML = html;
       pendingKeys.forEach((key) => {
         const entry = data[key];
@@ -171,15 +171,15 @@
         box.className = 'admin-box';
         const q = document.createElement('p');
         q.className = 'admin-question';
-        q.innerHTML = '<span style="color:#9b7fd4; font-weight:700;">рџ’Ў</span> ' + entry.text;
+        q.innerHTML = '<span style="color:#9b7fd4; font-weight:700;">💡</span> ' + entry.text;
         const askerLabel = document.createElement('p');
         askerLabel.style.cssText = 'font-size:11px; color:#999; margin:-4px 0 8px;';
-        askerLabel.textContent = 'РћС‚: ' + (entry.askerName || 'РќРµРёР·РІРµСЃС‚РЅС‹Р№');
+        askerLabel.textContent = 'От: ' + (entry.askerName || 'Неизвестный');
         const textarea = document.createElement('textarea');
-        textarea.placeholder = 'Р’Р°С€ РѕС‚РІРµС‚/РєРѕРјРјРµРЅС‚Р°СЂРёР№...';
+        textarea.placeholder = 'Ваш ответ/комментарий...';
         const publishBtn = document.createElement('button');
         publishBtn.className = 'publish-btn';
-        publishBtn.textContent = 'РћРїСѓР±Р»РёРєРѕРІР°С‚СЊ';
+        publishBtn.textContent = 'Опубликовать';
         publishBtn.addEventListener('click', () => {
           const answer = textarea.value.trim();
           if (!answer) return;
@@ -193,7 +193,7 @@
         });
         const rejectBtn = document.createElement('button');
         rejectBtn.className = 'del-btn';
-        rejectBtn.textContent = 'рџ—‘ РЈРґР°Р»РёС‚СЊ Р±РµР· РїСѓР±Р»РёРєР°С†РёРё';
+        rejectBtn.textContent = '🗑 Удалить без публикации';
         rejectBtn.addEventListener('click', () => deleteEntry(key));
         box.appendChild(q);
         box.appendChild(askerLabel);

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="sync.js?v=21"></script>
-  <title>Р’РѕРїСЂРѕСЃ-РѕС‚РІРµС‚</title>
+  <title>Вопрос-ответ</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
     .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -32,19 +32,19 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="index.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>вќ“ Р’РѕРїСЂРѕСЃ-РѕС‚РІРµС‚ вќ“</h1>
-    <p class="intro">Р—Р°РґР°Р№С‚Рµ Р»СЋР±РѕР№ РІРѕРїСЂРѕСЃ вЂ” СЏ РѕС‚РІРµС‡Сѓ, Рё РѕРЅ РїРѕСЏРІРёС‚СЃСЏ Р·РґРµСЃСЊ РґР»СЏ РІСЃРµС… рџ’њ</p>
+    <a class="back" href="index.html">← Назад</a>
+    <h1>❓ Вопрос-ответ ❓</h1>
+    <p class="intro">Задайте любой вопрос — я отвечу, и он появится здесь для всех 💜</p>
 
-    <textarea id="question-input" placeholder="Р’Р°С€ РІРѕРїСЂРѕСЃ..."></textarea>
-    <button class="send-btn" id="send-btn">РћС‚РїСЂР°РІРёС‚СЊ РІРѕРїСЂРѕСЃ</button>
+    <textarea id="question-input" placeholder="Ваш вопрос..."></textarea>
+    <button class="send-btn" id="send-btn">Отправить вопрос</button>
     <div class="status-msg" id="status-msg"></div>
 
        <div id="admin-section"></div>
 
-        <p class="section-title">РћРїСѓР±Р»РёРєРѕРІР°РЅРЅС‹Рµ РІРѕРїСЂРѕСЃС‹</p>
-    <input type="text" id="search-input" placeholder="рџ”Ќ РџРѕРёСЃРє РїРѕ РІРѕРїСЂРѕСЃР°Рј..." style="width:100%; box-sizing:border-box; border:1px solid #e0e0e0; border-radius:10px; padding:8px 10px; font-size:13px; margin-bottom:10px;">
-    <div id="published-list"><p class="empty-note">Р—Р°РіСЂСѓР·РєР°...</p></div>
+        <p class="section-title">Опубликованные вопросы</p>
+    <input type="text" id="search-input" placeholder="🔍 Поиск по вопросам..." style="width:100%; box-sizing:border-box; border:1px solid #e0e0e0; border-radius:10px; padding:8px 10px; font-size:13px; margin-bottom:10px;">
+    <div id="published-list"><p class="empty-note">Загрузка...</p></div>
   </div>
 
   <script>
@@ -58,11 +58,11 @@
       if (!text) return;
       const btn = document.getElementById('send-btn');
       btn.disabled = true;
-              let askerName = 'РќРµРёР·РІРµСЃС‚РЅС‹Р№';
+              let askerName = 'Неизвестный';
       if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
         const u = window.Telegram.WebApp.initDataUnsafe.user;
         askerName = (u.first_name || '') + (u.last_name ? ' ' + u.last_name : '') + (u.username ? ' (@' + u.username + ')' : '');
-        if (!askerName.trim()) askerName = 'РќРµРёР·РІРµСЃС‚РЅС‹Р№';
+        if (!askerName.trim()) askerName = 'Неизвестный';
       }
 
       const getNickname = (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID)
@@ -78,11 +78,11 @@
         .then(res => res.json())
         .then(() => {
           input.value = '';
-          statusMsg.textContent = 'Р’РѕРїСЂРѕСЃ РѕС‚РїСЂР°РІР»РµРЅ! РћРЅ РїРѕСЏРІРёС‚СЃСЏ Р·РґРµСЃСЊ РїРѕСЃР»Рµ РѕС‚РІРµС‚Р°.';
+          statusMsg.textContent = 'Вопрос отправлен! Он появится здесь после ответа.';
           btn.disabled = false;
         })
                 .catch(() => {
-          statusMsg.textContent = 'РќРµ РїРѕР»СѓС‡РёР»РѕСЃСЊ РѕС‚РїСЂР°РІРёС‚СЊ, РїРѕРїСЂРѕР±СѓР№С‚Рµ РµС‰С‘ СЂР°Р·.';
+          statusMsg.textContent = 'Не получилось отправить, попробуйте ещё раз.';
           statusMsg.style.color = '#c25a5a';
           btn.disabled = false;
         });
@@ -90,7 +90,7 @@
     });
 
        function deleteEntry(key) {
-      if (!confirm('РЈРґР°Р»РёС‚СЊ СЌС‚РѕС‚ РІРѕРїСЂРѕСЃ РЅР°СЃРѕРІСЃРµРј?')) return;
+      if (!confirm('Удалить этот вопрос насовсем?')) return;
       fetch(`${FIREBASE_URL}/qa/${key}.json`, { method: 'DELETE' }).then(() => loadAll());
     }
 
@@ -116,7 +116,7 @@
         });
       }
       if (keys.length === 0) {
-        listEl.innerHTML = '<p class="empty-note">' + (searchTerm ? 'РќРёС‡РµРіРѕ РЅРµ РЅР°Р№РґРµРЅРѕ' : 'РџРѕРєР° РЅРµС‚ РѕРїСѓР±Р»РёРєРѕРІР°РЅРЅС‹С… РІРѕРїСЂРѕСЃРѕРІ') + '</p>';
+        listEl.innerHTML = '<p class="empty-note">' + (searchTerm ? 'Ничего не найдено' : 'Пока нет опубликованных вопросов') + '</p>';
         return;
       }
       keys.forEach((key) => {
@@ -135,7 +135,7 @@
         if (entry.askerNickname) {
           const nick = document.createElement('p');
           nick.style.cssText = 'font-size:11px; color:#9b7fd4; margin:6px 0 0; font-weight:600;';
-          nick.textContent = 'рџ’њ ' + entry.askerNickname;
+          nick.textContent = '💜 ' + entry.askerNickname;
           div.appendChild(nick);
         }
 
@@ -143,10 +143,10 @@
           const controls = document.createElement('div');
           controls.style.cssText = 'margin-top:8px; display:flex; gap:8px;';
           const editBtn = document.createElement('button');
-          editBtn.textContent = 'вњЏпёЏ РР·РјРµРЅРёС‚СЊ РѕС‚РІРµС‚';
+          editBtn.textContent = '✏️ Изменить ответ';
           editBtn.style.cssText = 'font-size:12px; background:#eee; border:none; border-radius:6px; padding:6px 10px; cursor:pointer;';
           editBtn.addEventListener('click', () => {
-            const newAnswer = prompt('РР·РјРµРЅРёС‚СЊ РѕС‚РІРµС‚:', entry.answer);
+            const newAnswer = prompt('Изменить ответ:', entry.answer);
             if (newAnswer === null || !newAnswer.trim()) return;
             fetch(`${FIREBASE_URL}/qa/${key}.json`, {
               method: 'PATCH',
@@ -154,7 +154,7 @@
             }).then(() => loadAll());
           });
           const delBtn = document.createElement('button');
-          delBtn.textContent = 'рџ—‘ РЈРґР°Р»РёС‚СЊ';
+          delBtn.textContent = '🗑 Удалить';
           delBtn.style.cssText = 'font-size:12px; background:#fbe4e4; border:none; border-radius:6px; padding:6px 10px; cursor:pointer; color:#c25a5a;';
           delBtn.addEventListener('click', () => deleteEntry(key));
           controls.appendChild(editBtn);
@@ -171,10 +171,10 @@
       if (!isAdmin) { adminEl.innerHTML = ''; return; }
       const pendingKeys = keys.filter(k => data[k].status === 'pending');
       if (pendingKeys.length === 0) {
-        adminEl.innerHTML = '<p class="section-title">Р’РѕРїСЂРѕСЃС‹ РЅР° РјРѕРґРµСЂР°С†РёРё</p><p class="empty-note">РќРѕРІС‹С… РІРѕРїСЂРѕСЃРѕРІ РїРѕРєР° РЅРµС‚</p>';
+        adminEl.innerHTML = '<p class="section-title">Вопросы на модерации</p><p class="empty-note">Новых вопросов пока нет</p>';
         return;
       }
-      let html = '<p class="section-title">Р’РѕРїСЂРѕСЃС‹ РЅР° РјРѕРґРµСЂР°С†РёРё (' + pendingKeys.length + ')</p>';
+      let html = '<p class="section-title">Вопросы на модерации (' + pendingKeys.length + ')</p>';
       adminEl.innerHTML = html;
       pendingKeys.forEach((key) => {
         const entry = data[key];
@@ -185,12 +185,12 @@
         q.innerHTML = '<span style="color:#9b7fd4; font-weight:700;">?</span> ' + entry.question;
         const askerLabel = document.createElement('p');
         askerLabel.style.cssText = 'font-size:11px; color:#999; margin:-4px 0 8px;';
-        askerLabel.textContent = 'РћС‚: ' + (entry.askerName || 'РќРµРёР·РІРµСЃС‚РЅС‹Р№');
+        askerLabel.textContent = 'От: ' + (entry.askerName || 'Неизвестный');
         const textarea = document.createElement('textarea');
-        textarea.placeholder = 'Р’Р°С€ РѕС‚РІРµС‚...';
+        textarea.placeholder = 'Ваш ответ...';
         const publishBtn = document.createElement('button');
         publishBtn.className = 'publish-btn';
-        publishBtn.textContent = 'РћРїСѓР±Р»РёРєРѕРІР°С‚СЊ';
+        publishBtn.textContent = 'Опубликовать';
                publishBtn.addEventListener('click', () => {
           const answer = textarea.value.trim();
           if (!answer) return;
@@ -203,7 +203,7 @@
             .catch(() => { publishBtn.disabled = false; });
         });
         const rejectBtn = document.createElement('button');
-        rejectBtn.textContent = 'рџ—‘ РЈРґР°Р»РёС‚СЊ Р±РµР· РїСѓР±Р»РёРєР°С†РёРё';
+        rejectBtn.textContent = '🗑 Удалить без публикации';
         rejectBtn.style.cssText = 'margin-top:8px; margin-left:8px; background:#fbe4e4; color:#c25a5a; border:none; border-radius:8px; padding:8px 14px; font-size:13px; cursor:pointer;';
         rejectBtn.addEventListener('click', () => deleteEntry(key));
                 box.appendChild(q);

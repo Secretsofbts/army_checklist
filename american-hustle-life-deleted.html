@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="sync.js?v=21"></script>
-  <title>American Hustle Life: Р’С‹СЂРµР·Р°РЅРЅС‹Рµ СЃС†РµРЅС‹</title>
+  <title>American Hustle Life: Вырезанные сцены</title>
   <style>
     body {
       background: #f2f0f7;
@@ -58,43 +58,43 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="american-hustle-life.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџ‡єрџ‡ё American Hustle Life: Р’С‹СЂРµР·Р°РЅРЅС‹Рµ СЃС†РµРЅС‹ рџ‡єрџ‡ё</h1>
+    <a class="back" href="american-hustle-life.html">← Назад</a>
+    <h1>🇺🇸 American Hustle Life: Вырезанные сцены 🇺🇸</h1>
     <div id="list"></div>
-    <a class="footer-link" href="american-hustle-life.html">American Hustle Life в¬…пёЏ</a>
+    <a class="footer-link" href="american-hustle-life.html">American Hustle Life ⬅️</a>
   </div>
 
   <script>
     const items = [
-      { text: "Р Р°РґРѕСЃС‚РЅС‹Рµ РїР°СЂРЅРё РІ СЃР°РјРѕР»РµС‚Рµ, РєРѕС‚РѕСЂС‹Р№ Р»РµС‚РёС‚ РІ РђРјРµСЂРёРєСѓ", link: "https://t.me/violent_arhive/1423" },
-      { text: "Bangtan Boys РёРіСЂР°СЋС‚ РІ СЃР°РјРѕР»РµС‚Рµ", link: "https://t.me/violent_arhive/1424" },
-      { text: "РќРµСЂРµР»РµРІР°РЅС‚РЅС‹Рµ С‡Р°СЂС‹ V", link: "https://t.me/violent_arhive/1425" },
-      { text: "V СЃ СѓСЂРѕРєРѕРј Рѕ С€С‚СЂР°С„Р°С…", link: "https://t.me/violent_arhive/1426" },
-      { text: "Р—Р°РєРѕРЅС‹ С‚РѕСЂРіР° РІ РђРјРµСЂРёРєРµ", link: "https://t.me/violent_arhive/1427" },
-      { text: "Р§РёРјРёРЅ Р±С‹СЃС‚СЂРѕ РїСЂРµРІСЂР°С‚РёР»СЃСЏ РІ РјР°РґР°Рј РІ РђРјРµСЂРёРєРµ", link: "https://t.me/violent_arhive/1428" },
-      { text: "Р’РµСЃРµР»С‹Р№ РІ РґРѕСЂРѕРіРµ РїРѕСЃР»Рµ РїРѕРєСѓРїРѕРє", link: "https://t.me/violent_arhive/1430" },
-      { text: "V, РРЅС‚РµСЂРІСЊСЋ РїРѕ Р°РЅРіР»РёР№СЃРєРѕРјСѓ РЅР° РјРµСЃС‚Рµ!", link: "https://t.me/violent_arhive/1431" },
-      { text: "Р§РёРјРёРЅ, \"РўРµР±Рµ РЅСЂР°РІРёС‚СЃСЏ Р№РѕРіСѓСЂС‚?\"", link: "https://t.me/violent_arhive/1432" },
-      { text: "V, Suga, Jungkook Р°РєСЂРѕР±Р°С‚С‹ РЅР° СЃРєРµР№С‚Р±РѕСЂРґРµ?!", link: "https://t.me/violent_arhive/1433" },
-      { text: "РЁСѓРіР°, Р’Рё, Р§РѕРЅРіСѓРє! Р”СЂСѓРіРѕР№ РјРѕР¶РµС‚ РІРёРґРµС‚СЊ С„РµР№РµСЂРІРµСЂРє РїРѕ-РґСЂСѓРіРѕРјСѓ?", link: "https://t.me/violent_arhive/1434" },
-      { text: "Р”Р¶РµР№-РҐРѕСѓРї, Р”Р¶РёРЅ Рё Р·РІРµР·РґР° Youtube С‚Р°РЅС†СѓСЋС‚ РІРјРµСЃС‚Рµ!", link: "https://t.me/violent_arhive/1447" },
-      { text: "РџРѕС‡С‚Рё РїСЂРѕСЃРЅСѓРІС€РёР№СЃСЏ V. РљР°Рє РїСЊСЏРЅС‹Р№?!", link: "https://t.me/violent_arhive/1448" },
-      { text: "Suga, V, JungKook РїСЂРµРєСЂР°СЃРЅС‹Р№ РЅРѕРјРµСЂ?!", link: "https://t.me/violent_arhive/1449" },
-      { text: "РњС‹ Р·РЅР°РµРј, С‡РµРј Р Рњ Рё Р§РёРјРёРЅРё Р·Р°РЅРёРјР°СЋС‚СЃСЏ РїСЂСЏРјРѕ СЃРµР№С‡Р°СЃ. РџСЂРµРєСЂР°СЃРЅРѕРµ РїСЂРµРґСЃРєР°Р·Р°РЅРёРµ!", link: "https://t.me/violent_arhive/1451" },
-      { text: "Р’Рё, Р§РѕРЅРіСѓРє Рё Р·Р°РіРѕРІРѕСЂ СЃ РјРѕСЂРѕР¶РµРЅС‹Рј?", link: "https://t.me/violent_arhive/1452" },
-      { text: "Р§РѕРЅРіСѓРє: РЇ РґРµР№СЃС‚РІРёС‚РµР»СЊРЅРѕ С…РѕС‡Сѓ РїРѕРІР·СЂРѕСЃР»РµС‚СЊ. Р’СЂРµРјСЏ Р¶Р°Р»РѕРІР°С‚СЊСЃСЏ!", link: "https://t.me/violent_arhive/1453" },
-      { text: "V, Р§РёРјРёРЅ Рё Р”Р¶РµР№-РҐРѕСѓРї!", link: "https://t.me/violent_arhive/1454" },
-      { text: "РРЅС‚РµСЂРІСЊСЋ BTS Р·Р° РєСѓР»РёСЃР°РјРё!", link: "https://t.me/violent_arhive/1457" },
-      { text: "РќРµРѕР¶РёРґР°РЅРЅРѕ СЃ СЃР°РјРѕРіРѕ РЅР°С‡Р°Р»Р° РјР°Р»СЊС‡РёРєРё РІРѕСЃС…РёС‰Р°СЋС‚СЃСЏ MNET!", link: "https://t.me/violent_arhive/1458" },
-      { text: "V РІС‹Р±РёСЂР°РµС‚ РѕРїР°СЃРЅСѓСЋ Р»СЋР±РѕРІСЊ. Р§РѕРЅРіСѓРє - С‡РёСЃС‚СѓСЋ.", link: "https://t.me/violent_arhive/1461" },
-      { text: "Р’РЅРµС€РЅРёР№ РІРёРґ СѓС‡Р°СЃС‚РЅРёРєРѕРІ РЅР° СЃС†РµРЅРµ РєР»РёРїР° Boy In Luv America Version", link: "https://t.me/violent_arhive/1462" },
-      { text: "Р§РѕРЅРіСѓРєРё РµСЃС‚ РІРёРЅРѕРіСЂР°Рґ!", link: "https://t.me/violent_arhive/1463" },
-      { text: "Р—РѕР»РѕС‚РѕР№ РјР°РєРЅСЌ РёР· BTS! РЎ Р”РЅРµРј СЂРѕР¶РґРµРЅРёСЏ, Р§РѕРЅРіСѓРєРєРё", link: "https://t.me/violent_arhive/1464" },
-      { text: "РћР±СЉСЏРІР»РµРЅРёРµ MVP РёС… Р±Р°СЃРєРµС‚Р±РѕР»СЊРЅРѕРіРѕ РјР°С‚С‡Р°!", link: "https://t.me/violent_arhive/1465" },
-      { text: "Р’С‹РїСѓСЃРє СЃРµР»С„Рё-РєР°РјРµСЂС‹ Р”Р¶РёРЅР°!!", link: "https://t.me/violent_arhive/1466" },
-      { text: "Р§С‚Рѕ РїСЂРѕРёР·РѕС€Р»Рѕ РІРѕ РІСЂРµРјСЏ РёРЅС‚РµСЂРІСЊСЋ Bangtan Boys; РїСЂРµРґС‹СЃС‚РѕСЂРёСЏ СЂР°СЃРєСЂС‹С‚Р°!", link: "https://t.me/violent_arhive/1467" },
-      { text: "Р§РёРјРёРЅ: \"РЇ Р·РІРµР·РґР° РЅРѕРІРѕРіРѕ РїРѕРєРѕР»РµРЅРёСЏ! РљРѕС„Рµ Рё РїРѕРЅС‡РёРє!\"", link: "https://t.me/violent_arhive/1468" },
-      { text: "Р—Р° РґРµРЅСЊ РґРѕ РєРѕРЅС†РµСЂС‚Р° Р§РёРјРёРЅ РІС‹СЂР°Р¶Р°РµС‚ СЃРІРѕРµ Р±РµСЃРїРѕРєРѕР№СЃС‚РІРѕ Рё С‚СЂРµРїРµС‰СѓС‰РµРµ СЃРµСЂРґС†Рµ С‚РµР»РѕРј!", link: "https://t.me/violent_arhive/1469" }
+      { text: "Радостные парни в самолете, который летит в Америку", link: "https://t.me/violent_arhive/1423" },
+      { text: "Bangtan Boys играют в самолете", link: "https://t.me/violent_arhive/1424" },
+      { text: "Нерелевантные чары V", link: "https://t.me/violent_arhive/1425" },
+      { text: "V с уроком о штрафах", link: "https://t.me/violent_arhive/1426" },
+      { text: "Законы торга в Америке", link: "https://t.me/violent_arhive/1427" },
+      { text: "Чимин быстро превратился в мадам в Америке", link: "https://t.me/violent_arhive/1428" },
+      { text: "Веселый в дороге после покупок", link: "https://t.me/violent_arhive/1430" },
+      { text: "V, Интервью по английскому на месте!", link: "https://t.me/violent_arhive/1431" },
+      { text: "Чимин, \"Тебе нравится йогурт?\"", link: "https://t.me/violent_arhive/1432" },
+      { text: "V, Suga, Jungkook акробаты на скейтборде?!", link: "https://t.me/violent_arhive/1433" },
+      { text: "Шуга, Ви, Чонгук! Другой может видеть фейерверк по-другому?", link: "https://t.me/violent_arhive/1434" },
+      { text: "Джей-Хоуп, Джин и звезда Youtube танцуют вместе!", link: "https://t.me/violent_arhive/1447" },
+      { text: "Почти проснувшийся V. Как пьяный?!", link: "https://t.me/violent_arhive/1448" },
+      { text: "Suga, V, JungKook прекрасный номер?!", link: "https://t.me/violent_arhive/1449" },
+      { text: "Мы знаем, чем РМ и Чимини занимаются прямо сейчас. Прекрасное предсказание!", link: "https://t.me/violent_arhive/1451" },
+      { text: "Ви, Чонгук и заговор с мороженым?", link: "https://t.me/violent_arhive/1452" },
+      { text: "Чонгук: Я действительно хочу повзрослеть. Время жаловаться!", link: "https://t.me/violent_arhive/1453" },
+      { text: "V, Чимин и Джей-Хоуп!", link: "https://t.me/violent_arhive/1454" },
+      { text: "Интервью BTS за кулисами!", link: "https://t.me/violent_arhive/1457" },
+      { text: "Неожиданно с самого начала мальчики восхищаются MNET!", link: "https://t.me/violent_arhive/1458" },
+      { text: "V выбирает опасную любовь. Чонгук - чистую.", link: "https://t.me/violent_arhive/1461" },
+      { text: "Внешний вид участников на сцене клипа Boy In Luv America Version", link: "https://t.me/violent_arhive/1462" },
+      { text: "Чонгуки ест виноград!", link: "https://t.me/violent_arhive/1463" },
+      { text: "Золотой макнэ из BTS! С Днем рождения, Чонгукки", link: "https://t.me/violent_arhive/1464" },
+      { text: "Объявление MVP их баскетбольного матча!", link: "https://t.me/violent_arhive/1465" },
+      { text: "Выпуск селфи-камеры Джина!!", link: "https://t.me/violent_arhive/1466" },
+      { text: "Что произошло во время интервью Bangtan Boys; предыстория раскрыта!", link: "https://t.me/violent_arhive/1467" },
+      { text: "Чимин: \"Я звезда нового поколения! Кофе и пончик!\"", link: "https://t.me/violent_arhive/1468" },
+      { text: "За день до концерта Чимин выражает свое беспокойство и трепещущее сердце телом!", link: "https://t.me/violent_arhive/1469" }
     ];
 
     const listEl = document.getElementById('list');
@@ -129,7 +129,7 @@
       link.className = 'link';
       link.href = item.link;
       link.target = '_blank';
-      link.textContent = 'рџ”—';
+      link.textContent = '🔗';
 
       row.appendChild(box);
       row.appendChild(span);

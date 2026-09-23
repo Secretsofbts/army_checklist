@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
    <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="sync.js?v=21"></script>
-  <title>РљР»РёРїС‹ BTS 2024-2025</title>
+  <title>Клипы BTS 2024-2025</title>
   <style>
     body {
       background: #f2f0f7;
@@ -89,31 +89,31 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="all-clips.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџ“№ РљР»РёРїС‹: 2024 вЂ“ 2025 рџ“№</h1>
+    <a class="back" href="all-clips.html">← Назад</a>
+    <h1>📹 Клипы: 2024 – 2025 📹</h1>
         <div id="list"></div>
-    <a class="footer-link" href="all-clips.html">Р’СЃРµ РєР»РёРїС‹ BTS в¬…пёЏ</a>
+    <a class="footer-link" href="all-clips.html">Все клипы BTS ⬅️</a>
   </div>
 
   <script>
         const data = [
       { year: "2024", groups: [
-        { album: "РђР»СЊР±РѕРј РҐРѕСЃРѕРєР°:", hearts: "рџ¤Ќ", items: [
+        { album: "Альбом Хосока:", hearts: "🤍", items: [
           { text: "NEURON", link: "https://t.me/violent_arhive/4568" }
         ]},
-        { album: "РђР»СЊР±РѕРј РќР°РјРґР¶СѓРЅР°:", hearts: "рџ’™", items: [
+        { album: "Альбом Намджуна:", hearts: "💙", items: [
           { text: "Come back to me", link: "https://t.me/violent_arhive/4564" },
           { text: "LOST!", link: "https://t.me/violent_arhive/5074" },
           { text: "Groin", link: "https://t.me/violent_arhive/5072" },
           { text: "Domodachi", sub: "feat. Little Simz", link: "https://t.me/violent_arhive/5069" },
-          { text: "г… г… ", sub: "Credit Roll", link: "https://t.me/violent_arhive/5067" },
+          { text: "ㅠㅠ", sub: "Credit Roll", link: "https://t.me/violent_arhive/5067" },
           { text: "Around the world in a day", link: "https://t.me/violent_arhive/4934" }
         ]},
-        { album: "РђР»СЊР±РѕРј Р§РёРјРёРЅР°:", hearts: "рџ’›", items: [
+        { album: "Альбом Чимина:", hearts: "💛", items: [
           { text: "Smeraldo Garden Marching Band", link: "https://t.me/violent_arhive/4636" },
           { text: "Who", link: "https://t.me/violent_arhive/4912" }
         ]},
-        { album: "РђР»СЊР±РѕРј Р”Р¶РёРЅР°:", hearts: "рџ’•", items: [
+        { album: "Альбом Джина:", hearts: "💕", items: [
           { text: "I'll Be There", link: "https://t.me/violent_arhive/4858" },
           { text: "Running Wild", link: "https://t.me/violent_arhive/4910" }
         ]}
@@ -124,7 +124,7 @@
     data.forEach((block) => {
       const yearTitle = document.createElement('div');
       yearTitle.className = 'year';
-      yearTitle.textContent = block.year + ' РіРѕРґ';
+      yearTitle.textContent = block.year + ' год';
       listEl.appendChild(yearTitle);
 
            block.groups.forEach((group) => {
@@ -172,7 +172,7 @@
           link.className = 'link';
           link.href = item.link;
           link.target = '_blank';
-          link.textContent = 'рџ”—';
+          link.textContent = '🔗';
 
           row.appendChild(box);
           row.appendChild(span);

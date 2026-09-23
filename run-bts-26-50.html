@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -58,39 +58,39 @@
 </head>
 <body>
   <div class="app">
-        <a class="back" href="run-btss.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџЏѓ 26-50 СЌРїРёР·РѕРґ рџЏѓ</h1>
+        <a class="back" href="run-btss.html">← Назад</a>
+    <h1>🏃 26-50 эпизод 🏃</h1>
     <div id="list"></div>
-    <a class="footer-link" href="run-btss.html">Р’СЃРµ СЃРµСЂРёРё RUN BTS в¬…пёЏ</a>
+    <a class="footer-link" href="run-btss.html">Все серии RUN BTS ⬅️</a>
   </div>
 
   <script>
         const items = [
-      { text: "26 СЌРїРёР·РѕРґ", sub: "\"РЎРµРєСЂРµС‚РЅС‹Р№ Р°РіРµРЅС‚\"", link: "https://t.me/violent_arhive/176" },
-      { text: "27 СЌРїРёР·РѕРґ", sub: "\"РќР°С€ 1 РјРѕР·РіРѕРІРѕР№ С‚СЂРµРЅРёРЅРі\" 1С‡", link: "https://t.me/violent_arhive/207" },
-      { text: "28 СЌРїРёР·РѕРґ", sub: "\"РќР°С€ 1 РјРѕР·РіРѕРІРѕР№ С‚СЂРµРЅРёРЅРі\" 2С‡", link: "https://t.me/violent_arhive/210" },
-      { text: "29 СЌРїРёР·РѕРґ", sub: "\"РџРѕРєР°Р· РјРѕРґ\"", link: "https://t.me/violent_arhive/252" },
-      { text: "30 СЌРїРёР·РѕРґ", sub: "\"РЎС‚Р°СЂС‹Рµ-РЅРѕРІС‹Рµ С€РѕСѓ\" 1С‡", link: "https://t.me/violent_arhive/375" },
-      { text: "31 СЌРїРёР·РѕРґ", sub: "\"РЎС‚Р°СЂС‹Рµ-РЅРѕРІС‹Рµ С€РѕСѓ\" 2С‡", link: "https://t.me/violent_arhive/377" },
-      { text: "32 СЌРїРёР·РѕРґ", sub: "\"РџРѕР¶Р°Р»СѓР№СЃС‚Р°, РїРѕР·Р°Р±РѕС‚СЊС‚РµСЃСЊ Рѕ РЎР°РЅС‚Рµ\"", link: "https://t.me/violent_arhive/379" },
-      { text: "33 СЌРїРёР·РѕРґ", sub: "\"РњР°РЅРёС‚Рѕ Рё РёРіСЂС‹\" 1С‡", link: "https://t.me/violent_arhive/257" },
-      { text: "34 СЌРїРёР·РѕРґ", sub: "\"РњР°РЅРёС‚Рѕ Рё РёРіСЂС‹\" 2С‡", link: "https://t.me/violent_arhive/381" },
-      { text: "35 СЌРїРёР·РѕРґ", sub: "\"РљРёРјС‡Рё-Р±Р°С‚Р»\" 1С‡", link: "https://t.me/violent_arhive/383" },
-      { text: "36 СЌРїРёР·РѕРґ", sub: "\"РљРёРјС‡Рё-Р±Р°С‚Р»\" 2С‡", link: "https://t.me/violent_arhive/385" },
-      { text: "37 СЌРїРёР·РѕРґ", sub: "\"Marble РІРµСЂРЅСѓР»СЃСЏ!\"", link: "https://t.me/violent_arhive/386" },
-      { text: "38 СЌРїРёР·РѕРґ", sub: "\"Р’СЂР°С‰Р°Р№С‚Рµ, BTS!\"", link: "https://t.me/violent_arhive/387" },
-      { text: "39 СЌРїРёР·РѕРґ", sub: "\"Р—РѕР»РѕС‚РѕР№ РєРѕР»РѕРєРѕР»СЊС‡РёРє\" 1С‡", link: "https://t.me/violent_arhive/388" },
-      { text: "40 СЌРїРёР·РѕРґ", sub: "\"Р›СѓРЅРЅС‹Р№ РЅРѕРІС‹Р№ РіРѕРґ!\"", link: "https://t.me/violent_arhive/390" },
-      { text: "41 СЌРїРёР·РѕРґ", sub: "\"Р—РѕР»РѕС‚РѕР№ РєРѕР»РѕРєРѕР»СЊС‡РёРє\" 2С‡", link: "https://t.me/violent_arhive/392" },
-      { text: "42 СЌРїРёР·РѕРґ", sub: "\"РЎРїРѕСЂС‚РёРІРЅРѕРµ СЃРѕСЃС‚СЏР·Р°РЅРёРµ\"", link: "https://t.me/violent_arhive/394" },
-      { text: "43 СЌРїРёР·РѕРґ", sub: "\"5 С‡СѓРІСЃС‚РІ\" 1С‡", link: "https://t.me/violent_arhive/395" },
-      { text: "44 СЌРїРёР·РѕРґ", sub: "\"5 С‡СѓРІСЃС‚РІ\" 2С‡", link: "https://t.me/violent_arhive/397" },
-      { text: "45 СЌРїРёР·РѕРґ", sub: "\"РљР°С„Рµ СЃ BTS\"", link: "https://t.me/violent_arhive/399" },
-      { text: "46 СЌРїРёР·РѕРґ", sub: "\"РњР°СЃС‚РµСЂСЃРєР°СЏ BTS\"", link: "https://t.me/violent_arhive/401" },
-      { text: "47 СЌРїРёР·РѕРґ", sub: "\"Р—Р°С‰РёС‚Р° РґРµСЂРµРІРЅРё BTS\" 1С‡", link: "https://t.me/violent_arhive/403" },
-      { text: "48 СЌРїРёР·РѕРґ", sub: "\"Р—Р°С‰РёС‚Р° РґРµСЂРµРІРЅРё BTS\" 2С‡", link: "https://t.me/violent_arhive/405" },
-      { text: "49 СЌРїРёР·РѕРґ", sub: "\"РњРµСЂРѕРїСЂРёСЏС‚РёРµ РЅР°РєР°РЅСѓРЅРµ 50-РіРѕ СЌРїРёР·РѕРґР°\" 1С‡", link: "https://t.me/violent_arhive/407" },
-      { text: "50 СЌРїРёР·РѕРґ", sub: "\"РњРµСЂРѕРїСЂРёСЏС‚РёРµ РЅР°РєР°РЅСѓРЅРµ 50-РіРѕ СЌРїРёР·РѕРґР°\" 2С‡", link: "https://t.me/violent_arhive/409" }
+      { text: "26 эпизод", sub: "\"Секретный агент\"", link: "https://t.me/violent_arhive/176" },
+      { text: "27 эпизод", sub: "\"Наш 1 мозговой тренинг\" 1ч", link: "https://t.me/violent_arhive/207" },
+      { text: "28 эпизод", sub: "\"Наш 1 мозговой тренинг\" 2ч", link: "https://t.me/violent_arhive/210" },
+      { text: "29 эпизод", sub: "\"Показ мод\"", link: "https://t.me/violent_arhive/252" },
+      { text: "30 эпизод", sub: "\"Старые-новые шоу\" 1ч", link: "https://t.me/violent_arhive/375" },
+      { text: "31 эпизод", sub: "\"Старые-новые шоу\" 2ч", link: "https://t.me/violent_arhive/377" },
+      { text: "32 эпизод", sub: "\"Пожалуйста, позаботьтесь о Санте\"", link: "https://t.me/violent_arhive/379" },
+      { text: "33 эпизод", sub: "\"Манито и игры\" 1ч", link: "https://t.me/violent_arhive/257" },
+      { text: "34 эпизод", sub: "\"Манито и игры\" 2ч", link: "https://t.me/violent_arhive/381" },
+      { text: "35 эпизод", sub: "\"Кимчи-батл\" 1ч", link: "https://t.me/violent_arhive/383" },
+      { text: "36 эпизод", sub: "\"Кимчи-батл\" 2ч", link: "https://t.me/violent_arhive/385" },
+      { text: "37 эпизод", sub: "\"Marble вернулся!\"", link: "https://t.me/violent_arhive/386" },
+      { text: "38 эпизод", sub: "\"Вращайте, BTS!\"", link: "https://t.me/violent_arhive/387" },
+      { text: "39 эпизод", sub: "\"Золотой колокольчик\" 1ч", link: "https://t.me/violent_arhive/388" },
+      { text: "40 эпизод", sub: "\"Лунный новый год!\"", link: "https://t.me/violent_arhive/390" },
+      { text: "41 эпизод", sub: "\"Золотой колокольчик\" 2ч", link: "https://t.me/violent_arhive/392" },
+      { text: "42 эпизод", sub: "\"Спортивное состязание\"", link: "https://t.me/violent_arhive/394" },
+      { text: "43 эпизод", sub: "\"5 чувств\" 1ч", link: "https://t.me/violent_arhive/395" },
+      { text: "44 эпизод", sub: "\"5 чувств\" 2ч", link: "https://t.me/violent_arhive/397" },
+      { text: "45 эпизод", sub: "\"Кафе с BTS\"", link: "https://t.me/violent_arhive/399" },
+      { text: "46 эпизод", sub: "\"Мастерская BTS\"", link: "https://t.me/violent_arhive/401" },
+      { text: "47 эпизод", sub: "\"Защита деревни BTS\" 1ч", link: "https://t.me/violent_arhive/403" },
+      { text: "48 эпизод", sub: "\"Защита деревни BTS\" 2ч", link: "https://t.me/violent_arhive/405" },
+      { text: "49 эпизод", sub: "\"Мероприятие накануне 50-го эпизода\" 1ч", link: "https://t.me/violent_arhive/407" },
+      { text: "50 эпизод", sub: "\"Мероприятие накануне 50-го эпизода\" 2ч", link: "https://t.me/violent_arhive/409" }
     ];
 
     const listEl = document.getElementById('list');
@@ -131,7 +131,7 @@
       link.className = 'link';
       link.href = item.link;
       link.target = '_blank';
-      link.textContent = 'рџ”—';
+      link.textContent = '🔗';
 
       row.appendChild(box);
       row.appendChild(span);

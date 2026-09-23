@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -62,21 +62,21 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="concerts-2014-2019.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџЋ¤ 2018 BTS World Tour Love Yourself In Seoul рџЋ¤</h1>
-    <p class="intro">Р“РѕРґ РІС‹РїСѓСЃРєР°: 2018<br>РўСѓСЂ BTS "Love Yourself" РїСЂРѕРґРѕР»Р¶Р°РµС‚ С‚РІРѕСЂРёС‚СЊ РёСЃС‚РѕСЂРёСЋ, СЂР°СЃРїСЂРѕРґР°РІР°СЏ Р°СЂРµРЅС‹ РїРѕ РІСЃРµРјСѓ РјРёСЂСѓ. РћС‚РєСЂРѕР№С‚Рµ РґР»СЏ СЃРµР±СЏ СЃРЅРѕРіСЃС€РёР±Р°С‚РµР»СЊРЅРѕРµ Рё РѕС€РµР»РѕРјРёС‚РµР»СЊРЅРѕРµ РІС‹СЃС‚СѓРїР»РµРЅРёРµ BTS РЅР° РєРѕРЅС†РµСЂС‚Рµ РІ РЎРµСѓР»Рµ!</p>
-    <p class="note">РџРµСЂРµРІРѕРґС‡РёРє РїРѕСЃРѕРІРµС‚РѕРІР°Р»Р° СЃРјРѕС‚СЂРµС‚СЊ РІ С‚Р°РєРѕРј РїРѕСЂСЏРґРєРµ: РїРѕРґРіРѕС‚РѕРІРєР° Рє РєРѕРЅС†РµСЂС‚Сѓ - СЃР°Рј РєРѕРЅС†РµСЂС‚ - РєРѕРјРјРµРЅС‚Р°СЂРёРё</p>
+    <a class="back" href="concerts-2014-2019.html">← Назад</a>
+    <h1>🎤 2018 BTS World Tour Love Yourself In Seoul 🎤</h1>
+    <p class="intro">Год выпуска: 2018<br>Тур BTS "Love Yourself" продолжает творить историю, распродавая арены по всему миру. Откройте для себя сногсшибательное и ошеломительное выступление BTS на концерте в Сеуле!</p>
+    <p class="note">Переводчик посоветовала смотреть в таком порядке: подготовка к концерту - сам концерт - комментарии</p>
     <div id="list"></div>
-    <a class="footer-link" href="concerts-2014-2019.html">Р’СЃРµ РєРѕРЅС†РµСЂС‚С‹ 2014-2019 в¬…пёЏ</a>
+    <a class="footer-link" href="concerts-2014-2019.html">Все концерты 2014-2019 ⬅️</a>
   </div>
 
   <script>
     const items = [
-      { text: "РљРѕРЅС†РµСЂС‚", links: [
+      { text: "Концерт", links: [
         { label: "720, rus.sub", link: "https://t.me/violent_arhive/2668" },
         { label: "1080, eng.sub", link: "https://t.me/violent_arhive/2664" }
       ]},
-      { text: "Concert Commentary - СЂРµР±СЏС‚Р° СЃР°РјРё СЃРјРѕС‚СЂСЏС‚ РєРѕРЅС†РµСЂС‚", link: "https://t.me/violent_arhive/2671" },
+      { text: "Concert Commentary - ребята сами смотрят концерт", link: "https://t.me/violent_arhive/2671" },
       { text: "MD & Poster Making Film", link: "https://t.me/violent_arhive/2672" },
       { text: "VCR Making Film", link: "https://t.me/violent_arhive/2673" },
       { text: "Pre-Production Making Film", link: "https://t.me/violent_arhive/2674" },
@@ -124,7 +124,7 @@
           link.className = 'link';
           link.href = l.link;
           link.target = '_blank';
-          link.textContent = 'рџ”—';
+          link.textContent = '🔗';
           row.appendChild(label);
           row.appendChild(link);
         });
@@ -133,7 +133,7 @@
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
-        link.textContent = 'рџ”—';
+        link.textContent = '🔗';
         row.appendChild(link);
       }
 

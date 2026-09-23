@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -37,12 +37,12 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="index.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџЋ‰ BTS FESTA рџЋ‰</h1>
-    <p class="intro">РўСѓСЃРѕРІРєР° РІ С‡РµСЃС‚СЊ РґРµР±СЋС‚Р° РіСЂСѓРїРїС‹, РєРѕС‚РѕСЂР°СЏ РґР»РёС‚СЃСЏ РїРѕС‡С‚Рё 2 РЅРµРґРµР»Рё РІ РЅР°С‡Р°Р»Рµ РёСЋРЅСЏ РєР°Р¶РґРѕРіРѕ РіРѕРґР°. РњС‹ Р±СѓРєРІР°Р»СЊРЅРѕ РјРѕР¶РµРј РїРѕСЃРјРѕС‚СЂРµС‚СЊ, РєР°Рє РЅР° РЅР°С€РёС… РіР»Р°Р·Р°С… РІС‹СЂРѕСЃР»Рё СЂРµР±СЏС‚Р° РёР· РіСЂСѓРїРїС‹ BTS</p>
-    <p class="intro">Р’ 2014-2018 Р±С‹Р»Рё РµС‰С‘ РїСЂРѕС„Р°Р№Р»С‹, РЅРѕ РёС… РЅРµ РїРµСЂРµРІРµР»Рё, РїРѕСЌС‚РѕРјСѓ СЏ РёС… РЅРµ РґРѕР±Р°РІРёР»Р°. РљСЂРѕРјРµ РЅРёС… РІРµСЃСЊ РєРѕРЅС‚РµРЅС‚ С„РµСЃС‚С‹ С‚СѓС‚</p>
+    <a class="back" href="index.html">← Назад</a>
+    <h1>🎉 BTS FESTA 🎉</h1>
+    <p class="intro">Тусовка в честь дебюта группы, которая длится почти 2 недели в начале июня каждого года. Мы буквально можем посмотреть, как на наших глазах выросли ребята из группы BTS</p>
+    <p class="intro">В 2014-2018 были ещё профайлы, но их не перевели, поэтому я их не добавила. Кроме них весь контент фесты тут</p>
     <div id="list"></div>
-    <a class="footer-link" href="index.html">РќР° РіР»Р°РІРЅСѓСЋ в¬…пёЏ</a>
+    <a class="footer-link" href="index.html">На главную ⬅️</a>
   </div>
 
   <script>
@@ -97,7 +97,7 @@
       var el = document.getElementById('badge-' + key);
       if (!el || !data || data.total === 0) { if (el) el.textContent = ''; return; }
       if (data.checked === data.total) {
-        el.textContent = 'вњ…';
+        el.textContent = '✅';
         el.style.color = '#2e9e5b';
         var checkbox = document.getElementById('checkbox-' + key);
         if (checkbox) {

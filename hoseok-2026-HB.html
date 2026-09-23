@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="sync.js?v=21"></script>
-  <title>РҐРѕСЃРѕРє 2026</title>
+  <title>Хосок 2026</title>
   <style>
     body {
       background: #f2f0f7;
@@ -64,19 +64,19 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="hoseok.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>РҐРѕСЃРѕРє: 2026 вЂ“ РќР’ рџ¤Ќ</h1>
+    <a class="back" href="hoseok.html">← Назад</a>
+    <h1>Хосок: 2026 – НВ 🤍</h1>
     <div id="list"></div>
-    <a class="footer-link" href="hoseok.html".html">Р’СЃРµ СЌС„РёСЂС‹ РҐРѕСЃРѕРєР° в¬…пёЏ</a>
+    <a class="footer-link" href="hoseok.html".html">Все эфиры Хосока ⬅️</a>
   </div>
 
   <script>
        const data = [
       { year: "2026", items: [
-        { text: "РЎ РґСЂ СЃ РґСЂ РҐРѕР‘Рё РҐСЌРїРё Р‘С‘СЂР·РґСЌР№ рџЋ‚", sub: "РѕС‚ 18.02", link: "https://t.me/violent_arhive/5420" },
-        { text: "3 СЌС„РёСЂР°: 'РљР°Рє-С‚Рѕ РІРѕС‚ С‚Р°Рє Рё РїСЂРѕС€Р»Рѕ РІСЃС‘вЂ¦ СЏ СЃС‡Р°СЃС‚Р»РёРІ~', 'С‡С‚Рѕ СЃС‚СЂСЏСЃР»РѕСЃСЊ-С‚Рѕ', 'РЅСѓ С‡С‚Рѕ Р¶ С‚Р°РєРѕРµ'", sub: "РѕС‚ 29.05", link: "https://t.me/violent_arhive/5532" },
-        { text: "Р›РѕРЅ-РґРѕРЅ-РІСЃС‘", sub: "РѕС‚ 08.07", link: "https://t.me/violent_arhive/5550" },
-        { text: "РўРѕСЂРѕРЅРўРѕСЂРѕРЅС‚Рѕ рџЊ§в‚пёЏ", sub: "РѕС‚ 23.08", link: "https://t.me/violent_arhive/5645" }
+        { text: "С др с др ХоБи Хэпи Бёрздэй 🎂", sub: "от 18.02", link: "https://t.me/violent_arhive/5420" },
+        { text: "3 эфира: 'Как-то вот так и прошло всё… я счастлив~', 'что стряслось-то', 'ну что ж такое'", sub: "от 29.05", link: "https://t.me/violent_arhive/5532" },
+        { text: "Лон-дон-всё", sub: "от 08.07", link: "https://t.me/violent_arhive/5550" },
+        { text: "ТоронТоронто 🌧☂️", sub: "от 23.08", link: "https://t.me/violent_arhive/5645" }
       ]}
     ];
 
@@ -84,7 +84,7 @@
     data.forEach((block) => {
       const yearTitle = document.createElement('div');
       yearTitle.className = 'year';
-      yearTitle.textContent = block.year + ' РіРѕРґ';
+      yearTitle.textContent = block.year + ' год';
       listEl.appendChild(yearTitle);
 
       block.items.forEach((item) => {
@@ -124,7 +124,7 @@
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
-        link.textContent = 'рџ”—';
+        link.textContent = '🔗';
 
         row.appendChild(box);
         row.appendChild(span);

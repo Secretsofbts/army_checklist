@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -26,35 +26,35 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="documentaries.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>вљЎпёЏ Break The Silence вљЎпёЏ</h1>
-    <p class="intro">Р“РѕРґ РІС‹РїСѓСЃРєР°: 2020</p>
-    <p class="intro">Р”РѕРєСѓРјРµРЅС‚Р°Р»СЊРЅС‹Р№ СЃРµСЂРёР°Р», РІ РєРѕС‚РѕСЂРѕРј СЂР°СЃСЃРєР°Р·Р°РЅРѕ Рѕ РїСѓС‚РµС€РµСЃС‚РІРёРё РґР»РёРЅРѕСЋ РІ 351 РґРµРЅСЊ, РЅР°С‡РёРЅР°СЏ СЃ РјРёСЂРѕРІРѕРіРѕ С‚СѓСЂР° BTS Love Yourself Рё Р·Р°РєР°РЅС‡РёРІР°СЏ С‚СѓСЂРѕРј Love Yourself: Speak Yourself. Р РµР±СЏС‚Р° СЂР°СЃСЃРєР°Р¶СѓС‚, РЅР° С‡С‘Рј РґРµСЂР¶РёС‚СЃСЏ РёС… РїСЂРѕС‡РЅР°СЏ СЃРІСЏР·СЊ, Рё С‡С‚Рѕ РѕРЅРё Р·РЅР°С‡Р°С‚ РґСЂСѓРі РґР»СЏ РґСЂСѓРіР°</p>
+    <a class="back" href="documentaries.html">← Назад</a>
+    <h1>⚡️ Break The Silence ⚡️</h1>
+    <p class="intro">Год выпуска: 2020</p>
+    <p class="intro">Документальный сериал, в котором рассказано о путешествии длиною в 351 день, начиная с мирового тура BTS Love Yourself и заканчивая туром Love Yourself: Speak Yourself. Ребята расскажут, на чём держится их прочная связь, и что они значат друг для друга</p>
 
-    <p class="section-title">РЎРµСЂРёР°Р»</p>
+    <p class="section-title">Сериал</p>
     <div id="list-episodes"></div>
 
-    <p class="section-title">Р¤РёР»СЊРј</p>
-    <p class="intro">Р¤РёР»СЊРј РёРєР°Рє РЅРµ СЃРІСЏР·Р°РЅ СЃ СЃРµСЂРёР°Р»РѕРј. Р’С‹С€РµР» РІ СЃРµРЅС‚СЏР±СЂРµ 2020. РЎРѕР±С‹С‚РёСЏ РїСЂРѕРёСЃС…РѕРґСЏС‚ СѓР¶Рµ РїРѕСЃР»Рµ СЌС‚РёС… РґРІСѓС… С‚СѓСЂРѕРІ</p>
+    <p class="section-title">Фильм</p>
+    <p class="intro">Фильм икак не связан с сериалом. Вышел в сентябре 2020. События происходят уже после этих двух туров</p>
     <div id="list-film"></div>
 
-    <a class="footer-link" href="documentaries.html">Р”РѕРєСѓРјРµРЅС‚Р°Р»СЊРЅС‹Рµ РїСЂРѕРµРєС‚С‹ в¬…пёЏ</a>
+    <a class="footer-link" href="documentaries.html">Документальные проекты ⬅️</a>
   </div>
 
   <script>
     const episodeItems = [
-      { text: "1 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/298" },
-      { text: "2 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/299" },
-      { text: "3 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/300" },
-      { text: "4 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/301" },
-      { text: "5 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/302" },
-      { text: "6 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/303" },
-      { text: "7 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/304" }
+      { text: "1 серия", link: "https://t.me/violent_arhive/298" },
+      { text: "2 серия", link: "https://t.me/violent_arhive/299" },
+      { text: "3 серия", link: "https://t.me/violent_arhive/300" },
+      { text: "4 серия", link: "https://t.me/violent_arhive/301" },
+      { text: "5 серия", link: "https://t.me/violent_arhive/302" },
+      { text: "6 серия", link: "https://t.me/violent_arhive/303" },
+      { text: "7 серия", link: "https://t.me/violent_arhive/304" }
     ];
 
     const filmItems = [
       { text: "Break The Silence: Persona", link: "https://t.me/violent_arhive/250" },
-      { text: "РљРѕРјРјРµРЅС‚Р°СЂРёРё РѕС‚ СЂРµР±СЏС‚", link: "https://t.me/violent_arhive/259" }
+      { text: "Комментарии от ребят", link: "https://t.me/violent_arhive/259" }
     ];
 
     function renderList(containerId, items) {
@@ -77,7 +77,7 @@
         });
         span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
         const link = document.createElement('a');
-        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = 'рџ”—';
+        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
         row.appendChild(box); row.appendChild(span); row.appendChild(link);
         listEl.appendChild(row);
       });

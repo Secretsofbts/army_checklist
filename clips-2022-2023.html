@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="sync.js?v=21"></script>
-  <title>РљР»РёРїС‹ BTS 2022-2023</title>
+  <title>Клипы BTS 2022-2023</title>
   <style>
     body {
       background: #f2f0f7;
@@ -89,10 +89,10 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="all-clips.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџ“№ РљР»РёРїС‹: 2022 вЂ“ 2023 рџ“№</h1>
+    <a class="back" href="all-clips.html">← Назад</a>
+    <h1>📹 Клипы: 2022 – 2023 📹</h1>
        <div id="list"></div>
-    <a class="footer-link" href="all-clips.html">Р’СЃРµ РєР»РёРїС‹ BTS в¬…пёЏ</a>
+    <a class="footer-link" href="all-clips.html">Все клипы BTS ⬅️</a>
   </div>
 
   <script>
@@ -102,39 +102,39 @@
           { text: "Yet To Come", link: "https://t.me/violent_arhive/2757" },
           { text: "Yet To Come", sub: "Hyundai", link: "https://t.me/violent_arhive/3146" }
         ]},
-        { album: "РђР»СЊР±РѕРј J-hope:", hearts: "рџ¤Ќ", items: [
+        { album: "Альбом J-hope:", hearts: "🤍", items: [
           { text: "MORE", link: "https://t.me/violent_arhive/2788" },
           { text: "Arson", link: "https://t.me/violent_arhive/2851" }
         ]},
-        { album: "РЎРёРЅРіР» Р”Р¶РёРЅР°:", hearts: "рџ’•", items: [
+        { album: "Сингл Джина:", hearts: "💕", items: [
           { text: "The Astronaut", link: "https://t.me/violent_arhive/3255" }
         ]},
-        { album: "РђР»СЊР±РѕРј РќР°РјРґР¶СѓРЅР°:", hearts: "рџ’™", items: [
+        { album: "Альбом Намджуна:", hearts: "💙", items: [
           { text: "Wild Flower", link: "https://t.me/violent_arhive/3337" },
           { text: "Still Life", link: "https://t.me/violent_arhive/3365" }
         ]}
       ]},
       { year: "2023", groups: [
-        { album: "РђР»СЊР±РѕРј Р§РёРјРёРЅР°:", hearts: "рџ’›", items: [
+        { album: "Альбом Чимина:", hearts: "💛", items: [
           { text: "Set Me Free Pt.2", link: "https://t.me/violent_arhive/3787" },
           { text: "Like Crazy", link: "https://t.me/violent_arhive/3813" }
         ]},
-        { album: "РђР»СЊР±РѕРј Р®РЅРіРё:", hearts: "рџ–¤", items: [
+        { album: "Альбом Юнги:", hearts: "🖤", items: [
           { text: "People Pt.2", link: "https://t.me/violent_arhive/3953" },
           { text: "Haegeum", link: "https://t.me/violent_arhive/3951" },
           { text: "Amygdala", link: "https://t.me/violent_arhive/3979" }
         ]},
-        { album: "РђР»СЊР±РѕРј РўСЌС…С‘РЅР°:", hearts: "рџ’љ", items: [
+        { album: "Альбом Тэхёна:", hearts: "💚", items: [
           { text: "Love Me Again", link: "https://t.me/violent_arhive/4159" },
           { text: "Rainy Days", link: "https://t.me/violent_arhive/4161" },
           { text: "Slow Dancing", link: "https://t.me/violent_arhive/4220" },
           { text: "Blue", link: "https://t.me/violent_arhive/4222" }
         ]},
-        { album: "РђР»СЊР±РѕРј Р§РѕРЅРіСѓРєР°:", hearts: "рџ’њ", items: [
+        { album: "Альбом Чонгука:", hearts: "💜", items: [
           { text: "Seven", link: "https://t.me/violent_arhive/4106" },
           { text: "3D", link: "https://t.me/violent_arhive/4251" },
           { text: "Standing Next to You", link: "https://t.me/violent_arhive/4303" },
-          { text: "Standing Next to You", sub: "СЃhoreography ver.", link: "https://t.me/violent_arhive/4346" },
+          { text: "Standing Next to You", sub: "сhoreography ver.", link: "https://t.me/violent_arhive/4346" },
           { text: "Standing Next to You", sub: "Usher Remix", link: "https://t.me/violent_arhive/4444" }
         ]}
       ]}
@@ -143,7 +143,7 @@
     data.forEach((block) => {
       const yearTitle = document.createElement('div');
       yearTitle.className = 'year';
-      yearTitle.textContent = block.year + ' РіРѕРґ';
+      yearTitle.textContent = block.year + ' год';
       listEl.appendChild(yearTitle);
 
             block.groups.forEach((group) => {
@@ -191,7 +191,7 @@
           link.className = 'link';
           link.href = item.link;
           link.target = '_blank';
-          link.textContent = 'рџ”—';
+          link.textContent = '🔗';
 
           row.appendChild(box);
           row.appendChild(span);

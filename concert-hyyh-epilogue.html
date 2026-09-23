@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -61,21 +61,21 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="concerts-2014-2019.html">в†ђ РќР°Р·Р°Рґ</a>
+    <a class="back" href="concerts-2014-2019.html">← Назад</a>
     <h1>"HYYH" On Stage: Epilogue</h1>
-    <p class="intro">Р“РѕРґ РІС‹РїСѓСЃРєР°: 2016<br>РљРѕРЅС†РµСЂС‚, РїСЂРѕС…РѕРґРёРІС€РёР№ РІ Olympic Park Gymnastics Arena РІ РЎРµСѓР»Рµ 07-08 РјР°СЏ</p>
+    <p class="intro">Год выпуска: 2016<br>Концерт, проходивший в Olympic Park Gymnastics Arena в Сеуле 07-08 мая</p>
     <div id="list"></div>
-    <a class="footer-link" href="concerts-2014-2019.html">Р’СЃРµ РєРѕРЅС†РµСЂС‚С‹ 2014-2019 в¬…пёЏ</a>
+    <a class="footer-link" href="concerts-2014-2019.html">Все концерты 2014-2019 ⬅️</a>
   </div>
 
   <script>
     const items = [
-      { text: "РљРѕРЅС†РµСЂС‚", links: [
-        { label: "СЂСѓСЃ.СЃСѓР±, 720-480", link: "https://t.me/violent_arhive/2601" },
+      { text: "Концерт", links: [
+        { label: "рус.суб, 720-480", link: "https://t.me/violent_arhive/2601" },
         { label: "eng.sub, 1080", link: "https://t.me/violent_arhive/2610" }
       ]},
       { text: "Poster & Bridge", link: "https://t.me/violent_arhive/2597" },
-      { text: "Shooting Film - С„РѕС‚РѕСЃСЉРµРјРєР°", link: "https://t.me/violent_arhive/2598" },
+      { text: "Shooting Film - фотосъемка", link: "https://t.me/violent_arhive/2598" },
       { text: "Concert Practice", link: "https://t.me/violent_arhive/2599" },
       { text: "Concert Making Film", link: "https://t.me/violent_arhive/2600" }
     ];
@@ -120,7 +120,7 @@
           link.className = 'link';
           link.href = l.link;
           link.target = '_blank';
-          link.textContent = 'рџ”—';
+          link.textContent = '🔗';
           row.appendChild(label);
           row.appendChild(link);
         });
@@ -129,7 +129,7 @@
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
-        link.textContent = 'рџ”—';
+        link.textContent = '🔗';
         row.appendChild(link);
       }
 

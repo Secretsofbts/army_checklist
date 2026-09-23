@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="sync.js?v=21"></script>
-  <title>РљР»РёРїС‹, РЅРµ РІС…РѕРґСЏС‰РёРµ РІ Р°Р»СЊР±РѕРјС‹</title>
+  <title>Клипы, не входящие в альбомы</title>
   <style>
     body {
       background: #f2f0f7;
@@ -61,11 +61,11 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="all-clips.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџЋ¶ РљР»РёРїС‹, РЅРµ РІС…РѕРґСЏС‰РёРµ РІ Р°Р»СЊР±РѕРјС‹ рџЋ¶</h1>
-    <p class="intro">РўСѓС‚ СЃРѕР±СЂР°РЅС‹ СЃРѕР»СЊРЅС‹Рµ РїРµСЃРЅРё, РєРѕР»Р»Р°Р±С‹ Рё РїСЂРѕСЃС‚Рѕ РїРѕРґР°СЂРєРё РґР»СЏ РђСЂРјРё, Сѓ РєРѕС‚РѕСЂС‹С… РµСЃС‚СЊ РєР»РёРї РёР»Рё С‡С‚Рѕ-С‚Рѕ РїРѕС…РѕР¶РµРµ РЅР° РЅРµРіРѕ</p>
+    <a class="back" href="all-clips.html">← Назад</a>
+    <h1>🎶 Клипы, не входящие в альбомы 🎶</h1>
+    <p class="intro">Тут собраны сольные песни, коллабы и просто подарки для Арми, у которых есть клип или что-то похожее на него</p>
     <div id="list"></div>
-    <a class="footer-link" href="all-clips.html">Р’СЃРµ РєР»РёРїС‹ BTS в¬…пёЏ</a>
+    <a class="footer-link" href="all-clips.html">Все клипы BTS ⬅️</a>
   </div>
 
   <script>
@@ -150,7 +150,7 @@
       link.className = 'link';
       link.href = item.link;
       link.target = '_blank';
-      link.textContent = 'рџ”—';
+      link.textContent = '🔗';
 
       row.appendChild(box);
       row.appendChild(span);

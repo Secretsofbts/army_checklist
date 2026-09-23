@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="sync.js?v=21"></script>
-  <title>Р РµР°РєС†РёСЏ РЅР° СЃРµР±СЏ</title>
+  <title>Реакция на себя</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
     .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -52,33 +52,33 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="bangtantv.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџ‘Ђ Р Р•РђРљР¦РРЇ РќРђ РЎР•Р‘РЇ рџ‘Ђ</h1>
-    <p class="intro">РЎР°РјС‹Рµ Р±РѕР»СЊС€РёРµ С„Р°РЅР°С‚С‹ Р±Р°РЅС‚Р°РЅ вЂ” СЌС‚Рѕ СЃР°РјРё Р±Р°РЅС‚Р°РЅС‹!</p>
+    <a class="back" href="bangtantv.html">← Назад</a>
+    <h1>👀 РЕАКЦИЯ НА СЕБЯ 👀</h1>
+    <p class="intro">Самые большие фанаты бантан — это сами бантаны!</p>
 
     <div id="list-main"></div>
 
-    <p class="note">РљР°РєРёРµ-С‚Рѕ СЂРµР°РєС†РёРё РµСЃС‚СЊ РІ РїСЂСЏРјРѕРј СЌС„РёСЂРµ, РѕС‚РґРµР»СЊРЅРѕ РІРёРґРµРѕ РЅРµС‚, РЅРѕ С‚Р°Рј РЅРµС‚ РєР°СЂС‚РёРЅРєРё</p>
+    <p class="note">Какие-то реакции есть в прямом эфире, отдельно видео нет, но там нет картинки</p>
     <div id="list-livestream"></div>
 
-       <p class="section-title">Р РµР°РєС†РёРё РЅР° РєРѕРЅС†РµСЂС‚С‹</p>
+       <p class="section-title">Реакции на концерты</p>
     <div id="list-concerts"></div>
 
-       <p class="section-title">РљРѕРјРјРµРЅС‚Р°СЂРёРё Рє РґРѕРєСѓРјРµРЅС‚Р°Р»СЊРЅС‹Рј С„РёР»СЊРјР°Рј (СЃРЅР°С‡Р°Р»Р° СЃРјРѕС‚СЂРёС‚Рµ СЃР°Рј С„РёР»СЊРј!</p>
+       <p class="section-title">Комментарии к документальным фильмам (сначала смотрите сам фильм!</p>
     <div id="list-docs"></div>
 
-    <p class="section-title">Р РµР°РєС†РёРё РѕС‚ РґСЂСѓРіРёС… Р»СЋРґРµР№</p>
+    <p class="section-title">Реакции от других людей</p>
     <div id="list-others"></div>
 
-    <p class="note">Р•СЃР»Рё Р·РЅР°РµС‚Рµ РµС‰С‘ СЂРµР°РєС†РёРё, РјРѕР¶РµС‚Рµ СЃРѕРѕР±С‰РёС‚СЊ, СЏ РїРѕРёС‰Сѓ) РџРѕРєР° С‚РѕР»СЊРєРѕ СЌС‚Рѕ РЅР°С€Р»Р° рџ’™</p>
+    <p class="note">Если знаете ещё реакции, можете сообщить, я поищу) Пока только это нашла 💙</p>
 
-    <a class="footer-link" href="bangtantv.html">BangtanTV в¬…пёЏ</a>
+    <a class="footer-link" href="bangtantv.html">BangtanTV ⬅️</a>
   </div>
 
   <script>
     const mainItems = [
-      { text: "\"Р РµР°РєС†РёСЏ РЅР° СЃРІРѕР№ РґРµР±СЋС‚\"", link: "https://t.me/violent_arhive/919" },
-      { text: "\"Р§РµСЂРµР· 5 РґРЅРµР№ РїРѕСЃР»Рµ РґРµР±СЋС‚Р°\"", link: "https://t.me/violent_arhive/924" },
+      { text: "\"Реакция на свой дебют\"", link: "https://t.me/violent_arhive/919" },
+      { text: "\"Через 5 дней после дебюта\"", link: "https://t.me/violent_arhive/924" },
       { text: "\"Black Swan\"", link: "https://t.me/violent_arhive/908" },
       { text: "\"Mic Drop\"", link: "https://t.me/violent_arhive/910" },
       { text: "\"DNA\"", link: "https://t.me/violent_arhive/911" },
@@ -96,29 +96,29 @@
     ];
 
     const livestreamItems = [
-      { text: "\"Life Goes On\"", sub: "СЃ 37:25 РјРёРЅСѓС‚С‹", link: "https://t.me/violent_arhive/204" },
-      { text: "\"Butter\"", sub: "СЃ 4:30", link: "https://t.me/violent_arhive/928" },
-      { text: "\"Set me free pt.2\" Рё \"Like Crazy\"", sub: "Р§РёРјРёРЅ СЃРјРѕС‚СЂРёС‚ СЃ 25 РјРёРЅСѓС‚С‹", link: "https://t.me/violent_arhive/3867" },
-      { text: "РћР±РјРµРЅ Р°Р»СЊР±РѕРјР°РјРё РњРёРЅРёРњРѕРЅРё", sub: "РІРµСЂСЃРёСЏ \"RPWP\" RM", link: "https://t.me/violent_arhive/4583" },
-      { text: "РћР±РјРµРЅ Р°Р»СЊР±РѕРјР°РјРё РњРёРЅРёРњРѕРЅРё", sub: "РІРµСЂСЃРёСЏ \"MUSE\" Р§РёРјРёРЅ", link: "https://t.me/violent_arhive/4648" }
+      { text: "\"Life Goes On\"", sub: "с 37:25 минуты", link: "https://t.me/violent_arhive/204" },
+      { text: "\"Butter\"", sub: "с 4:30", link: "https://t.me/violent_arhive/928" },
+      { text: "\"Set me free pt.2\" и \"Like Crazy\"", sub: "Чимин смотрит с 25 минуты", link: "https://t.me/violent_arhive/3867" },
+      { text: "Обмен альбомами МиниМони", sub: "версия \"RPWP\" RM", link: "https://t.me/violent_arhive/4583" },
+      { text: "Обмен альбомами МиниМони", sub: "версия \"MUSE\" Чимин", link: "https://t.me/violent_arhive/4648" }
     ];
     const concertItems = [
-      { text: "вњЁ 2017 The Wings in Seoul", link: "https://t.me/violent_arhive/2633" },
-      { text: "вњЁ 2018 LY in Seoul", link: "https://t.me/violent_arhive/2671" },
-      { text: "вњЁ 2019 LY:SY the Final", link: "https://t.me/violent_arhive/3361" }
+      { text: "✨ 2017 The Wings in Seoul", link: "https://t.me/violent_arhive/2633" },
+      { text: "✨ 2018 LY in Seoul", link: "https://t.me/violent_arhive/2671" },
+      { text: "✨ 2019 LY:SY the Final", link: "https://t.me/violent_arhive/3361" }
     ];
 
     const docsItems = [
-      { text: "РљРѕРјРјРµРЅС‚Р°СЂРёРё Рє В«Bring The Soul: The MovieВ»", link: "https://t.me/violent_arhive/1783" },
-      { text: "РљРѕРјРјРµРЅС‚Р°СЂРёРё Рє В«Break The Silence: PersonaВ»", link: "https://t.me/violent_arhive/259" },
-      { text: "РљРѕРјРјРµРЅС‚Р°СЂРёРё РҐРѕСЃРѕРєР°", sub: "J-Hope IN THE BOX", link: "https://t.me/violent_arhive/3834" },
-      { text: "РљРѕРјРјРµРЅС‚Р°СЂРёРё Р§РёРјРёРЅР°", sub: "Jimin's Production Diary", link: "https://t.me/violent_arhive/4399" }
+      { text: "Комментарии к «Bring The Soul: The Movie»", link: "https://t.me/violent_arhive/1783" },
+      { text: "Комментарии к «Break The Silence: Persona»", link: "https://t.me/violent_arhive/259" },
+      { text: "Комментарии Хосока", sub: "J-Hope IN THE BOX", link: "https://t.me/violent_arhive/3834" },
+      { text: "Комментарии Чимина", sub: "Jimin's Production Diary", link: "https://t.me/violent_arhive/4399" }
     ];
 
     const otherItems = [
-      { text: "Р РµР°РєС†РёСЏ РЅР° В«FRI(END)SВ» С‡.1", link: "https://t.me/violent_arhive/4536" },
-      { text: "Р РµР°РєС†РёСЏ РЅР° В«FRI(END)SВ» С‡.2", link: "https://t.me/violent_arhive/4537" },
-      { text: "Р РµР°РєС†РёСЏ РЅР° В«FRI(END)SВ» С‡.3", link: "https://t.me/violent_arhive/4539" }
+      { text: "Реакция на «FRI(END)S» ч.1", link: "https://t.me/violent_arhive/4536" },
+      { text: "Реакция на «FRI(END)S» ч.2", link: "https://t.me/violent_arhive/4537" },
+      { text: "Реакция на «FRI(END)S» ч.3", link: "https://t.me/violent_arhive/4539" }
     ];
 
     function renderList(containerId, items) {
@@ -147,7 +147,7 @@
         });
         span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
         const link = document.createElement('a');
-        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = 'рџ”—';
+        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
         row.appendChild(box); row.appendChild(span); row.appendChild(link);
         listEl.appendChild(row);
       });

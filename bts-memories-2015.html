@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -65,27 +65,27 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="bts-memories.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџ”® BTS Memories of 2015 рџ”®</h1>
-    <p class="intro">Р”Р°РЅРЅС‹Р№ СЂРµР»РёР· РІРєР»СЋС‡Р°РµС‚ РІ СЃРµР±СЏ 4 DVD-РґРёСЃРєР°: Р¶РёРІРѕР№ РєРѕРЅС†РµСЂС‚ 28-29.03.2015 РІ РЎРµСѓР»Рµ, РїРѕРґРіРѕС‚РѕРІРєР° Рє РІС‹СЃС‚СѓРїР»РµРЅРёСЋ, СЃСЉРµРјРєРё С„РёР»СЊРјР°, С‚СѓСЂ РїРѕ РЇРїРѕРЅРёРё Рё СЃСЉРµРјРєРё РєР»РёРїРѕРІ</p>
+    <a class="back" href="bts-memories.html">← Назад</a>
+    <h1>🔮 BTS Memories of 2015 🔮</h1>
+    <p class="intro">Данный релиз включает в себя 4 DVD-диска: живой концерт 28-29.03.2015 в Сеуле, подготовка к выступлению, съемки фильма, тур по Японии и съемки клипов</p>
     <div id="list"></div>
-    <a class="footer-link" href="bts-memories.html">BTS Memories в¬…пёЏ</a>
+    <a class="footer-link" href="bts-memories.html">BTS Memories ⬅️</a>
   </div>
 
   <script>
     const data = [
-      { section: "Р”РёСЃРє 1", items: [
+      { section: "Диск 1", items: [
         { text: "LIVE TRILOGY: BTS BEGINS", link: "https://t.me/violent_arhive/1515" }
       ]},
-      { section: "Р”РёСЃРє 2", items: [
+      { section: "Диск 2", items: [
         { text: "Begins Concert", sub: "Making Film", link: "https://t.me/violent_arhive/1518" }
       ]},
-      { section: "Р”РёСЃРє 3", items: [
+      { section: "Диск 3", items: [
         { text: "First Japan Tour", sub: "Wake up open your eyes", link: "https://t.me/violent_arhive/1519" },
-        { text: "Live Trilogy Episode II. THE RED BULLET TOUR",  sub: "1 С‡Р°СЃС‚СЊ",  link: "https://t.me/violent_arhive/1521" },
-        { text: "Live Trilogy Episode II. THE RED BULLET TOUR", sub: "2 С‡Р°СЃС‚СЊ",  link: "https://t.me/violent_arhive/1520" }
+        { text: "Live Trilogy Episode II. THE RED BULLET TOUR",  sub: "1 часть",  link: "https://t.me/violent_arhive/1521" },
+        { text: "Live Trilogy Episode II. THE RED BULLET TOUR", sub: "2 часть",  link: "https://t.me/violent_arhive/1520" }
       ]},
-      { section: "Р”РёСЃРє 4: СЃРѕР·РґР°РЅРёРµ РєР»РёРїРѕРІ", items: [
+      { section: "Диск 4: создание клипов", items: [
         { text: "Run", sub: "Making Film", link: "https://t.me/violent_arhive/1516" },
         { text: "I need U MV", sub: "Making Jap",  link: "https://t.me/violent_arhive/1522" },
         { text: "Butterfly Dream", sub: "Making Film", link: "https://t.me/violent_arhive/1524" },
@@ -95,8 +95,8 @@
         { text: "HYYH pt.2", sub: "Jacket shooting",  link: "https://t.me/violent_arhive/1528" },
         { text: "Prologue & VCR", sub: "Making Film",link: "https://t.me/violent_arhive/1530" }
       ]},
-            { section: "Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅРѕ (РЅРµ РёРґРµС‚ РІ СЃС‚Р°С‚РёСЃС‚РёРєСѓ)", excluded: true, items: [
-        { text: "1st Japan Tour 2015 (Wake up open your eyes) - РєРѕРЅС†РµСЂС‚", link: "https://t.me/violent_arhive/1534" }
+            { section: "Дополнительно (не идет в статистику)", excluded: true, items: [
+        { text: "1st Japan Tour 2015 (Wake up open your eyes) - концерт", link: "https://t.me/violent_arhive/1534" }
       ]}
     ];
 
@@ -145,7 +145,7 @@
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
-        link.textContent = 'рџ”—';
+        link.textContent = '🔗';
 
         row.appendChild(box);
         row.appendChild(span);

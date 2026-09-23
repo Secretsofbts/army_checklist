@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -58,46 +58,46 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="run-btss.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџЏѓ 81-111,5 СЌРїРёР·РѕРґ рџЏѓ</h1>
+    <a class="back" href="run-btss.html">← Назад</a>
+    <h1>🏃 81-111,5 эпизод 🏃</h1>
     <div id="list"></div>
-    <a class="footer-link" href="run-btss.html">Р’СЃРµ СЃРµСЂРёРё RUN BTS в¬…пёЏ</a>
+    <a class="footer-link" href="run-btss.html">Все серии RUN BTS ⬅️</a>
   </div>
 
   <script>
         const items = [
-      { text: "81 СЌРїРёР·РѕРґ", sub: "\"Р’РёСЂС‚СѓР°Р»СЊРЅР°СЏ СЂРµР°Р»СЊРЅРѕСЃС‚СЊ\" 1С‡", link: "https://t.me/violent_arhive/470" },
-      { text: "82 СЌРїРёР·РѕРґ", sub: "\"Р’РёСЂС‚СѓР°Р»СЊРЅР°СЏ СЂРµР°Р»СЊРЅРѕСЃС‚СЊ\" 2С‡", link: "https://t.me/violent_arhive/472" },
-      { text: "83 СЌРїРёР·РѕРґ", sub: "\"Р›РµС‚РЅСЏСЏ РїСЂРѕРіСѓР»РєР°\" 1С‡", link: "https://t.me/violent_arhive/474" },
-      { text: "84 СЌРїРёР·РѕРґ", sub: "\"Р›РµС‚РЅСЏСЏ РїСЂРѕРіСѓР»РєР°\" 2С‡", link: "https://t.me/violent_arhive/476" },
-      { text: "85 СЌРїРёР·РѕРґ", sub: "\"Р›РµС‚РЅСЏСЏ РїСЂРѕРіСѓР»РєР°\" 3С‡", link: "https://t.me/violent_arhive/478" },
-      { text: "86 СЌРїРёР·РѕРґ", sub: "\"Р”РµРЅСЊ РҐР°РЅРіС‹Р»СЏ\" 1С‡", link: "https://t.me/violent_arhive/480" },
-      { text: "87 СЌРїРёР·РѕРґ", sub: "\"Р”РµРЅСЊ РҐР°РЅРіС‹Р»СЏ\" 2С‡", link: "https://t.me/violent_arhive/481" },
-      { text: "88 СЌРїРёР·РѕРґ", sub: "\"Р”РµРЅСЊ РҐР°РЅРіС‹Р»СЏ\" 3С‡", link: "https://t.me/violent_arhive/482" },
-      { text: "89 СЌРїРёР·РѕРґ", sub: "\"Gayo РІРµСЂРЅСѓР»СЃСЏ\" 1С‡", link: "https://t.me/violent_arhive/484" },
-      { text: "90 СЌРїРёР·РѕРґ", sub: "\"Gayo РІРµСЂРЅСѓР»СЃСЏ\" 2С‡", link: "https://t.me/violent_arhive/486" },
-      { text: "91 СЌРїРёР·РѕРґ", sub: "\"РњРёРЅРё Р·РѕР»РѕС‚РѕР№ РєРѕР»РѕРєРѕР»СЊС‡РёРє\" 1С‡", link: "https://t.me/violent_arhive/488" },
-      { text: "92 СЌРїРёР·РѕРґ", sub: "\"РњРёРЅРё Р·РѕР»РѕС‚РѕР№ РєРѕР»РѕРєРѕР»СЊС‡РёРє\" 2С‡", link: "https://t.me/violent_arhive/490" },
-      { text: "93 СЌРїРёР·РѕРґ", sub: "\"Marble\" 1С‡", link: "https://t.me/violent_arhive/492" },
-      { text: "94 СЌРїРёР·РѕРґ", sub: "\"Marble\" 2С‡", link: "https://t.me/violent_arhive/494" },
-      { text: "95 СЌРїРёР·РѕРґ", sub: "\"РРіСЂР°РµРј СЃ BTS\" 1С‡", link: "https://t.me/violent_arhive/495" },
-      { text: "96 СЌРїРёР·РѕРґ", sub: "\"РРіСЂР°РµРј СЃ BTS\" 2С‡", link: "https://t.me/violent_arhive/496" },
-      { text: "97 СЌРїРёР·РѕРґ", sub: "\"РџРёР¶Р°РјРЅР°СЏ РІРµС‡РµСЂРёРЅРєР°\" 1С‡", link: "https://t.me/violent_arhive/498" },
-      { text: "98 СЌРїРёР·РѕРґ", sub: "\"РџРёР¶Р°РјРЅР°СЏ РІРµС‡РµСЂРёРЅРєР°\" 2С‡", link: "https://t.me/violent_arhive/500" },
-      { text: "99 СЌРїРёР·РѕРґ", sub: "\"Р¤Р»РѕСЂРёСЃС‚РёРєР°\"", link: "https://t.me/violent_arhive/502" },
-      { text: "100 СЌРїРёР·РѕРґ", sub: "\"РЎРїРµС†РёР°Р»СЊРЅС‹Р№ СЌРїРёР·РѕРґ\" 1С‡", link: "https://t.me/violent_arhive/504" },
-      { text: "101 СЌРїРёР·РѕРґ", sub: "\"РЎРїРµС†РёР°Р»СЊРЅС‹Р№ СЌРїРёР·РѕРґ\" 2С‡", link: "https://t.me/violent_arhive/506" },
-      { text: "102 СЌРїРёР·РѕРґ", sub: "\"РљРѕСЂРѕР»СЊ Р°РІР°С‚Р°СЂР° РіРѕС‚РѕРІРєРё\" 1С‡", link: "https://t.me/violent_arhive/508" },
-      { text: "103 СЌРїРёР·РѕРґ", sub: "\"РљРѕСЂРѕР»СЊ Р°РІР°С‚Р°СЂР° РіРѕС‚РѕРІРєРё\" 2С‡", link: "https://t.me/violent_arhive/510" },
-      { text: "104 СЌРїРёР·РѕРґ", sub: "\"Р¤РѕС‚РѕРІС‹СЃС‚Р°РІРєР°\" 1С‡", link: "https://t.me/violent_arhive/512" },
-      { text: "105 СЌРїРёР·РѕРґ", sub: "\"Р¤РѕС‚РѕРІС‹СЃС‚Р°РІРєР°\" 2С‡", link: "https://t.me/violent_arhive/514" },
-      { text: "106 СЌРїРёР·РѕРґ", sub: "\"Р¤РѕС‚РѕРІС‹СЃС‚Р°РІРєР°\" 3С‡", link: "https://t.me/violent_arhive/516" },
-      { text: "107 СЌРїРёР·РѕРґ", sub: "\"Р“РµР№РјРµСЂС‹\" 1С‡", link: "https://t.me/violent_arhive/518" },
-      { text: "108 СЌРїРёР·РѕРґ", sub: "\"Р“РµР№РјРµСЂС‹\" 2С‡", link: "https://t.me/violent_arhive/520" },
-      { text: "109 СЌРїРёР·РѕРґ", sub: "\"Р”СѓР±Р»СЏР¶\"", link: "https://t.me/violent_arhive/522" },
-      { text: "110 СЌРїРёР·РѕРґ", sub: "\"РћС…РѕС‚Р° Р·Р° СЃРѕРєСЂРѕРІРёС‰Р°РјРё\" 1С‡", link: "https://t.me/violent_arhive/524" },
-      { text: "111 СЌРїРёР·РѕРґ", sub: "\"РћС…РѕС‚Р° Р·Р° СЃРѕРєСЂРѕРІРёС‰Р°РјРё\" 2С‡", link: "https://t.me/violent_arhive/526" },
-      { text: "111,5 СЌРїРёР·РѕРґ", sub: "\"Director's cut\"", link: "https://t.me/violent_arhive/527" }
+      { text: "81 эпизод", sub: "\"Виртуальная реальность\" 1ч", link: "https://t.me/violent_arhive/470" },
+      { text: "82 эпизод", sub: "\"Виртуальная реальность\" 2ч", link: "https://t.me/violent_arhive/472" },
+      { text: "83 эпизод", sub: "\"Летняя прогулка\" 1ч", link: "https://t.me/violent_arhive/474" },
+      { text: "84 эпизод", sub: "\"Летняя прогулка\" 2ч", link: "https://t.me/violent_arhive/476" },
+      { text: "85 эпизод", sub: "\"Летняя прогулка\" 3ч", link: "https://t.me/violent_arhive/478" },
+      { text: "86 эпизод", sub: "\"День Хангыля\" 1ч", link: "https://t.me/violent_arhive/480" },
+      { text: "87 эпизод", sub: "\"День Хангыля\" 2ч", link: "https://t.me/violent_arhive/481" },
+      { text: "88 эпизод", sub: "\"День Хангыля\" 3ч", link: "https://t.me/violent_arhive/482" },
+      { text: "89 эпизод", sub: "\"Gayo вернулся\" 1ч", link: "https://t.me/violent_arhive/484" },
+      { text: "90 эпизод", sub: "\"Gayo вернулся\" 2ч", link: "https://t.me/violent_arhive/486" },
+      { text: "91 эпизод", sub: "\"Мини золотой колокольчик\" 1ч", link: "https://t.me/violent_arhive/488" },
+      { text: "92 эпизод", sub: "\"Мини золотой колокольчик\" 2ч", link: "https://t.me/violent_arhive/490" },
+      { text: "93 эпизод", sub: "\"Marble\" 1ч", link: "https://t.me/violent_arhive/492" },
+      { text: "94 эпизод", sub: "\"Marble\" 2ч", link: "https://t.me/violent_arhive/494" },
+      { text: "95 эпизод", sub: "\"Играем с BTS\" 1ч", link: "https://t.me/violent_arhive/495" },
+      { text: "96 эпизод", sub: "\"Играем с BTS\" 2ч", link: "https://t.me/violent_arhive/496" },
+      { text: "97 эпизод", sub: "\"Пижамная вечеринка\" 1ч", link: "https://t.me/violent_arhive/498" },
+      { text: "98 эпизод", sub: "\"Пижамная вечеринка\" 2ч", link: "https://t.me/violent_arhive/500" },
+      { text: "99 эпизод", sub: "\"Флористика\"", link: "https://t.me/violent_arhive/502" },
+      { text: "100 эпизод", sub: "\"Специальный эпизод\" 1ч", link: "https://t.me/violent_arhive/504" },
+      { text: "101 эпизод", sub: "\"Специальный эпизод\" 2ч", link: "https://t.me/violent_arhive/506" },
+      { text: "102 эпизод", sub: "\"Король аватара готовки\" 1ч", link: "https://t.me/violent_arhive/508" },
+      { text: "103 эпизод", sub: "\"Король аватара готовки\" 2ч", link: "https://t.me/violent_arhive/510" },
+      { text: "104 эпизод", sub: "\"Фотовыставка\" 1ч", link: "https://t.me/violent_arhive/512" },
+      { text: "105 эпизод", sub: "\"Фотовыставка\" 2ч", link: "https://t.me/violent_arhive/514" },
+      { text: "106 эпизод", sub: "\"Фотовыставка\" 3ч", link: "https://t.me/violent_arhive/516" },
+      { text: "107 эпизод", sub: "\"Геймеры\" 1ч", link: "https://t.me/violent_arhive/518" },
+      { text: "108 эпизод", sub: "\"Геймеры\" 2ч", link: "https://t.me/violent_arhive/520" },
+      { text: "109 эпизод", sub: "\"Дубляж\"", link: "https://t.me/violent_arhive/522" },
+      { text: "110 эпизод", sub: "\"Охота за сокровищами\" 1ч", link: "https://t.me/violent_arhive/524" },
+      { text: "111 эпизод", sub: "\"Охота за сокровищами\" 2ч", link: "https://t.me/violent_arhive/526" },
+      { text: "111,5 эпизод", sub: "\"Director's cut\"", link: "https://t.me/violent_arhive/527" }
     ];
 
     const listEl = document.getElementById('list');
@@ -138,7 +138,7 @@
       link.className = 'link';
       link.href = item.link;
       link.target = '_blank';
-      link.textContent = 'рџ”—';
+      link.textContent = '🔗';
 
       row.appendChild(box);
       row.appendChild(span);

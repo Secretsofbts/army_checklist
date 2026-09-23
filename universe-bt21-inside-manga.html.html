@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="sync.js?v=21"></script>
-  <title>Р’РЅСѓС‚СЂРё РњР°РЅРіР°</title>
+  <title>Внутри Манга</title>
   <style>
     body {
       background: #f2f0f7;
@@ -60,31 +60,31 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="universe-bt21.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџ«Ј Р’РќРЈРўР Р РњРђРќР“Рђ рџ«Ј</h1>
-    <p class="intro">Р“РѕРґ РІС‹РїСѓСЃРєР°: 2023 рџ•ђ</p>
-    <p class="intro">РњР°РЅРі вЂ“ РїРµСЂСЃРѕРЅР°Р¶, РїСЂРёРґСѓРјР°РЅРЅС‹Р№ РҐРѕСЃРѕРєРѕРј РґР»СЏ РІСЃРµР»РµРЅРЅРѕР№ BT21</a>. РћРЅ РІСЃРµРіРґР° Р±С‹Р» РІ РјР°СЃРєРµ РµРґРёРЅРѕСЂРѕРіР°. РќРѕ СЃРµР№С‡Р°СЃ РїСЂРёС€Р»Рѕ РІСЂРµРјСЏ РЅР°РєРѕРЅРµС†-С‚Рѕ СЃРЅСЏС‚СЊ СЃРІРѕСЋ РјР°СЃРєСѓ</p>
+    <a class="back" href="universe-bt21.html">← Назад</a>
+    <h1>🫣 ВНУТРИ МАНГА 🫣</h1>
+    <p class="intro">Год выпуска: 2023 🕐</p>
+    <p class="intro">Манг – персонаж, придуманный Хосоком для вселенной BT21</a>. Он всегда был в маске единорога. Но сейчас пришло время наконец-то снять свою маску</p>
     <div id="list"></div>
-    <a class="footer-link" href="universe-bt21.html">Р’СЃРµ СЃРµР·РѕРЅС‹ Universe BT21 в¬…пёЏ</a>
+    <a class="footer-link" href="universe-bt21.html">Все сезоны Universe BT21 ⬅️</a>
   </div>
 
   <script>
     const items = [
-      { text: "1 СЌРїРёР·РѕРґ", sub: "РїСѓС‚СЊ РњР°РЅРіР°", link: "https://t.me/violent_arhive/3752" },
-      { text: "2 СЌРїРёР·РѕРґ", sub: "РІРЅСѓС‚СЂРё Р”Р¶РµР№-РҐРѕСѓРїР°", link: "https://t.me/violent_arhive/3779" },
-      { text: "3 СЌРїРёР·РѕРґ", sub: "РҐРѕСѓРї РЅР°Р±СЂРѕСЃРєРё", link: "https://t.me/violent_arhive/3780" },
-      { text: "4 СЌРїРёР·РѕРґ", sub: "СЌС‚Рѕ С‚РѕР»СЊРєРѕ РЅР°С‡Р°Р»Рѕ", link: "https://t.me/violent_arhive/3799" },
-      { text: "5 СЌРїРёР·РѕРґ", sub: "РІРёРґРµРѕ-Р·РІРѕРЅРѕРє", link: "https://t.me/violent_arhive/3822" },
-      { text: "6 СЌРїРёР·РѕРґ", sub: "РњР°РЅРі СЃРЅСЏР» РјР°СЃРєСѓ", link: "https://t.me/violent_arhive/3868" },
-      { text: "7 СЌРїРёР·РѕРґ", sub: "РїСЂРѕРІРµРґС‘Рј РІСЃС‚СЂРµС‡Сѓ?", link: "https://t.me/violent_arhive/3893" },
-      { text: "8 СЌРїРёР·РѕРґ", sub: "РњР°РЅРі СЃ Р’Рў21~", link: "https://youtu.be/YMMoXGn5Leo" },
-      { text: "9 СЌРїРёР·РѕРґ", sub: "РІСЃС‚СЂРµС‡Р°-РґСѓС€Р°", link: "https://t.me/violent_arhive/3937" },
-      { text: "10 СЌРїРёР·РѕРґ", sub: "РёРЅС‚РµСЂРІСЊСЋ РњР°РЅРіР°", link: "https://t.me/violent_arhive/3970" },
-      { text: "11 СЌРїРёР·РѕРґ", sub: "СЃРµРјСЊСЏ Рё РјРµСЂС‡", link: "https://t.me/violent_arhive/3976" },
-      { text: "12 СЌРїРёР·РѕРґ", sub: "Р’Рў21 С‡РёС‚Р°СЋС‚ РјС‹СЃР»Рё", link: "https://t.me/violent_arhive/3977" },
-      { text: "13 СЌРїРёР·РѕРґ", sub: "С†РµР»СѓСЋ-РѕР±РЅРёРјР°СЋ", link: "https://t.me/violent_arhive/4067" },
-      { text: "14 СЌРїРёР·РѕРґ", sub: "РІ СЂРёС‚РјРµ РњР°РЅРіР°", link: "https://youtu.be/7bHVxuR--8k" },
-      { text: "РЎРїРµС†. СЌРїРёР·РѕРґ", sub: "РјРµСЂС‡ РњР°РЅРіР°", link: "https://t.me/violent_arhive/4066" }
+      { text: "1 эпизод", sub: "путь Манга", link: "https://t.me/violent_arhive/3752" },
+      { text: "2 эпизод", sub: "внутри Джей-Хоупа", link: "https://t.me/violent_arhive/3779" },
+      { text: "3 эпизод", sub: "Хоуп наброски", link: "https://t.me/violent_arhive/3780" },
+      { text: "4 эпизод", sub: "это только начало", link: "https://t.me/violent_arhive/3799" },
+      { text: "5 эпизод", sub: "видео-звонок", link: "https://t.me/violent_arhive/3822" },
+      { text: "6 эпизод", sub: "Манг снял маску", link: "https://t.me/violent_arhive/3868" },
+      { text: "7 эпизод", sub: "проведём встречу?", link: "https://t.me/violent_arhive/3893" },
+      { text: "8 эпизод", sub: "Манг с ВТ21~", link: "https://youtu.be/YMMoXGn5Leo" },
+      { text: "9 эпизод", sub: "встреча-душа", link: "https://t.me/violent_arhive/3937" },
+      { text: "10 эпизод", sub: "интервью Манга", link: "https://t.me/violent_arhive/3970" },
+      { text: "11 эпизод", sub: "семья и мерч", link: "https://t.me/violent_arhive/3976" },
+      { text: "12 эпизод", sub: "ВТ21 читают мысли", link: "https://t.me/violent_arhive/3977" },
+      { text: "13 эпизод", sub: "целую-обнимаю", link: "https://t.me/violent_arhive/4067" },
+      { text: "14 эпизод", sub: "в ритме Манга", link: "https://youtu.be/7bHVxuR--8k" },
+      { text: "Спец. эпизод", sub: "мерч Манга", link: "https://t.me/violent_arhive/4066" }
     ];
 
     const listEl = document.getElementById('list');
@@ -125,7 +125,7 @@
       link.className = 'link';
       link.href = item.link;
       link.target = '_blank';
-      link.textContent = 'рџ”—';
+      link.textContent = '🔗';
 
       row.appendChild(box);
       row.appendChild(span);

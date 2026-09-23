@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -65,32 +65,32 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="concerts-2025-2026.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџ‘‘ TOUR ARIRANG рџ‘‘</h1>
+    <a class="back" href="concerts-2025-2026.html">← Назад</a>
+    <h1>👑 TOUR ARIRANG 👑</h1>
     <div id="list"></div>
-    <p class="waiting">Р–РґС‘Рј РѕСЃС‚Р°Р»СЊРЅС‹Рµ РєРѕРЅС†РµСЂС‚С‹</p>
-    <a class="footer-link" href="concerts-2025-2026.html">Р’СЃРµ РєРѕРЅС†РµСЂС‚С‹ 2025-2026 РіРѕРґР° в¬…пёЏ</a>
+    <p class="waiting">Ждём остальные концерты</p>
+    <a class="footer-link" href="concerts-2025-2026.html">Все концерты 2025-2026 года ⬅️</a>
   </div>
 
   <script>
     const data = [
       { city: "Seoul", items: [
-        { text: "D-1", sub: "РѕС‚ 09.04.2026", link: "https://t.me/violent_arhive/5470" },
-        { text: "D-2", sub: "РѕС‚ 11.04.2026", link: "https://t.me/violent_arhive/5474" },
-        { text: "D-3", sub: "РѕС‚ 12.04.2026", link: "https://t.me/violent_arhive/5477" }
+        { text: "D-1", sub: "от 09.04.2026", link: "https://t.me/violent_arhive/5470" },
+        { text: "D-2", sub: "от 11.04.2026", link: "https://t.me/violent_arhive/5474" },
+        { text: "D-3", sub: "от 12.04.2026", link: "https://t.me/violent_arhive/5477" }
       ]},
       { city: "Japan", items: [
-        { text: "D-1", sub: "РѕС‚ 17.04.2026", link: "https://t.me/violent_arhive/5476" },
-        { text: "D-2", sub: "РѕС‚ 18.04.2026", link: "https://t.me/violent_arhive/5485" }
+        { text: "D-1", sub: "от 17.04.2026", link: "https://t.me/violent_arhive/5476" },
+        { text: "D-2", sub: "от 18.04.2026", link: "https://t.me/violent_arhive/5485" }
       ]},
            { city: "Busan", items: [
-        { text: "D-1", sub: "РѕС‚ 12.06.2026", link: "https://t.me/violent_arhive/5524" },
-        { text: "D-2", sub: "РѕС‚ 13.06.2026", link: "https://t.me/violent_arhive/5525" }
+        { text: "D-1", sub: "от 12.06.2026", link: "https://t.me/violent_arhive/5524" },
+        { text: "D-2", sub: "от 13.06.2026", link: "https://t.me/violent_arhive/5525" }
       ]},
             { city: "Los Angeles", items: [
-        { text: "D-1", sub: "РѕС‚ 01.09.2026", link: "https://t.me/violent_arhive/5611" },
-        { text: "D-2", sub: "РѕС‚ 02.09.2026", link: "https://t.me/violent_arhive/5612" },
-        { text: "D-3", sub: "РѕС‚ 05.09.2026", link: "https://t.me/violent_arhive/5619" }
+        { text: "D-1", sub: "от 01.09.2026", link: "https://t.me/violent_arhive/5611" },
+        { text: "D-2", sub: "от 02.09.2026", link: "https://t.me/violent_arhive/5612" },
+        { text: "D-3", sub: "от 05.09.2026", link: "https://t.me/violent_arhive/5619" }
       ]}
     ];
 
@@ -138,7 +138,7 @@
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
-        link.textContent = 'рџ”—';
+        link.textContent = '🔗';
 
         row.appendChild(box);
         row.appendChild(span);

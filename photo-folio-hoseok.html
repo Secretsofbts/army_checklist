@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="sync.js?v=21"></script>
-  <title>Photo-Folio: РҐРѕСЃРѕРє</title>
+  <title>Photo-Folio: Хосок</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
     .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -25,24 +25,24 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="photo-folio.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџ”Ґ РҐРѕСЃРѕРє рџ”Ґ</h1>
-    <p style="font-size: 13px; font-weight: 600; color: #888; margin: 0 0 4px;">РЎСЃС‹Р»РєРё РґР»СЏ РѕР·РЅР°РєРѕРјР»РµРЅРёСЏ</p>
+    <a class="back" href="photo-folio.html">← Назад</a>
+    <h1>🔥 Хосок 🔥</h1>
+    <p style="font-size: 13px; font-weight: 600; color: #888; margin: 0 0 4px;">Ссылки для ознакомления</p>
     <div id="extras"></div>
-    <p style="font-size: 13px; font-weight: 600; color: #888; margin: 16px 0 4px;">РџСЂРѕС†РµСЃСЃ СЃРѕР·РґР°РЅРёСЏ</p>
+    <p style="font-size: 13px; font-weight: 600; color: #888; margin: 16px 0 4px;">Процесс создания</p>
     <div id="list"></div>
-    <a class="footer-link" href="photo-folio.html">Photo-Folio в¬…пёЏ</a>
+    <a class="footer-link" href="photo-folio.html">Photo-Folio ⬅️</a>
   </div>
 
   <script>
     const extraLinks = [
       { text: "Concept Film", link: "https://t.me/violent_arhive/3653" },
-      { text: "РЎРєР°РЅС‹ С„РѕС‚РѕР±СѓРєР°", link: "https://telegra.ph/Me-Myself-and-J-HOPE-All-New-Hope-02-01" }
+      { text: "Сканы фотобука", link: "https://telegra.ph/Me-Myself-and-J-HOPE-All-New-Hope-02-01" }
     ];
 
     const items = [
       { text: "Production Film", link: "https://t.me/violent_arhive/3652" },
-      { text: "РЎСЉС‘РјРєРё С„РѕС‚РѕР±СѓРєР°", link: "https://t.me/violent_arhive/3698" }
+      { text: "Съёмки фотобука", link: "https://t.me/violent_arhive/3698" }
     ];
 
     const extrasEl = document.getElementById('extras');
@@ -54,7 +54,7 @@
       label.textContent = item.text;
       const icon = document.createElement('span');
       icon.className = 'link';
-      icon.textContent = 'рџ”—';
+      icon.textContent = '🔗';
       a.appendChild(label);
       a.appendChild(icon);
       extrasEl.appendChild(a);
@@ -79,7 +79,7 @@
       });
       span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
       const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = 'рџ”—';
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
       row.appendChild(box); row.appendChild(span); row.appendChild(link);
       listEl.appendChild(row);
     });

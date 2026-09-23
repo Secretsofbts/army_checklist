@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -60,19 +60,19 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="concerts-2014-2019.html">в†ђ РќР°Р·Р°Рґ</a>
+    <a class="back" href="concerts-2014-2019.html">← Назад</a>
     <h1>"Hwa Yang Yeon Hwa" On Stage</h1>
-    <p class="intro">Р“РѕРґ РІС‹РїСѓСЃРєР°: 2015<br>РљРѕРЅС†РµСЂС‚ РіСЂСѓРїРїС‹ BTS, РїСЂРѕС…РѕРґРёРІС€РёР№ РІ РЎРµСѓР»Рµ (Olympic Handball Gymnasium) 27-29 РЅРѕСЏР±СЂСЏ 2015 РіРѕРґР°</p>
+    <p class="intro">Год выпуска: 2015<br>Концерт группы BTS, проходивший в Сеуле (Olympic Handball Gymnasium) 27-29 ноября 2015 года</p>
     <div id="list"></div>
-    <a class="footer-link" href="concerts-2014-2019.html">Р’СЃРµ РєРѕРЅС†РµСЂС‚С‹ 2014-2019 в¬…пёЏ</a>
+    <a class="footer-link" href="concerts-2014-2019.html">Все концерты 2014-2019 ⬅️</a>
   </div>
 
   <script>
     const items = [
-      { text: "HYYH on stage - РєРѕРЅС†РµСЂС‚", sub: "eng.sub", link: "https://t.me/violent_arhive/2348" },
-      { text: "HYYH On Stage - РїСЂР°РєС‚РёРєР° Рё СЂРµРїРµС‚РёС†РёСЏ", link: "https://t.me/violent_arhive/2346" },
+      { text: "HYYH on stage - концерт", sub: "eng.sub", link: "https://t.me/violent_arhive/2348" },
+      { text: "HYYH On Stage - практика и репетиция", link: "https://t.me/violent_arhive/2346" },
       { text: "HYYH On Stage - Concert Making", link: "https://t.me/violent_arhive/2347" },
-      { text: "Prologue VCR&Making - СЃСЉРµРјРєРё РїСЂРѕР»РѕРіР°", link: "https://t.me/violent_arhive/1530" }
+      { text: "Prologue VCR&Making - съемки пролога", link: "https://t.me/violent_arhive/1530" }
     ];
 
        const listEl = document.getElementById('list');
@@ -114,7 +114,7 @@
       link.className = 'link';
       link.href = item.link;
       link.target = '_blank';
-      link.textContent = 'рџ”—';
+      link.textContent = '🔗';
 
       row.appendChild(box);
       row.appendChild(span);

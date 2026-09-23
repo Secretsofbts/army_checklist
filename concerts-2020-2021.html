@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="sync.js?v=21"></script>
-  <title>РћРЅР»Р°Р№РЅ-РєРѕРЅС†РµСЂС‚С‹ 2020-2021</title>
+  <title>Онлайн-концерты 2020-2021</title>
   <style>
     body {
       background: #f2f0f7;
@@ -72,30 +72,30 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="concerts.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџ–Ґ РћРќР›РђР™Рќ-РљРћРќР¦Р•Р РўР« рџ–Ґ</h1>
-    <p class="intro">РЎ РЅР°С‡Р°Р»Р° РїР°РЅРґРµРјРёРё СЂРµР±СЏС‚Р° РЅРµ РѕСЃС‚Р°РІР»СЏР»Рё РЅР°СЃ Р±РµР· РєРѕРЅС†РµСЂС‚РѕРІ Рё РїСЂРѕРІРµР»Рё РЅРµСЃРєРѕР»СЊРєРѕ РѕРЅР»Р°Р№РЅ. РљРѕРЅС†РµСЂС‚С‹ РІСЃРµРіРґР° Р·СЂРµР»РёС‰РЅС‹Рµ, РёРЅС‚РµСЂРµСЃРЅС‹Рµ Рё В«С‚С‘РїР»С‹РµВ». Р‘Р°РЅС‚Р°РЅС‹ РІСЃРµРіРґР° РІС‹РєР»Р°РґС‹РІР°СЋС‚СЃСЏ РїРѕ РїРѕР»РЅРѕР№, Рё РґР°СЂСЏС‚ РЅР°Рј СЃРІРѕСЋ Р»СЋР±РѕРІСЊ РґР°Р¶Рµ С‡РµСЂРµР· СЌРєСЂР°РЅ рџ’њ</p>
+    <a class="back" href="concerts.html">← Назад</a>
+    <h1>🖥 ОНЛАЙН-КОНЦЕРТЫ 🖥</h1>
+    <p class="intro">С начала пандемии ребята не оставляли нас без концертов и провели несколько онлайн. Концерты всегда зрелищные, интересные и «тёплые». Бантаны всегда выкладываются по полной, и дарят нам свою любовь даже через экран 💜</p>
     <div id="list"></div>
-    <p class="outro">Р’ РєРѕРЅС†Рµ 2021 РіРѕРґР° СЂРµР±СЏС‚Р° РїСЂРѕРІРµР»Рё СЃРІРѕР№ РїРµСЂРІС‹Р№ РѕС„С„Р»Р°Р№РЅ РєРѕРЅС†РµСЂС‚ РїРѕСЃР»Рµ РґРѕР»РіРѕРіРѕ РїРµСЂРµСЂС‹РІР° РїРѕСЃР»Рµ РєРѕРІРёРґР°, С…РѕС‚СЏ РѕРЅРё РїСЂРѕРґРѕР»Р¶Р°Р»Рё С‚СЂР°РЅСЃР»РёСЂРѕРІР°С‚СЊСЃСЏ Рё РѕРЅР»Р°Р№РЅ</p>
-  <a class="footer-link" href="concerts.html">Р’СЃРµ РєРѕРЅС†РµСЂС‚С‹ BTS в¬…пёЏ</a>
+    <p class="outro">В конце 2021 года ребята провели свой первый оффлайн концерт после долгого перерыва после ковида, хотя они продолжали транслироваться и онлайн</p>
+  <a class="footer-link" href="concerts.html">Все концерты BTS ⬅️</a>
   </div>
 
   <script>
         const items = [
-      { text: "BANG BANG CON", sub: "РѕС‚ 14.06.2020", links: [
-        { label: "Р°РЅРіР», 1080", link: "https://t.me/violent_arhive/1747" },
-        { label: "СЂСѓСЃ, 720, Р·Р°РµРґР°РµС‚", link: "https://t.me/violent_arhive/1679" }
+      { text: "BANG BANG CON", sub: "от 14.06.2020", links: [
+        { label: "англ, 1080", link: "https://t.me/violent_arhive/1747" },
+        { label: "рус, 720, заедает", link: "https://t.me/violent_arhive/1679" }
       ]},
-      { text: "MAP OF THE SOUL ON:E D-1", sub: "РѕС‚ 10.10.2020 вЂ” СЃ СЂСѓСЃ. СЃСѓР±С‚РёС‚СЂР°РјРё", link: "https://t.me/violent_arhive/1978" },
-      { text: "MAP OF THE SOUL ON:E D-2", sub: "РѕС‚ 11.10.2020 вЂ” СЃ Р°РЅРіР». СЃСѓР±С‚РёС‚СЂР°РјРё", link: "https://t.me/violent_arhive/979" },
-      { text: "NEW YEAR'S EVE LIVE", sub: "РѕС‚ 31.12.2020 вЂ” СЃ СЂСѓСЃ. СЃСѓР±С‚РёС‚СЂР°РјРё", link: "https://t.me/violent_arhive/982" },
-      { text: "SOWOOZOO D-1", sub: "РѕС‚ 13.06.2021 вЂ” СЃ СЂСѓСЃ. СЃСѓР±С‚РёС‚СЂР°РјРё", link: "https://t.me/violent_arhive/3607" },
-      { text: "SOWOOZOO D-2", sub: "РѕС‚ 14.06.2021 вЂ” Р±РµР· СЃСѓР±С‚РёС‚СЂРѕРІ", link: "https://t.me/violent_arhive/964" },
-      { text: "PERMISSION TO DANCE", sub: "РѕС‚ 24.10.2021", links: [
-        { label: "Р°РЅРіР». СЃСѓР±", link: "https://t.me/violent_arhive/1565" },
-        { label: "СЂСѓСЃ. СЃСѓР±", link: "https://t.me/violent_arhive/1629" }
+      { text: "MAP OF THE SOUL ON:E D-1", sub: "от 10.10.2020 — с рус. субтитрами", link: "https://t.me/violent_arhive/1978" },
+      { text: "MAP OF THE SOUL ON:E D-2", sub: "от 11.10.2020 — с англ. субтитрами", link: "https://t.me/violent_arhive/979" },
+      { text: "NEW YEAR'S EVE LIVE", sub: "от 31.12.2020 — с рус. субтитрами", link: "https://t.me/violent_arhive/982" },
+      { text: "SOWOOZOO D-1", sub: "от 13.06.2021 — с рус. субтитрами", link: "https://t.me/violent_arhive/3607" },
+      { text: "SOWOOZOO D-2", sub: "от 14.06.2021 — без субтитров", link: "https://t.me/violent_arhive/964" },
+      { text: "PERMISSION TO DANCE", sub: "от 24.10.2021", links: [
+        { label: "англ. суб", link: "https://t.me/violent_arhive/1565" },
+        { label: "рус. суб", link: "https://t.me/violent_arhive/1629" }
       ], subs: [
-        { text: "РЎР°СѓРЅРґС‡РµРє Рє РєРѕРЅС†РµСЂС‚Сѓ", sub: "СЃ Р°РЅРіР». СЃСѓР±С‚РёС‚СЂР°РјРё", link: "https://t.me/violent_arhive/1563" }
+        { text: "Саундчек к концерту", sub: "с англ. субтитрами", link: "https://t.me/violent_arhive/1563" }
       ]}
     ];
 
@@ -150,7 +150,7 @@
           link.className = 'link';
           link.href = l.link;
           link.target = '_blank';
-          link.textContent = 'рџ”—';
+          link.textContent = '🔗';
           linkRow.appendChild(label);
           linkRow.appendChild(link);
           linksWrap.appendChild(linkRow);
@@ -161,7 +161,7 @@
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
-        link.textContent = 'рџ”—';
+        link.textContent = '🔗';
         row.appendChild(link);
       }
 

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="sync.js?v=21"></script>
-  <title>Р‘РѕРЅ Р’РѕСЏР¶ 2 СЃРµР·РѕРЅ</title>
+  <title>Бон Вояж 2 сезон</title>
   <style>
     body {
       background: #f2f0f7;
@@ -59,23 +59,23 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="bon-voyage.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџЏ• Р‘РѕРЅ Р’РѕСЏР¶: 2 СЃРµР·РѕРЅ рџ§­</h1>
-    <p class="intro">Р’ РєР°Р¶РґРѕРј РїРѕСЃС‚Рµ вЂ” СЃРµСЂРёСЏ + Р·Р°РєР°РґСЂРѕРІС‹Рµ</p>
+    <a class="back" href="bon-voyage.html">← Назад</a>
+    <h1>🏕 Бон Вояж: 2 сезон 🧭</h1>
+    <p class="intro">В каждом посте — серия + закадровые</p>
     <div id="list"></div>
-    <a class="footer-link" href="bon-voyage.html">Р‘РѕРЅ Р’РѕСЏР¶ в¬…пёЏ</a>
+    <a class="footer-link" href="bon-voyage.html">Бон Вояж ⬅️</a>
   </div>
 
   <script>
     const items = [
-      { text: "1 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/69" },
-      { text: "2 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/71" },
-      { text: "3 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/74" },
-      { text: "4 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/76" },
-      { text: "5 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/78" },
-      { text: "6 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/83" },
-      { text: "7 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/85" },
-      { text: "8 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/87" }
+      { text: "1 серия", link: "https://t.me/violent_arhive/69" },
+      { text: "2 серия", link: "https://t.me/violent_arhive/71" },
+      { text: "3 серия", link: "https://t.me/violent_arhive/74" },
+      { text: "4 серия", link: "https://t.me/violent_arhive/76" },
+      { text: "5 серия", link: "https://t.me/violent_arhive/78" },
+      { text: "6 серия", link: "https://t.me/violent_arhive/83" },
+      { text: "7 серия", link: "https://t.me/violent_arhive/85" },
+      { text: "8 серия", link: "https://t.me/violent_arhive/87" }
     ];
 
     const listEl = document.getElementById('list');
@@ -110,7 +110,7 @@
       link.className = 'link';
       link.href = item.link;
       link.target = '_blank';
-      link.textContent = 'рџ”—';
+      link.textContent = '🔗';
 
       row.appendChild(box);
       row.appendChild(span);

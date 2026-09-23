@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -64,31 +64,31 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="shows.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџ”® UNIVERSE BT21 рџ”®</h1>
-    <p class="intro">РЎРµСЂРёР°Р» РїСЂРѕ СЃРѕР·РґР°РЅРёРµ РјРёР»С‹С… РїРµСЂСЃРѕРЅР°Р¶РµР№ BT21: РїРµСЂРІРѕРЅР°С‡Р°Р»СЊРЅС‹Рµ СЌСЃРєРёР·С‹, СЂРµР°РєС†РёРё СЂРµР±СЏС‚ Рё РїСЂРёРєРѕР»СЊРЅС‹Рµ Р°РЅРёРјР°С†РёРё</p>
+    <a class="back" href="shows.html">← Назад</a>
+    <h1>🔮 UNIVERSE BT21 🔮</h1>
+    <p class="intro">Сериал про создание милых персонажей BT21: первоначальные эскизы, реакции ребят и прикольные анимации</p>
     <p class="characters">
-      рџ‘Ѕ РўСЌС…С‘РЅ вЂ” РўР°С‚Р° (РёРЅРѕРїР»Р°РЅРµС‚СЏРЅРёРЅ)<br>
-      рџђЁ РќР°РјРґР¶СѓРЅ вЂ” РљРѕСЏ (РєРѕР°Р»Р°)<br>
-      рџ¦™ Р”Р¶РёРЅ вЂ” RJ (Р°Р»СЊРїР°РєР°)<br>
-      рџђ° Р§РѕРЅРіСѓРє вЂ” РљСѓРєРё (РєСЂРѕР»РёРє)<br>
-      рџЌЄ Р®РЅРіРё вЂ” РЁСѓРєРё (РїРµС‡РµРЅСЊРєР°)<br>
-      рџђ¶ Р§РёРјРёРЅ вЂ” Р§РёРјРјРё (С‰РµРЅРѕРє)<br>
-      рџђґ РҐРѕСЃРѕРє вЂ” РњР°РЅРі (РїРѕРЅРё)<br>
-      рџ¤– Army вЂ” Р’Р°РЅ (СЂРѕР±РѕС‚)
+      👽 Тэхён — Тата (инопланетянин)<br>
+      🐨 Намджун — Коя (коала)<br>
+      🦙 Джин — RJ (альпака)<br>
+      🐰 Чонгук — Куки (кролик)<br>
+      🍪 Юнги — Шуки (печенька)<br>
+      🐶 Чимин — Чимми (щенок)<br>
+      🐴 Хосок — Манг (пони)<br>
+      🤖 Army — Ван (робот)
     </p>
     <div id="list"></div>
-    <a class="footer-link" href="shows.html">РџРѕСЃС‚ РІСЃРµС… С€РѕСѓ в¬…пёЏ</a>
+    <a class="footer-link" href="shows.html">Пост всех шоу ⬅️</a>
   </div>
 
   <script>
     const navItems = [
-      { text: "РЎРћР—Р”РђРќРР• BT21 1 СЃРµР·РѕРЅ", link: "universe-bt21-s1.html", statKey: "universe-bt21-s1" },
-      { text: "РЎРћР—Р”РђРќРР• BT21 2 СЃРµР·РѕРЅ", link: "universe-bt21-s2.html", statKey: "universe-bt21-s2" },
-      { text: "BT21 ANIMATION Рє 2 СЃРµР·РѕРЅСѓ", link: "universe-bt21-s2-animation.html", statKey: "universe-bt21-s2-animation" },
-      { text: "РЎРћР—Р”РђРќРР• BT21 3 СЃРµР·РѕРЅ", link: "universe-bt21-s3.html", statKey: "universe-bt21-s3" },
-      { text: "BT21 ANIMATION Рє 3 СЃРµР·РѕРЅСѓ", link: "universe-bt21-s3-animation.html", statKey: "universe-bt21-s3-animation" },
-      { text: "Р’РЅСѓС‚СЂРё РњР°РЅРіР°", link: "universe-bt21-inside-manga.html", statKey: "universe-bt21-inside-manga" }
+      { text: "СОЗДАНИЕ BT21 1 сезон", link: "universe-bt21-s1.html", statKey: "universe-bt21-s1" },
+      { text: "СОЗДАНИЕ BT21 2 сезон", link: "universe-bt21-s2.html", statKey: "universe-bt21-s2" },
+      { text: "BT21 ANIMATION к 2 сезону", link: "universe-bt21-s2-animation.html", statKey: "universe-bt21-s2-animation" },
+      { text: "СОЗДАНИЕ BT21 3 сезон", link: "universe-bt21-s3.html", statKey: "universe-bt21-s3" },
+      { text: "BT21 ANIMATION к 3 сезону", link: "universe-bt21-s3-animation.html", statKey: "universe-bt21-s3-animation" },
+      { text: "Внутри Манга", link: "universe-bt21-inside-manga.html", statKey: "universe-bt21-inside-manga" }
     ];
 
     const listEl = document.getElementById('list');
@@ -120,7 +120,7 @@
       var el = document.getElementById('badge-' + key);
       if (!el || !data || data.total === 0) { if (el) el.textContent = ''; return; }
       if (data.checked === data.total) {
-        el.textContent = 'вњ…';
+        el.textContent = '✅';
         el.style.color = '#2e9e5b';
         var card = el.closest('.navlink');
         if (card) card.style.background = '#e3f7e9';

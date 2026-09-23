@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -65,30 +65,30 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="bangtan-bomb.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџ’Ј 2025 РіРѕРґ рџ’Ј</h1>
-    <p class="intro">Р’С‹Р»РѕР¶РµРЅС‹ РїРѕ РґР°С‚Р°Рј РёС… Р·Р°РіСЂСѓР·РєРё РЅР° YouTube-РєР°РЅР°Р» BTS, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РґР°С‚Сѓ С„Р°РєС‚РёС‡РµСЃРєРѕР№ СЃСЉС‘РјРєРё СЃР»РѕР¶РЅРѕ РїРѕРЅСЏС‚СЊ. РўРµ РјРµСЃСЏС†С‹, РєРѕС‚РѕСЂС‹С… РЅРµС‚, РІ РЅРёС… РЅРµ РІС‹С…РѕРґРёР»Рё</p>
+    <a class="back" href="bangtan-bomb.html">← Назад</a>
+    <h1>💣 2025 год 💣</h1>
+    <p class="intro">Выложены по датам их загрузки на YouTube-канал BTS, потому что дату фактической съёмки сложно понять. Те месяцы, которых нет, в них не выходили</p>
     <div id="list"></div>
-    <a class="footer-link" href="bangtan-bomb.html">Р’СЃРµ Bangtan Bomb в¬…пёЏ</a>
+    <a class="footer-link" href="bangtan-bomb.html">Все Bangtan Bomb ⬅️</a>
   </div>
 
   <script>
     const data = [
-      { month: "РЇРќР’РђР Р¬", items: [
-        { text: "РЎРєРµС‚С‡ СЃ РјРµСЂРѕРїСЂРёСЏС‚РёСЏ Р”Р¶РёРЅР° РґР»СЏ РђР РњР РІ Lotte World", link: "https://t.me/violent_arhive/4983" }
+      { month: "ЯНВАРЬ", items: [
+        { text: "Скетч с мероприятия Джина для АРМИ в Lotte World", link: "https://t.me/violent_arhive/4983" }
       ]},
-      { month: "РњРђР Рў", items: [
-        { text: "Р§РµР»Р»РµРЅРґР¶ \"Sweet Dreams\"", link: "https://t.me/violent_arhive/5037" },
-        { text: "Р§РµР»Р»РµРЅРґР¶ \"Shanghai Romance\"", link: "https://t.me/violent_arhive/5061" }
+      { month: "МАРТ", items: [
+        { text: "Челлендж \"Sweet Dreams\"", link: "https://t.me/violent_arhive/5037" },
+        { text: "Челлендж \"Shanghai Romance\"", link: "https://t.me/violent_arhive/5061" }
       ]},
-      { month: "РњРђР™", items: [
-        { text: "РЎСЉС‘РјРєРё Р”Р¶РёРЅР° В«РЈР·РЅР°Р№С‚Рµ РґР°С‚Сѓ РІС‹С…РѕРґР° Р°Р»СЊР±РѕРјР°В»", link: "https://t.me/violent_arhive/5116" }
+      { month: "МАЙ", items: [
+        { text: "Съёмки Джина «Узнайте дату выхода альбома»", link: "https://t.me/violent_arhive/5116" }
       ]},
-      { month: "РР®Р›Р¬", items: [
-        { text: "Р—Р°РїРёСЃСЊ С‡РµР»Р»РµРЅРґР¶Р° В«Killin' It Girl (Solo Version)В»", link: "https://t.me/violent_arhive/5230" }
+      { month: "ИЮЛЬ", items: [
+        { text: "Запись челленджа «Killin' It Girl (Solo Version)»", link: "https://t.me/violent_arhive/5230" }
       ]},
-      { month: "РђР’Р“РЈРЎРў", items: [
-        { text: "РЎРєРµС‚С‡ СЃ РІС‹СЃС‚СѓРїР»РµРЅРёСЏ Р”Р¶РµР№-РҐРѕСѓРїР° РЅР° SUMMER SWAG", link: "https://t.me/violent_arhive/5231" }
+      { month: "АВГУСТ", items: [
+        { text: "Скетч с выступления Джей-Хоупа на SUMMER SWAG", link: "https://t.me/violent_arhive/5231" }
       ]}
     ];
 
@@ -130,7 +130,7 @@
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
-        link.textContent = 'рџ”—';
+        link.textContent = '🔗';
 
         row.appendChild(box);
         row.appendChild(span);

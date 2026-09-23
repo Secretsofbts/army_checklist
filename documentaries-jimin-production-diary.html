@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -26,41 +26,41 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="documentaries.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>Jimin's Production Diary рџ“•</h1>
-    <p class="intro">Р“РѕРґ РІС‹РїСѓСЃРєР°: 2023</p>
-    <p class="intro">Р­С‚РѕС‚ С„РёР»СЊРј РїРѕР·РЅР°РєРѕРјРёС‚ С„Р°РЅР°С‚РѕРІ СЃ С‚РІРѕСЂС‡РµСЃРєРёРј РїСѓС‚С‘Рј Р§РёРјРёРЅР° РїСЂРё СЃРѕР·РґР°РЅРёРё СЃРѕР»СЊРЅРѕРіРѕ Р°Р»СЊР±РѕРјР° "FACE". РћРЅ РїРѕРґРµР»РёС‚СЃСЏ СЃ РЅР°РјРё СЃРІРѕРёРјРё РјС‹СЃР»СЏРјРё Рё РїРµСЂРµР¶РёРІР°РЅРёСЏРјРё</p>
+    <a class="back" href="documentaries.html">← Назад</a>
+    <h1>Jimin's Production Diary 📕</h1>
+    <p class="intro">Год выпуска: 2023</p>
+    <p class="intro">Этот фильм познакомит фанатов с творческим путём Чимина при создании сольного альбома "FACE". Он поделится с нами своими мыслями и переживаниями</p>
 
         <div class="row">
       <span style="width:1x; flex-shrink:0;"></span>
-      <span class="text" style="cursor:default;">рџ“№ Р“Р»Р°РІРЅС‹Р№ С‚СЂРµР№Р»РµСЂ С„РёР»СЊРјР°</span>
-      <a class="link" href="https://t.me/violent_arhive/4264" target="_blank">рџ”—</a>
+      <span class="text" style="cursor:default;">📹 Главный трейлер фильма</span>
+      <a class="link" href="https://t.me/violent_arhive/4264" target="_blank">🔗</a>
     </div>
 
     <div id="list-main"></div>
 
-    <p class="section-title">Р’РёРґРµРѕ РїРµСЂРµРґ РІС‹С…РѕРґРѕРј С„РёР»СЊРјР°</p>
+    <p class="section-title">Видео перед выходом фильма</p>
     <div id="list-preview"></div>
 
-    <a class="footer-link" href="documentaries.html">Р”РѕРєСѓРјРµРЅС‚Р°Р»СЊРЅС‹Рµ РїСЂРѕРµРєС‚С‹ в¬…пёЏ</a>
+    <a class="footer-link" href="documentaries.html">Документальные проекты ⬅️</a>
   </div>
 
   <script>
        const mainItems = [
-      { text: "Р¤РёР»СЊРј Production Diary", hearts: "рџ’›", link: "https://t.me/violent_arhive/4291" },
-      { text: "РљРѕРјРјРµРЅС‚Р°СЂРёРё Р§РёРјРёРЅР°", hearts: "вњЁ", link: "https://t.me/violent_arhive/4399" },
-      { text: "РљРІРёР·-С€РѕСѓ", hearts: "вЃ‰пёЏ", link: "https://t.me/violent_arhive/4295" },
-      { text: "РўСЂР°РЅСЃР»СЏС†РёСЏ Р§РёРјРёРЅР°", hearts: "рџ”†", link: "https://t.me/violent_arhive/4322" },
-      { text: "Special Talk СЃ Р§РёРјРёРЅРѕРј", hearts: "рџ—ЁпёЏ", link: "https://t.me/violent_arhive/4326" },
-      { text: "Р‘РѕРјР±РѕС‡РєР° СЃ Special Talk", hearts: "рџ’Ј", link: "https://t.me/violent_arhive/4388" }
+      { text: "Фильм Production Diary", hearts: "💛", link: "https://t.me/violent_arhive/4291" },
+      { text: "Комментарии Чимина", hearts: "✨", link: "https://t.me/violent_arhive/4399" },
+      { text: "Квиз-шоу", hearts: "⁉️", link: "https://t.me/violent_arhive/4295" },
+      { text: "Трансляция Чимина", hearts: "🔆", link: "https://t.me/violent_arhive/4322" },
+      { text: "Special Talk с Чимином", hearts: "🗨️", link: "https://t.me/violent_arhive/4326" },
+      { text: "Бомбочка с Special Talk", hearts: "💣", link: "https://t.me/violent_arhive/4388" }
     ];
 
     const previewItems = [
-      { text: "РџРѕ РєР»СЋС‡РµРІС‹Рј СЃР»РѕРІР°Рј FACE", link: "https://t.me/violent_arhive/4263" },
-      { text: "РќРµСЃРєР°Р·Р°РЅРЅР°СЏ РїСЂР°РІРґР°", link: "https://t.me/violent_arhive/4268" },
-      { text: "Р­РјРѕРґР¶Рё-СЃРєРµС‚С‡", link: "https://t.me/violent_arhive/4269" },
-      { text: "Р›СЋР±РёРјС‹Рµ СЃС‚СЂРѕС‡РєРё РёР· FACE", link: "https://t.me/violent_arhive/4273" },
-      { text: "РЎРѕР·РґР°РЅРёРµ С…СЌС€С‚РµРіР°", link: "https://t.me/violent_arhive/4283" }
+      { text: "По ключевым словам FACE", link: "https://t.me/violent_arhive/4263" },
+      { text: "Несказанная правда", link: "https://t.me/violent_arhive/4268" },
+      { text: "Эмоджи-скетч", link: "https://t.me/violent_arhive/4269" },
+      { text: "Любимые строчки из FACE", link: "https://t.me/violent_arhive/4273" },
+      { text: "Создание хэштега", link: "https://t.me/violent_arhive/4283" }
     ];
 
         function renderList(containerId, items) {
@@ -86,7 +86,7 @@
         hearts.style.cssText = 'font-size:13px; flex-shrink:0;';
         hearts.textContent = item.hearts || '';
         const link = document.createElement('a');
-        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = 'рџ”—';
+        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
         row.appendChild(box); row.appendChild(span); row.appendChild(hearts); row.appendChild(link);
         listEl.appendChild(row);
       });

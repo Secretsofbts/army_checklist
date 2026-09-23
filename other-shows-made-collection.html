@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -26,39 +26,39 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="other-shows-2020-2022.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџЋЁ ARTIST-MADE COLLECTION BY BTS рџЋЁ</h1>
-    <p class="intro">Р“РѕРґ: РєРѕРЅРµС† 2021 - РЅР°С‡Р°Р»Рѕ 2022 рџ•‘</p>
-    <p class="intro">Р’РёРґРµРѕ Рѕ С‚РѕРј, РєР°Рє СЃРѕР·РґР°РІР°Р»СЃСЏ СЌРєСЃРєР»СЋР·РёРІРЅС‹Р№ РјРµСЂС‡ РѕС‚ BTS</p>
+    <a class="back" href="other-shows-2020-2022.html">← Назад</a>
+    <h1>🎨 ARTIST-MADE COLLECTION BY BTS 🎨</h1>
+    <p class="intro">Год: конец 2021 - начало 2022 🕑</p>
+    <p class="intro">Видео о том, как создавался эксклюзивный мерч от BTS</p>
 
-    <p class="section-title">РљРѕР»Р»РµРєС†РёСЏ "SHOW"</p>
+    <p class="section-title">Коллекция "SHOW"</p>
     <div id="list1"></div>
 
     <p class="section-title">Making-of Log</p>
     <div id="list2"></div>
 
-    <a class="footer-link" href="other-shows-2020-2022.html">Р”СЂСѓРіРёРµ С€РѕСѓ (2020 - 2022) в¬…пёЏ</a>
+    <a class="footer-link" href="other-shows-2020-2022.html">Другие шоу (2020 - 2022) ⬅️</a>
   </div>
 
   <script>
         const list1 = [
-      { text: "Р”Р¶РёРЅ", hearts: "рџ’•", link: "https://t.me/violent_arhive/1980" },
-      { text: "РќР°РјРґР¶СѓРЅ", hearts: "рџ’™", link: "https://t.me/violent_arhive/1998" },
-      { text: "РўСЌС…С‘РЅ", hearts: "рџ’љ", link: "https://t.me/violent_arhive/1997" },
-      { text: "Р®РЅРіРё", hearts: "рџ–¤", link: "https://t.me/violent_arhive/1996" },
-      { text: "РҐРѕСЃРѕРє", hearts: "рџ¤Ќ", link: "https://t.me/violent_arhive/2028" },
-      { text: "Р§РёРјРёРЅ", hearts: "рџ’›", link: "https://t.me/violent_arhive/2023" },
-      { text: "Р§РѕРЅРіСѓРє", hearts: "рџ’њ", link: "https://t.me/violent_arhive/2031" }
+      { text: "Джин", hearts: "💕", link: "https://t.me/violent_arhive/1980" },
+      { text: "Намджун", hearts: "💙", link: "https://t.me/violent_arhive/1998" },
+      { text: "Тэхён", hearts: "💚", link: "https://t.me/violent_arhive/1997" },
+      { text: "Юнги", hearts: "🖤", link: "https://t.me/violent_arhive/1996" },
+      { text: "Хосок", hearts: "🤍", link: "https://t.me/violent_arhive/2028" },
+      { text: "Чимин", hearts: "💛", link: "https://t.me/violent_arhive/2023" },
+      { text: "Чонгук", hearts: "💜", link: "https://t.me/violent_arhive/2031" }
     ];
 
     const list2 = [
-      { text: "Р”Р¶РёРЅ", hearts: "рџ’•", link: "https://t.me/violent_arhive/2003" },
-      { text: "РќР°РјРґР¶СѓРЅ", hearts: "рџ’™", link: "https://t.me/violent_arhive/2002" },
-      { text: "РўСЌС…С‘РЅ", hearts: "рџ’љ", link: "https://t.me/violent_arhive/2004" },
-      { text: "Р®РЅРіРё", hearts: "рџ–¤", link: "https://t.me/violent_arhive/2001" },
-      { text: "РҐРѕСЃРѕРє", hearts: "рџ¤Ќ", link: "https://t.me/violent_arhive/2027" },
-      { text: "Р§РёРјРёРЅ", hearts: "рџ’›", link: "https://t.me/violent_arhive/2024" },
-      { text: "Р§РѕРЅРіСѓРє", hearts: "рџ’њ", link: "https://t.me/violent_arhive/2032" }
+      { text: "Джин", hearts: "💕", link: "https://t.me/violent_arhive/2003" },
+      { text: "Намджун", hearts: "💙", link: "https://t.me/violent_arhive/2002" },
+      { text: "Тэхён", hearts: "💚", link: "https://t.me/violent_arhive/2004" },
+      { text: "Юнги", hearts: "🖤", link: "https://t.me/violent_arhive/2001" },
+      { text: "Хосок", hearts: "🤍", link: "https://t.me/violent_arhive/2027" },
+      { text: "Чимин", hearts: "💛", link: "https://t.me/violent_arhive/2024" },
+      { text: "Чонгук", hearts: "💜", link: "https://t.me/violent_arhive/2032" }
     ];
 
     function renderList(containerId, items) {
@@ -84,7 +84,7 @@
         hearts.style.cssText = 'font-size:13px; flex-shrink:0;';
         hearts.textContent = item.hearts || '';
         const link = document.createElement('a');
-        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = 'рџ”—';
+        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
         row.appendChild(box); row.appendChild(span); row.appendChild(hearts); row.appendChild(link);
         listEl.appendChild(row);
       });

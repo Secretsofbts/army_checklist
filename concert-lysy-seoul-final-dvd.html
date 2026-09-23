@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -66,19 +66,19 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="concerts-2014-2019.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџ’ї BTS WORLD TOUR LY:SY D-3 THE FINAL DVD рџ’ї</h1>
-    <p class="intro">Р”Р°С‚Р° СЂРµР»РёР·Р°: РѕРєС‚СЏР±СЂСЊ 2022 рџ•‘<br>DVD СЃ С„РёРЅР°Р»СЊРЅС‹Рј РєРѕРЅС†РµСЂС‚РѕРј РјРёСЂРѕРІРѕРіРѕ С‚СѓСЂР° LY:SY. РћРЅ РїСЂРѕС€С‘Р» 29 РѕРєС‚СЏР±СЂСЏ 2019 РіРѕРґР° РІ РЎРµСѓР»Рµ</p>
+    <a class="back" href="concerts-2014-2019.html">← Назад</a>
+    <h1>💿 BTS WORLD TOUR LY:SY D-3 THE FINAL DVD 💿</h1>
+    <p class="intro">Дата релиза: октябрь 2022 🕑<br>DVD с финальным концертом мирового тура LY:SY. Он прошёл 29 октября 2019 года в Сеуле</p>
     <div id="list"></div>
-    <a class="footer-link" href="concerts-2014-2019.html">Р’СЃРµ РєРѕРЅС†РµСЂС‚С‹ 2014-2019 в¬…пёЏ</a>
+    <a class="footer-link" href="concerts-2014-2019.html">Все концерты 2014-2019 ⬅️</a>
   </div>
 
   <script>
     const data = [
       { disc: "Disk 1", desc: "", items: [
-        { text: "РљРѕРЅС†РµСЂС‚", sub: "РєР°С‡.1080, rus.sub", link: "https://t.me/violent_arhive/3350" }
+        { text: "Концерт", sub: "кач.1080, rus.sub", link: "https://t.me/violent_arhive/3350" }
       ]},
-      { disc: "Disk 2", desc: "РЎРѕР»Рѕ РєР°Р¶РґРѕРіРѕ РјРµРјР±РµСЂР°, РЅРѕ РЅРµ СЃ РєРѕРЅС†РµСЂС‚Р° 29 РѕРєС‚СЏР±СЂСЏ, Р° СЃРѕ 2 РґРЅСЏ РІ РЎРµСѓР»Рµ вЂ” 27 РѕРєС‚СЏР±СЂСЏ", items: [
+      { disc: "Disk 2", desc: "Соло каждого мембера, но не с концерта 29 октября, а со 2 дня в Сеуле — 27 октября", items: [
         { text: "J-Hope - Just Dance", link: "https://t.me/violent_arhive/3351" },
         { text: "JK - Euphoria", link: "https://t.me/violent_arhive/3352" },
         { text: "Jimin - Serendipity", link: "https://t.me/violent_arhive/3353" },
@@ -88,10 +88,10 @@
         { text: "Jin - Epiphany", link: "https://t.me/violent_arhive/3357" }
       ]},
       { disc: "Disk 3", desc: "", items: [
-        { text: "Practice Making Film", sub: "СЂРµРїРµС‚РёС†РёСЏ", link: "https://t.me/violent_arhive/3358" },
-        { text: "Rehearsal Making Film", sub: "С‚РѕР¶Рµ СЂРµРїРµС‚РёС†РёСЏ, РЅРѕ СѓР¶Рµ РЅР° СЃС†РµРЅРµ", link: "https://t.me/violent_arhive/3359" },
-        { text: "D-day Making Film", sub: "С‚РѕС‚ РґРµРЅСЊ, РєРѕРіРґР° РїСЂРѕС…РѕРґРёР» РєРѕРЅС†РµСЂС‚", link: "https://t.me/violent_arhive/3360" },
-        { text: "LY & SY Highlight Commentary", sub: "СЂРµР°РєС†РёСЏ СЂРµР±СЏС‚ РЅР° СЃРІРѕР№ Р¶Рµ РєРѕРЅС†РµСЂС‚ Рё РЅРµРєРѕС‚РѕСЂС‹Рµ РёС… РјС‹СЃР»Рё", link: "https://t.me/violent_arhive/3361" }
+        { text: "Practice Making Film", sub: "репетиция", link: "https://t.me/violent_arhive/3358" },
+        { text: "Rehearsal Making Film", sub: "тоже репетиция, но уже на сцене", link: "https://t.me/violent_arhive/3359" },
+        { text: "D-day Making Film", sub: "тот день, когда проходил концерт", link: "https://t.me/violent_arhive/3360" },
+        { text: "LY & SY Highlight Commentary", sub: "реакция ребят на свой же концерт и некоторые их мысли", link: "https://t.me/violent_arhive/3361" }
       ]}
     ];
 
@@ -147,7 +147,7 @@
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
-        link.textContent = 'рџ”—';
+        link.textContent = '🔗';
 
         row.appendChild(box);
         row.appendChild(span);

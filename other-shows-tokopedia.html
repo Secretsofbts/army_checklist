@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -25,20 +25,20 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="other-shows-2020-2022.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџ’љ TOKOPEDIA BTS рџ’љ</h1>
-    <p class="intro">РРЅРґРѕРЅРµР·РёР№СЃРєР°СЏ С‚РµС…РЅРѕР»РѕРіРёС‡РµСЃРєР°СЏ РєРѕРјРїР°РЅРёСЏ, СЃРїРµС†РёР°Р»РёР·РёСЂСѓСЋС‰Р°СЏСЃСЏ РЅР° СЌР»РµРєС‚СЂРѕРЅРЅРѕР№ РєРѕРјРјРµСЂС†РёРё, Р°РјР±Р°СЃСЃР°РґРѕСЂР°РјРё РєРѕС‚РѕСЂРѕР№ СЏРІР»СЏР»РёСЃСЊ BTS</p>
+    <a class="back" href="other-shows-2020-2022.html">← Назад</a>
+    <h1>💚 TOKOPEDIA BTS 💚</h1>
+    <p class="intro">Индонезийская технологическая компания, специализирующаяся на электронной коммерции, амбассадорами которой являлись BTS</p>
     <div id="list"></div>
-    <a class="footer-link" href="other-shows-2020-2022.html">Р”СЂСѓРіРёРµ С€РѕСѓ (2020 - 2022) в¬…пёЏ</a>
+    <a class="footer-link" href="other-shows-2020-2022.html">Другие шоу (2020 - 2022) ⬅️</a>
   </div>
 
   <script>
     const items = [
-      { text: "Q&A Game Play (1 С‡Р°СЃС‚СЊ)", link: "https://t.me/violent_arhive/290" },
-      { text: "Q&A Game Play (2 С‡Р°СЃС‚СЊ)", link: "https://t.me/violent_arhive/314" },
-      { text: "Р”Р¶РµРЅРіР° + РёРЅС‚РµСЂРІСЊСЋ", link: "https://t.me/violent_arhive/760" },
-      { text: "Tokopedia x BTS (1 С‡Р°СЃС‚СЊ)", link: "https://t.me/violent_arhive/1164" },
-      { text: "Tokopedia x BTS (2 С‡Р°СЃС‚СЊ)", link: "https://t.me/violent_arhive/1166" }
+      { text: "Q&A Game Play (1 часть)", link: "https://t.me/violent_arhive/290" },
+      { text: "Q&A Game Play (2 часть)", link: "https://t.me/violent_arhive/314" },
+      { text: "Дженга + интервью", link: "https://t.me/violent_arhive/760" },
+      { text: "Tokopedia x BTS (1 часть)", link: "https://t.me/violent_arhive/1164" },
+      { text: "Tokopedia x BTS (2 часть)", link: "https://t.me/violent_arhive/1166" }
     ];
 
     const listEl = document.getElementById('list');
@@ -60,7 +60,7 @@
       });
       span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
       const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = 'рџ”—';
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
       row.appendChild(box); row.appendChild(span); row.appendChild(link);
       listEl.appendChild(row);
     });

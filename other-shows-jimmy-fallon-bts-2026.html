@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="sync.js?v=21"></script>
-  <title>BTS Сѓ Р”Р¶РёРјРјРё Р¤СЌР»Р»РѕРЅР°</title>
+  <title>BTS у Джимми Фэллона</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
     .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -25,22 +25,22 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="other-shows-2026.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>вќ¤пёЏ Сѓ Р”Р¶РёРјРјРё Р¤СЌР»Р»РѕРЅР° рџЊ™</h1>
-    <p class="intro">Р”Р°С‚Р° РІС‹С…РѕРґР°: 26-27 РјР°СЂС‚Р° 2026</p>
-    <p class="intro">Р‘Р°РЅС‚Р°РЅС‹ СЂР°СЃСЃРєР°Р·Р°Р»Рё Рѕ РІРѕР·РІСЂР°С‰РµРЅРёРё РїРѕСЃР»Рµ РІРѕРµРЅРЅРѕР№ СЃР»СѓР¶Р±С‹ РІ Р®Р¶РЅРѕР№ РљРѕСЂРµРµ Рё Рѕ С‚РѕРј, РїРѕ С‡РµРјСѓ РѕРЅРё СЃРєСѓС‡Р°Р»Рё РґСЂСѓРі РІ РґСЂСѓРіРµ РІРѕ РІСЂРµРјСЏ СЂР°Р·Р»СѓРєРё. РўР°РєР¶Рµ BTS РѕР±СЉСЏСЃРЅРёР»Рё СЃРјС‹СЃР» РЅРµРєРѕС‚РѕСЂС‹С… РїРµСЃРµРЅ РёР· РЅРѕРІРѕРіРѕ Р°Р»СЊР±РѕРјР° ARIRANG</p>
+    <a class="back" href="other-shows-2026.html">← Назад</a>
+    <h1>❤️ у Джимми Фэллона 🌙</h1>
+    <p class="intro">Дата выхода: 26-27 марта 2026</p>
+    <p class="intro">Бантаны рассказали о возвращении после военной службы в Южной Корее и о том, по чему они скучали друг в друге во время разлуки. Также BTS объяснили смысл некоторых песен из нового альбома ARIRANG</p>
     <div id="list"></div>
-    <a class="footer-link" href="other-shows-2026.html">Р”СЂСѓРіРёРµ С€РѕСѓ (2026) в¬…пёЏ</a>
+    <a class="footer-link" href="other-shows-2026.html">Другие шоу (2026) ⬅️</a>
   </div>
 
   <script>
     const items = [
-      { text: "РРЅС‚РµСЂРІСЊСЋ", link: "https://t.me/violent_arhive/5465" },
-      { text: "РћР±СЃСѓР¶РґР°РµРј РїРµСЃРЅРё", link: "https://t.me/violent_arhive/5466" },
-      { text: "РћС‚РІРµС‚С‹ РЅР° РІРѕРїСЂРѕСЃС‹ РђР РњР", link: "https://t.me/violent_arhive/5467" },
-      { text: "РЎСЋСЂРїСЂРёР· РґР»СЏ РђР РњР", link: "https://t.me/violent_arhive/5468" },
-      { text: "Р’С‹СЃС‚СѓРїР»РµРЅРёРµ СЃ SWIM", link: "https://t.me/violent_arhive/5447" },
-      { text: "Р’С‹СЃС‚СѓРїР»РµРЅРёРµ СЃ 2.0", link: "https://t.me/violent_arhive/5446" }
+      { text: "Интервью", link: "https://t.me/violent_arhive/5465" },
+      { text: "Обсуждаем песни", link: "https://t.me/violent_arhive/5466" },
+      { text: "Ответы на вопросы АРМИ", link: "https://t.me/violent_arhive/5467" },
+      { text: "Сюрприз для АРМИ", link: "https://t.me/violent_arhive/5468" },
+      { text: "Выступление с SWIM", link: "https://t.me/violent_arhive/5447" },
+      { text: "Выступление с 2.0", link: "https://t.me/violent_arhive/5446" }
     ];
 
     const listEl = document.getElementById('list');
@@ -62,7 +62,7 @@
       });
       span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
       const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = 'рџ”—';
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
       row.appendChild(box); row.appendChild(span); row.appendChild(link);
       listEl.appendChild(row);
     });
@@ -71,7 +71,7 @@
       const all = document.querySelectorAll('input[type="checkbox"]');
       let total = 0, checked = 0;
       all.forEach(cb => { total++; if (cb.checked) checked++; });
-      // Р­С‚Рѕ С€РѕСѓ вЂ” "РІСЃС‘ РёР»Рё РЅРёС‡РµРіРѕ": РІРєР»Р°Рґ = 1 С‚РѕР»СЊРєРѕ РµСЃР»Рё Р’РЎР• РїСѓРЅРєС‚С‹ РѕС‚РјРµС‡РµРЅС‹
+      // Это шоу — "всё или ничего": вклад = 1 только если ВСЕ пункты отмечены
       const allDone = checked === total && total > 0;
       setProgress('other-shows-jimmy-fallon-bts-2026', { checked: allDone ? 1 : 0, total: 1 });
       pushWeightedContributions('other-shows-jimmy-fallon-bts-2026');

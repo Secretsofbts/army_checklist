@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -75,28 +75,28 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="concerts-2014-2019.html">в†ђ РќР°Р·Р°Рґ</a>
+    <a class="back" href="concerts-2014-2019.html">← Назад</a>
     <h1>2017 Live Trilogy Episode III: The Wings Tour in Japan</h1>
-    <p class="intro">Р“РѕРґ РІС‹РїСѓСЃРєР°: 2017<br>РљРѕРЅС†РµСЂС‚ BTS, РїСЂРѕС…РѕРґРёРІС€РёР№ РІ РЇРїРѕРЅРёРё</p>
+    <p class="intro">Год выпуска: 2017<br>Концерт BTS, проходивший в Японии</p>
     <div id="list"></div>
-    <div class="branch-note">Р”РѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹Р№ РјР°С‚РµСЂРёР°Р»:</div>
+    <div class="branch-note">Дополнительный материал:</div>
     <div class="branch-row">
       <a class="branch-pill" href="bts-memories-2017.html">BTS Memories of 2017</a>
     </div>
-    <a class="footer-link" href="concerts-2014-2019.html">Р’СЃРµ РєРѕРЅС†РµСЂС‚С‹ 2014-2019 в¬…пёЏ</a>
+    <a class="footer-link" href="concerts-2014-2019.html">Все концерты 2014-2019 ⬅️</a>
   </div>
 
   <script>
     const items = [
-      { text: "РљРѕРЅС†РµСЂС‚ РІ РЎР°Р№С‚Р°РјРµ", links: [
+      { text: "Концерт в Сайтаме", links: [
         { label: "360, rus.sub", link: "https://t.me/violent_arhive/2640" },
-        { label: "720, Р±РµР· СЃСѓР± (РЅРµС‚ РїРѕСЃР»РµРґРЅРёС… 30 РјРёРЅ)", link: "https://t.me/violent_arhive/2641" }
+        { label: "720, без суб (нет последних 30 мин)", link: "https://t.me/violent_arhive/2641" }
       ]},
-      { text: "РљРѕРЅС†РµСЂС‚ РІ РћСЃР°РєРµ", links: [
+      { text: "Концерт в Осаке", links: [
         { label: "720, rus.sub", link: "https://t.me/violent_arhive/2642" },
-        { label: "1080, Р±РµР· СЃСѓР±", link: "https://t.me/violent_arhive/2644" }
+        { label: "1080, без суб", link: "https://t.me/violent_arhive/2644" }
       ]},
-      { text: "Behind The Scenes - Р·Р°РєР°РґСЂРѕРІС‹Рµ", link: "https://t.me/violent_arhive/2647" },
+      { text: "Behind The Scenes - закадровые", link: "https://t.me/violent_arhive/2647" },
       { text: "Documentary in Osaka", link: "https://t.me/violent_arhive/2648" }
     ];
 
@@ -140,7 +140,7 @@
           link.className = 'link';
           link.href = l.link;
           link.target = '_blank';
-          link.textContent = 'рџ”—';
+          link.textContent = '🔗';
           row.appendChild(label);
           row.appendChild(link);
         });
@@ -149,7 +149,7 @@
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
-        link.textContent = 'рџ”—';
+        link.textContent = '🔗';
         row.appendChild(link);
       }
 

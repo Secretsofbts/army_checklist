@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -25,21 +25,21 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="specials.html">в†ђ РќР°Р·Р°Рґ</a>
-       <h1>рџ“ё BTS NOW рџ“ё</h1>
-    <p class="intro">Р“РѕРґ РІС‹РїСѓСЃРєР°: 2014-2016 рџ•‘</p>
+    <a class="back" href="specials.html">← Назад</a>
+       <h1>📸 BTS NOW 📸</h1>
+    <p class="intro">Год выпуска: 2014-2016 🕑</p>
     <p style="margin: 8px 0;"></p>
-    <p class="intro">Р—Р°РєР°РґСЂРѕРІС‹Рµ СЃСЉС‘РјРєРё СЃ С„РѕС‚РѕСЃРµСЃСЃРёСЏРјРё РІ СЂР°Р·Р»РёС‡РЅС‹С… РіРѕСЂРѕРґР°С… Рё СЃС‚СЂР°РЅР°С…</p>
-    <p class="intro">РџРѕ СЃСЃС‹Р»РєР°Рј РµСЃС‚СЊ РІРёРґРµРѕ Рё СЃСЃС‹Р»РєРё РЅР° СЃРєР°РЅС‹ С„РѕС‚РѕРіСЂР°С„РёР№ РёР· С„РѕС‚РѕР±СѓРєРѕРІ</p>
+    <p class="intro">Закадровые съёмки с фотосессиями в различных городах и странах</p>
+    <p class="intro">По ссылкам есть видео и ссылки на сканы фотографий из фотобуков</p>
     <div id="list"></div>
-     <a class="footer-link" href="specials.html">РЎРїРµС†РІС‹РїСѓСЃРєРё в¬…пёЏ</a>
+     <a class="footer-link" href="specials.html">Спецвыпуски ⬅️</a>
   </div>
 
   <script>
     const items = [
-           { text: "Thailand", sub: "2014 РіРѕРґ", link: "https://t.me/violent_arhive/2273" },
-      { text: "Europe/America", sub: "2015 РіРѕРґ", link: "https://t.me/violent_arhive/2274" },
-      { text: "Chicago", sub: "2016 РіРѕРґ", link: "https://t.me/violent_arhive/2276" }
+           { text: "Thailand", sub: "2014 год", link: "https://t.me/violent_arhive/2273" },
+      { text: "Europe/America", sub: "2015 год", link: "https://t.me/violent_arhive/2274" },
+      { text: "Chicago", sub: "2016 год", link: "https://t.me/violent_arhive/2276" }
     ];
 
     const listEl = document.getElementById('list');
@@ -67,7 +67,7 @@
       });
       span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
       const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = 'рџ”—';
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
       row.appendChild(box); row.appendChild(span); row.appendChild(link);
       listEl.appendChild(row);
     });

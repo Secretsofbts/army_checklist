@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="sync.js?v=21"></script>
-  <title>РќР°РјРґР¶СѓРЅ 2026</title>
+  <title>Намджун 2026</title>
   <style>
     body {
       background: #f2f0f7;
@@ -64,17 +64,17 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="namjoon.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>РќР°РјРґР¶СѓРЅ: 2026 вЂ“ РќР’ рџ’™</h1>
+    <a class="back" href="namjoon.html">← Назад</a>
+    <h1>Намджун: 2026 – НВ 💙</h1>
     <div id="list"></div>
-    <a class="footer-link" href="namjoon.html">Р’СЃРµ СЌС„РёСЂС‹ РќР°РјРґР¶СѓРЅР° в¬…пёЏ</a>
+    <a class="footer-link" href="namjoon.html">Все эфиры Намджуна ⬅️</a>
   </div>
 
   <script>
        const data = [
       { year: "2026", items: [
-        { text: "РџСЂРёРІРµС‚РёРєРё", sub: "РѕС‚ 28.05", link: "https://t.me/violent_arhive/5505" },
-        { text: "РџСЂР°Р·РґРЅРёС‡РЅС‹Р№ Р»Р°Р№РІ рџЋ‚", sub: "РѕС‚ 12.09", link: "https://t.me/violent_arhive/5641" }
+        { text: "Приветики", sub: "от 28.05", link: "https://t.me/violent_arhive/5505" },
+        { text: "Праздничный лайв 🎂", sub: "от 12.09", link: "https://t.me/violent_arhive/5641" }
       ]}
     ];
 
@@ -82,7 +82,7 @@
     data.forEach((block) => {
       const yearTitle = document.createElement('div');
       yearTitle.className = 'year';
-      yearTitle.textContent = block.year + ' РіРѕРґ';
+      yearTitle.textContent = block.year + ' год';
       listEl.appendChild(yearTitle);
 
       block.items.forEach((item) => {
@@ -122,7 +122,7 @@
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
-        link.textContent = 'рџ”—';
+        link.textContent = '🔗';
 
         row.appendChild(box);
         row.appendChild(span);

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="sync.js?v=21"></script>
-  <title>РќСѓ РІСЂРѕРґРµ Р±С‹ СЌРїРёР·РѕРґС‹: Р§РёРјРёРЅ</title>
+  <title>Ну вроде бы эпизоды: Чимин</title>
   <style>
     body {
       background: #f2f0f7;
@@ -58,24 +58,24 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="bts-episode-other.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>РќРЈ Р’Р РћР”Р• Р‘Р« Р­РџРР—РћР”Р«: рџ’›</h1>
+    <a class="back" href="bts-episode-other.html">← Назад</a>
+    <h1>НУ ВРОДЕ БЫ ЭПИЗОДЫ: 💛</h1>
     <div id="list"></div>
-    <a class="footer-link" href="bts-episode-other.html">Р’СЃРµ "РќСѓ РІСЂРѕРґРµ Р±С‹ СЌРїРёР·РѕРґС‹" в¬…пёЏ</a>
+    <a class="footer-link" href="bts-episode-other.html">Все "Ну вроде бы эпизоды" ⬅️</a>
   </div>
 
   <script>
     const items = [
-      { text: "РЎСЉС‘РјРєРё РєР»РёРїР° \"VIBE\"", link: "https://t.me/violent_arhive/3632" },
-      { text: "РЎСЉС‘РјРєРё Р¶РёРІРѕРіРѕ РёСЃРїРѕР»РЅРµРЅРёСЏ РїРµСЃРЅРё \"VIBE\"", link: "https://t.me/violent_arhive/3658" },
-      { text: "Р‘СЌРєСЃС‚РµР№РґР¶ СЃРѕ СЃСЉС‘РјРѕРє РґР»СЏ Р¶СѓСЂРЅР°Р»Р° Vogue Korea", link: "https://t.me/violent_arhive/3841" },
-      { text: "Р”РµРЅСЊ РІ РќСЊСЋ-Р™РѕСЂРєРµ", link: "https://t.me/violent_arhive/3878" },
-      { text: "Р‘РµРєСЃС‚РµР№РґР¶ СЃРѕ СЃСЉС‘РјРѕРє В«Smeraldo Garden Marching BandВ»", link: "https://t.me/violent_arhive/4629" },
-      { text: "Р—Р°РєСѓР»РёСЃСЊРµ СЃСЉС‘РјРѕРє РґР»СЏ Р°Р»СЊР±РѕРјР° \"MUSE\"", link: "https://t.me/violent_arhive/4651" },
-      { text: "РџСЂРѕС†РµСЃСЃ СЃСЉС‘РјРѕРє \"Who\"", link: "https://t.me/violent_arhive/4654" },
-      { text: "Р—Р°РєР°РґСЂРѕРІС‹Рµ РєР°РґСЂС‹ СЃ Р·Р°РїРёСЃРё Р°Р»СЊР±РѕРјР° В«MUSEВ»", link: "https://t.me/violent_arhive/4656" },
-      { text: "РЎСЉС‘РјРєРё Р¶РёРІРѕРіРѕ РёСЃРїРѕР»РЅРµРЅРёСЏ \"Rebirth + Slow Dance\"", link: "https://t.me/violent_arhive/4669" },
-      { text: "Р‘СЌРєСЃС‚РµР№РґР¶ СЃ С‚Р°РЅС†РµРІР°Р»СЊРЅРѕР№ РїСЂР°РєС‚РёРєРё В«MUSEВ»", link: "https://t.me/violent_arhive/4736" }
+      { text: "Съёмки клипа \"VIBE\"", link: "https://t.me/violent_arhive/3632" },
+      { text: "Съёмки живого исполнения песни \"VIBE\"", link: "https://t.me/violent_arhive/3658" },
+      { text: "Бэкстейдж со съёмок для журнала Vogue Korea", link: "https://t.me/violent_arhive/3841" },
+      { text: "День в Нью-Йорке", link: "https://t.me/violent_arhive/3878" },
+      { text: "Бекстейдж со съёмок «Smeraldo Garden Marching Band»", link: "https://t.me/violent_arhive/4629" },
+      { text: "Закулисье съёмок для альбома \"MUSE\"", link: "https://t.me/violent_arhive/4651" },
+      { text: "Процесс съёмок \"Who\"", link: "https://t.me/violent_arhive/4654" },
+      { text: "Закадровые кадры с записи альбома «MUSE»", link: "https://t.me/violent_arhive/4656" },
+      { text: "Съёмки живого исполнения \"Rebirth + Slow Dance\"", link: "https://t.me/violent_arhive/4669" },
+      { text: "Бэкстейдж с танцевальной практики «MUSE»", link: "https://t.me/violent_arhive/4736" }
     ];
 
        const listEl = document.getElementById('list');
@@ -110,7 +110,7 @@
       link.className = 'link';
       link.href = item.link;
       link.target = '_blank';
-      link.textContent = 'рџ”—';
+      link.textContent = '🔗';
 
       row.appendChild(box);
       row.appendChild(span);

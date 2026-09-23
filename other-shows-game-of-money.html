@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -25,17 +25,17 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="other-shows-2020-2022.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџ’° Game of Money рџ’°</h1>
-    <p class="intro">Р“РѕРґ РІС‹РїСѓСЃРєР°: 2022 рџ•‘</p>
+    <a class="back" href="other-shows-2020-2022.html">← Назад</a>
+    <h1>💰 Game of Money 💰</h1>
+    <p class="intro">Год выпуска: 2022 🕑</p>
     <div id="list"></div>
-    <a class="footer-link" href="other-shows-2020-2022.html">Р”СЂСѓРіРёРµ С€РѕСѓ (2020 - 2022) в¬…пёЏ</a>
+    <a class="footer-link" href="other-shows-2020-2022.html">Другие шоу (2020 - 2022) ⬅️</a>
   </div>
 
   <script>
     const items = [
-      { text: "рџ’њрџ’љрџ–¤", link: "https://t.me/violent_arhive/3129" },
-      { text: "рџ’›рџ’™рџ’•рџ¤Ќ", link: "https://t.me/violent_arhive/3140" }
+      { text: "💜💚🖤", link: "https://t.me/violent_arhive/3129" },
+      { text: "💛💙💕🤍", link: "https://t.me/violent_arhive/3140" }
     ];
 
     const listEl = document.getElementById('list');
@@ -57,7 +57,7 @@
       });
       span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
       const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = 'рџ”—';
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
       row.appendChild(box); row.appendChild(span); row.appendChild(link);
       listEl.appendChild(row);
     });

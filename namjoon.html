@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="sync.js?v=21"></script>
-  <title>РўСЂР°РЅСЃР»СЏС†РёРё РќР°РјРґР¶СѓРЅР°</title>
+  <title>Трансляции Намджуна</title>
   <style>
     body {
       background: #f2f0f7;
@@ -75,23 +75,23 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="vlive.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>РўСЂР°РЅСЃР»СЏС†РёРё РќР°РјРґР¶СѓРЅР° рџ’™</h1>
+    <a class="back" href="vlive.html">← Назад</a>
+    <h1>Трансляции Намджуна 💙</h1>
     <hr>
     <div class="list">
       <a class="card" href="namjoon-2015-2022.html">
-        <span>рџ”µ 2015 вЂ“ 2022 РіРѕРґ</span>
+        <span>🔵 2015 – 2022 год</span>
         <span class="badge" id="badge-2015-2022"></span>
       </a>
       <a class="card" href="namjoon-2023-2025.html">
-        <span>рџ”µ 2023 вЂ“ 2025 РіРѕРґ</span>
+        <span>🔵 2023 – 2025 год</span>
         <span class="badge" id="badge-2023-2025"></span>
       </a>
       <a class="card" href="namjoon-2026-HB.html">
-        <span>рџ”µ 2026 вЂ“ РЅР°СЃС‚РѕСЏС‰РµРµ РІСЂРµРјСЏ</span>
+        <span>🔵 2026 – настоящее время</span>
         <span class="badge" id="badge-2026-HB"></span>
       </a>
-      <a class="footer-link" href="vlive.html">Р’СЃРµ СЌС„РёСЂС‹ СЃ Vlive/Weverse в¬…пёЏ</a>
+      <a class="footer-link" href="vlive.html">Все эфиры с Vlive/Weverse ⬅️</a>
     </div>
   </div>
 
@@ -105,7 +105,7 @@
       var total = known !== null ? known : (rawData ? rawData.total : 0);
       if (total === 0) { el.textContent = ''; return; }
       if (checked === total) {
-        el.textContent = 'вњ…';
+        el.textContent = '✅';
         el.classList.add('done');
         el.closest('.card').classList.add('row-done');
       } else {

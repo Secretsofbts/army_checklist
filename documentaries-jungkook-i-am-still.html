@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -25,26 +25,26 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="documentaries.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџ’ї I AM STILL рџ’ї</h1>
-    <p class="intro">Р“РѕРґ РІС‹РїСѓСЃРєР°: 2024</p>
-    <p class="intro">Р¤РёР»СЊРј РѕС‚РїСЂР°РІРёС‚ Р·СЂРёС‚РµР»РµР№ РІ РІРѕСЃСЊРјРёРјРµСЃСЏС‡РЅРѕРµ РїСѓС‚РµС€РµСЃС‚РІРёРµ, СЂР°СЃСЃРєР°Р·С‹РІР°СЋС‰РµРµ Рѕ СЃРѕР»СЊРЅРѕРј РІРѕСЃС…РѕР¶РґРµРЅРёРё Р§РѕРЅРіСѓРєР° Рє РјРµР¶РґСѓРЅР°СЂРѕРґРЅРѕР№ СЃР»Р°РІРµ. Р¤РёР»СЊРј РїРѕРєР°Р¶РµС‚ РїРѕРґРіРѕС‚РѕРІРєСѓ Рє Р°Р»СЊР±РѕРјСѓ В«GOLDENВ», СЃС†РµРЅС‹ РёР· РµРіРѕ СЏСЂРєРёС… РІС‹СЃС‚СѓРїР»РµРЅРёР№ РїРѕ РІСЃРµРјСѓ РјРёСЂСѓ Рё СЌРєСЃРєР»СЋР·РёРІРЅС‹Рµ Р·Р°РєСѓР»РёСЃРЅС‹Рµ РєР°РґСЂС‹. РџРѕРєР»РѕРЅРЅРёРєРё СЃРјРѕРіСѓС‚ СѓРІРёРґРµС‚СЊ РІРЅСѓС‚СЂРµРЅРЅРёРµ РјС‹СЃР»Рё Рё Р»РёС‡РЅС‹Рµ СЂР°Р·РјС‹С€Р»РµРЅРёСЏ Р°Р№РґРѕР»Р°, С‡С‚Рѕ РїРѕР·РІРѕР»РёС‚ РіР»СѓР±Р¶Рµ РїРѕРЅСЏС‚СЊ Р°СЂС‚РёСЃС‚Р° Рё РµРіРѕ С‚РІРѕСЂС‡РµСЃРєРёР№ РїРѕРґС…РѕРґ</p>
+    <a class="back" href="documentaries.html">← Назад</a>
+    <h1>💿 I AM STILL 💿</h1>
+    <p class="intro">Год выпуска: 2024</p>
+    <p class="intro">Фильм отправит зрителей в восьмимесячное путешествие, рассказывающее о сольном восхождении Чонгука к международной славе. Фильм покажет подготовку к альбому «GOLDEN», сцены из его ярких выступлений по всему миру и эксклюзивные закулисные кадры. Поклонники смогут увидеть внутренние мысли и личные размышления айдола, что позволит глубже понять артиста и его творческий подход</p>
 
     <div class="row">
-      <span class="text" style="cursor:default;">рџ’Ѕ Р“Р»Р°РІРЅС‹Р№ С‚СЂРµР№Р»РµСЂ</span>
-      <a class="link" href="https://t.me/violent_arhive/4938" target="_blank">рџ”—</a>
+      <span class="text" style="cursor:default;">💽 Главный трейлер</span>
+      <a class="link" href="https://t.me/violent_arhive/4938" target="_blank">🔗</a>
     </div>
 
     <div id="list"></div>
 
-    <a class="footer-link" href="documentaries.html">Р”РѕРєСѓРјРµРЅС‚Р°Р»СЊРЅС‹Рµ РїСЂРѕРµРєС‚С‹ в¬…пёЏ</a>
+    <a class="footer-link" href="documentaries.html">Документальные проекты ⬅️</a>
   </div>
 
   <script>
     const items = [
-      { text: "1 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/4915" },
-      { text: "2 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/4916" },
-      { text: "3 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/4917" }
+      { text: "1 серия", link: "https://t.me/violent_arhive/4915" },
+      { text: "2 серия", link: "https://t.me/violent_arhive/4916" },
+      { text: "3 серия", link: "https://t.me/violent_arhive/4917" }
     ];
 
     const listEl = document.getElementById('list');
@@ -66,7 +66,7 @@
       });
       span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
       const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = 'рџ”—';
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
       row.appendChild(box); row.appendChild(span); row.appendChild(link);
       listEl.appendChild(row);
     });

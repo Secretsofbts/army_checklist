@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -25,18 +25,18 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="other-shows-2025.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџ‘Ѓ РќРµСЃРЅРѕСЃРЅС‹Р№ РјРµРЅРµРґР¶РµСЂ рџ‘Ѓ</h1>
-    <p class="intro">Р“РѕРґ РІС‹С…РѕРґР°: 2025 рџ•ђ</p>
-    <p class="intro">рџ¤Ќ РџСЂРѕРІРµРґС‘Рј РґРµРЅСЊ СЃ j-hope РІ Р‘Р°РЅРіРєРѕРєРµ</p>
+    <a class="back" href="other-shows-2025.html">← Назад</a>
+    <h1>👁 Несносный менеджер 👁</h1>
+    <p class="intro">Год выхода: 2025 🕐</p>
+    <p class="intro">🤍 Проведём день с j-hope в Бангкоке</p>
     <div id="list"></div>
-    <a class="footer-link" href="other-shows-2025.html">Р”СЂСѓРіРёРµ С€РѕСѓ (2025) в¬…пёЏ</a>
+    <a class="footer-link" href="other-shows-2025.html">Другие шоу (2025) ⬅️</a>
   </div>
 
   <script>
     const items = [
-      { text: "351 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/5169" },
-      { text: "352 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/5228" }
+      { text: "351 серия", link: "https://t.me/violent_arhive/5169" },
+      { text: "352 серия", link: "https://t.me/violent_arhive/5228" }
     ];
 
     const listEl = document.getElementById('list');
@@ -58,7 +58,7 @@
       });
       span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
       const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = 'рџ”—';
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
       row.appendChild(box); row.appendChild(span); row.appendChild(link);
       listEl.appendChild(row);
     });

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="sync.js?v=21"></script>
-  <title>Р”РѕРєСѓРјРµРЅС‚Р°Р»СЊРЅС‹Рµ РїСЂРѕРµРєС‚С‹</title>
+  <title>Документальные проекты</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
     .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -42,32 +42,32 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="index.html">в†ђ РќР°Р·Р°Рґ</a>
-        <h1>Р”РѕРєСѓРјРµРЅС‚Р°Р»СЊРЅС‹Рµ РїСЂРѕРµРєС‚С‹</h1>
+    <a class="back" href="index.html">← Назад</a>
+        <h1>Документальные проекты</h1>
     <p style="margin: 8px 0;"></p>
-    <p class="intro">РЎ РїРѕРјРѕС‰СЊСЋ СЌС‚РёС… С„РёР»СЊРјРѕРІ Рё СЃРµСЂРёР°Р»РѕРІ РјС‹ РјРѕР¶РµРј СѓР·РЅР°С‚СЊ СЂРµР±СЏС‚ С‡СѓС‚РѕС‡РєСѓ Р±РѕР»СЊС€Рµ, РїРѕС‚РѕРјСѓ С‡С‚Рѕ РѕРЅРё РґСѓС€Сѓ РЅР°РёР·РЅР°РЅРєСѓ РІС‹РІРѕСЂР°С‡РёРІР°СЋС‚, СЂР°СЃСЃРєР°Р·С‹РІР°СЋС‚ РЅР°Рј Рѕ СЃРІРѕРёС… СЃС‚СЂР°С…Р°С…, РїСЂРѕР±Р»РµРјР°С… Рё С‚СЂСѓРґРЅРѕСЃС‚СЏС…, СЃ РєРѕС‚РѕСЂС‹РјРё СЃС‚Р°Р»РєРёРІР°СЋС‚СЃСЏ РєР°Р¶РґС‹Р№ РґРµРЅСЊ</p>
-    <p class="intro">РќРёРєРѕРіРґР° РЅРµ Р·Р°Р±С‹РІР°Р№С‚Рµ: В«Р§РµРј Р±Р»РёР¶Рµ СЃРІРµС‚, С‚РµРј Р±РѕР»СЊС€Рµ С‚РµРЅСЊВ»... РўР°Рє С‡С‚Рѕ Р·Р°РїР°СЃРёС‚РµСЃСЊ РїР»Р°С‚РѕС‡РєР°РјРё, СЃР»С‘Р· С‚РѕС‡РЅРѕ Р±СѓРґРµС‚ РјРЅРѕРіРѕ</p>
+    <p class="intro">С помощью этих фильмов и сериалов мы можем узнать ребят чуточку больше, потому что они душу наизнанку выворачивают, рассказывают нам о своих страхах, проблемах и трудностях, с которыми сталкиваются каждый день</p>
+    <p class="intro">Никогда не забывайте: «Чем ближе свет, тем больше тень»... Так что запаситесь платочками, слёз точно будет много</p>
     <div id="list"></div>
-    <a class="footer-link" href="index.html">РќР° РіР»Р°РІРЅСѓСЋ в¬…пёЏ</a>
+    <a class="footer-link" href="index.html">На главную ⬅️</a>
   </div>
 
   <script>
        const items = [
-      { navlink: true, text: "Burn The Stage", sub: "8 СЃРµСЂРёР№ + С„РёР»СЊРј", year: "2018", link: "documentaries-burn-the-stage.html", statKey: "documentaries-burn-the-stage" },
-      { navlink: true, text: "Bring The Soul", sub: "6 СЃРµСЂРёР№ + С„РёР»СЊРј + РєРѕРјРјРµРЅС‚Р°СЂРёРё", year: "2019", link: "documentaries-bring-the-soul.html", statKey: "documentaries-bring-the-soul" },
-      { navlink: true, text: "Break The Silence", sub: "7 СЃРµСЂРёР№ + С„РёР»СЊРј + РєРѕРјРјРµРЅС‚Р°СЂРёРё", year: "2020", link: "documentaries-break-the-silence.html", statKey: "documentaries-break-the-silence" },
-      { text: "Good Insight", sub: "РЅРµР±РѕР»СЊС€РѕР№ С„РёР»СЊРј Рѕ BTS", year: "2018", link: "https://t.me/violent_arhive/2326" },
-      { text: "RM 'Indigo' Album Magazine Film", sub: "Рѕ СЃРѕР»СЊРЅРѕРј Р°Р»СЊР±РѕРјРµ РќР°РјРґР¶СѓРЅР°", year: "2022", link: "https://t.me/violent_arhive/3339" },
-      { navlink: true, text: "J-Hope IN THE BOX рџ“¦", sub: "С„РёР»СЊРј РҐРѕСЃРѕРєР° + РєРѕРјРјРµРЅС‚Р°СЂРёРё", year: "2023", link: "documentaries-jhope-in-the-box.html", statKey: "documentaries-jhope-in-the-box" },
-      { navlink: true, text: "SUGA: Road to D-DAY рџЋё", sub: "С„РёР»СЊРј Р®РЅРіРё", year: "2023", link: "documentaries-suga-road-to-dday.html", statKey: "documentaries-suga-road-to-dday" },
-      { navlink: true, text: "Jimin's Production Diaryрџ“•", sub: "С„РёР»СЊРј Р§РёРјРёРЅР°", year: "2023", link: "documentaries-jimin-production-diary.html", statKey: "documentaries-jimin-production-diary" },
-      { navlink: true, text: "Monuments: Beyond The Star", sub: "8 СЃРµСЂРёР№", year: "2023-2024", link: "documentaries-bts-monuments.html", statKey: "documentaries-bts-monuments" },
-      { navlink: true, text: "HOPE ON THE STREET", sub: "6 СЃРµСЂРёР№, СЃРµСЂРёР°Р» РҐРѕСЃРѕРєР°", year: "2024", link: "documentaries-hope-on-the-street.html", statKey: "documentaries-hope-on-the-street" },
-      { navlink: true, text: "JUNG KOOK: I AM STILL", sub: "3 СЃРµСЂРёРё, СЃРµСЂРёР°Р» Р§РѕРЅРіСѓРєР°", year: "2024", link: "documentaries-jungkook-i-am-still.html", statKey: "documentaries-jungkook-i-am-still" },
-      { text: "TOUR 'D-DAY' The Original", sub: "С„РёР»СЊРј Р®РЅРіРё (DVD)", year: "2024", link: "https://t.me/violent_arhive/4978" },
-      { text: "Right People, Wrong Place", sub: "С„РёР»СЊРј РќР°РјРґР¶СѓРЅР°", year: "2024", link: "https://t.me/violent_arhive/5441" },
-      { text: "HOPE ON THE STAGE", sub: "С„РёР»СЊРј РҐРѕСЃРѕРєР°", year: "2025", link: "https://t.me/violent_arhive/5440" },
-      { text: "BTS: THE RETURN", sub: "С„РёР»СЊРј Рѕ СЃРѕР·РґР°РЅРёРё ARIRANG", year: "2026", link: "https://t.me/violent_arhive/5422" }
+      { navlink: true, text: "Burn The Stage", sub: "8 серий + фильм", year: "2018", link: "documentaries-burn-the-stage.html", statKey: "documentaries-burn-the-stage" },
+      { navlink: true, text: "Bring The Soul", sub: "6 серий + фильм + комментарии", year: "2019", link: "documentaries-bring-the-soul.html", statKey: "documentaries-bring-the-soul" },
+      { navlink: true, text: "Break The Silence", sub: "7 серий + фильм + комментарии", year: "2020", link: "documentaries-break-the-silence.html", statKey: "documentaries-break-the-silence" },
+      { text: "Good Insight", sub: "небольшой фильм о BTS", year: "2018", link: "https://t.me/violent_arhive/2326" },
+      { text: "RM 'Indigo' Album Magazine Film", sub: "о сольном альбоме Намджуна", year: "2022", link: "https://t.me/violent_arhive/3339" },
+      { navlink: true, text: "J-Hope IN THE BOX 📦", sub: "фильм Хосока + комментарии", year: "2023", link: "documentaries-jhope-in-the-box.html", statKey: "documentaries-jhope-in-the-box" },
+      { navlink: true, text: "SUGA: Road to D-DAY 🎸", sub: "фильм Юнги", year: "2023", link: "documentaries-suga-road-to-dday.html", statKey: "documentaries-suga-road-to-dday" },
+      { navlink: true, text: "Jimin's Production Diary📕", sub: "фильм Чимина", year: "2023", link: "documentaries-jimin-production-diary.html", statKey: "documentaries-jimin-production-diary" },
+      { navlink: true, text: "Monuments: Beyond The Star", sub: "8 серий", year: "2023-2024", link: "documentaries-bts-monuments.html", statKey: "documentaries-bts-monuments" },
+      { navlink: true, text: "HOPE ON THE STREET", sub: "6 серий, сериал Хосока", year: "2024", link: "documentaries-hope-on-the-street.html", statKey: "documentaries-hope-on-the-street" },
+      { navlink: true, text: "JUNG KOOK: I AM STILL", sub: "3 серии, сериал Чонгука", year: "2024", link: "documentaries-jungkook-i-am-still.html", statKey: "documentaries-jungkook-i-am-still" },
+      { text: "TOUR 'D-DAY' The Original", sub: "фильм Юнги (DVD)", year: "2024", link: "https://t.me/violent_arhive/4978" },
+      { text: "Right People, Wrong Place", sub: "фильм Намджуна", year: "2024", link: "https://t.me/violent_arhive/5441" },
+      { text: "HOPE ON THE STAGE", sub: "фильм Хосока", year: "2025", link: "https://t.me/violent_arhive/5440" },
+      { text: "BTS: THE RETURN", sub: "фильм о создании ARIRANG", year: "2026", link: "https://t.me/violent_arhive/5422" }
     ];
 
     const listEl = document.getElementById('list');
@@ -114,7 +114,7 @@
           if (item.year) {
                        const yearSpan = document.createElement('span');
             yearSpan.style.cssText = 'display:block; font-size:10px; color:#bbb; margin-top:1px;';
-            yearSpan.textContent = 'Р“РѕРґ РІС‹РїСѓСЃРєР°: ' + item.year;
+            yearSpan.textContent = 'Год выпуска: ' + item.year;
             sub.appendChild(document.createElement('br'));
             sub.appendChild(yearSpan);
           }
@@ -157,7 +157,7 @@
         if (item.year) {
           const yearSpan = document.createElement('span');
           yearSpan.style.cssText = 'display:block; font-size:10px; color:#bbb; margin-top:1px;';
-          yearSpan.textContent = 'Р“РѕРґ РІС‹РїСѓСЃРєР°: ' + item.year;
+          yearSpan.textContent = 'Год выпуска: ' + item.year;
           sub.appendChild(document.createElement('br'));
           sub.appendChild(yearSpan);
         }
@@ -176,7 +176,7 @@
       hearts.textContent = item.hearts || '';
 
       const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = 'рџ”—';
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
 
       row.appendChild(box);
       row.appendChild(span);

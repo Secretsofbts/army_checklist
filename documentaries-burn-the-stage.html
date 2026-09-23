@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -26,28 +26,28 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="documentaries.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџ”Ґ Burn the stage рџ”Ґ</h1>
-    <p class="intro">Р“РѕРґ РІС‹РїСѓСЃРєР°: 2018</p>
-    <p class="intro">Р”РѕРєСѓРјРµРЅС‚Р°Р»СЊРЅС‹Р№ РјРёРЅРё-СЃРµСЂРёР°Р», РІ РєРѕС‚РѕСЂРѕРј РїРѕРєР°Р¶СѓС‚ В«Р·Р°РєСѓР»РёСЃРЅСѓСЋВ» Р¶РёР·РЅСЊ РіСЂСѓРїРїС‹, РІРєР»СЋС‡Р°СЏ СЂР°Р·Р»РёС‡РЅС‹Рµ РјРѕРјРµРЅС‚С‹ РІРѕ РІСЂРµРјСЏ РіР°СЃС‚СЂРѕР»РµР№ РїРѕ 20 РіРѕСЂРѕРґР°Рј РЅР° С‚СЂС‘С… СЂР°Р·РЅС‹С… РєРѕРЅС‚РёРЅРµРЅС‚Р°С…</p>
-    <p class="intro">Р•СЃС‚СЊ РІР°СЂРёР°РЅС‚ СЃ СЃСѓР±С‚РёС‚СЂР°РјРё Рё РѕР·РІСѓС‡РєРѕР№ вњЁ</p>
-           <p class="section-title">РЎРµСЂРёР°Р»</p>
+    <a class="back" href="documentaries.html">← Назад</a>
+    <h1>🔥 Burn the stage 🔥</h1>
+    <p class="intro">Год выпуска: 2018</p>
+    <p class="intro">Документальный мини-сериал, в котором покажут «закулисную» жизнь группы, включая различные моменты во время гастролей по 20 городам на трёх разных континентах</p>
+    <p class="intro">Есть вариант с субтитрами и озвучкой ✨</p>
+           <p class="section-title">Сериал</p>
     <div id="list-episodes"></div>
-    <p class="section-title">Р¤РёР»СЊРј</p>
+    <p class="section-title">Фильм</p>
     <div id="list-film"></div>
-    <a class="footer-link" href="documentaries.html">Р”РѕРєСѓРјРµРЅС‚Р°Р»СЊРЅС‹Рµ РїСЂРѕРµРєС‚С‹ в¬…пёЏ</a>
+    <a class="footer-link" href="documentaries.html">Документальные проекты ⬅️</a>
   </div>
 
   <script>
         const episodeItems = [
-      { text: "1 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/223" },
-      { text: "2 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/225" },
-      { text: "3 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/227" },
-      { text: "4 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/229" },
-      { text: "5 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/231" },
-      { text: "6 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/233" },
-      { text: "7 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/235" },
-      { text: "8 СЃРµСЂРёСЏ", link: "https://t.me/violent_arhive/237" }
+      { text: "1 серия", link: "https://t.me/violent_arhive/223" },
+      { text: "2 серия", link: "https://t.me/violent_arhive/225" },
+      { text: "3 серия", link: "https://t.me/violent_arhive/227" },
+      { text: "4 серия", link: "https://t.me/violent_arhive/229" },
+      { text: "5 серия", link: "https://t.me/violent_arhive/231" },
+      { text: "6 серия", link: "https://t.me/violent_arhive/233" },
+      { text: "7 серия", link: "https://t.me/violent_arhive/235" },
+      { text: "8 серия", link: "https://t.me/violent_arhive/237" }
     ];
 
     const filmItems = [
@@ -74,7 +74,7 @@
       });
       span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
       const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = 'рџ”—';
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
           row.appendChild(box); row.appendChild(span); row.appendChild(link);
       listEl.appendChild(row);
       });

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="sync.js?v=21"></script>
-  <title>РљРѕРЅС†РµСЂС‚С‹ 2021-2024</title>
+  <title>Концерты 2021-2024</title>
   <style>
     body {
       background: #f2f0f7;
@@ -61,36 +61,36 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="concerts.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>РљРћРќР¦Р•Р РўР« 2021-2024 Р“РћР”</h1>
-    <p class="intro">Р’ РєРѕРЅС†Рµ 2021 РіРѕРґР° СЂРµР±СЏС‚Р° РїСЂРѕРІРµР»Рё СЃРІРѕР№ РїРµСЂРІС‹Р№ РѕС„С„Р»Р°Р№РЅ РєРѕРЅС†РµСЂС‚ РїРѕСЃР»Рµ РґРѕР»РіРѕРіРѕ РїРµСЂРµСЂС‹РІР° РёР·-Р·Р° РєРѕРІРёРґР°, С…РѕС‚СЏ РѕРЅРё РїСЂРѕРґРѕР»Р¶Р°Р»Рё С‚СЂР°РЅСЃР»РёСЂРѕРІР°С‚СЊСЃСЏ Рё РѕРЅР»Р°Р№РЅ</p>
+    <a class="back" href="concerts.html">← Назад</a>
+    <h1>КОНЦЕРТЫ 2021-2024 ГОД</h1>
+    <p class="intro">В конце 2021 года ребята провели свой первый оффлайн концерт после долгого перерыва из-за ковида, хотя они продолжали транслироваться и онлайн</p>
     <div id="list"></div>
-    <a class="footer-link" href="concerts.html">Р’СЃРµ РєРѕРЅС†РµСЂС‚С‹ BTS в¬…пёЏ</a>
+    <a class="footer-link" href="concerts.html">Все концерты BTS ⬅️</a>
   </div>
 
   <script>
     const items = [
-      { text: "Р›Р•Р“Р•РќР”РђР РќР«Р• Р’Р«РЎРўРЈРџР›Р•РќРРЇ", sub: "РЅР°СЂРµР·РєР° РѕС‚ Р±РёРіС…РёС‚", link: "https://t.me/violent_arhive/3192" },
-      { text: "PERMISSION TO DANCE ON STAGE LA D-2 (РѕС„С„/РѕРЅР»Р°Р№РЅ)", sub: "РѕС‚ 29.11.2021 вЂ” СЃ СЂСѓСЃ. СЃСѓР±С‚РёС‚СЂР°РјРё", link: "https://t.me/violent_arhive/3078" },
-      { text: "PERMISSION TO DANCE ON STAGE LA D-4 (РѕС„С„/РѕРЅР»Р°Р№РЅ)", sub: "РѕС‚ 03.12.2021 вЂ” СЃ Р°РЅРіР». СЃСѓР±С‚РёС‚СЂР°РјРё", link: "https://t.me/violent_arhive/1899" },
-      { text: "PERMISSION TO DANCE ON STAGE SEOUL D1 (РѕС„С„/РѕРЅР»)", sub: "РѕС‚ 10.03.2022 вЂ” СЃ Р°РЅРіР». СЃСѓР±С‚РёС‚СЂР°РјРё", link: "https://t.me/violent_arhive/2336" },
-      { text: "PERMISSION TO DANCE ON STAGE SEOUL D3 (РѕС„С„/РѕРЅР»)", sub: "РѕС‚ 13.03.2022 вЂ” СЃ Р°РЅРіР». СЃСѓР±С‚РёС‚СЂР°РјРё", link: "https://t.me/violent_arhive/2342" },
-      { text: "PERMISSION TO DANCE ON STAGE LV D-4 (РѕС„С„/РѕРЅР»Р°Р№РЅ)", sub: "РѕС‚ 17.04.2022 вЂ” СЃ Р°РЅРіР». СЃСѓР±С‚РёС‚СЂР°РјРё", link: "https://t.me/violent_arhive/2588" },
-      { text: "PERMISSION TO DANCE ON STAGE LV D-4 (РѕС„С„/РѕРЅР»Р°Р№РЅ)", sub: "РѕС‚ 17.04.2022 вЂ” СЃ СЂСѓСЃ. СЃСѓР±С‚РёС‚СЂР°РјРё", link: "https://t.me/violent_arhive/4608" },
-      { text: "DVD PTD ON STAGE THE US", sub: "РѕС‚ 2021-2022 вЂ” СЃ СЂСѓСЃ. СЃСѓР±С‚РёС‚СЂР°РјРё", link: "https://t.me/violent_arhive/4994" },
-      { text: "LOLLAPALOOZA (РѕС„С„/РѕРЅР»Р°Р№РЅ)", sub: "РѕС‚ 01.08.2022 (J-Hope) вЂ” Р±РµР· СЃСѓР±С‚РёС‚СЂРѕРІ", link: "https://t.me/violent_arhive/2901" },
-      { text: "YET TO COME IN BUSAN (РѕС„С„/РѕРЅР»)", sub: "РѕС‚ 15.10.2022 вЂ” Р±РµР· СЃСѓР±С‚РёС‚СЂРѕРІ", link: "https://t.me/violent_arhive/3206" },
-      { text: "РњРёРЅРё-РєРѕРЅС†РµСЂС‚ РќР°РјРґР¶СѓРЅР° РІ Rolling Hall РІ РЎРµСѓР»Рµ (РѕС„С„)", sub: "РѕС‚ 05.12.2022 (RM) вЂ” СЃ СЂСѓСЃ. СЃСѓР±", link: "https://t.me/violent_arhive/3644" },
-      { text: "D-DAY in Japan D-3 + Р·Р°РєР°РґСЂРѕРІС‹Рµ (РѕС„С„/РѕРЅР»Р°Р№РЅ)", sub: "РѕС‚ 04.06.2023 (Р®РЅРіРё) вЂ” Р±РµР· СЃСѓР±", link: "https://t.me/violent_arhive/4043" },
-      { text: "D-DAY in Seoul D-1 (РѕС„С„/РѕРЅР»Р°Р№РЅ)", sub: "РѕС‚ 24.06.2023 (Р®РЅРіРё) вЂ” СЃ Р°РЅРіР». СЃСѓР±", link: "https://t.me/violent_arhive/4088" },
-      { text: "D-DAY in Seoul D-2 (РѕС„С„/РѕРЅР»Р°Р№РЅ)", sub: "РѕС‚ 25.06.2023 (Р®РЅРіРё) вЂ” СЃ СЂСѓСЃ. СЃСѓР±", link: "https://t.me/violent_arhive/4606" },
-      { text: "D-DAY in Seoul D-1 Final (РѕС„С„/РѕРЅР»Р°Р№РЅ)", sub: "РѕС‚ 04.08.2023 (Р®РЅРіРё) вЂ” СЃ Р°РЅРіР». СЃСѓР±", link: "https://t.me/violent_arhive/4145" },
-      { text: "D-DAY in Seoul D-2 Final (РѕС„С„/РѕРЅР»Р°Р№РЅ)", sub: "РѕС‚ 05.08.2023 (Р®РЅРіРё) вЂ” СЃ Р°РЅРіР». СЃСѓР±", link: "https://t.me/violent_arhive/4149" },
-      { text: "D-DAY in Seoul D-3 Final (РѕС„С„/РѕРЅР»Р°Р№РЅ)", sub: "РѕС‚ 06.08.2023 (Р®РЅРіРё) вЂ” СЃ Р°РЅРіР». СЃСѓР±", link: "https://t.me/violent_arhive/4151" },
-      { text: "DVD TOUR 'D-DAY' The Original", sub: "РѕС‚ 07.06.2024 (Р®РЅРіРё) вЂ” СЃ СЂСѓСЃ. СЃСѓР±С‚РёС‚СЂР°РјРё", link: "https://t.me/violent_arhive/4979" },
-      { text: "GOLDEN (РѕС„С„/РѕРЅР»Р°Р№РЅ)", sub: "РѕС‚ 20.11.2023 (Р§РѕРЅРіСѓРє) вЂ” СЃ СЂСѓСЃ. СЃСѓР±С‚РёС‚СЂР°РјРё", link: "https://t.me/violent_arhive/4372" },
-      { text: "Jin 'Happy' Special Stage - Day 1 (РѕС„С„/РѕРЅР»Р°Р№РЅ)", sub: "РѕС‚ 16.11.2024 вЂ” СЃ СЂСѓСЃ. СЃСѓР±С‚РёС‚СЂР°РјРё", link: "https://t.me/violent_arhive/4885" },
-      { text: "Jin 'Happy' Special Stage - Day 2 (РѕС„С„/РѕРЅР»Р°Р№РЅ)", sub: "РѕС‚ 17.11.2024 вЂ” Р±РµР· СЃСѓР±С‚РёС‚СЂРѕРІ", link: "https://t.me/violent_arhive/4886" }
+      { text: "ЛЕГЕНДАРНЫЕ ВЫСТУПЛЕНИЯ", sub: "нарезка от бигхит", link: "https://t.me/violent_arhive/3192" },
+      { text: "PERMISSION TO DANCE ON STAGE LA D-2 (офф/онлайн)", sub: "от 29.11.2021 — с рус. субтитрами", link: "https://t.me/violent_arhive/3078" },
+      { text: "PERMISSION TO DANCE ON STAGE LA D-4 (офф/онлайн)", sub: "от 03.12.2021 — с англ. субтитрами", link: "https://t.me/violent_arhive/1899" },
+      { text: "PERMISSION TO DANCE ON STAGE SEOUL D1 (офф/онл)", sub: "от 10.03.2022 — с англ. субтитрами", link: "https://t.me/violent_arhive/2336" },
+      { text: "PERMISSION TO DANCE ON STAGE SEOUL D3 (офф/онл)", sub: "от 13.03.2022 — с англ. субтитрами", link: "https://t.me/violent_arhive/2342" },
+      { text: "PERMISSION TO DANCE ON STAGE LV D-4 (офф/онлайн)", sub: "от 17.04.2022 — с англ. субтитрами", link: "https://t.me/violent_arhive/2588" },
+      { text: "PERMISSION TO DANCE ON STAGE LV D-4 (офф/онлайн)", sub: "от 17.04.2022 — с рус. субтитрами", link: "https://t.me/violent_arhive/4608" },
+      { text: "DVD PTD ON STAGE THE US", sub: "от 2021-2022 — с рус. субтитрами", link: "https://t.me/violent_arhive/4994" },
+      { text: "LOLLAPALOOZA (офф/онлайн)", sub: "от 01.08.2022 (J-Hope) — без субтитров", link: "https://t.me/violent_arhive/2901" },
+      { text: "YET TO COME IN BUSAN (офф/онл)", sub: "от 15.10.2022 — без субтитров", link: "https://t.me/violent_arhive/3206" },
+      { text: "Мини-концерт Намджуна в Rolling Hall в Сеуле (офф)", sub: "от 05.12.2022 (RM) — с рус. суб", link: "https://t.me/violent_arhive/3644" },
+      { text: "D-DAY in Japan D-3 + закадровые (офф/онлайн)", sub: "от 04.06.2023 (Юнги) — без суб", link: "https://t.me/violent_arhive/4043" },
+      { text: "D-DAY in Seoul D-1 (офф/онлайн)", sub: "от 24.06.2023 (Юнги) — с англ. суб", link: "https://t.me/violent_arhive/4088" },
+      { text: "D-DAY in Seoul D-2 (офф/онлайн)", sub: "от 25.06.2023 (Юнги) — с рус. суб", link: "https://t.me/violent_arhive/4606" },
+      { text: "D-DAY in Seoul D-1 Final (офф/онлайн)", sub: "от 04.08.2023 (Юнги) — с англ. суб", link: "https://t.me/violent_arhive/4145" },
+      { text: "D-DAY in Seoul D-2 Final (офф/онлайн)", sub: "от 05.08.2023 (Юнги) — с англ. суб", link: "https://t.me/violent_arhive/4149" },
+      { text: "D-DAY in Seoul D-3 Final (офф/онлайн)", sub: "от 06.08.2023 (Юнги) — с англ. суб", link: "https://t.me/violent_arhive/4151" },
+      { text: "DVD TOUR 'D-DAY' The Original", sub: "от 07.06.2024 (Юнги) — с рус. субтитрами", link: "https://t.me/violent_arhive/4979" },
+      { text: "GOLDEN (офф/онлайн)", sub: "от 20.11.2023 (Чонгук) — с рус. субтитрами", link: "https://t.me/violent_arhive/4372" },
+      { text: "Jin 'Happy' Special Stage - Day 1 (офф/онлайн)", sub: "от 16.11.2024 — с рус. субтитрами", link: "https://t.me/violent_arhive/4885" },
+      { text: "Jin 'Happy' Special Stage - Day 2 (офф/онлайн)", sub: "от 17.11.2024 — без субтитров", link: "https://t.me/violent_arhive/4886" }
     ];
 
     const listEl = document.getElementById('list');
@@ -129,7 +129,7 @@
       link.className = 'link';
       link.href = item.link;
       link.target = '_blank';
-      link.textContent = 'рџ”—';
+      link.textContent = '🔗';
 
       row.appendChild(box);
       row.appendChild(span);

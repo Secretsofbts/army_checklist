@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="sync.js?v=21"></script>
-  <title>C Р”Р¶РµР№РјСЃРѕРј РљРѕСЂРґРµРЅРѕРј</title>
+  <title>C Джеймсом Корденом</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
     .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -24,17 +24,17 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="other-shows.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџЊѓ Р”Р¶РµР№РјСЃРѕРј РљРѕСЂРґРµРЅРѕРј рџЊѓ</h1>
+    <a class="back" href="other-shows.html">← Назад</a>
+    <h1>🌃 Джеймсом Корденом 🌃</h1>
     <div id="list"></div>
-    <a class="footer-link" href="other-shows-2016-2019.html">Р”СЂСѓРіРёРµ С€РѕСѓ (2016 - 2019) в¬…пёЏ</a>
-   <a class="footer-link" href="other-shows-2020-2022.html">Р”СЂСѓРіРёРµ С€РѕСѓ (2020 - 2022) в¬…пёЏ</a>
+    <a class="footer-link" href="other-shows-2016-2019.html">Другие шоу (2016 - 2019) ⬅️</a>
+   <a class="footer-link" href="other-shows-2020-2022.html">Другие шоу (2020 - 2022) ⬅️</a>
   </div>
 
   <script>
     const items = [
-      { text: "Flinch СЃ BTS", link: "https://t.me/violent_arhive/947" },
-      { text: "РџСЂСЏС‚РєРё СЃ BTS", link: "https://t.me/violent_arhive/948" },
+      { text: "Flinch с BTS", link: "https://t.me/violent_arhive/947" },
+      { text: "Прятки с BTS", link: "https://t.me/violent_arhive/948" },
       { text: "BTS Carpool Karaoke", link: "https://t.me/violent_arhive/946" },
       { text: "Concert in the Crosswalk", link: "https://t.me/violent_arhive/2239" }
     ];
@@ -58,7 +58,7 @@
       });
       span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
       const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = 'рџ”—';
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
       row.appendChild(box); row.appendChild(span); row.appendChild(link);
       listEl.appendChild(row);
     });
