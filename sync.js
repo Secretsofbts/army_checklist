@@ -537,11 +537,26 @@ function progressForKey(key) {
 }
 
 function computeSectionProgress(keys) {
+  const seen = {};
   let checked = 0, total = 0;
+  const withoutIds = [];
   keys.forEach((key) => {
+    const ids = (typeof STAT_CHECKBOX_IDS !== 'undefined') ? STAT_CHECKBOX_IDS[key] : null;
+    if (ids && ids.length) {
+      ids.forEach((id) => {
+        if (seen[id]) return;
+        seen[id] = true;
+        total++;
+        if (localStorage.getItem(id) === 'true') checked++;
+      });
+    } else {
+      withoutIds.push(key);
+    }
+  });
+  withoutIds.forEach((key) => {
     const s = progressForKey(key);
-    checked += s.checked;
     total += s.total;
+    checked += s.checked;
   });
   return { checked, total };
 }
