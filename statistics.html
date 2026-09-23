@@ -38,7 +38,10 @@
       <p id="nickname-status" style="font-size:12px; color:#2e9e5b; margin:6px 0 0;"></p>
     </div>
 
-    <div id="stats-content"><p class="empty-note">Загрузка...</p></div>
+       <div id="stats-content"><p class="empty-note">Загрузка...</p></div>
+
+    <p class="section-title" style="font-size:15px; font-weight:700; margin:20px 0 4px;">Прогресс по разделам</p>
+    <div id="sections-progress"></div>
   </div>
 
   <script>
@@ -228,6 +231,50 @@
           status.style.color = '#c25a5a';
         });
     });
+
+        function renderSectionsProgress() {
+      const container = document.getElementById('sections-progress');
+      container.innerHTML = '';
+
+      Object.keys(SECTION_GROUPS).forEach((name) => {
+        const stats = computeSectionProgress(SECTION_GROUPS[name]);
+        appendSectionRow(container, name, stats);
+      });
+
+      const otherShowsStats = computeOtherShowsProgress();
+      appendSectionRow(container, 'Другие шоу', otherShowsStats);
+    }
+
+    function appendSectionRow(container, name, stats) {
+      const row = document.createElement('div');
+      row.style.cssText = 'display:flex; align-items:center; justify-content:space-between; padding:8px 4px; border-bottom:1px solid #f0f0f0; font-size:14px;';
+
+      const label = document.createElement('span');
+      label.textContent = name;
+      label.style.color = '#333';
+
+      const value = document.createElement('span');
+      value.style.cssText = 'font-size:13px; flex-shrink:0;';
+      if (stats.total === 0) {
+        value.textContent = '—';
+        value.style.color = '#ccc';
+      } else {
+        const percent = Math.round((stats.checked / stats.total) * 100);
+        if (percent === 100) {
+          value.textContent = '✅ 100%';
+          value.style.color = '#2e9e5b';
+        } else {
+          value.textContent = percent + '%';
+          value.style.color = '#9b7fd4';
+        }
+      }
+
+      row.appendChild(label);
+      row.appendChild(value);
+      container.appendChild(row);
+    }
+
+    renderSectionsProgress();
 
     loadStats();
 

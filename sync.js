@@ -450,7 +450,98 @@ const YEAR_OWN_TOTALS = {
   'documentaries-jungkook-i-am-still': 3,
   'documentaries-suga-road-to-dday': 7
 };
-  function getStatTotal(key) {
+ const SECTION_GROUPS = {
+  'Все трансляции': [
+    'jungkook-2016-2022','jungkook-2023-2024','jungkook-2025-2026',
+    'taehyung-2015-2022','taehyung-2023-2024','taehyung-2025','taehyung-2026',
+    'comeback',
+    'jin-2015-2022','jin-2023-2025','jin-2026-HB',
+    'namjoon-2015-2022','namjoon-2023-2025','namjoon-2026-HB',
+    'hoseok-2015-2022','hoseok-2023-2025','hoseok-2026-HB',
+    'radio',
+    'jimin-2015-2022','jimin-2023-2026',
+    'yoongi-2015-2022','yoongi-2023-2026',
+    'ot7-2015-2017','ot7-2018-2022','ot7-2023-2026',
+    'somepeople-2015','somepeople-2016','somepeople-2017-2019','somepeople-2020-2022','somepeople-2023-2025','somepeople-2026'
+  ],
+  'Трансляции с YouTube': [
+    'vlog-jungkook','vlog-v','vlog-jin','vlog-jimin','vlog-namjoon','vlog-suga','vlog-jhope','vlog-ot7','vlog-somepeople',
+    'eatjin','logon',
+    'vlogsbts-jimin','vlogsbts-jin','vlogsbts-taehyung','vlogsbts-jungkook','vlogsbts-namjoon','vlogsbts-yoongi','vlogsbts-hoseok',
+    'gcf','normal-log'
+  ],
+  'Концерты BTS': [
+    'concert-hyyh-on-stage','concert-hyyh-epilogue','concert-hyyh-epilogue-japan',
+    'concert-wings-seoul','concert-wings-final','concert-wings-japan',
+    'concert-wt-love-yourself-seoul','concert-wt-love-yourself-europe','concert-wt-love-yourself-ny',
+    'concert-lysy-seoul-final-dvd','concert-arirang-tour',
+    'fm-3rd-muster','fm-jp-vol3'
+  ],
+  'Различные шоу': [
+    'run-bts-1-25','run-bts-26-50','run-bts-51-80','run-bts-81-111','run-bts-112-135','run-bts-136-155','run-bts-156-165',
+    'run-jin-1-25','run-jin-26-36','run-bts-2-0-1-25',
+    'bon-voyage-s1','bon-voyage-s2','bon-voyage-s3','bon-voyage-s4',
+    'in-the-soop-s1','in-the-soop-s2','in-the-soop-friendcation',
+    'are-you-sure-s1','are-you-sure-s2',
+    'bts-gayo','american-hustle-life-episodes','rookie-king','suchwita',
+    'universe-bt21-s1','universe-bt21-s2','universe-bt21-s2-animation','universe-bt21-s3','universe-bt21-s3-animation','universe-bt21-inside-manga'
+  ],
+  'BangtanTV': [
+    'clips-2013-2015','clips-2016-2018','clips-2019-2021','clips-2022-2023','clips-2024-2025','clips-2026-2027','clips-japan','clips-mixtape','clips-standalone',
+    'bombs-2013-june','bombs-2013-july','bombs-2013-august','bombs-2013-september','bombs-2013-october','bombs-2013-november','bombs-2024','bombs-2025','bombs-2026',
+    'bts-episode-1-50','bts-episode-51-100','bts-episode-101-150','bts-episode-151-194',
+    'bts-episode-other-jimin','bts-episode-other-jungkook','bts-episode-other-hoseok','bts-episode-other-yoongi','bts-episode-other-namjoon','bts-episode-other-jin','bts-episode-other-taehyung','bts-episode-other-somepeople',
+    'reaction-to-self',
+    'photo-folio-jungkook','photo-folio-namjoon','photo-folio-jimin','photo-folio-common','photo-folio-jin','photo-folio-taehyung','photo-folio-hoseok','photo-folio-yoongi','photo-folio-extra',
+    'album-review','message-from-jin'
+  ],
+  'BTS Memories': [
+    'bts-memories-2014','bts-memories-2015','bts-memories-2016','bts-memories-2017','bts-memories-2018','bts-memories-2019','bts-memories-2020','bts-memories-7moments'
+  ],
+  'Спецвыпуски': [
+    'season-summer','season-winter','season-greeting','bts-now'
+  ],
+  'Документальные проекты': [
+    'documentaries-break-the-silence','documentaries-bring-the-soul','documentaries-bts-monuments','documentaries-burn-the-stage','documentaries-hope-on-the-street','documentaries-jhope-in-the-box','documentaries-jimin-production-diary','documentaries-jungkook-i-am-still','documentaries-suga-road-to-dday'
+  ],
+  'Всякое другое': [
+    'sleepy-interview','learn-korean','fm-0613','halloween','hwarang','beginns-youth','td-stories',
+    'translations-2cool4skool','translations-orul82','translations-skoolluvaffair','translations-golden','translations-hots',
+    'mcountdown-2013','mcountdown-2014','mcountdown-2015','mcountdown-2016','mcountdown-2017','mcountdown-2018','mcountdown-2019','mcountdown-2020','mcountdown-2022','mcountdown-2023','mcountdown-2025'
+  ],
+  'BTS FESTA': [
+    'bts-festa-2014','bts-festa-2015','bts-festa-2016','bts-festa-2017','bts-festa-2018','bts-festa-2019','bts-festa-2020','bts-festa-2021','bts-festa-2022','bts-festa-2023','bts-festa-2024','bts-festa-2025','bts-festa-2026'
+  ]
+};
+
+function computeSectionProgress(keys) {
+  let checked = 0, total = 0;
+  keys.forEach((key) => {
+    const known = getStatTotal(key);
+    const raw = localStorage.getItem('progress:' + key);
+    const data = raw ? JSON.parse(raw) : null;
+    if (known !== null) {
+      total += known;
+      checked += data ? data.checked : 0;
+    } else if (data) {
+      total += data.total;
+      checked += data.checked;
+    }
+  });
+  return { checked, total };
+}
+
+function computeOtherShowsProgress() {
+  let checked = 0, total = 0;
+  ['other-shows-2013-2015','other-shows-2016-2019','other-shows-2020-2022','other-shows-2023-2024','other-shows-2025','other-shows-2026'].forEach((yearKey) => {
+    const stats = getCombinedYearStats(yearKey);
+    checked += stats.checked;
+    total += stats.total;
+  });
+  return { checked, total };
+}
+
+function getStatTotal(key) {
     return STAT_TOTALS.hasOwnProperty(key) ? STAT_TOTALS[key] : null;
   }
 
