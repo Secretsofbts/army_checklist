@@ -5,6 +5,76 @@
   if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
     ARMY_USER_ID = window.Telegram.WebApp.initDataUnsafe.user.id;
   }
+
+  // Галочки и прогресс на одном телефоне не должны смешиваться между аккаунтами Telegram.
+  // В облаке ключи как раньше (video-..., progress:...), в localStorage — с префиксом id пользователя.
+  (function isolateArmyLocalStorage() {
+    if (!ARMY_USER_ID) return;
+    const prefix = String(ARMY_USER_ID) + ':';
+    const origGet = Storage.prototype.getItem;
+    const origSet = Storage.prototype.setItem;
+    const origRemove = Storage.prototype.removeItem;
+
+    function isSharedMetaKey(key) {
+      return key === 'siteVersion' ||
+        key === 'seenContentVersion' ||
+        key.indexOf('userNumber_') === 0 ||
+        key.indexOf('userFirstSeen_') === 0 ||
+        key.indexOf('hasDonated_') === 0;
+    }
+
+    function isProgressKey(key) {
+      return key.indexOf('video-') === 0 ||
+        key.indexOf('noline-') === 0 ||
+        key.indexOf('progress:') === 0;
+    }
+
+    function shouldNamespace(key) {
+      if (key == null) return false;
+      key = String(key);
+      if (key.indexOf(prefix) === 0) return false;
+      if (isSharedMetaKey(key)) return false;
+      return isProgressKey(key);
+    }
+
+    Storage.prototype.getItem = function (key) {
+      if (this !== localStorage || !shouldNamespace(key)) {
+        return origGet.call(this, key);
+      }
+      const namespaced = origGet.call(this, prefix + key);
+      if (namespaced !== null) return namespaced;
+      return origGet.call(this, key);
+    };
+
+    Storage.prototype.setItem = function (key, value) {
+      if (this !== localStorage || !shouldNamespace(key)) {
+        return origSet.call(this, key, value);
+      }
+      return origSet.call(this, prefix + key, value);
+    };
+
+    Storage.prototype.removeItem = function (key) {
+      if (this !== localStorage || !shouldNamespace(key)) {
+        return origRemove.call(this, key);
+      }
+      origRemove.call(this, prefix + key);
+      return origRemove.call(this, key);
+    };
+
+    const snapshot = [];
+    for (let i = 0; i < localStorage.length; i++) {
+      snapshot.push(localStorage.key(i));
+    }
+    snapshot.forEach(function (key) {
+      if (!key || key.indexOf(prefix) === 0 || isSharedMetaKey(key) || !isProgressKey(key)) return;
+      const namespaced = prefix + key;
+      if (origGet.call(localStorage, namespaced) === null) {
+        origSet.call(localStorage, namespaced, origGet.call(localStorage, key));
+      }
+      origRemove.call(localStorage, key);
+    });
+  })();
+
   // Регистрация нового пользователя (один раз на каждого человека)
 function registerUserIfNeeded() {
   if (!ARMY_USER_ID) return;
