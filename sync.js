@@ -358,7 +358,7 @@ const YEAR_OWN_TOTALS = {
   'bts-episode-other-namjoon': 1,
   'bts-episode-other-jin': 11,
   'bts-episode-other-taehyung': 8,
-  'bts-episode-other-somepeople': 21,
+  'bts-episode-other-somepeople': 22,
   'reaction-to-self': 31,
   'photo-folio-jungkook': 2,
   'photo-folio-namjoon': 3,
