@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=59"></script>
+  <script src="sync.js?v=60"></script>
   <title>Концерты 2025-2026</title>
   <style>
     body {
@@ -44,7 +44,6 @@
     input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; margin-top: 2px; }
     .text { flex: 1; cursor: pointer; color: #333; }
     .text.done { color: #bbb; text-decoration: line-through; }
-    .done .text { color: #bbb; text-decoration: line-through; }
     .sub { display: block; font-size: 11px; color: #999; margin-top: 2px; }
     .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; margin-top: 2px; }
         .navcard {
@@ -80,6 +79,11 @@
     <h1>КОНЦЕРТЫ 2025-2026 ГОД</h1>
     <p class="intro"></p>
     <div id="list"></div>
+           <a class="navcard" href="concert-runseokjin-ep-tour.html" id="runseokjin-card">
+     <input type="checkbox" id="runseokjin-checkbox" style="pointer-events:none; display:none;">
+     <span class="navcard-label" id="runseokjin-label">🖥 RUNSEOKJIN_EP.TOUR in GOYANG</span>
+     <span id="badge-concert-runseokjin-ep-tour" style="font-size:12px; color:#999;"></span>
+   </a>
            <a class="navcard" href="concert-arirang-tour.html" id="arirang-card">
      <input type="checkbox" id="arirang-checkbox" style="pointer-events:none; display:none;">
      <span class="navcard-label" id="arirang-label">🖥 Общий пост тура ARIRANG</span>
@@ -99,10 +103,11 @@
     ];
 
     const listEl = document.getElementById('list');
-    items.forEach((item) => {
-      const id = 'video-' + item.link.split('/').pop();
+    const jinCard = document.getElementById('runseokjin-card');
+    items.forEach((item, i) => {
       const row = document.createElement('div');
       row.className = 'row';
+      const id = 'video-' + item.link.split('/').pop();
       row.dataset.id = id;
 
       const box = document.createElement('input');
@@ -140,14 +145,15 @@
       row.appendChild(span);
       row.appendChild(link);
       listEl.appendChild(row);
+      if (i === 4 && jinCard) listEl.appendChild(jinCard);
     });
-             function renderBadge(elId, key) {
+             function renderBadge(elId, key, checkboxId, labelId) {
       var el = document.getElementById(elId);
       if (!el) return;
       var known = getStatTotal(key);
       var raw = localStorage.getItem('progress:' + key);
-      var checkbox = document.getElementById('arirang-checkbox');
-      var label = document.getElementById('arirang-label');
+      var checkbox = document.getElementById(checkboxId);
+      var label = document.getElementById(labelId);
       var rawData = raw ? JSON.parse(raw) : null;
       var data = { checked: rawData ? rawData.checked : 0, total: known !== null ? known : (rawData ? rawData.total : 0) };
       if (data.total === 0) { el.textContent = ''; return; }
@@ -163,11 +169,12 @@
       }
     }
 function renderAllBadges() {
-    renderBadge('badge-concert-arirang-tour', 'concert-arirang-tour');
+    renderBadge('badge-concert-arirang-tour', 'concert-arirang-tour', 'arirang-checkbox', 'arirang-label');
+    renderBadge('badge-concert-runseokjin-ep-tour', 'concert-runseokjin-ep-tour', 'runseokjin-checkbox', 'runseokjin-label');
     }
     renderAllBadges();
     refreshLocalStorageFromCloud(renderAllBadges);    function updateProgress() {
-      const all = document.querySelectorAll('input[type="checkbox"]');
+      const all = document.querySelectorAll('#list .row input[type="checkbox"]');
       let total = 0, checked = 0;
       all.forEach(cb => {
         total++;

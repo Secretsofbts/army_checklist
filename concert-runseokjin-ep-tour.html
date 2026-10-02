@@ -6,9 +6,9 @@
   <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="sync.js?v=60"></script>
-  <title>BTS Memories of 2015</title>
+  <title>RUNSEOKJIN_EP.TOUR in GOYANG</title>
   <style>
     body {
       background: #f2f0f7;
@@ -31,9 +31,10 @@
       display: inline-block;
       margin-bottom: 12px;
     }
-    h1 { font-size: 18px; margin: 0 0 4px; }
-    .intro { font-size: 13px; color: #555; margin: 0 0 16px; }
-    .section-title {
+    h1 { font-size: 18px; margin: 0 0 12px; }
+    .intro { font-size: 13px; color: #555; margin: 0 0 10px; }
+    .intro a { color: #7b5fb3; text-decoration: none; }
+    .city-title {
       font-size: 13px;
       font-weight: 600;
       color: #888;
@@ -48,9 +49,10 @@
       font-size: 14px;
     }
     input[type="checkbox"] { width: 18px; height: 18px; flex-shrink: 0; }
-       .text { flex: 1; cursor: pointer; color: #333; }
+    .text { flex: 1; cursor: pointer; color: #333; }
     .text.done { color: #bbb; text-decoration: line-through; }
     .link { color: #999; text-decoration: none; font-size: 13px; flex-shrink: 0; }
+    .waiting { font-size: 13px; color: #999; font-style: italic; padding: 12px 4px; text-align: center; }
     .footer-link {
       display: block;
       text-align: center;
@@ -60,69 +62,50 @@
       margin-top: 16px;
       padding-top: 12px;
       border-top: 1px solid #eee;
-   }
+    }
   </style>
 </head>
 <body>
   <div class="app">
-    <a class="back" href="bts-memories.html">← Назад</a>
-    <h1>🔮 BTS Memories of 2015 🔮</h1>
-    <p class="intro">Данный релиз включает в себя 4 DVD-диска: живой концерт 28-29.03.2015 в Сеуле, подготовка к выступлению, съемки фильма, тур по Японии и съемки клипов</p>
+    <a class="back" href="concerts-2025-2026.html">← Назад</a>
+    <h1>💕 RUNSEOKJIN_EP.TOUR in GOYANG 💕</h1>
+    <p class="intro">Первый сольный мировой тур Джина. Он начался 28 июня 2025 года в Гояне. Завершился — 1 ноября 2025 в Инчхоне</p>
+    <p class="intro">Замысел родился у самого Джина после завершения шоу <a href="https://t.me/violent_arhive/5458" target="_blank">RUN JIN</a>. Он подумал: а что, если финальный выпуск шоу провести на сцене вместе с фанатами?</p>
+    <p class="intro">Там автоперевод на русский, я постаралась поправить, но все равно субтитры где-то отстают или спешат, но смысл понятен</p>
     <div id="list"></div>
-    <a class="footer-link" href="bts-memories.html">BTS Memories ⬅️</a>
+    <p class="waiting">Ждём остальные концерты</p>
+    <a class="footer-link" href="concerts-2025-2026.html">Все концерты 2025-2026 года ⬅️</a>
   </div>
 
   <script>
     const data = [
-      { section: "Диск 1", items: [
-        { text: "LIVE TRILOGY: BTS BEGINS", link: "https://t.me/violent_arhive/1515" }
-      ]},
-      { section: "Диск 2", items: [
-        { text: "Begins Concert", sub: "Making Film", link: "https://t.me/violent_arhive/1518" }
-      ]},
-      { section: "Диск 3", items: [
-        { text: "First Japan Tour", sub: "Wake up open your eyes", link: "https://t.me/violent_arhive/1519" },
-        { text: "Live Trilogy Episode II. THE RED BULLET TOUR",  sub: "1 часть",  link: "https://t.me/violent_arhive/1521" },
-        { text: "Live Trilogy Episode II. THE RED BULLET TOUR", sub: "2 часть",  link: "https://t.me/violent_arhive/1520" }
-      ]},
-      { section: "Диск 4: создание клипов", items: [
-        { text: "Run", sub: "Making Film", link: "https://t.me/violent_arhive/1516" },
-        { text: "I need U MV", sub: "Making Jap",  link: "https://t.me/violent_arhive/1522" },
-        { text: "Butterfly Dream", sub: "Making Film", link: "https://t.me/violent_arhive/1524" },
-        { text: "Boy In Luv", sub: "Chinese ver. recording", link: "https://t.me/violent_arhive/1525" },
-        { text: "DOPE", sub: "Making Film",  link: "https://t.me/violent_arhive/1526" },
-        { text: "HYYH pt.1", sub: "Jacket shooting", link: "https://t.me/violent_arhive/1527" },
-        { text: "HYYH pt.2", sub: "Jacket shooting",  link: "https://t.me/violent_arhive/1528" },
-        { text: "Prologue & VCR", sub: "Making Film",link: "https://t.me/violent_arhive/1530" }
-      ]},
-            { section: "Дополнительно (не идет в статистику)", excluded: true, items: [
-        { text: "1st Japan Tour 2015 (Wake up open your eyes) - концерт", link: "https://t.me/violent_arhive/1534" }
+      { city: "GOYANG", items: [
+        { text: "D-1", sub: "от 28.06.2025", link: "https://t.me/violent_arhive/5682" }
       ]}
     ];
 
     const listEl = document.getElementById('list');
     data.forEach((block) => {
-      const sectionTitle = document.createElement('div');
-      sectionTitle.className = 'section-title';
-      sectionTitle.textContent = block.section;
-      listEl.appendChild(sectionTitle);
+      const cityTitle = document.createElement('div');
+      cityTitle.className = 'city-title';
+      cityTitle.textContent = block.city;
+      listEl.appendChild(cityTitle);
 
-                      block.items.forEach((item) => {
-        const id = 'video-' + item.link.split('/').pop();
+      block.items.forEach((item) => {
         const row = document.createElement('div');
         row.className = 'row';
+        const id = 'video-' + item.link.split('/').pop();
         row.dataset.id = id;
-        if (block.excluded) row.dataset.noStat = 'true';
 
         const box = document.createElement('input');
         box.type = 'checkbox';
 
-                const span = document.createElement('span');
+        const span = document.createElement('span');
         span.className = 'text';
         span.textContent = item.text;
         if (item.sub) {
           const sub = document.createElement('span');
-          sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px; font-weight:400;';
+          sub.style.cssText = 'display:block; font-size:11px; color:#999; margin-top:2px;';
           sub.textContent = item.sub;
           span.appendChild(sub);
         }
@@ -154,17 +137,15 @@
       });
     });
 
-        function updateProgress() {
+    function updateProgress() {
       const all = document.querySelectorAll('input[type="checkbox"]');
       let total = 0, checked = 0;
       all.forEach(cb => {
-        const row = cb.closest('.row');
-        if (row && row.dataset.noStat === 'true') return;
         total++;
         if (cb.checked) checked++;
       });
-      setProgress('bts-memories-2015', {checked, total});
-      pushWeightedContributions('bts-memories-2015');
+      setProgress('concert-runseokjin-ep-tour', {checked, total});
+      pushWeightedContributions('concert-runseokjin-ep-tour');
     }
     updateProgress();
     syncChecklistFromCloud(updateProgress);
