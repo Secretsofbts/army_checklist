@@ -157,20 +157,20 @@
       text-align: center;
       box-shadow: 0 1px 2px rgba(94, 61, 158, 0.25);
     }
-    .heat-day.lv1 { background: #ddd0f0; color: #7b5fb3; }
-    .heat-day.lv2 { background: #c4a6e6; color: #5e3d9e; }
-    .heat-day.lv3 { background: #9b7fd4; color: rgba(255,255,255,0.9); }
-    .heat-day.lv4 { background: #5e3d9e; color: rgba(255,255,255,0.9); }
+    .heat-day.lv1 { background: #efe6fb; color: #7b5fb3; }
+    .heat-day.lv2 { background: #d7c4f2; color: #6b4caf; }
+    .heat-day.lv3 { background: #b598e0; color: #fff; }
+    .heat-day.lv4 { background: #6b4caf; color: #fff; }
     .heat-cell {
       width: 11px;
       height: 11px;
       border-radius: 2px;
       background: #eceaf2;
     }
-    .heat-cell.lv1 { background: #ddd0f0; }
-    .heat-cell.lv2 { background: #c4a6e6; }
-    .heat-cell.lv3 { background: #9b7fd4; }
-    .heat-cell.lv4 { background: #5e3d9e; }
+    .heat-cell.lv1 { background: #efe6fb; }
+    .heat-cell.lv2 { background: #d7c4f2; }
+    .heat-cell.lv3 { background: #b598e0; }
+    .heat-cell.lv4 { background: #6b4caf; }
     .heatmap-legend {
       display: flex;
       align-items: center;
@@ -535,14 +535,12 @@
       return 'отметок';
     }
 
-    function heatLevel(n, max) {
+    function heatLevel(n) {
       if (!n) return '';
-      if (max <= 1) return 'lv1';
-      const t = n / max;
-      if (t > 0.75) return 'lv4';
-      if (t > 0.5) return 'lv3';
-      if (t > 0.25) return 'lv2';
-      return 'lv1';
+      if (n <= 2) return 'lv1';
+      if (n <= 5) return 'lv2';
+      if (n <= 9) return 'lv3';
+      return 'lv4';
     }
 
     function renderCheckHeatmap() {
@@ -553,12 +551,6 @@
       const activity = (typeof getCheckActivity === 'function') ? getCheckActivity() : {};
       const today = new Date();
       today.setHours(0, 0, 0, 0);
-
-      let max = 0;
-      Object.keys(activity).forEach(function (k) {
-        const v = parseInt(activity[k], 10) || 0;
-        if (v > max) max = v;
-      });
 
       const monthNames = ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'];
       const card = document.createElement('div');
@@ -613,7 +605,7 @@
             const key = (typeof localDateKey === 'function') ? localDateKey(date) : '';
             const n = parseInt(activity[key], 10) || 0;
             if (n) {
-              cell.classList.add(heatLevel(n, max));
+              cell.classList.add(heatLevel(n));
               const cnt = document.createElement('span');
               cnt.className = 'cnt';
               cnt.textContent = '×' + n;
