@@ -88,15 +88,25 @@
     .section-row.depth-1.is-done,
     .section-row.depth-2.is-done { background: #e3f7e9; border-color: transparent; }
     .heatmap-card { background: #f7f7fa; border-radius: 12px; padding: 14px 10px 12px; margin: 0 0 10px; }
-    .heatmap-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 6px; }
-    .heatmap-months-row { display: flex; gap: 10px; }
+    .heatmap-scroll {
+      display: flex;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x mandatory;
+      overscroll-behavior-x: contain;
+      padding-bottom: 6px;
+    }
     .heat-month {
       background: #fff;
       border: 1px solid #eee;
       border-radius: 12px;
       padding: 10px 8px 8px;
-      min-width: 248px;
-      flex-shrink: 0;
+      box-sizing: border-box;
+      flex: 0 0 100%;
+      width: 100%;
+      min-width: 100%;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
     }
     .heat-month-title {
       font-size: 13px;
@@ -539,8 +549,6 @@
 
       const scroll = document.createElement('div');
       scroll.className = 'heatmap-scroll';
-      const row = document.createElement('div');
-      row.className = 'heatmap-months-row';
 
       for (let m = 11; m >= 0; m--) {
         const monthStart = new Date(today.getFullYear(), today.getMonth() - m, 1);
@@ -601,10 +609,9 @@
         }
 
         block.appendChild(days);
-        row.appendChild(block);
+        scroll.appendChild(block);
       }
 
-      scroll.appendChild(row);
       card.appendChild(scroll);
 
       const legend = document.createElement('div');
@@ -639,7 +646,11 @@
 
       box.appendChild(card);
       requestAnimationFrame(function () {
-        scroll.scrollLeft = scroll.scrollWidth;
+        requestAnimationFrame(function () {
+          const months = scroll.querySelectorAll('.heat-month');
+          const last = months[months.length - 1];
+          if (last) scroll.scrollLeft = last.offsetLeft;
+        });
       });
     }
 
