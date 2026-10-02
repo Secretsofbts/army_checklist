@@ -244,6 +244,14 @@ registerUserIfNeeded();
     saveCheckActivityState(state);
   }
 
+  function recordCheckRewatch(id) {
+    if (!(String(id).indexOf('video-') === 0 || String(id).indexOf('noline-') === 0)) return;
+    const state = getCheckActivityState();
+    const today = localDateKey();
+    state.days[today] = (parseInt(state.days[today], 10) || 0) + 1;
+    saveCheckActivityState(state);
+  }
+
   function setChecked(id, value) {
     const nowTrue = value === true || value === 'true';
     const wasTrue = localStorage.getItem(id) === 'true';
@@ -252,6 +260,128 @@ registerUserIfNeeded();
     if (ARMY_USER_ID) {
       saveToCloudWithRetry(`users/${ARMY_USER_ID}/${id}`, value);
     }
+  }
+
+  function setupCheckboxRewatchHold() {
+    const HOLD_MS = 650;
+    let timer = null;
+    let startX = 0;
+    let startY = 0;
+    let holdBox = null;
+    let suppressToggle = false;
+
+    function isWatchCheckbox(box) {
+      if (!box || box.type !== 'checkbox' || box.disabled) return false;
+      const row = box.closest('[data-id]');
+      if (!row) return false;
+      const id = row.dataset.id || '';
+      return id.indexOf('video-') === 0 || id.indexOf('noline-') === 0;
+    }
+
+    function clearTimer() {
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+    }
+
+    function cancelHold() {
+      clearTimer();
+      if (!suppressToggle) holdBox = null;
+    }
+
+    function point(e) {
+      if (e.touches && e.touches[0]) return e.touches[0];
+      if (e.changedTouches && e.changedTouches[0]) return e.changedTouches[0];
+      return e;
+    }
+
+    function onDown(e) {
+      const box = e.target;
+      if (!isWatchCheckbox(box) || !box.checked) return;
+      if (e.pointerType === 'mouse' && typeof e.button === 'number' && e.button !== 0) return;
+      const p = point(e);
+      startX = p.clientX;
+      startY = p.clientY;
+      holdBox = box;
+      suppressToggle = false;
+      clearTimer();
+      timer = setTimeout(function () {
+        timer = null;
+        if (!holdBox || !holdBox.checked) return;
+        const row = holdBox.closest('[data-id]');
+        const id = row && row.dataset.id;
+        if (!id) return;
+        suppressToggle = true;
+        recordCheckRewatch(id);
+        try {
+          if (window.Telegram && Telegram.WebApp && Telegram.WebApp.HapticFeedback) {
+            Telegram.WebApp.HapticFeedback.impactOccurred('light');
+          }
+        } catch (err) {}
+        holdBox.classList.add('army-rewatch');
+        const el = holdBox;
+        setTimeout(function () { el.classList.remove('army-rewatch'); }, 700);
+      }, HOLD_MS);
+    }
+
+    function onMove(e) {
+      if (!holdBox || suppressToggle) return;
+      const p = point(e);
+      if (Math.abs(p.clientX - startX) > 14 || Math.abs(p.clientY - startY) > 14) cancelHold();
+    }
+
+    function onUp(e) {
+      clearTimer();
+      if (suppressToggle) {
+        if (e.cancelable) e.preventDefault();
+        if (holdBox) holdBox.checked = true;
+        setTimeout(function () {
+          suppressToggle = false;
+          holdBox = null;
+        }, 400);
+      } else {
+        holdBox = null;
+      }
+    }
+
+    document.addEventListener('pointerdown', onDown, true);
+    document.addEventListener('pointermove', onMove, true);
+    document.addEventListener('pointerup', onUp, true);
+    document.addEventListener('pointercancel', cancelHold, true);
+    document.addEventListener('touchend', function (e) {
+      if (!suppressToggle) return;
+      if (e.cancelable) e.preventDefault();
+    }, { capture: true, passive: false });
+    document.addEventListener('click', function (e) {
+      if (!suppressToggle) return;
+      if (!isWatchCheckbox(e.target)) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      e.target.checked = true;
+    }, true);
+    document.addEventListener('change', function (e) {
+      if (!suppressToggle) return;
+      if (!isWatchCheckbox(e.target)) return;
+      e.stopImmediatePropagation();
+      e.target.checked = true;
+      const row = e.target.closest('[data-id]');
+      const span = row && row.querySelector('.text');
+      if (span) span.classList.add('done');
+    }, true);
+    document.addEventListener('contextmenu', function (e) {
+      if (isWatchCheckbox(e.target) && e.target.checked) e.preventDefault();
+    }, true);
+
+    const css = document.createElement('style');
+    css.textContent = 'input[type=checkbox]{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}input[type=checkbox].army-rewatch{outline:2px solid #9b7fd4;outline-offset:2px;}';
+    document.head.appendChild(css);
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupCheckboxRewatchHold);
+  } else {
+    setupCheckboxRewatchHold();
   }
 
   function setProgress(key, value) {
