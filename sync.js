@@ -309,12 +309,27 @@ registerUserIfNeeded();
     saveCheckActivityState(state);
   }
 
+  function extraRewatchesForId(state, id) {
+    const byRewatch = parseInt(state.rewatchById && state.rewatchById[id], 10) || 0;
+    const log = (state.rewatchLog && state.rewatchLog[id]) || [];
+    const marks = (state.markLog && state.markLog[id]) || [];
+    let fromMarks = 0;
+    if (state.byId && state.byId[id] === 'old') {
+      marks.forEach(function (d) {
+        if (/^\d{4}-\d{2}-\d{2}$/.test(d)) fromMarks++;
+      });
+    } else if (marks.length) {
+      fromMarks = Math.max(0, marks.length - 1);
+    }
+    return Math.max(byRewatch, log.length, fromMarks);
+  }
+
   function paintRewatchBadges() {
-    const times = (getCheckActivityState().rewatchById) || {};
+    const state = getCheckActivityState();
     document.querySelectorAll('[data-id]').forEach(function (row) {
       const id = row.dataset.id || '';
       if (!(id.indexOf('video-') === 0 || id.indexOf('noline-') === 0)) return;
-      const extra = parseInt(times[id], 10) || 0;
+      const extra = extraRewatchesForId(state, id);
       const box = row.querySelector('input[type="checkbox"]');
       if (!box) return;
       let hit = box.parentElement;
@@ -498,7 +513,7 @@ registerUserIfNeeded();
     }, true);
 
     const css = document.createElement('style');
-    css.textContent = 'input[type=checkbox]{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}input[type=checkbox].army-rewatch{outline:2px solid #9b7fd4;outline-offset:2px;}.army-check-hit{position:relative;display:inline-block;flex-shrink:0;width:18px;height:18px;vertical-align:middle;overflow:visible;}.army-check-hit input[type=checkbox]{margin:0;}.army-rewatch-n{position:absolute;right:-6px;top:-8px;left:auto;font-size:8px;font-weight:700;color:#888 !important;line-height:1;padding:0;background:transparent;cursor:pointer;-webkit-user-select:none;user-select:none;z-index:2;}';
+    css.textContent = 'input[type=checkbox]{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}input[type=checkbox].army-rewatch{outline:2px solid #9b7fd4;outline-offset:2px;}[data-id]{overflow:visible;}.army-check-hit{position:relative;display:inline-block;flex-shrink:0;width:18px;height:18px;vertical-align:middle;overflow:visible;}.army-check-hit input[type=checkbox]{margin:0;}.army-rewatch-n{position:absolute;right:-7px;top:-9px;left:auto;font-size:8px;font-weight:700;color:#888 !important;line-height:1;padding:0;background:transparent;cursor:pointer;-webkit-user-select:none;user-select:none;z-index:5;}';
     document.head.appendChild(css);
     saveCheckActivityState(getCheckActivityState());
     paintRewatchBadges();
