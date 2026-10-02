@@ -272,7 +272,7 @@ registerUserIfNeeded();
     });
     const state = getCheckActivityState();
     const record = Math.max(state.bestStreak || 0, longestMarkedStreak(days), streak);
-    const bestDay = Math.max(state.bestDayCount || 0, maxDay);
+    const bestDay = maxDay;
     return { totalDays: totalDays, streak: streak, record: record, bestDay: bestDay };
   }
 
@@ -319,7 +319,7 @@ registerUserIfNeeded();
       const n = parseInt(state.days[k], 10) || 0;
       if (n > maxDay) maxDay = n;
     });
-    state.bestDayCount = Math.max(state.bestDayCount || 0, maxDay);
+    state.bestDayCount = maxDay;
     setProgress('checkActivity', { days: state.days, byId: state.byId, rewatchById: state.rewatchById, rewatchLog: state.rewatchLog, markLog: state.markLog, bestStreak: state.bestStreak, bestDayCount: state.bestDayCount });
   }
 
