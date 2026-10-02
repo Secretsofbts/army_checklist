@@ -134,7 +134,7 @@ registerUserIfNeeded();
   }
 
   function getCheckActivityState() {
-    const empty = { days: {}, byId: {}, rewatchById: {}, rewatchLog: {}, markLog: {}, bestStreak: 0 };
+    const empty = { days: {}, byId: {}, rewatchById: {}, rewatchLog: {}, markLog: {}, bestStreak: 0, bestDayCount: 0 };
     const raw = localStorage.getItem('progress:checkActivity');
     if (!raw) return empty;
     try {
@@ -145,13 +145,13 @@ registerUserIfNeeded();
         const rewatchById = (data.rewatchById && typeof data.rewatchById === 'object' && !Array.isArray(data.rewatchById)) ? data.rewatchById : {};
         const rewatchLog = (data.rewatchLog && typeof data.rewatchLog === 'object' && !Array.isArray(data.rewatchLog)) ? data.rewatchLog : {};
         const markLog = (data.markLog && typeof data.markLog === 'object' && !Array.isArray(data.markLog)) ? data.markLog : {};
-        return { days: data.days, byId: byId, rewatchById: rewatchById, rewatchLog: rewatchLog, markLog: markLog, bestStreak: parseInt(data.bestStreak, 10) || 0 };
+        return { days: data.days, byId: byId, rewatchById: rewatchById, rewatchLog: rewatchLog, markLog: markLog, bestStreak: parseInt(data.bestStreak, 10) || 0, bestDayCount: parseInt(data.bestDayCount, 10) || 0 };
       }
       const days = {};
       Object.keys(data).forEach(function (k) {
         if (/^\d{4}-\d{2}-\d{2}$/.test(k)) days[k] = parseInt(data[k], 10) || 0;
       });
-      return { days: days, byId: {}, rewatchById: {}, rewatchLog: {}, markLog: {}, bestStreak: 0 };
+      return { days: days, byId: {}, rewatchById: {}, rewatchLog: {}, markLog: {}, bestStreak: 0, bestDayCount: 0 };
     } catch (e) {
       return empty;
     }
@@ -239,8 +239,15 @@ registerUserIfNeeded();
       if ((parseInt(days[k], 10) || 0) > 0) totalDays++;
     });
     const streak = currentMarkedStreak(days);
-    const record = Math.max(getCheckActivityState().bestStreak || 0, longestMarkedStreak(days), streak);
-    return { totalDays: totalDays, streak: streak, record: record };
+    let maxDay = 0;
+    Object.keys(days).forEach(function (k) {
+      const n = parseInt(days[k], 10) || 0;
+      if (n > maxDay) maxDay = n;
+    });
+    const state = getCheckActivityState();
+    const record = Math.max(state.bestStreak || 0, longestMarkedStreak(days), streak);
+    const bestDay = Math.max(state.bestDayCount || 0, maxDay);
+    return { totalDays: totalDays, streak: streak, record: record, bestDay: bestDay };
   }
 
   function adoptOldCheckedIds(state) {
@@ -281,7 +288,13 @@ registerUserIfNeeded();
     });
     rebuildActivityDays(state);
     state.bestStreak = Math.max(state.bestStreak || 0, longestMarkedStreak(state.days), currentMarkedStreak(state.days));
-    setProgress('checkActivity', { days: state.days, byId: state.byId, rewatchById: state.rewatchById, rewatchLog: state.rewatchLog, markLog: state.markLog, bestStreak: state.bestStreak });
+    let maxDay = 0;
+    Object.keys(state.days).forEach(function (k) {
+      const n = parseInt(state.days[k], 10) || 0;
+      if (n > maxDay) maxDay = n;
+    });
+    state.bestDayCount = Math.max(state.bestDayCount || 0, maxDay);
+    setProgress('checkActivity', { days: state.days, byId: state.byId, rewatchById: state.rewatchById, rewatchLog: state.rewatchLog, markLog: state.markLog, bestStreak: state.bestStreak, bestDayCount: state.bestDayCount });
   }
 
   function dropActivityDay(state, key) {
