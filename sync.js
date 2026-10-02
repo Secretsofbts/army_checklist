@@ -335,7 +335,7 @@ registerUserIfNeeded();
     else state.days[key] = n;
   }
 
-  const ACTIVITY_UNDO_MS = 15000;
+  const ACTIVITY_UNDO_MS = 5000;
 
   function bumpCheckActivity(id, nowTrue, wasTrue) {
     if (wasTrue === nowTrue) return;
