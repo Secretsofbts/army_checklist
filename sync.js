@@ -134,7 +134,7 @@ registerUserIfNeeded();
   }
 
   function getCheckActivityState() {
-    const empty = { days: {}, byId: {}, rewatchById: {}, rewatchLog: {}, markLog: {}, bestStreak: 0, bestDayCount: 0 };
+    const empty = { days: {}, byId: {}, rewatchById: {}, rewatchLog: {}, markLog: {}, undoById: {}, bestStreak: 0, bestDayCount: 0 };
     const raw = localStorage.getItem('progress:checkActivity');
     if (!raw) return empty;
     try {
@@ -145,13 +145,14 @@ registerUserIfNeeded();
         const rewatchById = (data.rewatchById && typeof data.rewatchById === 'object' && !Array.isArray(data.rewatchById)) ? data.rewatchById : {};
         const rewatchLog = (data.rewatchLog && typeof data.rewatchLog === 'object' && !Array.isArray(data.rewatchLog)) ? data.rewatchLog : {};
         const markLog = (data.markLog && typeof data.markLog === 'object' && !Array.isArray(data.markLog)) ? data.markLog : {};
-        return { days: data.days, byId: byId, rewatchById: rewatchById, rewatchLog: rewatchLog, markLog: markLog, bestStreak: parseInt(data.bestStreak, 10) || 0, bestDayCount: parseInt(data.bestDayCount, 10) || 0 };
+        const undoById = (data.undoById && typeof data.undoById === 'object' && !Array.isArray(data.undoById)) ? data.undoById : {};
+        return { days: data.days, byId: byId, rewatchById: rewatchById, rewatchLog: rewatchLog, markLog: markLog, undoById: undoById, bestStreak: parseInt(data.bestStreak, 10) || 0, bestDayCount: parseInt(data.bestDayCount, 10) || 0 };
       }
       const days = {};
       Object.keys(data).forEach(function (k) {
         if (/^\d{4}-\d{2}-\d{2}$/.test(k)) days[k] = parseInt(data[k], 10) || 0;
       });
-      return { days: days, byId: {}, rewatchById: {}, rewatchLog: {}, markLog: {}, bestStreak: 0, bestDayCount: 0 };
+      return { days: days, byId: {}, rewatchById: {}, rewatchLog: {}, markLog: {}, undoById: {}, bestStreak: 0, bestDayCount: 0 };
     } catch (e) {
       return empty;
     }
@@ -272,7 +273,7 @@ registerUserIfNeeded();
     });
     const state = getCheckActivityState();
     const record = Math.max(state.bestStreak || 0, longestMarkedStreak(days), streak);
-    const bestDay = maxDay;
+    const bestDay = Math.max(state.bestDayCount || 0, maxDay);
     return { totalDays: totalDays, streak: streak, record: record, bestDay: bestDay };
   }
 
@@ -303,6 +304,11 @@ registerUserIfNeeded();
     if (!state.rewatchById || typeof state.rewatchById !== 'object') state.rewatchById = {};
     if (!state.rewatchLog || typeof state.rewatchLog !== 'object') state.rewatchLog = {};
     if (!state.markLog || typeof state.markLog !== 'object') state.markLog = {};
+    if (!state.undoById || typeof state.undoById !== 'object') state.undoById = {};
+    Object.keys(state.undoById).forEach(function (id) {
+      const snap = state.undoById[id];
+      if (!snap || typeof snap !== 'object' || Date.now() > (parseInt(snap.until, 10) || 0)) delete state.undoById[id];
+    });
     Object.keys(state.rewatchById).forEach(function (id) {
       if (!state.byId[id]) delete state.rewatchById[id];
     });
@@ -319,8 +325,8 @@ registerUserIfNeeded();
       const n = parseInt(state.days[k], 10) || 0;
       if (n > maxDay) maxDay = n;
     });
-    state.bestDayCount = maxDay;
-    setProgress('checkActivity', { days: state.days, byId: state.byId, rewatchById: state.rewatchById, rewatchLog: state.rewatchLog, markLog: state.markLog, bestStreak: state.bestStreak, bestDayCount: state.bestDayCount });
+    state.bestDayCount = Math.max(state.bestDayCount || 0, maxDay);
+    setProgress('checkActivity', { days: state.days, byId: state.byId, rewatchById: state.rewatchById, rewatchLog: state.rewatchLog, markLog: state.markLog, undoById: state.undoById, bestStreak: state.bestStreak, bestDayCount: state.bestDayCount });
   }
 
   function dropActivityDay(state, key) {
@@ -329,17 +335,46 @@ registerUserIfNeeded();
     else state.days[key] = n;
   }
 
+  const ACTIVITY_UNDO_MS = 15000;
+
   function bumpCheckActivity(id, nowTrue, wasTrue) {
     if (wasTrue === nowTrue) return;
     if (!(String(id).indexOf('video-') === 0 || String(id).indexOf('noline-') === 0)) return;
     const state = getCheckActivityState();
     const today = localDateKey();
+    if (!state.undoById || typeof state.undoById !== 'object') state.undoById = {};
     if (nowTrue) {
+      const snap = state.undoById[id];
+      const canUndo = snap && typeof snap === 'object' && Date.now() <= (parseInt(snap.until, 10) || 0);
+      delete state.undoById[id];
+      if (canUndo) {
+        if (snap.byId) state.byId[id] = snap.byId;
+        if (!state.markLog) state.markLog = {};
+        if (snap.markLog && snap.markLog.length) state.markLog[id] = snap.markLog.slice();
+        else if (snap.byId && /^\d{4}-\d{2}-\d{2}$/.test(snap.byId)) state.markLog[id] = [snap.byId];
+        if (snap.rewatchById) {
+          if (!state.rewatchById) state.rewatchById = {};
+          state.rewatchById[id] = snap.rewatchById;
+        }
+        if (snap.rewatchLog && snap.rewatchLog.length) {
+          if (!state.rewatchLog) state.rewatchLog = {};
+          state.rewatchLog[id] = snap.rewatchLog.slice();
+        }
+        saveCheckActivityState(state);
+        return;
+      }
       if (state.byId[id]) return;
       state.byId[id] = today;
       if (!state.markLog) state.markLog = {};
       state.markLog[id] = [today];
     } else {
+      state.undoById[id] = {
+        until: Date.now() + ACTIVITY_UNDO_MS,
+        byId: state.byId[id] || null,
+        markLog: (state.markLog && state.markLog[id]) ? state.markLog[id].slice() : [],
+        rewatchById: (state.rewatchById && state.rewatchById[id]) ? state.rewatchById[id] : 0,
+        rewatchLog: (state.rewatchLog && state.rewatchLog[id]) ? state.rewatchLog[id].slice() : []
+      };
       delete state.byId[id];
       if (state.rewatchById) delete state.rewatchById[id];
       if (state.rewatchLog) delete state.rewatchLog[id];
