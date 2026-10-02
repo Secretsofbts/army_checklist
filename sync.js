@@ -1260,8 +1260,48 @@ function getCombinedYearStats(yearKey) {
     else tg.BackButton.show();
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setupTelegramHistoryBack);
-  } else {
+  function setupIosEdgeBackSwipe() {
+    if (window.__armyIosEdgeBack) return;
+    if (isArmyHomePage()) return;
+    const tg = window.Telegram && window.Telegram.WebApp;
+    const platform = tg && tg.platform ? String(tg.platform).toLowerCase() : '';
+    if (platform !== 'ios') return;
+    window.__armyIosEdgeBack = true;
+    let startX = 0;
+    let startY = 0;
+    let tracking = false;
+    document.addEventListener('touchstart', function (e) {
+      if (e.touches.length !== 1) {
+        tracking = false;
+        return;
+      }
+      const t = e.touches[0];
+      if (t.clientX > 36) {
+        tracking = false;
+        return;
+      }
+      startX = t.clientX;
+      startY = t.clientY;
+      tracking = true;
+    }, { passive: true });
+    document.addEventListener('touchend', function (e) {
+      if (!tracking) return;
+      tracking = false;
+      const t = e.changedTouches[0];
+      if (!t) return;
+      const dx = t.clientX - startX;
+      const dy = t.clientY - startY;
+      if (dx > 70 && Math.abs(dy) < 50) armyNavigateBack();
+    }, { passive: true });
+  }
+
+  function setupArmyBackNav() {
     setupTelegramHistoryBack();
+    setupIosEdgeBackSwipe();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupArmyBackNav);
+  } else {
+    setupArmyBackNav();
   }
