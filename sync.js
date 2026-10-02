@@ -988,7 +988,7 @@ const YEAR_OWN_TOTALS = {
   'concert-wt-love-yourself-europe': 2,
   'concert-wt-love-yourself-ny': 2,
   'concert-lysy-seoul-final-dvd': 12,
-  'concert-arirang-tour': 10,
+  'concert-arirang-tour': 11,
   'fm-3rd-muster': 3,
     'fm-jp-vol3': 8,
   'other-shows-star-bromance-minwoo-jungkook': 5,
