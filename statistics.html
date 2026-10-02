@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=27"></script>
+  <script src="sync.js?v=29"></script>
   <title>Статистика</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -61,6 +61,56 @@
     .section-row.is-done .section-ring-inner { color: #2e9e5b; }
     .section-row.is-empty .section-ring { background: #eceaf2; }
     .section-row.is-empty .section-ring-inner { color: #bbb; }
+    .heatmap-card { background: #f7f7fa; border-radius: 12px; padding: 14px 12px 12px; margin: 0 0 10px; }
+    .heatmap-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 4px; }
+    .heatmap-inner { display: inline-block; min-width: 100%; }
+    .heatmap-months {
+      display: grid;
+      grid-auto-flow: column;
+      gap: 3px;
+      margin: 0 0 4px 22px;
+      height: 14px;
+      font-size: 10px;
+      color: #999;
+    }
+    .heatmap-body { display: flex; align-items: flex-start; gap: 4px; }
+    .heatmap-wdays {
+      display: grid;
+      grid-template-rows: repeat(7, 11px);
+      gap: 3px;
+      font-size: 9px;
+      color: #bbb;
+      line-height: 11px;
+      flex-shrink: 0;
+      width: 18px;
+    }
+    .heatmap-grid {
+      display: grid;
+      grid-auto-flow: column;
+      grid-template-rows: repeat(7, 11px);
+      gap: 3px;
+    }
+    .heat-cell {
+      width: 11px;
+      height: 11px;
+      border-radius: 2px;
+      background: #eceaf2;
+    }
+    .heat-cell.lv1 { background: #ddd0f0; }
+    .heat-cell.lv2 { background: #c4a6e6; }
+    .heat-cell.lv3 { background: #9b7fd4; }
+    .heat-cell.lv4 { background: #5e3d9e; }
+    .heatmap-legend {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+      margin-top: 10px;
+      font-size: 10px;
+      color: #999;
+    }
+    .heatmap-legend .heat-cell { margin: 0; }
+    .heatmap-note { font-size: 11px; color: #aaa; margin: 8px 0 0; line-height: 1.4; }
   </style>
 </head>
 <body>
@@ -78,6 +128,9 @@
     </div>
 
        <div id="stats-content"><p class="empty-note">Загрузка...</p></div>
+
+    <p class="section-title">Активность отметок</p>
+    <div id="check-heatmap"></div>
 
     <p class="section-title">Прогресс по разделам (в разработке)</p>
     <div id="sections-progress"></div>
@@ -127,9 +180,10 @@
             function loadStats() {
       const afterCloud = () => {
         renderStats();
+        renderCheckHeatmap();
         renderSectionsProgress();
       };
-      fetch('checkbox-ids.json?v=27')
+      fetch('checkbox-ids.json?v=29')
         .then((res) => res.json())
         .then((ids) => {
           STAT_CHECKBOX_IDS = ids || {};
@@ -345,6 +399,140 @@
       row.appendChild(info);
       row.appendChild(ring);
       container.appendChild(row);
+    }
+
+    function pluralMarks(n) {
+      const mod10 = n % 10, mod100 = n % 100;
+      if (mod10 === 1 && mod100 !== 11) return 'отметка';
+      if ([2, 3, 4].includes(mod10) && ![12, 13, 14].includes(mod100)) return 'отметки';
+      return 'отметок';
+    }
+
+    function startOfMonday(d) {
+      const x = new Date(d.getFullYear(), d.getMonth(), d.getDate());
+      const wd = x.getDay();
+      const back = wd === 0 ? 6 : wd - 1;
+      x.setDate(x.getDate() - back);
+      return x;
+    }
+
+    function heatLevel(n, max) {
+      if (!n) return '';
+      if (max <= 1) return 'lv1';
+      const t = n / max;
+      if (t > 0.75) return 'lv4';
+      if (t > 0.5) return 'lv3';
+      if (t > 0.25) return 'lv2';
+      return 'lv1';
+    }
+
+    function renderCheckHeatmap() {
+      const box = document.getElementById('check-heatmap');
+      if (!box) return;
+      box.innerHTML = '';
+
+      const activity = (typeof getCheckActivity === 'function') ? getCheckActivity() : {};
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      const weeks = 53;
+      const start = startOfMonday(today);
+      start.setDate(start.getDate() - (weeks - 1) * 7);
+
+      let max = 0;
+      Object.keys(activity).forEach(function (k) {
+        const v = parseInt(activity[k], 10) || 0;
+        if (v > max) max = v;
+      });
+
+      const monthNames = ['янв', 'фев', 'мар', 'апр', 'май', 'июн', 'июл', 'авг', 'сен', 'окт', 'ноя', 'дек'];
+      const card = document.createElement('div');
+      card.className = 'heatmap-card';
+
+      const scroll = document.createElement('div');
+      scroll.className = 'heatmap-scroll';
+      const inner = document.createElement('div');
+      inner.className = 'heatmap-inner';
+
+      const monthsRow = document.createElement('div');
+      monthsRow.className = 'heatmap-months';
+      monthsRow.style.gridTemplateColumns = 'repeat(' + weeks + ', 11px)';
+
+      const body = document.createElement('div');
+      body.className = 'heatmap-body';
+
+      const wdays = document.createElement('div');
+      wdays.className = 'heatmap-wdays';
+      ['пн', '', 'ср', '', 'пт', '', ''].forEach(function (label) {
+        const s = document.createElement('span');
+        s.textContent = label;
+        wdays.appendChild(s);
+      });
+
+      const grid = document.createElement('div');
+      grid.className = 'heatmap-grid';
+
+      let lastMonth = -1;
+      for (let w = 0; w < weeks; w++) {
+        const weekStart = new Date(start);
+        weekStart.setDate(start.getDate() + w * 7);
+        const monthLabel = document.createElement('span');
+        const m = weekStart.getMonth();
+        if (m !== lastMonth) {
+          monthLabel.textContent = monthNames[m];
+          lastMonth = m;
+        }
+        monthsRow.appendChild(monthLabel);
+
+        for (let d = 0; d < 7; d++) {
+          const day = new Date(weekStart);
+          day.setDate(weekStart.getDate() + d);
+          const cell = document.createElement('div');
+          cell.className = 'heat-cell';
+          if (day > today) {
+            cell.style.visibility = 'hidden';
+          } else {
+            const key = (typeof localDateKey === 'function') ? localDateKey(day) : '';
+            const n = parseInt(activity[key], 10) || 0;
+            if (n) cell.classList.add(heatLevel(n, max));
+            const dateText = day.toLocaleDateString('ru-RU', { day: 'numeric', month: 'short', year: 'numeric' });
+            cell.title = n ? (dateText + ' · ' + n + ' ' + pluralMarks(n)) : (dateText + ' · нет отметок');
+          }
+          grid.appendChild(cell);
+        }
+      }
+
+      body.appendChild(wdays);
+      body.appendChild(grid);
+      inner.appendChild(monthsRow);
+      inner.appendChild(body);
+      scroll.appendChild(inner);
+
+      const legend = document.createElement('div');
+      legend.className = 'heatmap-legend';
+      const less = document.createElement('span');
+      less.textContent = 'меньше';
+      legend.appendChild(less);
+      ['', 'lv1', 'lv2', 'lv3', 'lv4'].forEach(function (lv) {
+        const c = document.createElement('div');
+        c.className = 'heat-cell' + (lv ? ' ' + lv : '');
+        legend.appendChild(c);
+      });
+      const more = document.createElement('span');
+      more.textContent = 'больше';
+      legend.appendChild(more);
+
+      const note = document.createElement('p');
+      note.className = 'heatmap-note';
+      note.textContent = 'Квадратик — сколько галочек вы поставили в этот день. Старые отметки сюда не попадают: календарь считает с этого обновления.';
+
+      card.appendChild(scroll);
+      card.appendChild(legend);
+      card.appendChild(note);
+      box.appendChild(card);
+
+      requestAnimationFrame(function () {
+        scroll.scrollLeft = scroll.scrollWidth;
+      });
     }
 
     loadStats();

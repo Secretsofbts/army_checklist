@@ -125,8 +125,77 @@ registerUserIfNeeded();
     });
   }
 
+  function localDateKey(date) {
+    const d = date || new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1);
+    const day = String(d.getDate());
+    return y + '-' + (m.length < 2 ? '0' + m : m) + '-' + (day.length < 2 ? '0' + day : day);
+  }
+
+  function getCheckActivityState() {
+    const empty = { days: {}, byId: {} };
+    const raw = localStorage.getItem('progress:checkActivity');
+    if (!raw) return empty;
+    try {
+      const data = JSON.parse(raw);
+      if (!data || typeof data !== 'object' || Array.isArray(data)) return empty;
+      if (data.days && typeof data.days === 'object' && !Array.isArray(data.days)) {
+        const byId = (data.byId && typeof data.byId === 'object' && !Array.isArray(data.byId)) ? data.byId : {};
+        return { days: data.days, byId: byId };
+      }
+      const days = {};
+      Object.keys(data).forEach(function (k) {
+        if (/^\d{4}-\d{2}-\d{2}$/.test(k)) days[k] = parseInt(data[k], 10) || 0;
+      });
+      return { days: days, byId: {} };
+    } catch (e) {
+      return empty;
+    }
+  }
+
+  function getCheckActivity() {
+    return getCheckActivityState().days;
+  }
+
+  function saveCheckActivityState(state) {
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - 400);
+    const cutoffKey = localDateKey(cutoff);
+    Object.keys(state.days).forEach(function (day) {
+      if (day < cutoffKey) delete state.days[day];
+    });
+    Object.keys(state.byId).forEach(function (id) {
+      if (state.byId[id] < cutoffKey) delete state.byId[id];
+    });
+    setProgress('checkActivity', { days: state.days, byId: state.byId });
+  }
+
+  function bumpCheckActivity(id, nowTrue, wasTrue) {
+    if (wasTrue === nowTrue) return;
+    if (!(String(id).indexOf('video-') === 0 || String(id).indexOf('noline-') === 0)) return;
+    const state = getCheckActivityState();
+    const today = localDateKey();
+    if (nowTrue) {
+      if (state.byId[id]) return;
+      state.days[today] = (parseInt(state.days[today], 10) || 0) + 1;
+      state.byId[id] = today;
+    } else {
+      const day = state.byId[id] || ((parseInt(state.days[today], 10) || 0) > 0 ? today : null);
+      if (!day) return;
+      const next = (parseInt(state.days[day], 10) || 0) - 1;
+      if (next <= 0) delete state.days[day];
+      else state.days[day] = next;
+      delete state.byId[id];
+    }
+    saveCheckActivityState(state);
+  }
+
   function setChecked(id, value) {
+    const nowTrue = value === true || value === 'true';
+    const wasTrue = localStorage.getItem(id) === 'true';
     localStorage.setItem(id, value);
+    bumpCheckActivity(id, nowTrue, wasTrue);
     if (ARMY_USER_ID) {
       saveToCloudWithRetry(`users/${ARMY_USER_ID}/${id}`, value);
     }
