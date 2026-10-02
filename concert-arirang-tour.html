@@ -103,9 +103,9 @@
       listEl.appendChild(cityTitle);
 
             block.items.forEach((item) => {
-        const id = 'video-' + item.link.split('/').pop();
         const row = document.createElement('div');
         row.className = 'row';
+        const id = 'video-' + item.link.split('/').pop();
         row.dataset.id = id;
 
         const box = document.createElement('input');
