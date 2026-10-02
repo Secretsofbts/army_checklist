@@ -34,12 +34,6 @@
     h1 { font-size: 18px; margin: 0 0 12px; }
     .intro { font-size: 13px; color: #555; margin: 0 0 10px; }
     .intro a { color: #7b5fb3; text-decoration: none; }
-    .city-title {
-      font-size: 13px;
-      font-weight: 600;
-      color: #888;
-      margin: 16px 0 6px;
-    }
     .row {
       display: flex;
       align-items: center;
@@ -78,20 +72,12 @@
   </div>
 
   <script>
-    const data = [
-      { city: "GOYANG", items: [
-        { text: "D-1", sub: "от 28.06.2025", link: "https://t.me/violent_arhive/5682" }
-      ]}
+    const items = [
+      { text: "Гуян D-1", sub: "от 28.06.2025", link: "https://t.me/violent_arhive/5682" }
     ];
 
     const listEl = document.getElementById('list');
-    data.forEach((block) => {
-      const cityTitle = document.createElement('div');
-      cityTitle.className = 'city-title';
-      cityTitle.textContent = block.city;
-      listEl.appendChild(cityTitle);
-
-      block.items.forEach((item) => {
+    items.forEach((item) => {
         const row = document.createElement('div');
         row.className = 'row';
         const id = 'video-' + item.link.split('/').pop();
@@ -134,7 +120,6 @@
         row.appendChild(span);
         row.appendChild(link);
         listEl.appendChild(row);
-      });
     });
 
     function updateProgress() {
