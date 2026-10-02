@@ -134,7 +134,7 @@ registerUserIfNeeded();
   }
 
   function getCheckActivityState() {
-    const empty = { days: {}, byId: {}, rewatchById: {}, rewatchLog: {}, bestStreak: 0 };
+    const empty = { days: {}, byId: {}, rewatchById: {}, rewatchLog: {}, markLog: {}, bestStreak: 0 };
     const raw = localStorage.getItem('progress:checkActivity');
     if (!raw) return empty;
     try {
@@ -144,20 +144,52 @@ registerUserIfNeeded();
         const byId = (data.byId && typeof data.byId === 'object' && !Array.isArray(data.byId)) ? data.byId : {};
         const rewatchById = (data.rewatchById && typeof data.rewatchById === 'object' && !Array.isArray(data.rewatchById)) ? data.rewatchById : {};
         const rewatchLog = (data.rewatchLog && typeof data.rewatchLog === 'object' && !Array.isArray(data.rewatchLog)) ? data.rewatchLog : {};
-        return { days: data.days, byId: byId, rewatchById: rewatchById, rewatchLog: rewatchLog, bestStreak: parseInt(data.bestStreak, 10) || 0 };
+        const markLog = (data.markLog && typeof data.markLog === 'object' && !Array.isArray(data.markLog)) ? data.markLog : {};
+        return { days: data.days, byId: byId, rewatchById: rewatchById, rewatchLog: rewatchLog, markLog: markLog, bestStreak: parseInt(data.bestStreak, 10) || 0 };
       }
       const days = {};
       Object.keys(data).forEach(function (k) {
         if (/^\d{4}-\d{2}-\d{2}$/.test(k)) days[k] = parseInt(data[k], 10) || 0;
       });
-      return { days: days, byId: {}, rewatchById: {}, rewatchLog: {}, bestStreak: 0 };
+      return { days: days, byId: {}, rewatchById: {}, rewatchLog: {}, markLog: {}, bestStreak: 0 };
     } catch (e) {
       return empty;
     }
   }
 
+  function rebuildActivityDays(state) {
+    const days = {};
+    function add(d) {
+      if (!d || !/^\d{4}-\d{2}-\d{2}$/.test(d)) return;
+      days[d] = (parseInt(days[d], 10) || 0) + 1;
+    }
+    if (!state.markLog) state.markLog = {};
+    const ids = {};
+    Object.keys(state.byId || {}).forEach(function (id) { ids[id] = true; });
+    Object.keys(state.markLog).forEach(function (id) { ids[id] = true; });
+    Object.keys(ids).forEach(function (id) {
+      const log = state.markLog[id];
+      if (log && log.length) {
+        log.forEach(add);
+        return;
+      }
+      add(state.byId[id]);
+      const extras = state.rewatchLog && state.rewatchLog[id];
+      if (extras && extras.length) {
+        extras.forEach(add);
+      } else {
+        const n = parseInt(state.rewatchById && state.rewatchById[id], 10) || 0;
+        const base = state.byId[id];
+        for (let i = 0; i < n; i++) add(base);
+      }
+    });
+    state.days = days;
+  }
+
   function getCheckActivity() {
-    return getCheckActivityState().days;
+    const state = getCheckActivityState();
+    rebuildActivityDays(state);
+    return state.days;
   }
 
   function shiftDate(date, days) {
@@ -201,18 +233,31 @@ registerUserIfNeeded();
   }
 
   function getCheckActivitySummary() {
-    const state = getCheckActivityState();
-    const days = state.days;
+    const days = getCheckActivity();
     let totalDays = 0;
     Object.keys(days).forEach(function (k) {
       if ((parseInt(days[k], 10) || 0) > 0) totalDays++;
     });
     const streak = currentMarkedStreak(days);
-    const record = Math.max(state.bestStreak || 0, longestMarkedStreak(days), streak);
+    const record = Math.max(getCheckActivityState().bestStreak || 0, longestMarkedStreak(days), streak);
     return { totalDays: totalDays, streak: streak, record: record };
   }
 
+  function adoptOldCheckedIds(state) {
+    if (!state.byId) state.byId = {};
+    const prefix = ARMY_USER_ID ? String(ARMY_USER_ID) + ':' : '';
+    for (let i = 0; i < localStorage.length; i++) {
+      let key = localStorage.key(i);
+      if (!key) continue;
+      if (prefix && key.indexOf(prefix) === 0) key = key.slice(prefix.length);
+      else if (ARMY_USER_ID && /^\d+:/.test(key)) continue;
+      if (!(key.indexOf('video-') === 0 || key.indexOf('noline-') === 0)) continue;
+      if (localStorage.getItem(key) === 'true' && !state.byId[key]) state.byId[key] = 'old';
+    }
+  }
+
   function saveCheckActivityState(state) {
+    adoptOldCheckedIds(state);
     const cutoff = new Date();
     cutoff.setDate(cutoff.getDate() - 400);
     const cutoffKey = localDateKey(cutoff);
@@ -220,18 +265,23 @@ registerUserIfNeeded();
       if (day < cutoffKey) delete state.days[day];
     });
     Object.keys(state.byId).forEach(function (id) {
-      if (state.byId[id] < cutoffKey) delete state.byId[id];
+      if (/^\d{4}-\d{2}-\d{2}$/.test(state.byId[id]) && state.byId[id] < cutoffKey) delete state.byId[id];
     });
     if (!state.rewatchById || typeof state.rewatchById !== 'object') state.rewatchById = {};
     if (!state.rewatchLog || typeof state.rewatchLog !== 'object') state.rewatchLog = {};
+    if (!state.markLog || typeof state.markLog !== 'object') state.markLog = {};
     Object.keys(state.rewatchById).forEach(function (id) {
       if (!state.byId[id]) delete state.rewatchById[id];
     });
     Object.keys(state.rewatchLog).forEach(function (id) {
       if (!state.byId[id]) delete state.rewatchLog[id];
     });
+    Object.keys(state.markLog).forEach(function (id) {
+      if (!state.byId[id]) delete state.markLog[id];
+    });
+    rebuildActivityDays(state);
     state.bestStreak = Math.max(state.bestStreak || 0, longestMarkedStreak(state.days), currentMarkedStreak(state.days));
-    setProgress('checkActivity', { days: state.days, byId: state.byId, rewatchById: state.rewatchById, rewatchLog: state.rewatchLog, bestStreak: state.bestStreak });
+    setProgress('checkActivity', { days: state.days, byId: state.byId, rewatchById: state.rewatchById, rewatchLog: state.rewatchLog, markLog: state.markLog, bestStreak: state.bestStreak });
   }
 
   function dropActivityDay(state, key) {
@@ -247,21 +297,14 @@ registerUserIfNeeded();
     const today = localDateKey();
     if (nowTrue) {
       if (state.byId[id]) return;
-      state.days[today] = (parseInt(state.days[today], 10) || 0) + 1;
       state.byId[id] = today;
+      if (!state.markLog) state.markLog = {};
+      state.markLog[id] = [today];
     } else {
-      const day = state.byId[id] || ((parseInt(state.days[today], 10) || 0) > 0 ? today : null);
-      if (!day) return;
-      let extras = (state.rewatchLog && state.rewatchLog[id]) ? state.rewatchLog[id].slice() : [];
-      if (!extras.length) {
-        const extra = parseInt(state.rewatchById && state.rewatchById[id], 10) || 0;
-        for (let i = 0; i < extra; i++) extras.push(today);
-      }
-      extras.forEach(function (d) { dropActivityDay(state, d); });
-      dropActivityDay(state, day);
       delete state.byId[id];
       if (state.rewatchById) delete state.rewatchById[id];
       if (state.rewatchLog) delete state.rewatchLog[id];
+      if (state.markLog) delete state.markLog[id];
     }
     saveCheckActivityState(state);
   }
@@ -301,12 +344,19 @@ registerUserIfNeeded();
     if (!(String(id).indexOf('video-') === 0 || String(id).indexOf('noline-') === 0)) return;
     const state = getCheckActivityState();
     const today = localDateKey();
-    state.days[today] = (parseInt(state.days[today], 10) || 0) + 1;
+    if (!state.byId) state.byId = {};
+    if (!state.byId[id]) state.byId[id] = 'old';
     if (!state.rewatchById) state.rewatchById = {};
     if (!state.rewatchLog) state.rewatchLog = {};
+    if (!state.markLog) state.markLog = {};
     state.rewatchById[id] = (parseInt(state.rewatchById[id], 10) || 0) + 1;
     if (!state.rewatchLog[id]) state.rewatchLog[id] = [];
     state.rewatchLog[id].push(today);
+    if (!state.markLog[id] || !state.markLog[id].length) {
+      state.markLog[id] = [];
+      if (/^\d{4}-\d{2}-\d{2}$/.test(state.byId[id])) state.markLog[id].push(state.byId[id]);
+    }
+    state.markLog[id].push(today);
     saveCheckActivityState(state);
     paintRewatchBadges();
   }
@@ -357,7 +407,12 @@ registerUserIfNeeded();
     }
 
     function onDown(e) {
-      const box = e.target;
+      let box = e.target;
+      if (box && box.closest && box.closest('.army-rewatch-n')) return;
+      if (!box || box.type !== 'checkbox') {
+        const hit = box && box.closest && box.closest('.army-check-hit');
+        box = hit ? hit.querySelector('input[type="checkbox"]') : null;
+      }
       if (!isWatchCheckbox(box) || !box.checked) return;
       if (e.pointerType === 'mouse' && typeof e.button === 'number' && e.button !== 0) return;
       const p = point(e);
@@ -445,6 +500,7 @@ registerUserIfNeeded();
     const css = document.createElement('style');
     css.textContent = 'input[type=checkbox]{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}input[type=checkbox].army-rewatch{outline:2px solid #9b7fd4;outline-offset:2px;}.army-check-hit{position:relative;display:inline-block;flex-shrink:0;width:18px;height:18px;vertical-align:middle;overflow:visible;}.army-check-hit input[type=checkbox]{margin:0;}.army-rewatch-n{position:absolute;right:-6px;top:-8px;left:auto;font-size:8px;font-weight:700;color:#888 !important;line-height:1;padding:0;background:transparent;cursor:pointer;-webkit-user-select:none;user-select:none;z-index:2;}';
     document.head.appendChild(css);
+    saveCheckActivityState(getCheckActivityState());
     paintRewatchBadges();
     let paintTimer = null;
     const obs = new MutationObserver(function () {
