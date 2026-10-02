@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=30"></script>
+  <script src="sync.js?v=34"></script>
   <title>Статистика</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -26,7 +26,7 @@
     .section-row {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 8px;
       background: #f7f7fa;
       border-radius: 12px;
       padding: 10px 12px;
@@ -61,6 +61,32 @@
     .section-row.is-done .section-ring-inner { color: #2e9e5b; }
     .section-row.is-empty .section-ring { background: #eceaf2; }
     .section-row.is-empty .section-ring-inner { color: #bbb; }
+    .section-arrow {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+      border: none;
+      background: transparent;
+      color: #9b7fd4;
+      font-size: 11px;
+      line-height: 22px;
+      padding: 0;
+      cursor: pointer;
+      text-align: center;
+    }
+    .section-arrow.is-empty {
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .section-children {
+      display: none;
+      padding: 0 0 4px 10px;
+    }
+    .section-children.is-open { display: block; }
+    .section-row.depth-1 { background: #f3f0f8; }
+    .section-row.depth-2 { background: #fff; border: 1px solid #eee; }
+    .section-row.depth-1.is-done,
+    .section-row.depth-2.is-done { background: #e3f7e9; border-color: transparent; }
     .heatmap-card { background: #f7f7fa; border-radius: 12px; padding: 14px 10px 12px; margin: 0 0 10px; }
     .heatmap-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; padding-bottom: 6px; }
     .heatmap-months-row { display: flex; gap: 10px; }
@@ -91,24 +117,40 @@
       text-align: center;
     }
     .heat-day {
-      min-height: 32px;
+      position: relative;
+      min-height: 34px;
       border-radius: 6px;
       background: #f3f1f7;
       color: #888;
       display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      line-height: 1.1;
+      align-items: flex-start;
+      justify-content: flex-start;
+      padding: 3px 0 0 4px;
     }
     .heat-day.empty { background: transparent; }
     .heat-day.future { background: #f7f7fa; color: #ddd; }
-    .heat-day .num { font-size: 11px; font-weight: 600; }
-    .heat-day .cnt { font-size: 9px; font-weight: 700; margin-top: 1px; }
-    .heat-day.lv1 { background: #ddd0f0; color: #5e3d9e; }
-    .heat-day.lv2 { background: #c4a6e6; color: #3d246e; }
-    .heat-day.lv3 { background: #9b7fd4; color: #fff; }
-    .heat-day.lv4 { background: #5e3d9e; color: #fff; }
+    .heat-day .num { font-size: 10px; font-weight: 400; }
+    .heat-day .cnt {
+      position: absolute;
+      right: 1px;
+      bottom: 2px;
+      min-width: 20px;
+      height: 13px;
+      padding: 0 3px;
+      border-radius: 8px;
+      background: #fff;
+      color: #5e3d9e;
+      font-size: 8px;
+      font-weight: 700;
+      line-height: 13px;
+      white-space: nowrap;
+      text-align: center;
+      box-shadow: 0 1px 2px rgba(94, 61, 158, 0.25);
+    }
+    .heat-day.lv1 { background: #ddd0f0; color: #7b5fb3; }
+    .heat-day.lv2 { background: #c4a6e6; color: #5e3d9e; }
+    .heat-day.lv3 { background: #9b7fd4; color: rgba(255,255,255,0.9); }
+    .heat-day.lv4 { background: #5e3d9e; color: rgba(255,255,255,0.9); }
     .heat-cell {
       width: 11px;
       height: 11px;
@@ -128,7 +170,13 @@
       font-size: 10px;
       color: #999;
     }
-    .heatmap-note { font-size: 11px; color: #aaa; margin: 8px 0 0; line-height: 1.4; }
+    .heatmap-caption {
+      margin: 10px 0 0;
+      font-size: 12px;
+      color: #7b5fb3;
+      text-align: center;
+      line-height: 1.45;
+    }
   </style>
 </head>
 <body>
@@ -201,7 +249,7 @@
         renderCheckHeatmap();
         renderSectionsProgress();
       };
-      fetch('checkbox-ids.json?v=29')
+      fetch('checkbox-ids.json?v=32')
         .then((res) => res.json())
         .then((ids) => {
           STAT_CHECKBOX_IDS = ids || {};
@@ -370,19 +418,20 @@
       const container = document.getElementById('sections-progress');
       container.innerHTML = '';
 
+      (typeof SECTION_TREE !== 'undefined' ? SECTION_TREE : []).forEach((node) => {
+        appendSectionBranch(container, node, 0);
+      });
+
       Object.keys(SECTION_GROUPS).forEach((name) => {
         const stats = computeSectionProgress(SECTION_GROUPS[name]);
-        appendSectionRow(container, name, stats);
+        appendSectionRow(container, name, stats, 0, false);
       });
 
       const otherShowsStats = computeOtherShowsProgress();
-      appendSectionRow(container, 'Другие шоу', otherShowsStats);
+      appendSectionRow(container, 'Другие шоу', otherShowsStats, 0, false);
     }
 
-    function appendSectionRow(container, name, stats) {
-      const row = document.createElement('div');
-      row.className = 'section-row';
-
+    function fillSectionStats(row, name, stats) {
       const info = document.createElement('div');
       info.className = 'section-info';
 
@@ -414,9 +463,42 @@
       info.appendChild(label);
       info.appendChild(count);
       ring.appendChild(inner);
-      row.appendChild(info);
-      row.appendChild(ring);
+      return { info, ring };
+    }
+
+    function appendSectionRow(container, name, stats, depth, hasChildren) {
+      const row = document.createElement('div');
+      row.className = 'section-row' + (depth ? ' depth-' + depth : '');
+      const arrow = document.createElement('button');
+      arrow.type = 'button';
+      arrow.className = 'section-arrow' + (hasChildren ? '' : ' is-empty');
+      arrow.textContent = '▶';
+      const parts = fillSectionStats(row, name, stats);
+      row.appendChild(arrow);
+      row.appendChild(parts.info);
+      row.appendChild(parts.ring);
       container.appendChild(row);
+      return { row, arrow };
+    }
+
+    function appendSectionBranch(container, node, depth) {
+      const wrap = document.createElement('div');
+      const stats = computeSectionProgress(node.keys || []);
+      const hasChildren = !!(node.children && node.children.length);
+      const built = appendSectionRow(wrap, node.name, stats, depth, hasChildren);
+      if (hasChildren) {
+        const kids = document.createElement('div');
+        kids.className = 'section-children';
+        node.children.forEach(function (child) {
+          appendSectionBranch(kids, child, depth + 1);
+        });
+        wrap.appendChild(kids);
+        built.arrow.addEventListener('click', function () {
+          const open = kids.classList.toggle('is-open');
+          built.arrow.textContent = open ? '▼' : '▶';
+        });
+      }
+      container.appendChild(wrap);
     }
 
     function pluralMarks(n) {
@@ -509,7 +591,7 @@
               cell.classList.add(heatLevel(n, max));
               const cnt = document.createElement('span');
               cnt.className = 'cnt';
-              cnt.textContent = String(n);
+              cnt.textContent = '×' + n;
               cell.appendChild(cnt);
             }
             const dateText = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
@@ -540,10 +622,20 @@
       legend.appendChild(more);
       card.appendChild(legend);
 
-      const note = document.createElement('p');
-      note.className = 'heatmap-note';
-      note.textContent = 'Число сверху — день месяца, снизу — сколько галочек поставили. Листайте вбок по месяцам. Старые отметки сюда не попадают.';
-      card.appendChild(note);
+      const summary = (typeof getCheckActivitySummary === 'function')
+        ? getCheckActivitySummary()
+        : { totalDays: 0, streak: 0 };
+      const caption = document.createElement('p');
+      caption.className = 'heatmap-caption';
+      if (!summary.totalDays) {
+        caption.textContent = 'Пока нет дней с новыми отметками';
+      } else if (!summary.streak) {
+        caption.textContent = 'Смотрели контент ' + summary.totalDays + ' ' + pluralDays(summary.totalDays) + ' · подряд сейчас нет';
+      } else {
+        caption.textContent = 'Смотрели контент ' + summary.totalDays + ' ' + pluralDays(summary.totalDays) +
+          ' · подряд ' + summary.streak + ' ' + pluralDays(summary.streak);
+      }
+      card.appendChild(caption);
 
       box.appendChild(card);
       requestAnimationFrame(function () {

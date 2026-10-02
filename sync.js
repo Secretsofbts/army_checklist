@@ -158,6 +158,33 @@ registerUserIfNeeded();
     return getCheckActivityState().days;
   }
 
+  function shiftDate(date, days) {
+    const d = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    d.setDate(d.getDate() + days);
+    return d;
+  }
+
+  function getCheckActivitySummary() {
+    const days = getCheckActivity();
+    let totalDays = 0;
+    Object.keys(days).forEach(function (k) {
+      if ((parseInt(days[k], 10) || 0) > 0) totalDays++;
+    });
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    function hasMarks(d) {
+      return (parseInt(days[localDateKey(d)], 10) || 0) > 0;
+    }
+    let cursor = today;
+    if (!hasMarks(today)) cursor = shiftDate(today, -1);
+    let streak = 0;
+    while (hasMarks(cursor)) {
+      streak++;
+      cursor = shiftDate(cursor, -1);
+    }
+    return { totalDays: totalDays, streak: streak };
+  }
+
   function saveCheckActivityState(state) {
     const cutoff = new Date();
     cutoff.setDate(cutoff.getDate() - 400);
@@ -590,24 +617,57 @@ const YEAR_OWN_TOTALS = {
   'documentaries-jungkook-i-am-still': 3,
   'documentaries-suga-road-to-dday': 7
 };
+ const VLIVE_TRANSLATION_MEMBERS = [
+  { name: 'Чонгук', keys: ['jungkook-2016-2022','jungkook-2023-2024','jungkook-2025-2026'] },
+  { name: 'Тэхён', keys: ['taehyung-2015-2022','taehyung-2023-2024','taehyung-2025','taehyung-2026'] },
+  { name: 'Джин', keys: ['jin-2015-2022','jin-2023-2025','jin-2026-HB'] },
+  { name: 'Намджун', keys: ['namjoon-2015-2022','namjoon-2023-2025','namjoon-2026-HB'] },
+  { name: 'Хосок', keys: ['hoseok-2015-2022','hoseok-2023-2025','hoseok-2026-HB'] },
+  { name: 'Чимин', keys: ['jimin-2015-2022','jimin-2023-2026'] },
+  { name: 'Юнги', keys: ['yoongi-2015-2022','yoongi-2023-2026'] },
+  { name: 'Несколько человек', keys: ['somepeople-2015','somepeople-2016','somepeople-2017-2019','somepeople-2020-2022','somepeople-2023-2025','somepeople-2026'] },
+  { name: 'ОТ7 (все вместе)', keys: ['ot7-2015-2017','ot7-2018-2022','ot7-2023-2026'] },
+  { name: 'Радио', keys: ['radio'] },
+  { name: 'Comeback', keys: ['comeback'] }
+];
+ const YOUTUBE_TRANSLATION_MEMBERS = [
+  { name: 'Чонгук', keys: ['vlog-jungkook'] },
+  { name: 'Тэхён', keys: ['vlog-v'] },
+  { name: 'Джин', keys: ['vlog-jin','eatjin'] },
+  { name: 'Чимин', keys: ['vlog-jimin'] },
+  { name: 'Намджун', keys: ['vlog-namjoon','logon'] },
+  { name: 'Юнги', keys: ['vlog-suga'] },
+  { name: 'Хосок', keys: ['vlog-jhope'] },
+  { name: 'ОТ7', keys: ['vlog-ot7'] },
+  { name: 'Несколько человек', keys: ['vlog-somepeople'] }
+];
+ function flattenBranchKeys(nodes) {
+  const keys = [];
+  (nodes || []).forEach(function (node) {
+    if (node.children && node.children.length) {
+      flattenBranchKeys(node.children).forEach(function (key) { keys.push(key); });
+    } else if (node.keys && node.keys.length) {
+      node.keys.forEach(function (key) { keys.push(key); });
+    }
+  });
+  return keys;
+}
+ const SECTION_TREE = [
+  {
+    name: 'Трансляции',
+    children: [
+      { name: 'с Vlive и Weverse', children: VLIVE_TRANSLATION_MEMBERS },
+      { name: 'с ютуба', children: YOUTUBE_TRANSLATION_MEMBERS }
+    ]
+  }
+ ];
+ SECTION_TREE.forEach(function fillBranchKeys(node) {
+   if (node.children && node.children.length) {
+     node.children.forEach(fillBranchKeys);
+     node.keys = flattenBranchKeys(node.children);
+   }
+ });
  const SECTION_GROUPS = {
-  'Все трансляции': [
-    'jungkook-2016-2022','jungkook-2023-2024','jungkook-2025-2026',
-    'taehyung-2015-2022','taehyung-2023-2024','taehyung-2025','taehyung-2026',
-    'comeback',
-    'jin-2015-2022','jin-2023-2025','jin-2026-HB',
-    'namjoon-2015-2022','namjoon-2023-2025','namjoon-2026-HB',
-    'hoseok-2015-2022','hoseok-2023-2025','hoseok-2026-HB',
-    'radio',
-    'jimin-2015-2022','jimin-2023-2026',
-    'yoongi-2015-2022','yoongi-2023-2026',
-    'ot7-2015-2017','ot7-2018-2022','ot7-2023-2026',
-    'somepeople-2015','somepeople-2016','somepeople-2017-2019','somepeople-2020-2022','somepeople-2023-2025','somepeople-2026'
-  ],
-  'Трансляции с YouTube': [
-    'vlog-jungkook','vlog-v','vlog-jin','vlog-jimin','vlog-namjoon','vlog-suga','vlog-jhope','vlog-ot7','vlog-somepeople',
-    'eatjin','logon'
-  ],
   'Различные шоу': [
     'run-bts-1-25','run-bts-26-50','run-bts-51-80','run-bts-81-111','run-bts-112-135','run-bts-136-155','run-bts-156-165',
     'run-jin-1-25','run-jin-26-36','run-bts-2-0-1-25',
