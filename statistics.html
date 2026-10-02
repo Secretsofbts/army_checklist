@@ -653,8 +653,8 @@
       statsRow.className = 'heatmap-stats';
       [
         { n: summary.totalDays, label: 'всего дней активности' },
-        { n: summary.streak, label: 'подряд дней в данный момент' },
-        { n: summary.record, label: 'рекорд активности по количеству дней' }
+        { n: summary.streak, label: 'подряд дней' },
+        { n: summary.record, label: 'рекорд по кол-ву дней подряд' }
       ].forEach(function (item) {
         const cell = document.createElement('div');
         cell.className = 'heatmap-stat';

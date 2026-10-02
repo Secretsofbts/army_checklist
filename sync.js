@@ -134,7 +134,7 @@ registerUserIfNeeded();
   }
 
   function getCheckActivityState() {
-    const empty = { days: {}, byId: {}, bestStreak: 0 };
+    const empty = { days: {}, byId: {}, rewatchById: {}, bestStreak: 0 };
     const raw = localStorage.getItem('progress:checkActivity');
     if (!raw) return empty;
     try {
@@ -142,13 +142,14 @@ registerUserIfNeeded();
       if (!data || typeof data !== 'object' || Array.isArray(data)) return empty;
       if (data.days && typeof data.days === 'object' && !Array.isArray(data.days)) {
         const byId = (data.byId && typeof data.byId === 'object' && !Array.isArray(data.byId)) ? data.byId : {};
-        return { days: data.days, byId: byId, bestStreak: parseInt(data.bestStreak, 10) || 0 };
+        const rewatchById = (data.rewatchById && typeof data.rewatchById === 'object' && !Array.isArray(data.rewatchById)) ? data.rewatchById : {};
+        return { days: data.days, byId: byId, rewatchById: rewatchById, bestStreak: parseInt(data.bestStreak, 10) || 0 };
       }
       const days = {};
       Object.keys(data).forEach(function (k) {
         if (/^\d{4}-\d{2}-\d{2}$/.test(k)) days[k] = parseInt(data[k], 10) || 0;
       });
-      return { days: days, byId: {}, bestStreak: 0 };
+      return { days: days, byId: {}, rewatchById: {}, bestStreak: 0 };
     } catch (e) {
       return empty;
     }
@@ -220,8 +221,12 @@ registerUserIfNeeded();
     Object.keys(state.byId).forEach(function (id) {
       if (state.byId[id] < cutoffKey) delete state.byId[id];
     });
+    if (!state.rewatchById || typeof state.rewatchById !== 'object') state.rewatchById = {};
+    Object.keys(state.rewatchById).forEach(function (id) {
+      if (!state.byId[id]) delete state.rewatchById[id];
+    });
     state.bestStreak = Math.max(state.bestStreak || 0, longestMarkedStreak(state.days), currentMarkedStreak(state.days));
-    setProgress('checkActivity', { days: state.days, byId: state.byId, bestStreak: state.bestStreak });
+    setProgress('checkActivity', { days: state.days, byId: state.byId, rewatchById: state.rewatchById, bestStreak: state.bestStreak });
   }
 
   function bumpCheckActivity(id, nowTrue, wasTrue) {
@@ -240,8 +245,29 @@ registerUserIfNeeded();
       if (next <= 0) delete state.days[day];
       else state.days[day] = next;
       delete state.byId[id];
+      if (state.rewatchById) delete state.rewatchById[id];
     }
     saveCheckActivityState(state);
+  }
+
+  function paintRewatchBadges() {
+    const times = (getCheckActivityState().rewatchById) || {};
+    document.querySelectorAll('[data-id]').forEach(function (row) {
+      const id = row.dataset.id || '';
+      const extra = parseInt(times[id], 10) || 0;
+      const box = row.querySelector('input[type="checkbox"]');
+      let badge = row.querySelector('.army-rewatch-n');
+      if (extra < 1 || !box || !box.checked) {
+        if (badge) badge.remove();
+        return;
+      }
+      if (!badge) {
+        badge = document.createElement('span');
+        badge.className = 'army-rewatch-n';
+        box.insertAdjacentElement('afterend', badge);
+      }
+      badge.textContent = '×' + (extra + 1);
+    });
   }
 
   function recordCheckRewatch(id) {
@@ -249,7 +275,10 @@ registerUserIfNeeded();
     const state = getCheckActivityState();
     const today = localDateKey();
     state.days[today] = (parseInt(state.days[today], 10) || 0) + 1;
+    if (!state.rewatchById) state.rewatchById = {};
+    state.rewatchById[id] = (parseInt(state.rewatchById[id], 10) || 0) + 1;
     saveCheckActivityState(state);
+    paintRewatchBadges();
   }
 
   function setChecked(id, value) {
@@ -260,6 +289,7 @@ registerUserIfNeeded();
     if (ARMY_USER_ID) {
       saveToCloudWithRetry(`users/${ARMY_USER_ID}/${id}`, value);
     }
+    paintRewatchBadges();
   }
 
   function setupCheckboxRewatchHold() {
@@ -374,8 +404,15 @@ registerUserIfNeeded();
     }, true);
 
     const css = document.createElement('style');
-    css.textContent = 'input[type=checkbox]{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}input[type=checkbox].army-rewatch{outline:2px solid #9b7fd4;outline-offset:2px;}';
+    css.textContent = 'input[type=checkbox]{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}input[type=checkbox].army-rewatch{outline:2px solid #9b7fd4;outline-offset:2px;}.army-rewatch-n{font-size:10px;font-weight:700;color:#7b5fb3;background:#efe8fa;border-radius:8px;padding:1px 5px;margin-left:2px;flex-shrink:0;}';
     document.head.appendChild(css);
+    paintRewatchBadges();
+    let paintTimer = null;
+    const obs = new MutationObserver(function () {
+      clearTimeout(paintTimer);
+      paintTimer = setTimeout(paintRewatchBadges, 80);
+    });
+    if (document.body) obs.observe(document.body, { childList: true, subtree: true });
   }
 
   if (document.readyState === 'loading') {
@@ -411,6 +448,7 @@ registerUserIfNeeded();
             changed = true;
           }
         });
+        paintRewatchBadges();
         if (changed && onChanged) onChanged();
       })
       .catch(() => {});
@@ -441,6 +479,7 @@ registerUserIfNeeded();
             localStorage.setItem(k, JSON.stringify(data[k]));
           }
         });
+        paintRewatchBadges();
         if (callback) callback();
       })
       .catch(() => {});
@@ -461,6 +500,7 @@ registerUserIfNeeded();
             localStorage.setItem(k, data[k]);
           }
         });
+        paintRewatchBadges();
         if (callback) callback();
       })
       .catch(() => { if (callback) callback(); });
