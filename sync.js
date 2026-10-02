@@ -134,7 +134,7 @@ registerUserIfNeeded();
   }
 
   function getCheckActivityState() {
-    const empty = { days: {}, byId: {} };
+    const empty = { days: {}, byId: {}, bestStreak: 0 };
     const raw = localStorage.getItem('progress:checkActivity');
     if (!raw) return empty;
     try {
@@ -142,13 +142,13 @@ registerUserIfNeeded();
       if (!data || typeof data !== 'object' || Array.isArray(data)) return empty;
       if (data.days && typeof data.days === 'object' && !Array.isArray(data.days)) {
         const byId = (data.byId && typeof data.byId === 'object' && !Array.isArray(data.byId)) ? data.byId : {};
-        return { days: data.days, byId: byId };
+        return { days: data.days, byId: byId, bestStreak: parseInt(data.bestStreak, 10) || 0 };
       }
       const days = {};
       Object.keys(data).forEach(function (k) {
         if (/^\d{4}-\d{2}-\d{2}$/.test(k)) days[k] = parseInt(data[k], 10) || 0;
       });
-      return { days: days, byId: {} };
+      return { days: days, byId: {}, bestStreak: 0 };
     } catch (e) {
       return empty;
     }
@@ -164,12 +164,25 @@ registerUserIfNeeded();
     return d;
   }
 
-  function getCheckActivitySummary() {
-    const days = getCheckActivity();
-    let totalDays = 0;
-    Object.keys(days).forEach(function (k) {
-      if ((parseInt(days[k], 10) || 0) > 0) totalDays++;
+  function longestMarkedStreak(days) {
+    const marked = Object.keys(days).filter(function (k) {
+      return (parseInt(days[k], 10) || 0) > 0;
+    }).sort();
+    let record = 0;
+    let run = 0;
+    let prev = null;
+    marked.forEach(function (k) {
+      const d = k.split('-');
+      const cur = new Date(parseInt(d[0], 10), parseInt(d[1], 10) - 1, parseInt(d[2], 10));
+      if (prev && localDateKey(shiftDate(prev, 1)) === k) run += 1;
+      else run = 1;
+      if (run > record) record = run;
+      prev = cur;
     });
+    return record;
+  }
+
+  function currentMarkedStreak(days) {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     function hasMarks(d) {
@@ -182,7 +195,19 @@ registerUserIfNeeded();
       streak++;
       cursor = shiftDate(cursor, -1);
     }
-    return { totalDays: totalDays, streak: streak };
+    return streak;
+  }
+
+  function getCheckActivitySummary() {
+    const state = getCheckActivityState();
+    const days = state.days;
+    let totalDays = 0;
+    Object.keys(days).forEach(function (k) {
+      if ((parseInt(days[k], 10) || 0) > 0) totalDays++;
+    });
+    const streak = currentMarkedStreak(days);
+    const record = Math.max(state.bestStreak || 0, longestMarkedStreak(days), streak);
+    return { totalDays: totalDays, streak: streak, record: record };
   }
 
   function saveCheckActivityState(state) {
@@ -195,7 +220,8 @@ registerUserIfNeeded();
     Object.keys(state.byId).forEach(function (id) {
       if (state.byId[id] < cutoffKey) delete state.byId[id];
     });
-    setProgress('checkActivity', { days: state.days, byId: state.byId });
+    state.bestStreak = Math.max(state.bestStreak || 0, longestMarkedStreak(state.days), currentMarkedStreak(state.days));
+    setProgress('checkActivity', { days: state.days, byId: state.byId, bestStreak: state.bestStreak });
   }
 
   function bumpCheckActivity(id, nowTrue, wasTrue) {
