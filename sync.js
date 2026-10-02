@@ -443,7 +443,7 @@ registerUserIfNeeded();
     }, true);
 
     const css = document.createElement('style');
-    css.textContent = 'input[type=checkbox]{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}input[type=checkbox].army-rewatch{outline:2px solid #9b7fd4;outline-offset:2px;}.army-check-hit{position:relative;display:inline-block;flex-shrink:0;width:18px;height:18px;vertical-align:middle;overflow:visible;}.army-check-hit input[type=checkbox]{margin:0;}.army-rewatch-n{position:absolute;right:-6px;top:-8px;left:auto;font-size:11px;font-weight:800;color:#7b5fb3 !important;line-height:1;padding:0;background:transparent;cursor:pointer;-webkit-user-select:none;user-select:none;z-index:2;}';
+    css.textContent = 'input[type=checkbox]{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}input[type=checkbox].army-rewatch{outline:2px solid #9b7fd4;outline-offset:2px;}.army-check-hit{position:relative;display:inline-block;flex-shrink:0;width:18px;height:18px;vertical-align:middle;overflow:visible;}.army-check-hit input[type=checkbox]{margin:0;}.army-rewatch-n{position:absolute;right:-6px;top:-8px;left:auto;font-size:8px;font-weight:700;color:#888 !important;line-height:1;padding:0;background:transparent;cursor:pointer;-webkit-user-select:none;user-select:none;z-index:2;}';
     document.head.appendChild(css);
     paintRewatchBadges();
     let paintTimer = null;
