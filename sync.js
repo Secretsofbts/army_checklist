@@ -1222,10 +1222,68 @@ function getCombinedYearStats(yearKey) {
 
   checkForUpdate();
 
-  function isArmyHomePage() {
-    const file = (location.pathname.split('/').pop() || '').toLowerCase();
-    return file === '' || file === 'index.html';
+  function armyStartParam() {
+    const tg = window.Telegram && window.Telegram.WebApp;
+    if (tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param) {
+      return String(tg.initDataUnsafe.start_param);
+    }
+    try {
+      const q = new URLSearchParams(location.search);
+      const fromQuery = q.get('startapp') || q.get('tgWebAppStartParam') || '';
+      if (fromQuery) return fromQuery;
+      const h = (location.hash || '').replace(/^#/, '');
+      if (h) {
+        const hq = new URLSearchParams(h);
+        return hq.get('tgWebAppStartParam') || hq.get('startapp') || '';
+      }
+    } catch (e) {}
+    return '';
   }
+
+  function armyOpenFromStartParam() {
+    if (!isArmyHomePage()) return;
+    const param = armyStartParam();
+    if (!param || !/^[a-zA-Z0-9_-]{1,64}$/.test(param)) return;
+    let done = '';
+    try { done = sessionStorage.getItem('armyStartDone') || ''; } catch (e) {}
+    if (done === param) return;
+    const aliases = {
+      'runseokjin': 'concert-runseokjin-ep-tour.html',
+      'jin-tour': 'concert-runseokjin-ep-tour.html',
+      'arirang': 'concert-arirang-tour.html',
+      'concerts-2025': 'concerts-2025-2026.html',
+      'concerts': 'concerts.html',
+      'statistics': 'statistics.html',
+      'stats': 'statistics.html'
+    };
+    const key = param.toLowerCase();
+    let target = aliases[key];
+    if (!target) target = key.replace(/\.html$/, '') + '.html';
+    if (!/^[a-z0-9_-]+\.html$/.test(target)) return;
+    try { sessionStorage.setItem('armyStartDone', param); } catch (e) {}
+    location.replace(target);
+  }
+
+  function isArmyHomePage() {
+    const parts = location.pathname.split('/').filter(Boolean);
+    const file = (parts[parts.length - 1] || '').toLowerCase();
+    return !file || file === 'index.html' || file === 'army_checklist' || !file.endsWith('.html');
+  }
+
+  function armyScheduleStartOpen() {
+    armyOpenFromStartParam();
+    const tg = window.Telegram && window.Telegram.WebApp;
+    if (tg && typeof tg.ready === 'function') {
+      try { tg.ready(); } catch (e) {}
+      if (typeof tg.onEvent === 'function') {
+        tg.onEvent('activated', armyOpenFromStartParam);
+      }
+    }
+    setTimeout(armyOpenFromStartParam, 50);
+    setTimeout(armyOpenFromStartParam, 300);
+    setTimeout(armyOpenFromStartParam, 800);
+  }
+  armyScheduleStartOpen();
 
   function armyNavigateBack() {
     if (document.referrer) {
