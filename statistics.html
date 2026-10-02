@@ -661,7 +661,7 @@
         cell.className = 'heatmap-stat';
         const circle = document.createElement('div');
         circle.className = 'heatmap-stat-circle';
-        circle.textContent = String(item.n || 0);
+        circle.textContent = String(item.n == null ? 0 : item.n);
         const lab = document.createElement('div');
         lab.className = 'heatmap-stat-label';
         lab.textContent = item.label;

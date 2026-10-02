@@ -188,8 +188,34 @@ registerUserIfNeeded();
 
   function getCheckActivity() {
     const state = getCheckActivityState();
+    const raw = {};
+    Object.keys(state.days || {}).forEach(function (k) {
+      if (/^\d{4}-\d{2}-\d{2}$/.test(k)) raw[k] = parseInt(state.days[k], 10) || 0;
+    });
     rebuildActivityDays(state);
-    return state.days;
+    const merged = {};
+    function take(src) {
+      Object.keys(src || {}).forEach(function (k) {
+        const n = parseInt(src[k], 10) || 0;
+        if (n > (merged[k] || 0)) merged[k] = n;
+      });
+    }
+    take(raw);
+    take(state.days);
+    const today = localDateKey();
+    let todayFromIds = 0;
+    Object.keys(state.markLog || {}).forEach(function (id) {
+      (state.markLog[id] || []).forEach(function (d) {
+        if (d === today) todayFromIds++;
+      });
+    });
+    if (!todayFromIds) {
+      Object.keys(state.byId || {}).forEach(function (id) {
+        if (state.byId[id] === today) todayFromIds++;
+      });
+    }
+    if (todayFromIds > (merged[today] || 0)) merged[today] = todayFromIds;
+    return merged;
   }
 
   function shiftDate(date, days) {
@@ -528,7 +554,6 @@ registerUserIfNeeded();
     const css = document.createElement('style');
     css.textContent = 'input[type=checkbox]{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}input[type=checkbox].army-rewatch{outline:2px solid #9b7fd4;outline-offset:2px;}[data-id]{overflow:visible;}.army-check-hit{position:relative;display:inline-block;flex-shrink:0;width:18px;height:18px;vertical-align:middle;overflow:visible;}.army-check-hit input[type=checkbox]{margin:0;}.army-rewatch-n{position:absolute;right:-7px;top:-9px;left:auto;font-size:8px;font-weight:700;color:#888 !important;line-height:1;padding:0;background:transparent;cursor:pointer;-webkit-user-select:none;user-select:none;z-index:5;}';
     document.head.appendChild(css);
-    saveCheckActivityState(getCheckActivityState());
     paintRewatchBadges();
     let paintTimer = null;
     const obs = new MutationObserver(function () {
