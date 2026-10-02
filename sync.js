@@ -608,13 +608,6 @@ const YEAR_OWN_TOTALS = {
     'vlog-jungkook','vlog-v','vlog-jin','vlog-jimin','vlog-namjoon','vlog-suga','vlog-jhope','vlog-ot7','vlog-somepeople',
     'eatjin','logon'
   ],
-  'Концерты BTS': [
-    'concert-hyyh-on-stage','concert-hyyh-epilogue','concert-hyyh-epilogue-japan',
-    'concert-wings-seoul','concert-wings-final','concert-wings-japan',
-    'concert-wt-love-yourself-seoul','concert-wt-love-yourself-europe','concert-wt-love-yourself-ny',
-    'concert-lysy-seoul-final-dvd','concert-arirang-tour',
-    'fm-3rd-muster','fm-jp-vol3'
-  ],
   'Различные шоу': [
     'run-bts-1-25','run-bts-26-50','run-bts-51-80','run-bts-81-111','run-bts-112-135','run-bts-136-155','run-bts-156-165',
     'run-jin-1-25','run-jin-26-36','run-bts-2-0-1-25',
