@@ -284,7 +284,7 @@ registerUserIfNeeded();
         hit.className = 'army-check-hit';
       }
       let badge = hit.querySelector('.army-rewatch-n');
-      if (!box.checked) {
+      if (!box.checked || extra < 1) {
         if (badge) badge.remove();
         return;
       }
@@ -293,7 +293,7 @@ registerUserIfNeeded();
         badge.className = 'army-rewatch-n';
         hit.appendChild(badge);
       }
-      badge.textContent = String(extra + 1);
+      badge.textContent = '×' + (extra + 1);
     });
   }
 
@@ -443,7 +443,7 @@ registerUserIfNeeded();
     }, true);
 
     const css = document.createElement('style');
-    css.textContent = 'input[type=checkbox]{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}input[type=checkbox].army-rewatch{outline:2px solid #9b7fd4;outline-offset:2px;}.army-check-hit{position:relative;display:inline-block;flex-shrink:0;width:18px;height:18px;vertical-align:middle;}.army-check-hit input[type=checkbox]{margin:0;}.army-rewatch-n{position:absolute;left:11px;top:-7px;font-size:8px;font-weight:700;color:#7b5fb3;line-height:1;padding:0;background:transparent;cursor:pointer;-webkit-user-select:none;user-select:none;z-index:2;}';
+    css.textContent = 'input[type=checkbox]{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}input[type=checkbox].army-rewatch{outline:2px solid #9b7fd4;outline-offset:2px;}.army-check-hit{position:relative;display:inline-block;flex-shrink:0;width:18px;height:18px;vertical-align:middle;overflow:visible;}.army-check-hit input[type=checkbox]{margin:0;}.army-rewatch-n{position:absolute;right:-6px;top:-8px;left:auto;font-size:11px;font-weight:800;color:#7b5fb3 !important;line-height:1;padding:0;background:transparent;cursor:pointer;-webkit-user-select:none;user-select:none;z-index:2;}';
     document.head.appendChild(css);
     paintRewatchBadges();
     let paintTimer = null;
