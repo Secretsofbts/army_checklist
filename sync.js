@@ -169,6 +169,7 @@ registerUserIfNeeded();
     Object.keys(state.byId || {}).forEach(function (id) { ids[id] = true; });
     Object.keys(state.markLog).forEach(function (id) { ids[id] = true; });
     Object.keys(ids).forEach(function (id) {
+      if (localStorage.getItem(id) !== 'true') return;
       const log = state.markLog[id];
       if (log && log.length) {
         log.forEach(add);
@@ -189,34 +190,29 @@ registerUserIfNeeded();
 
   function getCheckActivity() {
     const state = getCheckActivityState();
-    const raw = {};
-    Object.keys(state.days || {}).forEach(function (k) {
-      if (/^\d{4}-\d{2}-\d{2}$/.test(k)) raw[k] = parseInt(state.days[k], 10) || 0;
-    });
     rebuildActivityDays(state);
-    const merged = {};
-    function take(src) {
-      Object.keys(src || {}).forEach(function (k) {
-        const n = parseInt(src[k], 10) || 0;
-        if (n > (merged[k] || 0)) merged[k] = n;
-      });
-    }
-    take(raw);
-    take(state.days);
+    const days = {};
+    Object.keys(state.days || {}).forEach(function (k) {
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(k)) return;
+      const n = parseInt(state.days[k], 10) || 0;
+      if (n > 0) days[k] = n;
+    });
     const today = localDateKey();
     let todayFromIds = 0;
     Object.keys(state.markLog || {}).forEach(function (id) {
+      if (localStorage.getItem(id) !== 'true') return;
       (state.markLog[id] || []).forEach(function (d) {
         if (d === today) todayFromIds++;
       });
     });
     if (!todayFromIds) {
       Object.keys(state.byId || {}).forEach(function (id) {
+        if (localStorage.getItem(id) !== 'true') return;
         if (state.byId[id] === today) todayFromIds++;
       });
     }
-    if (todayFromIds > (merged[today] || 0)) merged[today] = todayFromIds;
-    return merged;
+    if (todayFromIds > (days[today] || 0)) days[today] = todayFromIds;
+    return days;
   }
 
   function shiftDate(date, days) {
@@ -274,6 +270,16 @@ registerUserIfNeeded();
     const state = getCheckActivityState();
     const record = Math.max(state.bestStreak || 0, longestMarkedStreak(days), streak);
     const bestDay = maxDay;
+    let storedMax = 0;
+    Object.keys(state.days || {}).forEach(function (k) {
+      const n = parseInt(state.days[k], 10) || 0;
+      if (n > storedMax) storedMax = n;
+    });
+    if (storedMax > maxDay || (state.bestDayCount || 0) > maxDay) {
+      state.days = days;
+      state.bestDayCount = maxDay;
+      saveCheckActivityState(state);
+    }
     return { totalDays: totalDays, streak: streak, record: record, bestDay: bestDay };
   }
 
@@ -300,6 +306,14 @@ registerUserIfNeeded();
     });
     Object.keys(state.byId).forEach(function (id) {
       if (/^\d{4}-\d{2}-\d{2}$/.test(state.byId[id]) && state.byId[id] < cutoffKey) delete state.byId[id];
+    });
+    Object.keys(state.byId).forEach(function (id) {
+      if (localStorage.getItem(id) !== 'true') {
+        delete state.byId[id];
+        if (state.rewatchById) delete state.rewatchById[id];
+        if (state.rewatchLog) delete state.rewatchLog[id];
+        if (state.markLog) delete state.markLog[id];
+      }
     });
     if (!state.rewatchById || typeof state.rewatchById !== 'object') state.rewatchById = {};
     if (!state.rewatchLog || typeof state.rewatchLog !== 'object') state.rewatchLog = {};
