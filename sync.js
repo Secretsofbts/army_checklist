@@ -270,19 +270,30 @@ registerUserIfNeeded();
     const times = (getCheckActivityState().rewatchById) || {};
     document.querySelectorAll('[data-id]').forEach(function (row) {
       const id = row.dataset.id || '';
+      if (!(id.indexOf('video-') === 0 || id.indexOf('noline-') === 0)) return;
       const extra = parseInt(times[id], 10) || 0;
       const box = row.querySelector('input[type="checkbox"]');
-      let badge = row.querySelector('.army-rewatch-n');
-      if (extra < 1 || !box || !box.checked) {
+      if (!box) return;
+      let hit = box.parentElement;
+      if (!hit || !hit.classList || !(hit.classList.contains('army-check-hit') || hit.classList.contains('army-check-col'))) {
+        hit = document.createElement('span');
+        hit.className = 'army-check-hit';
+        box.parentNode.insertBefore(hit, box);
+        hit.appendChild(box);
+      } else {
+        hit.className = 'army-check-hit';
+      }
+      let badge = hit.querySelector('.army-rewatch-n');
+      if (!box.checked) {
         if (badge) badge.remove();
         return;
       }
       if (!badge) {
         badge = document.createElement('span');
         badge.className = 'army-rewatch-n';
-        box.insertAdjacentElement('afterend', badge);
+        hit.appendChild(badge);
       }
-      badge.textContent = '×' + (extra + 1);
+      badge.textContent = String(extra + 1);
     });
   }
 
@@ -312,7 +323,7 @@ registerUserIfNeeded();
   }
 
   function setupCheckboxRewatchHold() {
-    const HOLD_MS = 650;
+    const HOLD_MS = 500;
     let timer = null;
     let startX = 0;
     let startY = 0;
@@ -403,6 +414,15 @@ registerUserIfNeeded();
       if (e.cancelable) e.preventDefault();
     }, { capture: true, passive: false });
     document.addEventListener('click', function (e) {
+      const badge = e.target.closest && e.target.closest('.army-rewatch-n');
+      if (badge) {
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        const row = badge.closest('[data-id]');
+        const id = row && row.dataset.id;
+        if (id) recordCheckRewatch(id);
+        return;
+      }
       if (!suppressToggle) return;
       if (!isWatchCheckbox(e.target)) return;
       e.preventDefault();
@@ -423,7 +443,7 @@ registerUserIfNeeded();
     }, true);
 
     const css = document.createElement('style');
-    css.textContent = 'input[type=checkbox]{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}input[type=checkbox].army-rewatch{outline:2px solid #9b7fd4;outline-offset:2px;}.army-rewatch-n{font-size:10px;font-weight:700;color:#7b5fb3;background:#efe8fa;border-radius:8px;padding:1px 5px;margin-left:2px;flex-shrink:0;}';
+    css.textContent = 'input[type=checkbox]{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}input[type=checkbox].army-rewatch{outline:2px solid #9b7fd4;outline-offset:2px;}.army-check-hit{position:relative;display:inline-block;flex-shrink:0;width:18px;height:18px;vertical-align:middle;}.army-check-hit input[type=checkbox]{margin:0;}.army-rewatch-n{position:absolute;left:11px;top:-7px;font-size:8px;font-weight:700;color:#7b5fb3;line-height:1;padding:0;background:transparent;cursor:pointer;-webkit-user-select:none;user-select:none;z-index:2;}';
     document.head.appendChild(css);
     paintRewatchBadges();
     let paintTimer = null;
