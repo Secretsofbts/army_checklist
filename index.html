@@ -169,16 +169,27 @@
          fetch('content-log.json?t=' + Date.now())
       .then(res => res.json())
       .then(data => {
-        const seen = localStorage.getItem('seenContentVersion');
-        const isExistingUser = !!localStorage.getItem('userNumber_' + ARMY_USER_ID);
         const messages = (data.messages && data.messages.length)
           ? data.messages
           : (data.message ? [data.message] : []);
-        if (isExistingUser && (seen === null || parseInt(seen) < data.version) && messages.length) {
+
+        function alreadySeen() {
+          const seen = parseInt(localStorage.getItem('seenContentVersion'), 10) || 0;
+          return seen >= data.version;
+        }
+
+        function hasUserNumber() {
+          return !!(ARMY_USER_ID && localStorage.getItem('userNumber_' + ARMY_USER_ID));
+        }
+
+        function paintBanners() {
+          if (!messages.length || document.querySelector('.content-log-banner')) return;
           const app = document.querySelector('.app');
-          const anchor = app.querySelector('.list');
+          const anchor = app && app.querySelector('.list');
+          if (!anchor) return;
           messages.forEach(function (msg) {
             const banner = document.createElement('div');
+            banner.className = 'content-log-banner';
             banner.style.cssText = 'background:#f0edf9; border:1px solid #d9cdf0; border-radius:12px; padding:12px 14px; margin-bottom:14px; font-size:13px; color:#5b3a8e; display:flex; justify-content:space-between; align-items:center; gap:10px;';
             const text = document.createElement('span');
             text.textContent = '💬 ' + msg;
@@ -191,7 +202,21 @@
             app.insertBefore(banner, anchor);
           });
         }
-        localStorage.setItem('seenContentVersion', data.version);
+
+        function tryShow() {
+          if (alreadySeen()) return true;
+          if (!hasUserNumber()) return false;
+          paintBanners();
+          localStorage.setItem('seenContentVersion', data.version);
+          return true;
+        }
+
+        if (tryShow()) return;
+        let tries = 0;
+        const timer = setInterval(function () {
+          tries++;
+          if (tryShow() || tries > 20) clearInterval(timer);
+        }, 250);
       })
       .catch(() => {});
   const menuBtn = document.getElementById('menu-btn');
