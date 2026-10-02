@@ -1206,3 +1206,48 @@ function getCombinedYearStats(yearKey) {
 }
 
   checkForUpdate();
+
+  function isArmyHomePage() {
+    const file = (location.pathname.split('/').pop() || '').toLowerCase();
+    return file === '' || file === 'index.html';
+  }
+
+  function armyNavigateBack() {
+    if (document.referrer) {
+      try {
+        if (new URL(document.referrer).origin === location.origin) {
+          history.back();
+          return;
+        }
+      } catch (e) {}
+    }
+    const link = document.querySelector('a.back[href]');
+    if (link) {
+      const href = link.getAttribute('href');
+      if (href && href !== '#') {
+        location.href = href;
+        return;
+      }
+    }
+    location.href = 'index.html';
+  }
+
+  function setupTelegramHistoryBack() {
+    if (window.__armyTgBackSetup) return;
+    const tg = window.Telegram && window.Telegram.WebApp;
+    if (!tg || !tg.BackButton) return;
+    window.__armyTgBackSetup = true;
+    try {
+      tg.ready();
+      tg.expand();
+    } catch (e) {}
+    tg.BackButton.onClick(armyNavigateBack);
+    if (isArmyHomePage()) tg.BackButton.hide();
+    else tg.BackButton.show();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupTelegramHistoryBack);
+  } else {
+    setupTelegramHistoryBack();
+  }
