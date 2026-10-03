@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=66"></script>
+  <script src="sync.js?v=68"></script>
   <title>Ну вроде бы эпизоды: ОТ7</title>
   <style>
     body {
@@ -88,13 +88,14 @@
       { text: "Скетч «ARIRANG» в Пусане", link: "https://t.me/violent_arhive/5607" },
       { text: "На ЧМ по футболу FIFA 2026", link: "https://t.me/violent_arhive/5608" },
       { text: "Скетч практики к WORLD TOUR ARIRANG", link: "https://t.me/violent_arhive/5667" },
+      { text: "BTS WORLD TOUR Arirang in Europe", link: "https://t.me/violent_arhive/5689" }
     ];
 
         const listEl = document.getElementById('list');
     items.forEach((item) => {
-      const id = 'video-' + item.link.split('/').pop();
       const row = document.createElement('div');
       row.className = 'row';
+      const id = 'video-' + item.link.split('/').pop();
       row.dataset.id = id;
 
       const box = document.createElement('input');
