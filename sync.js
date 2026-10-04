@@ -1267,7 +1267,7 @@ function getCombinedYearStats(yearKey) {
   function isArmyHomePage() {
     const parts = location.pathname.split('/').filter(Boolean);
     const file = (parts[parts.length - 1] || '').toLowerCase();
-    return !file || file === 'index.html' || file === 'army_checklist' || !file.endsWith('.html');
+    return !file || file === 'index.html' || file === 'army_checklist';
   }
 
   function armyScheduleStartOpen() {
@@ -1301,18 +1301,6 @@ function getCombinedYearStats(yearKey) {
   function armyNavigateBack() {
     if (window.__armyLeaving) return;
     window.__armyLeaving = true;
-    if (armyCameFromStartLink() || (typeof history !== 'undefined' && history.length <= 2)) {
-      location.href = armyParentHref();
-      return;
-    }
-    if (document.referrer) {
-      try {
-        if (new URL(document.referrer).origin === location.origin) {
-          history.back();
-          return;
-        }
-      } catch (e) {}
-    }
     location.href = armyParentHref();
   }
 
@@ -1351,7 +1339,7 @@ function getCombinedYearStats(yearKey) {
     if (isArmyHomePage()) return;
     const tg = window.Telegram && window.Telegram.WebApp;
     const platform = tg && tg.platform ? String(tg.platform).toLowerCase() : '';
-    if (platform === 'tdesktop' || platform === 'macos' || platform === 'web' || platform === 'weba' || platform === 'webk') return;
+    if (platform === 'tdesktop' || platform === 'macos') return;
     window.__armyIosEdgeBack = true;
     let startX = 0;
     let startY = 0;
