@@ -1392,15 +1392,21 @@ function getCombinedYearStats(yearKey) {
     window.__armyIosEdgeBack = true;
     let startX = 0;
     let startY = 0;
+    let edge = '';
     let tracking = false;
     document.addEventListener('touchstart', function (e) {
       if (e.touches.length !== 1) {
         tracking = false;
+        edge = '';
         return;
       }
       const t = e.touches[0];
-      if (t.clientX > 56) {
+      const w = window.innerWidth || 0;
+      if (t.clientX <= 56) edge = 'left';
+      else if (w && t.clientX >= w - 56) edge = 'right';
+      else {
         tracking = false;
+        edge = '';
         return;
       }
       startX = t.clientX;
@@ -1413,22 +1419,28 @@ function getCombinedYearStats(yearKey) {
       if (!t) return;
       const dx = t.clientX - startX;
       const dy = t.clientY - startY;
-      if (Math.abs(dy) > 50 && Math.abs(dy) > dx) {
+      if (Math.abs(dy) > 50 && Math.abs(dy) > Math.abs(dx)) {
         tracking = false;
+        edge = '';
         return;
       }
-      if (dx > 12) {
+      const goingBack = (edge === 'left' && dx > 12) || (edge === 'right' && dx < -12);
+      if (goingBack) {
         try { e.preventDefault(); } catch (err) {}
       }
     }, { passive: false });
     document.addEventListener('touchend', function (e) {
       if (!tracking) return;
       tracking = false;
+      const from = edge;
+      edge = '';
       const t = e.changedTouches[0];
       if (!t) return;
       const dx = t.clientX - startX;
       const dy = t.clientY - startY;
-      if (dx > 70 && Math.abs(dy) < 50) armyNavigateBack();
+      if (Math.abs(dy) >= 50) return;
+      if (from === 'left' && dx > 70) armyNavigateBack();
+      if (from === 'right' && dx < -70) armyNavigateBack();
     }, { passive: true });
   }
 
