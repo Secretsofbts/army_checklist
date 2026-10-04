@@ -1222,31 +1222,38 @@ function getCombinedYearStats(yearKey) {
 
   checkForUpdate();
 
+  function armyQueryParam(raw, key) {
+    if (!raw) return '';
+    try {
+      return new URLSearchParams(String(raw).replace(/^\?/, '').replace(/^#/, '')).get(key) || '';
+    } catch (e) {
+      return '';
+    }
+  }
+
   function armyStartParam() {
     const tg = window.Telegram && window.Telegram.WebApp;
-    if (tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param) {
-      return String(tg.initDataUnsafe.start_param);
-    }
+    const found = [];
     try {
-      const q = new URLSearchParams(location.search);
-      const fromQuery = q.get('startapp') || q.get('tgWebAppStartParam') || '';
-      if (fromQuery) return fromQuery;
-      const h = (location.hash || '').replace(/^#/, '');
-      if (h) {
-        const hq = new URLSearchParams(h);
-        return hq.get('tgWebAppStartParam') || hq.get('startapp') || '';
-      }
+      found.push(armyQueryParam(location.hash, 'tgWebAppStartParam'));
+      found.push(armyQueryParam(location.hash, 'startapp'));
+      found.push(armyQueryParam(location.search, 'tgWebAppStartParam'));
+      found.push(armyQueryParam(location.search, 'startapp'));
     } catch (e) {}
+    if (tg && tg.initDataUnsafe && tg.initDataUnsafe.start_param) {
+      found.push(String(tg.initDataUnsafe.start_param));
+    }
+    if (tg && tg.initData) {
+      found.push(armyQueryParam(tg.initData, 'start_param'));
+    }
+    for (let i = 0; i < found.length; i++) {
+      const p = String(found[i] || '').trim();
+      if (p && /^[a-zA-Z0-9_-]{1,64}$/.test(p)) return p;
+    }
     return '';
   }
 
-  function armyOpenFromStartParam() {
-    if (!isArmyHomePage()) return;
-    const param = armyStartParam();
-    if (!param || !/^[a-zA-Z0-9_-]{1,64}$/.test(param)) return;
-    let done = '';
-    try { done = sessionStorage.getItem('armyStartDone') || ''; } catch (e) {}
-    if (done === param) return;
+  function armyStartTarget(param) {
     const aliases = {
       'runseokjin': 'concert-runseokjin-ep-tour.html',
       'jin-tour': 'concert-runseokjin-ep-tour.html',
@@ -1256,17 +1263,52 @@ function getCombinedYearStats(yearKey) {
       'statistics': 'statistics.html',
       'stats': 'statistics.html'
     };
-    const key = param.toLowerCase();
+    const key = String(param || '').toLowerCase();
     let target = aliases[key];
     if (!target) target = key.replace(/\.html$/, '') + '.html';
-    if (!/^[a-z0-9_-]+\.html$/.test(target)) return;
-    try { sessionStorage.setItem('armyStartDone', param); } catch (e) {}
-    location.replace(target);
+    if (!/^[a-z0-9_-]+\.html$/.test(target)) return '';
+    return target;
+  }
+
+  function armyAbsPage(file) {
+    let path = location.pathname || '/';
+    const last = (path.split('/').pop() || '').toLowerCase();
+    if (path.endsWith('/')) return path + file;
+    if (last.endsWith('.html')) return path.replace(/[^/]+$/, file);
+    return path + '/' + file;
+  }
+
+  function armyCurrentFile() {
+    const parts = location.pathname.split('/').filter(Boolean);
+    return (parts[parts.length - 1] || '').toLowerCase();
+  }
+
+  function armyOpenFromStartParam() {
+    const param = armyStartParam();
+    if (!param) return;
+    const target = armyStartTarget(param);
+    if (!target) return;
+    const current = armyCurrentFile();
+    if (current === target) {
+      try { sessionStorage.setItem('armyStartLanded', param); } catch (e) {}
+      return;
+    }
+    if (!isArmyHomePage()) return;
+    let landed = '';
+    try { landed = sessionStorage.getItem('armyStartLanded') || ''; } catch (e) {}
+    if (landed === param) return;
+    if (window.__armyStartOpening === param) return;
+    window.__armyStartOpening = param;
+    location.replace(armyAbsPage(target));
+    setTimeout(function () {
+      if (isArmyHomePage() && window.__armyStartOpening === param) {
+        window.__armyStartOpening = '';
+      }
+    }, 400);
   }
 
   function isArmyHomePage() {
-    const parts = location.pathname.split('/').filter(Boolean);
-    const file = (parts[parts.length - 1] || '').toLowerCase();
+    const file = armyCurrentFile();
     return !file || file === 'index.html' || file === 'army_checklist';
   }
 
@@ -1279,9 +1321,13 @@ function getCombinedYearStats(yearKey) {
         tg.onEvent('activated', armyOpenFromStartParam);
       }
     }
-    setTimeout(armyOpenFromStartParam, 50);
-    setTimeout(armyOpenFromStartParam, 300);
-    setTimeout(armyOpenFromStartParam, 800);
+    window.addEventListener('hashchange', armyOpenFromStartParam);
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState === 'visible') armyOpenFromStartParam();
+    });
+    [50, 150, 300, 600, 1000, 1600, 2500, 4000].forEach(function (ms) {
+      setTimeout(armyOpenFromStartParam, ms);
+    });
   }
   armyScheduleStartOpen();
 
@@ -1301,7 +1347,13 @@ function getCombinedYearStats(yearKey) {
   function armyNavigateBack() {
     if (window.__armyLeaving) return;
     window.__armyLeaving = true;
-    location.href = armyParentHref();
+    const href = armyParentHref();
+    setTimeout(function () {
+      location.assign(href);
+    }, 0);
+    setTimeout(function () {
+      window.__armyLeaving = false;
+    }, 1200);
   }
 
   function armyEnsureSwipeHistory() {
@@ -1313,9 +1365,6 @@ function getCombinedYearStats(yearKey) {
     } catch (e) {}
     window.addEventListener('popstate', function () {
       if (window.__armyLeaving) return;
-      try {
-        history.pushState({ armyLock: 1 }, '', location.href);
-      } catch (e) {}
       armyNavigateBack();
     });
   }
@@ -1358,6 +1407,20 @@ function getCombinedYearStats(yearKey) {
       startY = t.clientY;
       tracking = true;
     }, { passive: true });
+    document.addEventListener('touchmove', function (e) {
+      if (!tracking) return;
+      const t = e.touches[0];
+      if (!t) return;
+      const dx = t.clientX - startX;
+      const dy = t.clientY - startY;
+      if (Math.abs(dy) > 50 && Math.abs(dy) > dx) {
+        tracking = false;
+        return;
+      }
+      if (dx > 12) {
+        try { e.preventDefault(); } catch (err) {}
+      }
+    }, { passive: false });
     document.addEventListener('touchend', function (e) {
       if (!tracking) return;
       tracking = false;
