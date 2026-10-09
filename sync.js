@@ -868,7 +868,7 @@ const YEAR_OWN_TOTALS = {
   'run-bts-156-165': 10,
   'run-jin-1-25': 25,
   'run-jin-26-36': 11,
-  'run-bts-2-0-1-25': 5,
+  'run-bts-2-0-1-25': 6,
   'bon-voyage-s1': 9,
   'bon-voyage-s2': 8,
   'bon-voyage-s3': 10,
