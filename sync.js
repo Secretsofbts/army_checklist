@@ -813,7 +813,7 @@ const YEAR_OWN_TOTALS = {
     'taehyung-2015-2022': 25,
     'taehyung-2023-2024': 33,
     'taehyung-2025': 25,
-    'taehyung-2026': 6,
+    'taehyung-2026': 7,
     'comeback': 28,
     'jin-2015-2022': 29,
     'jin-2023-2025': 18,
