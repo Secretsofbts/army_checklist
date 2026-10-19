@@ -23,6 +23,22 @@
     .stat-label { font-size: 12px; color: #888; margin-top: 4px; }
     .empty-note { font-size: 13px; color: #999; text-align: center; padding: 20px 0; }
     .section-title { font-size: 15px; font-weight: 700; margin: 20px 0 10px; }
+    .sections-toggle {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .sections-toggle-arrow {
+      color: #9b7fd4;
+      font-size: 11px;
+      line-height: 1.4;
+      width: 14px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    #sections-progress.is-collapsed { display: none; }
     .section-row {
       display: flex;
       align-items: center;
@@ -225,8 +241,11 @@
     <p class="section-title">Активность отметок</p>
     <div id="check-heatmap"></div>
 
-    <p class="section-title">Прогресс по разделам (в разработке, пока не смотрите)</p>
-    <div id="sections-progress"></div>
+    <p class="section-title sections-toggle" id="sections-toggle">
+      <span class="sections-toggle-arrow" id="sections-toggle-arrow">▶</span>
+      <span>Прогресс по разделам (в разработке, пока не смотрите)</span>
+    </p>
+    <div id="sections-progress" class="is-collapsed"></div>
   </div>
 
   <script>
@@ -527,6 +546,17 @@
       }
       container.appendChild(wrap);
     }
+
+    (function setupSectionsFold() {
+      const toggle = document.getElementById('sections-toggle');
+      const panel = document.getElementById('sections-progress');
+      const arrow = document.getElementById('sections-toggle-arrow');
+      if (!toggle || !panel || !arrow) return;
+      toggle.addEventListener('click', function () {
+        const collapsed = panel.classList.toggle('is-collapsed');
+        arrow.textContent = collapsed ? '▶' : '▼';
+      });
+    })();
 
     function pluralMarks(n) {
       const mod10 = n % 10, mod100 = n % 100;
