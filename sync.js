@@ -826,7 +826,7 @@ const YEAR_OWN_TOTALS = {
     'hoseok-2026-HB': 4,
     'radio': 11,
     'jimin-2015-2022': 23,
-    'jimin-2023-2026': 17,
+    'jimin-2023-2026': 18,
     'yoongi-2015-2022': 25,
     'yoongi-2023-2026': 15,
     'ot7-2015-2017': 32,
