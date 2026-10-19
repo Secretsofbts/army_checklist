@@ -851,7 +851,7 @@ const YEAR_OWN_TOTALS = {
     'logon': 24,
     'vlogsbts-jimin': 3,
     'vlogsbts-jin': 6,
-    'vlogsbts-taehyung': 9,
+    'vlogsbts-taehyung': 10,
       'vlogsbts-jungkook': 7,
     'vlogsbts-jungkook-with-gcf': 15,
     'vlogsbts-namjoon': 8,
