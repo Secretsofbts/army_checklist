@@ -963,6 +963,7 @@ const YEAR_OWN_TOTALS = {
   'mcountdown-2023': 3,
     'mcountdown-2025': 1,
   'sleepy-interview': 7,
+  'interviews-2026': 1,
   'learn-korean': 20,
     'fm-0613': 16,
   'bts-festa-2014': 5,
@@ -1092,7 +1093,7 @@ const YEAR_OWN_TOTALS = {
     'documentaries-break-the-silence','documentaries-bring-the-soul','documentaries-bts-monuments','documentaries-burn-the-stage','documentaries-hope-on-the-street','documentaries-jhope-in-the-box','documentaries-jimin-production-diary','documentaries-jungkook-i-am-still','documentaries-suga-road-to-dday'
   ],
   'Всякое другое': [
-    'sleepy-interview','learn-korean','fm-0613','halloween','hwarang','beginns-youth','td-stories',
+    'sleepy-interview','interviews-2026','learn-korean','fm-0613','halloween','hwarang','beginns-youth','td-stories',
     'translations-2cool4skool','translations-orul82','translations-skoolluvaffair','translations-golden','translations-hots',
     'mcountdown-2013','mcountdown-2014','mcountdown-2015','mcountdown-2016','mcountdown-2017','mcountdown-2018','mcountdown-2019','mcountdown-2020','mcountdown-2022','mcountdown-2023','mcountdown-2025'
   ],
