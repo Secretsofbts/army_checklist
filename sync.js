@@ -268,16 +268,17 @@ registerUserIfNeeded();
       if (n > maxDay) maxDay = n;
     });
     const state = getCheckActivityState();
-    const record = Math.max(state.bestStreak || 0, longestMarkedStreak(days), streak);
+    const record = Math.max(longestMarkedStreak(days), streak);
     const bestDay = maxDay;
     let storedMax = 0;
     Object.keys(state.days || {}).forEach(function (k) {
       const n = parseInt(state.days[k], 10) || 0;
       if (n > storedMax) storedMax = n;
     });
-    if (storedMax > maxDay || (state.bestDayCount || 0) > maxDay) {
+    if (storedMax > maxDay || (state.bestDayCount || 0) > maxDay || (state.bestStreak || 0) > record) {
       state.days = days;
       state.bestDayCount = maxDay;
+      state.bestStreak = record;
       saveCheckActivityState(state);
     }
     return { totalDays: totalDays, streak: streak, record: record, bestDay: bestDay };
@@ -333,7 +334,7 @@ registerUserIfNeeded();
       if (!state.byId[id]) delete state.markLog[id];
     });
     rebuildActivityDays(state);
-    state.bestStreak = Math.max(state.bestStreak || 0, longestMarkedStreak(state.days), currentMarkedStreak(state.days));
+    state.bestStreak = Math.max(longestMarkedStreak(state.days), currentMarkedStreak(state.days));
     let maxDay = 0;
     Object.keys(state.days).forEach(function (k) {
       const n = parseInt(state.days[k], 10) || 0;
