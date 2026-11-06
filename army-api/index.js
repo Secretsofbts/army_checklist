@@ -8,6 +8,13 @@ const ADMIN_IDS = String(process.env.ADMIN_TELEGRAM_IDS || '891936733')
   .split(',')
   .map(function (s) { return s.trim(); })
   .filter(Boolean);
+const DAY_MS = 24 * 60 * 60 * 1000;
+const LEGACY_TRIAL_DAYS = 3;
+const NEW_TRIAL_DAYS = 10;
+// Момент «запуска оплаты» (фиксированная дата, иначе при рестарте Render всё сбросится).
+// Можно переопределить в Render: SUBSCRIPTION_LAUNCH_AT = миллисекунды Unix.
+const SUBSCRIPTION_LAUNCH_AT = Number(process.env.SUBSCRIPTION_LAUNCH_AT) ||
+  Date.parse('2026-11-06T21:00:00+03:00');
 
 if (!process.env.FIREBASE_SERVICE_ACCOUNT) {
   console.error('Нужна переменная FIREBASE_SERVICE_ACCOUNT (JSON ключа сервисного аккаунта)');
@@ -89,6 +96,163 @@ function pathAllowed(user, method, path) {
 
 app.get('/health', function (req, res) {
   res.json({ ok: true });
+});
+
+function subscriptionRef(uid) {
+  return db.ref('subscriptions/' + uid);
+}
+
+function buildSubscriptionStatus(uid, data, isAdmin) {
+  const now = Date.now();
+  if (isAdmin) {
+    return {
+      ok: true,
+      status: 'admin',
+      forever: true,
+      expiresAt: null,
+      trial: false,
+      priceRub: 200
+    };
+  }
+  data = data || {};
+  if (data.forever) {
+    return {
+      ok: true,
+      status: 'forever',
+      forever: true,
+      expiresAt: null,
+      trial: false,
+      priceRub: 200
+    };
+  }
+  const expiresAt = typeof data.expiresAt === 'number' ? data.expiresAt : 0;
+  if (expiresAt > now) {
+    return {
+      ok: true,
+      status: data.trial ? 'trial' : 'active',
+      forever: false,
+      expiresAt: expiresAt,
+      trial: !!data.trial,
+      priceRub: 200
+    };
+  }
+  return {
+    ok: false,
+    status: 'expired',
+    forever: false,
+    expiresAt: expiresAt || null,
+    trial: !!data.trial,
+    priceRub: 200
+  };
+}
+
+async function ensureSubscriptionRecord(uid) {
+  const ref = subscriptionRef(uid);
+  const snap = await ref.get();
+  if (snap.exists() && snap.val()) {
+    return snap.val();
+  }
+
+  const registrySnap = await db.ref('user_registry/' + uid).get();
+  const registry = registrySnap.exists() ? registrySnap.val() : null;
+  const firstSeen = registry && registry.firstSeen ? Number(registry.firstSeen) : Date.now();
+  const isLegacy = firstSeen < SUBSCRIPTION_LAUNCH_AT;
+  const trialDays = isLegacy ? LEGACY_TRIAL_DAYS : NEW_TRIAL_DAYS;
+  const now = Date.now();
+  // Старым: 3 дня от запуска оплаты. Новым: 10 дней от первой регистрации (не меньше «сейчас + 10»).
+  let expiresAt;
+  if (isLegacy) {
+    expiresAt = SUBSCRIPTION_LAUNCH_AT + trialDays * DAY_MS;
+    if (expiresAt < now) expiresAt = now + trialDays * DAY_MS;
+  } else {
+    expiresAt = firstSeen + trialDays * DAY_MS;
+    if (expiresAt < now) expiresAt = now + trialDays * DAY_MS;
+  }
+
+  const entry = {
+    active: true,
+    trial: true,
+    trialDays: trialDays,
+    forever: false,
+    expiresAt: expiresAt,
+    createdAt: now,
+    updatedAt: now
+  };
+  await ref.set(entry);
+  return entry;
+}
+
+app.get('/subscription', async function (req, res) {
+  const user = authUser(req);
+  if (!user) return res.status(401).json({ error: 'auth' });
+  const uid = String(user.id);
+  try {
+    if (user.isAdmin) {
+      const existing = await subscriptionRef(uid).get();
+      if (!existing.exists() || !existing.val() || !existing.val().forever) {
+        await subscriptionRef(uid).set({
+          active: true,
+          trial: false,
+          forever: true,
+          expiresAt: null,
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+          note: 'admin'
+        });
+      }
+      return res.json(buildSubscriptionStatus(uid, { forever: true }, true));
+    }
+    const data = await ensureSubscriptionRecord(uid);
+    return res.json(buildSubscriptionStatus(uid, data, false));
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: 'subscription' });
+  }
+});
+
+// Выдать доступ вручную (только админ). body: { userId, days?, forever? }
+app.post('/admin/grant', async function (req, res) {
+  const user = authUser(req);
+  if (!user || !user.isAdmin) return res.status(403).json({ error: 'forbidden' });
+  const targetId = String((req.body && req.body.userId) || '').trim();
+  if (!targetId) return res.status(400).json({ error: 'userId' });
+  const forever = !!(req.body && req.body.forever);
+  const days = Math.max(0, parseInt(req.body && req.body.days, 10) || 0);
+  try {
+    const ref = subscriptionRef(targetId);
+    const snap = await ref.get();
+    const prev = snap.exists() ? snap.val() : {};
+    const now = Date.now();
+    let entry;
+    if (forever) {
+      entry = {
+        active: true,
+        trial: false,
+        forever: true,
+        expiresAt: null,
+        createdAt: (prev && prev.createdAt) || now,
+        updatedAt: now,
+        grantedBy: String(user.id)
+      };
+    } else {
+      const base = Math.max(now, (prev && prev.expiresAt) || 0);
+      const expiresAt = base + (days || 30) * DAY_MS;
+      entry = {
+        active: true,
+        trial: false,
+        forever: false,
+        expiresAt: expiresAt,
+        createdAt: (prev && prev.createdAt) || now,
+        updatedAt: now,
+        grantedBy: String(user.id)
+      };
+    }
+    await ref.set(entry);
+    return res.json(buildSubscriptionStatus(targetId, entry, false));
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: 'grant' });
+  }
 });
 
 app.post('/register', async function (req, res) {

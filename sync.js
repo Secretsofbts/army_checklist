@@ -153,6 +153,98 @@ function registerUserIfNeeded() {
 }
 registerUserIfNeeded();
 
+  // Проверка подписки: без оплаты — экран-заглушка. Галочки и прогресс НЕ стираем.
+  function showSubscriptionPaywall(info) {
+    if (document.getElementById('army-paywall')) return;
+    info = info || {};
+    const overlay = document.createElement('div');
+    overlay.id = 'army-paywall';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.style.cssText = [
+      'position:fixed', 'inset:0', 'z-index:2147483646',
+      'background:linear-gradient(165deg,#ebe6f4 0%,#f7f5fb 45%,#efeaf8 100%)',
+      'display:flex', 'align-items:center', 'justify-content:center',
+      'padding:24px 18px', 'box-sizing:border-box',
+      'font-family:Arial,sans-serif'
+    ].join(';');
+
+    const card = document.createElement('div');
+    card.style.cssText = [
+      'width:100%', 'max-width:340px', 'background:#fff',
+      'border-radius:18px', 'padding:28px 22px 24px',
+      'box-shadow:0 10px 40px rgba(80,60,120,0.12)',
+      'text-align:center'
+    ].join(';');
+
+    const title = document.createElement('div');
+    title.textContent = 'Нужна подписка';
+    title.style.cssText = 'font-size:20px;font-weight:700;color:#2b2440;margin:0 0 10px';
+
+    const text = document.createElement('div');
+    text.textContent = 'Пробный период закончился. Чтобы снова открыть чеклист, оформите подписку. Все ваши галочки сохранены и никуда не денутся.';
+    text.style.cssText = 'font-size:14px;line-height:1.45;color:#666;margin:0 0 18px';
+
+    const price = document.createElement('div');
+    price.textContent = (info.priceRub || 200) + ' ₽ в месяц';
+    price.style.cssText = 'font-size:16px;font-weight:600;color:#5b4a7a;margin:0 0 16px';
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = 'Оплата скоро';
+    btn.disabled = true;
+    btn.style.cssText = [
+      'width:100%', 'border:none', 'border-radius:12px', 'padding:14px 16px',
+      'font-size:15px', 'font-weight:600', 'cursor:default',
+      'background:#d9d2e8', 'color:#5b4a7a'
+    ].join(';');
+
+    const note = document.createElement('div');
+    note.textContent = 'Оплату подключим следующим шагом. Если срок уже должен быть открыт — напишите в поддержку.';
+    note.style.cssText = 'font-size:12px;line-height:1.4;color:#999;margin:14px 0 0';
+
+    card.appendChild(title);
+    card.appendChild(text);
+    card.appendChild(price);
+    card.appendChild(btn);
+    card.appendChild(note);
+    overlay.appendChild(card);
+
+    function mount() {
+      if (!document.body) return;
+      document.body.appendChild(overlay);
+      try {
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
+      } catch (e) {}
+    }
+    if (document.body) mount();
+    else document.addEventListener('DOMContentLoaded', mount);
+  }
+
+  function checkSubscriptionAccess() {
+    const api = String(ARMY_API_URL || '').replace(/\/$/, '');
+    if (!api || !ARMY_USER_ID) return;
+    fetch(api + '/subscription', {
+      method: 'GET',
+      headers: {
+        'X-Telegram-Init-Data': telegramInitData()
+      }
+    })
+      .then(function (res) {
+        if (res.status === 404) return null;
+        if (!res.ok) return null;
+        return res.json();
+      })
+      .then(function (data) {
+        if (!data || typeof data !== 'object') return;
+        if (data.ok) return;
+        showSubscriptionPaywall(data);
+      })
+      .catch(function () {});
+  }
+  checkSubscriptionAccess();
+
   function saveToCloudWithRetry(path, value, attempt) {
     attempt = attempt || 1;
     armyCloudFetch(path, {
