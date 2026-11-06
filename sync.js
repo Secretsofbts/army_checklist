@@ -235,19 +235,13 @@ registerUserIfNeeded();
     ].join(';');
 
     const title = document.createElement('div');
+    title.textContent = 'Откройте доступ к чек-листу';
     title.style.cssText = [
       'font-family:Arial,sans-serif',
-      'font-size:20px', 'font-weight:700',
+      'font-size:18px', 'font-weight:700',
       'color:#2b2440', 'margin:0 0 18px', 'line-height:1.3',
       'text-align:center'
     ].join(';');
-    const titleL1 = document.createElement('div');
-    titleL1.textContent = 'Откройте доступ';
-    const titleL2 = document.createElement('div');
-    titleL2.textContent = 'к чек-листу';
-    titleL2.style.cssText = 'margin-top:2px';
-    title.appendChild(titleL1);
-    title.appendChild(titleL2);
 
     const plans = document.createElement('div');
     plans.style.cssText = 'display:flex;flex-direction:column;gap:10px;margin:0 0 18px';
