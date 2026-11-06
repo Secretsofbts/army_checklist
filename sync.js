@@ -178,36 +178,42 @@ registerUserIfNeeded();
     ].join(';');
 
     const title = document.createElement('div');
-    title.textContent = 'Нужна подписка';
-    title.style.cssText = 'font-size:20px;font-weight:700;color:#2b2440;margin:0 0 10px';
+    title.textContent = 'Для продолжения использования чек-листа оформите подписку';
+    title.style.cssText = 'font-size:17px;font-weight:700;color:#2b2440;margin:0 0 18px;line-height:1.35';
 
-    const text = document.createElement('div');
-    text.textContent = 'Пробный период закончился. Чтобы снова открыть чеклист, оформите подписку. Все ваши галочки сохранены и никуда не денутся.';
-    text.style.cssText = 'font-size:14px;line-height:1.45;color:#666;margin:0 0 18px';
+    const plans = document.createElement('div');
+    plans.style.cssText = 'display:flex;flex-direction:column;gap:10px;margin:0 0 18px';
 
-    const price = document.createElement('div');
-    price.textContent = (info.priceRub || 200) + ' ₽ в месяц';
-    price.style.cssText = 'font-size:16px;font-weight:600;color:#5b4a7a;margin:0 0 16px';
-
-    const btn = document.createElement('button');
-    btn.type = 'button';
-    btn.textContent = 'Оплата скоро';
-    btn.disabled = true;
-    btn.style.cssText = [
+    const monthBtn = document.createElement('button');
+    monthBtn.type = 'button';
+    monthBtn.disabled = true;
+    monthBtn.style.cssText = [
       'width:100%', 'border:none', 'border-radius:12px', 'padding:14px 16px',
-      'font-size:15px', 'font-weight:600', 'cursor:default',
-      'background:#d9d2e8', 'color:#5b4a7a'
+      'font-size:15px', 'font-weight:600', 'cursor:default', 'text-align:left',
+      'background:#ebe6f4', 'color:#2b2440',
+      'display:flex', 'justify-content:space-between', 'align-items:center', 'gap:10px'
     ].join(';');
+    const monthLabel = document.createElement('span');
+    monthLabel.textContent = (info.priceRub || 200) + ' ₽ — месяц';
+    const monthSoon = document.createElement('span');
+    monthSoon.textContent = 'оплата скоро';
+    monthSoon.style.cssText = 'font-size:12px;font-weight:600;color:#8a7aa8';
+    monthBtn.appendChild(monthLabel);
+    monthBtn.appendChild(monthSoon);
+    plans.appendChild(monthBtn);
 
     const note = document.createElement('div');
-    note.textContent = 'Оплату подключим следующим шагом. Если срок уже должен быть открыт — напишите в поддержку.';
-    note.style.cssText = 'font-size:12px;line-height:1.4;color:#999;margin:14px 0 0';
+    note.textContent = 'Все ваши галочки будут сохранены. Если чек-лист уже должен быть открыт — напишите в поддержку (личные сообщения «Любимого архива»).';
+    note.style.cssText = 'font-size:13px;line-height:1.45;color:#666;margin:0 0 14px;text-align:left';
+
+    const thanks = document.createElement('div');
+    thanks.textContent = 'Спасибо, что пользуетесь ботом 💜';
+    thanks.style.cssText = 'font-size:13px;line-height:1.4;color:#5b4a7a;font-weight:600';
 
     card.appendChild(title);
-    card.appendChild(text);
-    card.appendChild(price);
-    card.appendChild(btn);
+    card.appendChild(plans);
     card.appendChild(note);
+    card.appendChild(thanks);
     overlay.appendChild(card);
 
     function mount() {
