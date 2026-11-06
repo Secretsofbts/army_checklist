@@ -226,6 +226,14 @@ registerUserIfNeeded();
       'font-family:Arial,sans-serif', 'visibility:visible'
     ].join(';');
 
+    if (!document.getElementById('army-paywall-font')) {
+      const fontLink = document.createElement('link');
+      fontLink.id = 'army-paywall-font';
+      fontLink.rel = 'stylesheet';
+      fontLink.href = 'https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap';
+      (document.head || document.documentElement).appendChild(fontLink);
+    }
+
     const card = document.createElement('div');
     card.style.cssText = [
       'width:100%', 'max-width:340px', 'background:#fff',
@@ -235,17 +243,19 @@ registerUserIfNeeded();
     ].join(';');
 
     const title = document.createElement('div');
-    title.textContent = 'Откройте доступ к чек-листу';
     title.style.cssText = [
-      'font-size:22px', 'font-weight:700', 'color:#3a2f55',
-      'margin:0 0 8px', 'line-height:1.25', 'text-align:center',
-      'letter-spacing:-0.01em'
+      'font-family:\'Great Vibes\',cursive',
+      'font-size:40px', 'font-weight:400', 'font-style:normal',
+      'color:#4a3a6b', 'margin:4px 0 22px', 'line-height:1.15',
+      'text-align:center'
     ].join(';');
-    const titleLine = document.createElement('div');
-    titleLine.style.cssText = [
-      'width:48px', 'height:3px', 'border-radius:2px',
-      'background:#9b7fd4', 'margin:0 auto 20px'
-    ].join(';');
+    const titleL1 = document.createElement('div');
+    titleL1.textContent = 'Откройте доступ';
+    const titleL2 = document.createElement('div');
+    titleL2.textContent = 'к чек-листу';
+    titleL2.style.cssText = 'margin-top:2px';
+    title.appendChild(titleL1);
+    title.appendChild(titleL2);
 
     const plans = document.createElement('div');
     plans.style.cssText = 'display:flex;flex-direction:column;gap:10px;margin:0 0 18px';
@@ -268,18 +278,12 @@ registerUserIfNeeded();
     monthBtn.appendChild(monthSoon);
     plans.appendChild(monthBtn);
 
-    const note = document.createElement('div');
-    note.textContent = 'Все ваши галочки будут сохранены.';
-    note.style.cssText = 'font-size:13px;line-height:1.45;color:#666;margin:0 0 14px;text-align:center';
-
     const thanks = document.createElement('div');
     thanks.textContent = 'Спасибо, что пользуетесь ботом 💜';
     thanks.style.cssText = 'font-size:13px;line-height:1.4;color:#5b4a7a;font-weight:600';
 
     card.appendChild(title);
-    card.appendChild(titleLine);
     card.appendChild(plans);
-    card.appendChild(note);
     card.appendChild(thanks);
     overlay.appendChild(card);
     armyMountTopOverlay(overlay);
