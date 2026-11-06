@@ -8,6 +8,11 @@ const ADMIN_IDS = String(process.env.ADMIN_TELEGRAM_IDS || '891936733')
   .split(',')
   .map(function (s) { return s.trim(); })
   .filter(Boolean);
+// Тестовые аккаунты «как будто не оплачено» (ваша 2-я страница). Убрать ID из списка, когда тест закончите.
+const FORCE_EXPIRED_IDS = String(process.env.FORCE_EXPIRED_IDS || '2055929706')
+  .split(',')
+  .map(function (s) { return s.trim(); })
+  .filter(Boolean);
 const DAY_MS = 24 * 60 * 60 * 1000;
 const LEGACY_TRIAL_DAYS = 3;
 const NEW_TRIAL_DAYS = 10;
@@ -201,6 +206,24 @@ app.get('/subscription', async function (req, res) {
         });
       }
       return res.json(buildSubscriptionStatus(uid, { forever: true }, true));
+    }
+    // Принудительно показать экран «нужна подписка» (тест)
+    if (FORCE_EXPIRED_IDS.indexOf(uid) !== -1) {
+      const now = Date.now();
+      await subscriptionRef(uid).set({
+        active: false,
+        trial: false,
+        forever: false,
+        expiresAt: now - DAY_MS,
+        createdAt: now,
+        updatedAt: now,
+        note: 'force-expired-test'
+      });
+      return res.json(buildSubscriptionStatus(uid, {
+        forever: false,
+        trial: false,
+        expiresAt: now - DAY_MS
+      }, false));
     }
     const data = await ensureSubscriptionRecord(uid);
     return res.json(buildSubscriptionStatus(uid, data, false));
