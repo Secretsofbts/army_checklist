@@ -151,11 +151,37 @@ function buildSubscriptionStatus(uid, data, isAdmin) {
   };
 }
 
+// Полуночь по Москве (UTC+3) для календарного дня ms, плюс N суток.
+function moscowMidnightPlusDays(ms, days) {
+  const MOSCOW = 3 * 60 * 60 * 1000;
+  const local = ms + MOSCOW;
+  const startOfDay = Math.floor(local / DAY_MS) * DAY_MS - MOSCOW;
+  return startOfDay + days * DAY_MS;
+}
+
+// Старым: сегодняшний день не считаем, 3 полных дня с завтра (до полуночи после 3-го дня).
+function legacyTrialExpiresAt(now) {
+  // завтра 00:00 МСК + 3 дня = конец 3-го бесплатного дня
+  return moscowMidnightPlusDays(now, 1 + LEGACY_TRIAL_DAYS);
+}
+
 async function ensureSubscriptionRecord(uid) {
   const ref = subscriptionRef(uid);
   const snap = await ref.get();
   if (snap.exists() && snap.val()) {
-    return snap.val();
+    const existing = snap.val();
+    // Если пробный период старым уже записали «со сегодня» — подвинем на «с завтра», если новый срок позже
+    if (existing.trial && existing.trialDays === LEGACY_TRIAL_DAYS && !existing.forever &&
+        existing.note !== 'force-expired-test') {
+      const fixed = legacyTrialExpiresAt(Date.now());
+      if (!existing.expiresAt || existing.expiresAt < fixed) {
+        existing.expiresAt = fixed;
+        existing.active = true;
+        existing.updatedAt = Date.now();
+        await ref.set(existing);
+      }
+    }
+    return existing;
   }
 
   const registrySnap = await db.ref('user_registry/' + uid).get();
@@ -164,11 +190,11 @@ async function ensureSubscriptionRecord(uid) {
   const isLegacy = firstSeen < SUBSCRIPTION_LAUNCH_AT;
   const trialDays = isLegacy ? LEGACY_TRIAL_DAYS : NEW_TRIAL_DAYS;
   const now = Date.now();
-  // Старым: 3 дня от запуска оплаты. Новым: 10 дней от первой регистрации (не меньше «сейчас + 10»).
+  // Старым: сегодня бесплатно «в подарок», 3 дня считаем с завтра.
+  // Новым: 10 дней от первой регистрации (не меньше «сейчас + 10»).
   let expiresAt;
   if (isLegacy) {
-    expiresAt = SUBSCRIPTION_LAUNCH_AT + trialDays * DAY_MS;
-    if (expiresAt < now) expiresAt = now + trialDays * DAY_MS;
+    expiresAt = legacyTrialExpiresAt(now);
   } else {
     expiresAt = firstSeen + trialDays * DAY_MS;
     if (expiresAt < now) expiresAt = now + trialDays * DAY_MS;
