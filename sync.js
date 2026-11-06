@@ -226,14 +226,6 @@ registerUserIfNeeded();
       'font-family:Arial,sans-serif', 'visibility:visible'
     ].join(';');
 
-    if (!document.getElementById('army-paywall-font')) {
-      const fontLink = document.createElement('link');
-      fontLink.id = 'army-paywall-font';
-      fontLink.rel = 'stylesheet';
-      fontLink.href = 'https://fonts.googleapis.com/css2?family=Marck+Script&display=swap';
-      (document.head || document.documentElement).appendChild(fontLink);
-    }
-
     const card = document.createElement('div');
     card.style.cssText = [
       'width:100%', 'max-width:340px', 'background:#fff',
@@ -244,13 +236,10 @@ registerUserIfNeeded();
 
     const title = document.createElement('div');
     title.style.cssText = [
-      'font-family:\'Marck Script\',cursive',
-      'font-size:34px', 'font-weight:400', 'font-style:normal',
-      'color:#4a3a6b', 'margin:0 0 18px', 'line-height:1.2',
-      'text-align:center',
-      'padding:18px 14px 16px',
-      'border-radius:14px',
-      'background:linear-gradient(165deg,#efe8f8 0%,#e4daf2 55%,#ddd0ee 100%)'
+      'font-family:Arial,sans-serif',
+      'font-size:20px', 'font-weight:700',
+      'color:#2b2440', 'margin:0 0 18px', 'line-height:1.3',
+      'text-align:center'
     ].join(';');
     const titleL1 = document.createElement('div');
     titleL1.textContent = 'Откройте доступ';
