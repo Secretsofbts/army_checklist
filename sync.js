@@ -246,8 +246,11 @@ registerUserIfNeeded();
     title.style.cssText = [
       'font-family:\'Marck Script\',cursive',
       'font-size:34px', 'font-weight:400', 'font-style:normal',
-      'color:#4a3a6b', 'margin:4px 0 22px', 'line-height:1.2',
-      'text-align:center'
+      'color:#4a3a6b', 'margin:0 0 18px', 'line-height:1.2',
+      'text-align:center',
+      'padding:18px 14px 16px',
+      'border-radius:14px',
+      'background:linear-gradient(165deg,#efe8f8 0%,#e4daf2 55%,#ddd0ee 100%)'
     ].join(';');
     const titleL1 = document.createElement('div');
     titleL1.textContent = 'Откройте доступ';
