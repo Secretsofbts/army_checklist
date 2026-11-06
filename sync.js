@@ -235,13 +235,16 @@ registerUserIfNeeded();
     ].join(';');
 
     const title = document.createElement('div');
-    title.textContent = 'Для продолжения использования чек-листа оформите подписку';
+    title.textContent = 'Откройте доступ к чек-листу';
     title.style.cssText = [
-      'font-size:20px', 'font-weight:800', 'color:#2b2440',
-      'margin:0 0 20px', 'line-height:1.3', 'letter-spacing:-0.02em',
-      'padding:14px 14px 14px 16px', 'text-align:left',
-      'background:linear-gradient(90deg,#f3eef9 0%,#faf8fc 100%)',
-      'border-left:4px solid #8b6fc0', 'border-radius:12px'
+      'font-size:22px', 'font-weight:700', 'color:#3a2f55',
+      'margin:0 0 8px', 'line-height:1.25', 'text-align:center',
+      'letter-spacing:-0.01em'
+    ].join(';');
+    const titleLine = document.createElement('div');
+    titleLine.style.cssText = [
+      'width:48px', 'height:3px', 'border-radius:2px',
+      'background:#9b7fd4', 'margin:0 auto 20px'
     ].join(';');
 
     const plans = document.createElement('div');
@@ -266,14 +269,15 @@ registerUserIfNeeded();
     plans.appendChild(monthBtn);
 
     const note = document.createElement('div');
-    note.textContent = 'Все ваши галочки будут сохранены. Если чек-лист уже должен быть открыт — напишите в личные сообщения «Любимого архива».';
-    note.style.cssText = 'font-size:13px;line-height:1.45;color:#666;margin:0 0 14px;text-align:left';
+    note.textContent = 'Все ваши галочки будут сохранены.';
+    note.style.cssText = 'font-size:13px;line-height:1.45;color:#666;margin:0 0 14px;text-align:center';
 
     const thanks = document.createElement('div');
     thanks.textContent = 'Спасибо, что пользуетесь ботом 💜';
     thanks.style.cssText = 'font-size:13px;line-height:1.4;color:#5b4a7a;font-weight:600';
 
     card.appendChild(title);
+    card.appendChild(titleLine);
     card.appendChild(plans);
     card.appendChild(note);
     card.appendChild(thanks);
