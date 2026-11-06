@@ -154,9 +154,66 @@ function registerUserIfNeeded() {
 registerUserIfNeeded();
 
   // Проверка подписки: без оплаты — экран-заглушка. Галочки и прогресс НЕ стираем.
+  // Сразу закрываем экран, чтобы не мелькал чеклист до ответа сервера.
+  function armyMountTopOverlay(el) {
+    function go() {
+      const host = document.body || document.documentElement;
+      if (!host) return;
+      host.appendChild(el);
+      try {
+        document.documentElement.style.overflow = 'hidden';
+        if (document.body) document.body.style.overflow = 'hidden';
+      } catch (e) {}
+    }
+    if (document.body || document.documentElement) go();
+    else document.addEventListener('DOMContentLoaded', go);
+  }
+
+  function armyRemoveEl(id) {
+    const el = document.getElementById(id);
+    if (el && el.parentNode) el.parentNode.removeChild(el);
+  }
+
+  function armyUnlockPageScroll() {
+    try {
+      document.documentElement.style.overflow = '';
+      if (document.body) document.body.style.overflow = '';
+    } catch (e) {}
+  }
+
+  function showSubscriptionGateLock() {
+    if (document.getElementById('army-sub-lock') || document.getElementById('army-paywall')) return;
+    document.documentElement.classList.add('army-await-sub');
+    if (!document.getElementById('army-sub-lock-css')) {
+      const css = document.createElement('style');
+      css.id = 'army-sub-lock-css';
+      css.textContent = 'html.army-await-sub body{visibility:hidden!important}html.army-await-sub #army-sub-lock,html.army-await-sub #army-paywall{visibility:visible!important}';
+      (document.head || document.documentElement).appendChild(css);
+    }
+    const lock = document.createElement('div');
+    lock.id = 'army-sub-lock';
+    lock.style.cssText = [
+      'position:fixed', 'inset:0', 'z-index:2147483646',
+      'background:linear-gradient(165deg,#ebe6f4 0%,#f7f5fb 45%,#efeaf8 100%)',
+      'pointer-events:auto'
+    ].join(';');
+    armyMountTopOverlay(lock);
+  }
+
+  function clearSubscriptionGateLock() {
+    document.documentElement.classList.remove('army-await-sub');
+    armyRemoveEl('army-sub-lock');
+    armyRemoveEl('army-sub-lock-css');
+    if (!document.getElementById('army-paywall')) armyUnlockPageScroll();
+  }
+
   function showSubscriptionPaywall(info) {
-    if (document.getElementById('army-paywall')) return;
     info = info || {};
+    armyRemoveEl('army-sub-lock');
+    document.documentElement.classList.remove('army-await-sub');
+    armyRemoveEl('army-sub-lock-css');
+    if (document.getElementById('army-paywall')) return;
+
     const overlay = document.createElement('div');
     overlay.id = 'army-paywall';
     overlay.setAttribute('role', 'dialog');
@@ -166,7 +223,7 @@ registerUserIfNeeded();
       'background:linear-gradient(165deg,#ebe6f4 0%,#f7f5fb 45%,#efeaf8 100%)',
       'display:flex', 'align-items:center', 'justify-content:center',
       'padding:24px 18px', 'box-sizing:border-box',
-      'font-family:Arial,sans-serif'
+      'font-family:Arial,sans-serif', 'visibility:visible'
     ].join(';');
 
     const card = document.createElement('div');
@@ -179,7 +236,13 @@ registerUserIfNeeded();
 
     const title = document.createElement('div');
     title.textContent = 'Для продолжения использования чек-листа оформите подписку';
-    title.style.cssText = 'font-size:17px;font-weight:700;color:#2b2440;margin:0 0 18px;line-height:1.35';
+    title.style.cssText = [
+      'font-size:20px', 'font-weight:800', 'color:#2b2440',
+      'margin:0 0 20px', 'line-height:1.3', 'letter-spacing:-0.02em',
+      'padding:14px 14px 14px 16px', 'text-align:left',
+      'background:linear-gradient(90deg,#f3eef9 0%,#faf8fc 100%)',
+      'border-left:4px solid #8b6fc0', 'border-radius:12px'
+    ].join(';');
 
     const plans = document.createElement('div');
     plans.style.cssText = 'display:flex;flex-direction:column;gap:10px;margin:0 0 18px';
@@ -203,7 +266,7 @@ registerUserIfNeeded();
     plans.appendChild(monthBtn);
 
     const note = document.createElement('div');
-    note.textContent = 'Все ваши галочки будут сохранены. Если чек-лист уже должен быть открыт — напишите в поддержку (личные сообщения «Любимого архива»).';
+    note.textContent = 'Все ваши галочки будут сохранены. Если чек-лист уже должен быть открыт — напишите в личные сообщения «Любимого архива».';
     note.style.cssText = 'font-size:13px;line-height:1.45;color:#666;margin:0 0 14px;text-align:left';
 
     const thanks = document.createElement('div');
@@ -215,22 +278,13 @@ registerUserIfNeeded();
     card.appendChild(note);
     card.appendChild(thanks);
     overlay.appendChild(card);
-
-    function mount() {
-      if (!document.body) return;
-      document.body.appendChild(overlay);
-      try {
-        document.documentElement.style.overflow = 'hidden';
-        document.body.style.overflow = 'hidden';
-      } catch (e) {}
-    }
-    if (document.body) mount();
-    else document.addEventListener('DOMContentLoaded', mount);
+    armyMountTopOverlay(overlay);
   }
 
   function checkSubscriptionAccess() {
     const api = String(ARMY_API_URL || '').replace(/\/$/, '');
     if (!api || !ARMY_USER_ID) return;
+    showSubscriptionGateLock();
     fetch(api + '/subscription', {
       method: 'GET',
       headers: {
@@ -243,11 +297,19 @@ registerUserIfNeeded();
         return res.json();
       })
       .then(function (data) {
-        if (!data || typeof data !== 'object') return;
-        if (data.ok) return;
+        if (!data || typeof data !== 'object') {
+          clearSubscriptionGateLock();
+          return;
+        }
+        if (data.ok) {
+          clearSubscriptionGateLock();
+          return;
+        }
         showSubscriptionPaywall(data);
       })
-      .catch(function () {});
+      .catch(function () {
+        clearSubscriptionGateLock();
+      });
   }
   checkSubscriptionAccess();
 
