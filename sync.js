@@ -598,13 +598,32 @@ registerUserIfNeeded();
     paintRewatchBadges();
   }
 
+  // Недавние локальные клики по галочкам: облако не должно их сразу перезаписать старым значением
+  var recentLocalChecks = Object.create(null);
+  var RECENT_CHECK_MS = 20000;
+
+  function rememberLocalCheck(id, nowTrue) {
+    recentLocalChecks[id] = { value: !!nowTrue, at: Date.now() };
+  }
+
+  function shouldKeepLocalCheck(id) {
+    const rec = recentLocalChecks[id];
+    if (!rec) return false;
+    if (Date.now() - rec.at > RECENT_CHECK_MS) {
+      delete recentLocalChecks[id];
+      return false;
+    }
+    return true;
+  }
+
   function setChecked(id, value) {
     const nowTrue = value === true || value === 'true';
     const wasTrue = localStorage.getItem(id) === 'true';
     localStorage.setItem(id, value);
+    rememberLocalCheck(id, nowTrue);
     bumpCheckActivity(id, nowTrue, wasTrue);
     if (ARMY_USER_ID) {
-      saveToCloudWithRetry(`users/${ARMY_USER_ID}/${id}`, value);
+      saveToCloudWithRetry(`users/${ARMY_USER_ID}/${id}`, nowTrue);
     }
     paintRewatchBadges();
   }
@@ -770,12 +789,20 @@ registerUserIfNeeded();
         let changed = false;
         document.querySelectorAll('[data-id]').forEach((row) => {
           const id = row.dataset.id;
-          if (data[id] !== undefined && data[id] !== (localStorage.getItem(id) === 'true')) {
+          if (data[id] === undefined) return;
+          const cloudTrue = data[id] === true || data[id] === 'true';
+          const localTrue = localStorage.getItem(id) === 'true';
+          if (shouldKeepLocalCheck(id)) {
+            // Только что нажали — не откатываем облаком. Если облако уже совпало — забываем защиту.
+            if (cloudTrue === localTrue) delete recentLocalChecks[id];
+            return;
+          }
+          if (cloudTrue !== localTrue) {
             const box = row.querySelector('input[type="checkbox"]');
             const span = row.querySelector('.text');
-            if (box) box.checked = data[id];
-            if (span) span.classList.toggle('done', data[id]);
-            localStorage.setItem(id, data[id]);
+            if (box) box.checked = cloudTrue;
+            if (span) span.classList.toggle('done', cloudTrue);
+            localStorage.setItem(id, cloudTrue);
             changed = true;
           }
         });
@@ -828,7 +855,13 @@ registerUserIfNeeded();
           if (k.indexOf('progress:') === 0) {
             localStorage.setItem(k, JSON.stringify(data[k]));
           } else {
-            localStorage.setItem(k, data[k]);
+            if (shouldKeepLocalCheck(k)) {
+              const cloudTrue = data[k] === true || data[k] === 'true';
+              const localTrue = localStorage.getItem(k) === 'true';
+              if (cloudTrue === localTrue) delete recentLocalChecks[k];
+              return;
+            }
+            localStorage.setItem(k, data[k] === true || data[k] === 'true');
           }
         });
         paintRewatchBadges();
