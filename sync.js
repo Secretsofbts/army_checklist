@@ -230,7 +230,7 @@ registerUserIfNeeded();
       const fontLink = document.createElement('link');
       fontLink.id = 'army-paywall-font';
       fontLink.rel = 'stylesheet';
-      fontLink.href = 'https://fonts.googleapis.com/css2?family=Great+Vibes&display=swap';
+      fontLink.href = 'https://fonts.googleapis.com/css2?family=Marck+Script&display=swap';
       (document.head || document.documentElement).appendChild(fontLink);
     }
 
@@ -244,9 +244,9 @@ registerUserIfNeeded();
 
     const title = document.createElement('div');
     title.style.cssText = [
-      'font-family:\'Great Vibes\',cursive',
-      'font-size:40px', 'font-weight:400', 'font-style:normal',
-      'color:#4a3a6b', 'margin:4px 0 22px', 'line-height:1.15',
+      'font-family:\'Marck Script\',cursive',
+      'font-size:34px', 'font-weight:400', 'font-style:normal',
+      'color:#4a3a6b', 'margin:4px 0 22px', 'line-height:1.2',
       'text-align:center'
     ].join(';');
     const titleL1 = document.createElement('div');
