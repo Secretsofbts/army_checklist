@@ -1,6 +1,6 @@
   // sync.js — общая логика облачной синхронизации через Firebase
   const FIREBASE_URL = "https://army-checklist-default-rtdb.firebaseio.com";
-  const ARMY_API_URL = "";
+  const ARMY_API_URL = "https://army-checklist.onrender.com";
   function telegramInitData() {
     const tg = window.Telegram && window.Telegram.WebApp;
     return (tg && tg.initData) || '';
