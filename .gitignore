@@ -1,0 +1,3 @@
+army-api/.env
+army-api/node_modules/
+army-api/serviceAccount.json

@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=81"></script>
+  <script src="sync.js?v=82"></script>
   <title>Вопрос-ответ</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -66,12 +66,12 @@
       }
 
       const getNickname = (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID)
-        ? fetch(`${FIREBASE_URL}/user_registry/${ARMY_USER_ID}.json`).then(res => res.json()).catch(() => null)
+        ? armyCloudFetch('user_registry/' + ARMY_USER_ID).then(res => res.json()).catch(() => null)
         : Promise.resolve(null);
 
       getNickname.then((entry) => {
         const askerNickname = (entry && entry.nickname) ? entry.nickname : null;
-        fetch(`${FIREBASE_URL}/qa.json`, {
+        armyCloudFetch('qa', {
           method: 'POST',
           body: JSON.stringify({ question: text, status: 'pending', askedAt: Date.now(), askerName: askerName, askerNickname: askerNickname })
         })
@@ -91,7 +91,7 @@
 
        function deleteEntry(key) {
       if (!confirm('Удалить этот вопрос насовсем?')) return;
-      fetch(`${FIREBASE_URL}/qa/${key}.json`, { method: 'DELETE' }).then(() => loadAll());
+      armyCloudFetch('qa/' + key, { method: 'DELETE' }).then(() => loadAll());
     }
 
         let lastPublishedData = {};
@@ -148,7 +148,7 @@
           editBtn.addEventListener('click', () => {
             const newAnswer = prompt('Изменить ответ:', entry.answer);
             if (newAnswer === null || !newAnswer.trim()) return;
-            fetch(`${FIREBASE_URL}/qa/${key}.json`, {
+            armyCloudFetch('qa/' + key, {
               method: 'PATCH',
               body: JSON.stringify({ answer: newAnswer.trim() })
             }).then(() => loadAll());
@@ -195,7 +195,7 @@
           const answer = textarea.value.trim();
           if (!answer) return;
           publishBtn.disabled = true;
-          fetch(`${FIREBASE_URL}/qa/${key}.json`, {
+          armyCloudFetch('qa/' + key, {
             method: 'PATCH',
             body: JSON.stringify({ answer, status: 'published', answeredAt: Date.now() })
           })
@@ -218,7 +218,7 @@
        document.getElementById('search-input').addEventListener('input', applySearchFilter);
 
     function loadAll() {
-      fetch(`${FIREBASE_URL}/qa.json`)
+      armyCloudFetch('qa')
         .then(res => res.json())
         .then(data => {
           data = data || {};

@@ -1,5 +1,26 @@
   // sync.js — общая логика облачной синхронизации через Firebase
   const FIREBASE_URL = "https://army-checklist-default-rtdb.firebaseio.com";
+  const ARMY_API_URL = "";
+  function telegramInitData() {
+    const tg = window.Telegram && window.Telegram.WebApp;
+    return (tg && tg.initData) || '';
+  }
+  function armyCloudFetch(path, options) {
+    options = options || {};
+    const clean = String(path || '').replace(/^\/+/, '').replace(/\.json$/, '');
+    const api = String(ARMY_API_URL || '').replace(/\/$/, '');
+    if (!api) {
+      return fetch(FIREBASE_URL + '/' + clean + '.json', options);
+    }
+    const headers = Object.assign({}, options.headers || {});
+    headers['X-Telegram-Init-Data'] = telegramInitData();
+    if (options.body != null && !headers['Content-Type'] && !headers['content-type']) {
+      headers['Content-Type'] = 'application/json';
+    }
+    return fetch(api + '/cloud/' + clean, Object.assign({}, options, { headers: headers }));
+  }
+  window.armyCloudFetch = armyCloudFetch;
+  window.FIREBASE_URL = FIREBASE_URL;
   var STAT_CHECKBOX_IDS = {};
   let ARMY_USER_ID = null;
   if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
@@ -78,8 +99,28 @@
   // Регистрация нового пользователя (один раз на каждого человека)
 function registerUserIfNeeded() {
   if (!ARMY_USER_ID) return;
+  const api = String(ARMY_API_URL || '').replace(/\/$/, '');
+  if (api) {
+    fetch(api + '/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-Telegram-Init-Data': telegramInitData()
+      },
+      body: '{}'
+    })
+      .then(function (res) { return res.json(); })
+      .then(function (existing) {
+        if (existing && existing.number) {
+          localStorage.setItem('userNumber_' + ARMY_USER_ID, existing.number);
+          if (existing.firstSeen) localStorage.setItem('userFirstSeen_' + ARMY_USER_ID, existing.firstSeen);
+        }
+      })
+      .catch(function () {});
+    return;
+  }
 
-  fetch(`${FIREBASE_URL}/user_registry/${ARMY_USER_ID}.json`)
+  armyCloudFetch('user_registry/' + ARMY_USER_ID)
     .then(res => res.json())
     .then(existing => {
       if (existing && existing.number) {
@@ -89,17 +130,17 @@ function registerUserIfNeeded() {
         return;
       }
       // новый пользователь — узнаём текущий счётчик и увеличиваем
-           fetch(`${FIREBASE_URL}/user_count.json`)
+           armyCloudFetch('user_count')
         .then(res => res.json())
         .then(count => {
           const newNumber = (count || 0) + 1;
           const firstSeen = Date.now();
-          fetch(`${FIREBASE_URL}/user_count.json`, {
+          armyCloudFetch('user_count', {
             method: 'PUT',
             body: JSON.stringify(newNumber),
             keepalive: true
           });
-          fetch(`${FIREBASE_URL}/user_registry/${ARMY_USER_ID}.json`, {
+          armyCloudFetch('user_registry/' + ARMY_USER_ID, {
             method: 'PUT',
             body: JSON.stringify({ number: newNumber, firstSeen }),
             keepalive: true
@@ -114,7 +155,7 @@ registerUserIfNeeded();
 
   function saveToCloudWithRetry(path, value, attempt) {
     attempt = attempt || 1;
-    fetch(`${FIREBASE_URL}/${path}.json`, {
+    armyCloudFetch(path, {
       method: 'PUT',
       body: JSON.stringify(value),
       keepalive: true
@@ -630,7 +671,7 @@ registerUserIfNeeded();
   // Подтягивает облачные данные и обновляет чекбоксы на странице (без задержки экрана)
   function syncChecklistFromCloud(onChanged) {
     if (!ARMY_USER_ID) return;
-    fetch(`${FIREBASE_URL}/users/${ARMY_USER_ID}.json`)
+    armyCloudFetch('users/' + ARMY_USER_ID)
       .then(res => res.json())
       .then(data => {
         if (!data) return;
@@ -655,7 +696,7 @@ registerUserIfNeeded();
   // Подтягивает бейджи статистики для страниц-хабов
   function syncBadgesFromCloud(keys, applyFn) {
     if (!ARMY_USER_ID) return;
-    fetch(`${FIREBASE_URL}/users/${ARMY_USER_ID}.json`)
+    armyCloudFetch('users/' + ARMY_USER_ID)
       .then(res => res.json())
       .then(data => {
         if (!data) return;
@@ -668,7 +709,7 @@ registerUserIfNeeded();
   }
      function refreshLocalStorageFromCloud(callback) {
     if (!ARMY_USER_ID) return;
-    fetch(`${FIREBASE_URL}/users/${ARMY_USER_ID}.json`)
+    armyCloudFetch('users/' + ARMY_USER_ID)
       .then(res => res.json())
       .then(data => {
         if (!data) { if (callback) callback(); return; }
@@ -687,7 +728,7 @@ registerUserIfNeeded();
   // и отдельные галочки (video-...), и итоговые цифры (progress:...)
   function refreshEverythingFromCloud(callback) {
     if (!ARMY_USER_ID) { if (callback) callback(); return; }
-    fetch(`${FIREBASE_URL}/users/${ARMY_USER_ID}.json`)
+    armyCloudFetch('users/' + ARMY_USER_ID)
       .then(res => res.json())
       .then(data => {
         if (!data) { if (callback) callback(); return; }

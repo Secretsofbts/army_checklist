@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=81"></script>
+  <script src="sync.js?v=82"></script>
   <title>Статистика</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -316,7 +316,7 @@
       let myFirstSeen = localStorage.getItem('userFirstSeen_' + ARMY_USER_ID);
 
       if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
-        fetch(`${FIREBASE_URL}/user_registry/${ARMY_USER_ID}.json`)
+        armyCloudFetch('user_registry/' + ARMY_USER_ID)
           .then(res => res.json())
           .then(entry => {
             if (entry) {
@@ -333,7 +333,7 @@
           .catch(() => {});
       }
 
-      fetch(`${FIREBASE_URL}/user_count.json`)
+      armyCloudFetch('user_count')
         .then(res => res.json())
         .then(totalUsers => {
           contentEl.innerHTML = '';
@@ -385,7 +385,7 @@
           if (localStorage.getItem('hasDonated_' + ARMY_USER_ID) === 'true') {
             showDonateBadge();
           } else if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
-            fetch(`${FIREBASE_URL}/user_registry/${ARMY_USER_ID}.json`)
+            armyCloudFetch('user_registry/' + ARMY_USER_ID)
               .then(res => res.json())
               .then(entry => {
                 if (entry && entry.hasDonated) {
@@ -414,7 +414,7 @@
     }
 
     if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
-      fetch(`${FIREBASE_URL}/user_registry/${ARMY_USER_ID}.json`)
+      armyCloudFetch('user_registry/' + ARMY_USER_ID)
         .then(res => res.json())
         .then(entry => {
           if (entry && entry.nickname) {
@@ -432,7 +432,7 @@
       if (typeof ARMY_USER_ID === 'undefined' || !ARMY_USER_ID) return;
 
       status.textContent = 'Проверяем...';
-      fetch(`${FIREBASE_URL}/user_registry.json`)
+      armyCloudFetch('user_registry')
         .then(res => res.json())
         .then(registry => {
           const taken = Object.keys(registry || {}).some((uid) => {
@@ -443,7 +443,7 @@
             status.style.color = '#c25a5a';
             return;
           }
-                   fetch(`${FIREBASE_URL}/user_registry/${ARMY_USER_ID}.json`, {
+                   armyCloudFetch('user_registry/' + ARMY_USER_ID, {
             method: 'PATCH',
             body: JSON.stringify({ nickname: val })
           })

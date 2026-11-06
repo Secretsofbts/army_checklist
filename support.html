@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=81"></script>
+  <script src="sync.js?v=82"></script>
   <title>Поддержка бота</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -70,7 +70,7 @@
     const donatedStatus = document.getElementById('donated-status');
 
     if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
-      fetch(`${FIREBASE_URL}/user_registry/${ARMY_USER_ID}.json`)
+      armyCloudFetch('user_registry/' + ARMY_USER_ID)
         .then(res => res.json())
         .then(entry => {
           if (entry && entry.hasDonated) {
@@ -89,7 +89,7 @@
         localStorage.setItem('hasDonated_' + ARMY_USER_ID, 'true');
       }
       if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
-        fetch(`${FIREBASE_URL}/user_registry/${ARMY_USER_ID}.json`, {
+        armyCloudFetch('user_registry/' + ARMY_USER_ID, {
           method: 'PATCH',
           body: JSON.stringify({ hasDonated: true, donatedAt: Date.now() })
         }).then(() => loadAngels());
@@ -101,7 +101,7 @@
     });
 
     function loadAngels() {
-      fetch(`${FIREBASE_URL}/user_registry.json`)
+      armyCloudFetch('user_registry')
         .then(res => res.json())
         .then(registry => {
           const angelsEl = document.getElementById('angels-section');
