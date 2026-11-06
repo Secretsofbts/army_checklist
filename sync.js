@@ -247,13 +247,19 @@ registerUserIfNeeded();
 
   function saveToCloudWithRetry(path, value, attempt) {
     attempt = attempt || 1;
+    // Примитивы (false/true/число) оборачиваем: голый JSON false иногда теряется в WebView/сервере.
+    var payload = value;
+    if (value === null || typeof value !== 'object') {
+      payload = { __army: value };
+    }
     armyCloudFetch(path, {
       method: 'PUT',
-      body: JSON.stringify(value),
-      keepalive: true
-    }).catch(() => {
+      body: JSON.stringify(payload)
+    }).then(function (res) {
+      if (!res || !res.ok) throw new Error('cloud-save');
+    }).catch(function () {
       if (attempt < 3) {
-        setTimeout(() => saveToCloudWithRetry(path, value, attempt + 1), 1000 * attempt);
+        setTimeout(function () { saveToCloudWithRetry(path, value, attempt + 1); }, 1000 * attempt);
       }
     });
   }

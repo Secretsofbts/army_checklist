@@ -45,7 +45,29 @@ app.use(function (req, res, next) {
   if (req.method === 'OPTIONS') return res.status(204).end();
   next();
 });
-app.use(express.json({ limit: '2mb' }));
+app.use(express.json({
+  limit: '2mb',
+  verify: function (req, res, buf) {
+    req.rawBody = buf ? buf.toString('utf8') : '';
+  }
+}));
+
+function unwrapCloudBody(req) {
+  var val = req.body;
+  // Голый JSON false/true иногда приходит как пустой body — берём raw
+  if ((val === undefined || (val && typeof val === 'object' && !Array.isArray(val) && Object.keys(val).length === 0)) && req.rawBody) {
+    try {
+      val = JSON.parse(req.rawBody);
+    } catch (e) {}
+  }
+  // Клиент оборачивает примитивы: { "__army": false }
+  if (val && typeof val === 'object' && !Array.isArray(val) &&
+      Object.prototype.hasOwnProperty.call(val, '__army') &&
+      Object.keys(val).length === 1) {
+    val = val.__army;
+  }
+  return val;
+}
 
 function verifyTelegramInitData(initData) {
   if (!initData) return null;
@@ -344,17 +366,20 @@ app.use('/cloud', async function (req, res) {
       return res.json(snap.exists() ? snap.val() : null);
     }
     if (method === 'PUT') {
-      await ref.set(req.body);
-      return res.json(req.body == null ? null : req.body);
+      const val = unwrapCloudBody(req);
+      await ref.set(val === undefined ? null : val);
+      return res.json(val === undefined ? null : val);
     }
     if (method === 'PATCH') {
-      await ref.update(req.body || {});
+      const val = unwrapCloudBody(req);
+      await ref.update(val && typeof val === 'object' ? val : {});
       const snap = await ref.get();
       return res.json(snap.exists() ? snap.val() : null);
     }
     if (method === 'POST') {
+      const val = unwrapCloudBody(req);
       const newRef = ref.push();
-      await newRef.set(req.body);
+      await newRef.set(val === undefined ? null : val);
       return res.json({ name: newRef.key });
     }
     if (method === 'DELETE') {
