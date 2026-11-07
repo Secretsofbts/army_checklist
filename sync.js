@@ -299,17 +299,18 @@ registerUserIfNeeded();
     });
   }
 
-  function armyOneDayWarnKey(expiresAt) {
-    return 'armyOneDayWarn_' + ARMY_USER_ID + '_' + String(expiresAt || '');
+  function armyDaysLeftWarnKey(days, expiresAt) {
+    return 'armyDaysLeftWarn_' + days + '_' + ARMY_USER_ID + '_' + String(expiresAt || '');
   }
 
-  function showOneDayWarn() {
-    if (document.getElementById('army-oneday-warn') ||
+  function showDaysLeftWarn(daysLeft) {
+    const id = 'army-daysleft-warn';
+    if (document.getElementById(id) ||
         document.getElementById('army-paywall') ||
         document.getElementById('army-trial-welcome')) return;
 
     const overlay = document.createElement('div');
-    overlay.id = 'army-oneday-warn';
+    overlay.id = id;
     overlay.setAttribute('role', 'dialog');
     overlay.setAttribute('aria-modal', 'true');
     overlay.style.cssText = [
@@ -333,7 +334,8 @@ registerUserIfNeeded();
     emoji.style.cssText = 'font-size:28px;margin:0 0 10px';
 
     const title = document.createElement('div');
-    title.textContent = 'Остался 1 день';
+    if (daysLeft === 1) title.textContent = 'Остался 1 день';
+    else title.textContent = 'Осталось ' + daysLeft + ' дня';
     title.style.cssText = 'font-size:18px;font-weight:700;color:#2b2440;margin:0 0 10px';
 
     const text = document.createElement('div');
@@ -359,7 +361,7 @@ registerUserIfNeeded();
     ].join(';');
 
     function dismiss(goCabinet) {
-      armyRemoveEl('army-oneday-warn');
+      armyRemoveEl(id);
       armyUnlockPageScroll();
       if (goCabinet) {
         try { location.href = 'statistics.html'; } catch (e2) {}
@@ -378,19 +380,18 @@ registerUserIfNeeded();
     armyMountTopOverlay(overlay);
   }
 
-  function maybeShowOneDayWarn(data) {
+  function maybeShowDaysLeftWarn(data) {
     if (!ARMY_USER_ID) return;
     if (!(data && data.ok) || data.forever || data.status === 'admin' || data.status === 'forever') return;
     if (!data.expiresAt) return;
     const leftDays = Math.ceil((Number(data.expiresAt) - Date.now()) / (24 * 60 * 60 * 1000));
-    if (leftDays !== 1) return;
-    const warnKey = armyOneDayWarnKey(data.expiresAt);
+    if (leftDays !== 1 && leftDays !== 3) return;
+    const warnKey = armyDaysLeftWarnKey(leftDays, data.expiresAt);
     try {
       if (localStorage.getItem(warnKey) === '1') return;
-      // Сразу помечаем «уже показали», даже если уйдут со страницы без кнопки
       localStorage.setItem(warnKey, '1');
     } catch (e) {}
-    showOneDayWarn();
+    showDaysLeftWarn(leftDays);
   }
 
   function showSubscriptionPaywall(info) {
@@ -483,7 +484,7 @@ registerUserIfNeeded();
       armyRemoveEl('army-paywall');
       armyUnlockPageScroll();
       maybeShowTrialWelcome(data);
-      maybeShowOneDayWarn(data);
+      maybeShowDaysLeftWarn(data);
       return;
     }
     showSubscriptionPaywall(data);
