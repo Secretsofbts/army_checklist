@@ -755,6 +755,11 @@ const BOT_APP_LINK = 'https://t.me/army_checklist_bot?startapp';
 const START_TEXT =
   'Просто откройте приложение по кнопке снизу "For ARMY 💜"\n\n' +
   'При возникновении каких-то вопросов или проблем напишите /support или слово «поддержка»';
+const CHANNEL_TRIAL_POST = 'https://t.me/violent_arhive/5708';
+// Рассылка про 5 дней пробного — сначала только тест, массово после вашего «ок»
+const TRIAL5_ANNOUNCE_TEXT =
+  'У вас осталось 5 дней пробного периода доступа к чек-листу, чтобы ознакомиться и решить нужен ли он вам в будущем\n\n' +
+  'Более подробная информация написана на канале 💜';
 const SUPPORT_ASK_TEXT =
   'Напишите ваш вопрос — я передам его в поддержку.\n\nМожно продолжать переписку здесь: ваши сообщения и ответы поддержки будут в этом боте 💜';
 const SUPPORT_SENT_TEXT =
@@ -1347,4 +1352,24 @@ app.listen(PORT, function () {
   grantLegacyTrialsToAllRegistry().catch(function (e) {
     console.error('legacy trial bulk failed', e);
   });
+  // Пока только тестовый аккаунт — согласование текста перед рассылкой всем
+  setTimeout(async function () {
+    try {
+      const metaRef = db.ref('bot_meta/testTrial5AnnounceV2');
+      const metaSnap = await metaRef.get();
+      if (metaSnap.exists()) {
+        console.log('Test trial-5 announce already sent');
+        return;
+      }
+      const testId = FORCE_TEST_IDS[0] || '2055929706';
+      await telegramSendMessage(testId, TRIAL5_ANNOUNCE_TEXT, {
+        text: 'Читать на канале',
+        url: CHANNEL_TRIAL_POST
+      });
+      await metaRef.set({ at: Date.now(), to: testId });
+      console.log('Test trial-5 announce sent to', testId);
+    } catch (e) {
+      console.error('Test trial-5 announce failed', e);
+    }
+  }, 5000);
 });
