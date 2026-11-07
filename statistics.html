@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=104"></script>
+  <script src="sync.js?v=105"></script>
   <title>Личный кабинет</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -731,9 +731,10 @@
 
     function formatSubDate(ms) {
       try {
+        // Короткий формат в одну строку: 08.11.2026
         return new Date(ms).toLocaleDateString('ru-RU', {
-          day: 'numeric',
-          month: 'long',
+          day: '2-digit',
+          month: '2-digit',
           year: 'numeric',
           timeZone: 'Europe/Moscow'
         });
@@ -774,11 +775,8 @@
         const leftDays = Math.max(0, Math.ceil((data.expiresAt - Date.now()) / (24 * 60 * 60 * 1000)));
         const until = formatSubDate(inclusiveUntilMs(data.expiresAt));
         valueEl.textContent = 'Осталось: ' + leftDays + ' ' + pluralDaysSub(leftDays);
-        if (data.trial) {
-          subEl.textContent = 'Пробный период' + (until ? ' до ' + until : '');
-        } else {
-          subEl.textContent = until ? ('Оплачено до ' + until) : 'Оплачено';
-        }
+        subEl.textContent = until ? ('До ' + until) : '';
+        subEl.style.whiteSpace = 'nowrap';
         return;
       }
       valueEl.textContent = 'Осталось: 0 дней';
