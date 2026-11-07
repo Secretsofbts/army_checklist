@@ -604,11 +604,11 @@ const CABINET_LINK = 'https://t.me/army_checklist_bot?startapp=cabinet';
 const BOT_APP_LINK = 'https://t.me/army_checklist_bot?startapp';
 const START_TEXT =
   'Просто откройте приложение по кнопке снизу "For ARMY 💜"\n\n' +
-  'При возникновении каких-то вопросов или проблем напишите команду /support или слово «поддержка»';
+  'При возникновении каких-то вопросов или проблем напишите /support или слово «поддержка»';
 const SUPPORT_ASK_TEXT =
-  'Напишите ваш вопрос одним следующим сообщением — я передам его в поддержку 💜';
+  'Напишите ваш вопрос — я передам его в поддержку.\n\nМожно продолжать переписку здесь: ваши сообщения и ответы поддержки будут в этом боте 💜';
 const SUPPORT_SENT_TEXT =
-  'Сообщение отправлено в поддержку. Ответ придёт сюда же, в этот бот 💜';
+  'Сообщение отправлено в поддержку. Можно писать дальше сюда же — это диалог. Ответ придёт в этот бот 💜';
 const SUPPORT_EMPTY_TEXT =
   'Пожалуйста, напишите вопрос текстом.';
 const ONEDAY_REMIND_TEXT =
@@ -676,7 +676,7 @@ function isFirstExpiredDayMoscow(expiresAt, now) {
   return moscowParts(expiresAt).dateKey === moscowParts(now).dateKey;
 }
 
-async function telegramSendMessage(chatId, text, button) {
+async function telegramSendMessage(chatId, text, button, replyToMsgId) {
   // button === undefined → кнопка «Личный кабинет»
   // button === null → без кнопок
   if (button === undefined) button = { text: 'Личный кабинет', url: CABINET_LINK };
@@ -690,6 +690,7 @@ async function telegramSendMessage(chatId, text, button) {
       inline_keyboard: [[{ text: button.text, url: button.url }]]
     };
   }
+  if (replyToMsgId) payload.reply_to_message_id = replyToMsgId;
   const url = 'https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage';
   const res = await fetch(url, {
     method: 'POST',
@@ -717,33 +718,63 @@ function parseSupportCommand(text) {
   return null;
 }
 
-function supportPendingRef(uid) {
-  return db.ref('support_pending/' + uid);
+function isBotCommandText(text) {
+  return /^\/[a-zA-Zа-яА-ЯёЁ_]+/.test(String(text || '').trim());
+}
+
+function supportSessionRef(uid) {
+  return db.ref('support_sessions/' + uid);
 }
 
 function supportTicketRef(adminChatId, adminMsgId) {
   return db.ref('support_tickets/' + adminChatId + '_' + adminMsgId);
 }
 
-async function deliverSupportQuestion(fromUser, questionText) {
+async function openSupportSession(uid, extra) {
+  const prevSnap = await supportSessionRef(uid).get();
+  const prev = prevSnap.exists() ? (prevSnap.val() || {}) : {};
+  const entry = Object.assign({}, prev, extra || {}, {
+    active: true,
+    updatedAt: Date.now(),
+    createdAt: prev.createdAt || Date.now()
+  });
+  await supportSessionRef(uid).set(entry);
+  return entry;
+}
+
+async function deliverSupportMessage(fromUser, questionText, options) {
+  options = options || {};
   const uid = String(fromUser.id);
+  const session = await openSupportSession(uid, { awaitingFirst: false });
   const name = [fromUser.first_name, fromUser.last_name].filter(Boolean).join(' ') || 'без имени';
   const uname = fromUser.username ? '@' + fromUser.username : 'нет username';
+  const isFollowUp = !!options.followUp;
   const body =
-    '🆘 Сообщение в поддержку\n' +
+    (isFollowUp ? '💬 Продолжение диалога\n' : '🆘 Сообщение в поддержку\n') +
     'От: ' + name + ' (' + uname + ')\n' +
     'id: ' + uid + '\n\n' +
     questionText +
-    '\n\n↳ Ответьте reply (ответом) на это сообщение — текст уйдёт человеку.';
+    '\n\n↳ Ответьте reply на это сообщение — текст уйдёт человеку. Диалог можно продолжать.';
 
   const admins = ADMIN_IDS.length ? ADMIN_IDS : [];
   if (!admins.length) throw new Error('no-admin');
 
+  const lastByAdmin = (session && session.lastAdminMsg) || {};
+  const nextLast = Object.assign({}, lastByAdmin);
+
   for (let i = 0; i < admins.length; i++) {
     const adminId = admins[i];
-    const sent = await telegramSendMessage(adminId, body, null);
+    const replyTo = lastByAdmin[adminId] || null;
+    let sent;
+    try {
+      sent = await telegramSendMessage(adminId, body, null, replyTo);
+    } catch (e) {
+      // Если старый reply_to уже невалиден — шлём без него
+      sent = await telegramSendMessage(adminId, body, null);
+    }
     const msgId = sent && sent.result && sent.result.message_id;
     if (msgId) {
+      nextLast[adminId] = msgId;
       await supportTicketRef(adminId, msgId).set({
         userId: uid,
         userName: name,
@@ -751,7 +782,12 @@ async function deliverSupportQuestion(fromUser, questionText) {
       });
     }
   }
-  await supportPendingRef(uid).remove();
+
+  await openSupportSession(uid, {
+    awaitingFirst: false,
+    lastAdminMsg: nextLast,
+    lastUserTextAt: Date.now()
+  });
 }
 
 async function handleAdminSupportReply(msg) {
@@ -770,12 +806,18 @@ async function handleAdminSupportReply(msg) {
     return true;
   }
 
-  await telegramSendMessage(
-    userId,
-    'Ответ поддержки:\n\n' + answer,
-    null
-  );
-  await telegramSendMessage(msg.chat.id, '✓ Отправлено пользователю', null);
+  await telegramSendMessage(userId, 'Ответ поддержки:\n\n' + answer, null);
+  // Диалог остаётся открытым: человек может писать дальше без новой команды
+  await openSupportSession(userId, { awaitingFirst: false });
+
+  // Чтобы следующие сообщения пользователя клеились к этой ветке
+  const sessionSnap = await supportSessionRef(userId).get();
+  const session = sessionSnap.exists() ? (sessionSnap.val() || {}) : {};
+  const lastByAdmin = Object.assign({}, session.lastAdminMsg || {});
+  lastByAdmin[String(msg.chat.id)] = reply.message_id;
+  await openSupportSession(userId, { lastAdminMsg: lastByAdmin });
+
+  await telegramSendMessage(msg.chat.id, '✓ Отправлено. Можно продолжать диалог reply-ем.', null);
   return true;
 }
 
@@ -785,39 +827,46 @@ async function handleSupportFlow(msg) {
   const uid = String(msg.from.id);
   const text = String(msg.text || '');
 
-  // Админ отвечает reply-ем на тикет
+  // Админ отвечает reply-ем на любое сообщение диалога
   if (await handleAdminSupportReply(msg)) return true;
+  // Сообщения админа без reply в поддержку не пересылаем
+  if (isAdminTelegramId(msg.from.id)) return false;
 
   const parsed = parseSupportCommand(text);
   if (parsed) {
     if (!parsed.question) {
-      await supportPendingRef(uid).set({ at: Date.now() });
+      await openSupportSession(uid, { awaitingFirst: true });
       await telegramSendMessage(msg.chat.id, SUPPORT_ASK_TEXT, null);
       return true;
     }
-    await deliverSupportQuestion(msg.from, parsed.question);
-    await telegramSendMessage(msg.chat.id, SUPPORT_SENT_TEXT, null);
+    const sessionSnap = await supportSessionRef(uid).get();
+    const already = sessionSnap.exists() && sessionSnap.val() && sessionSnap.val().active;
+    await deliverSupportMessage(msg.from, parsed.question, { followUp: !!already });
+    if (!already) await telegramSendMessage(msg.chat.id, SUPPORT_SENT_TEXT, null);
     return true;
   }
 
-  // Ждём следующее сообщение после команды «поддержка»
-  const pendingSnap = await supportPendingRef(uid).get();
-  if (pendingSnap.exists()) {
-    if (/^\/start(?:@\w+)?(?:\s|$)/i.test(text)) {
-      await supportPendingRef(uid).remove();
-      return false;
-    }
-    const question = text.trim() || String(msg.caption || '').trim();
-    if (!question) {
+  const sessionSnap = await supportSessionRef(uid).get();
+  if (!sessionSnap.exists()) return false;
+  const session = sessionSnap.val() || {};
+  if (!session.active) return false;
+
+  // Команды бота (кроме support) не считаем текстом диалога
+  if (isBotCommandText(text) && !parseSupportCommand(text)) return false;
+
+  const question = text.trim() || String(msg.caption || '').trim();
+  if (!question) {
+    if (session.awaitingFirst) {
       await telegramSendMessage(msg.chat.id, SUPPORT_EMPTY_TEXT, null);
       return true;
     }
-    await deliverSupportQuestion(msg.from, question);
-    await telegramSendMessage(msg.chat.id, SUPPORT_SENT_TEXT, null);
-    return true;
+    return false;
   }
 
-  return false;
+  const wasAwaiting = !!session.awaitingFirst;
+  await deliverSupportMessage(msg.from, question, { followUp: !wasAwaiting });
+  if (wasAwaiting) await telegramSendMessage(msg.chat.id, SUPPORT_SENT_TEXT, null);
+  return true;
 }
 
 async function telegramSendPhoto(chatId, caption, photoPath) {
