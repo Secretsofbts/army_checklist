@@ -488,7 +488,7 @@ app.use('/cloud', async function (req, res) {
 const CABINET_LINK = 'https://t.me/army_checklist_bot?startapp=cabinet';
 const ONEDAY_REMIND_TEXT =
   'Сегодня последний день вашей подписки на чек-лист по архиву BTS.\n\n' +
-  'Для продолжения использования можно оплатить её в <a href="' + CABINET_LINK + '">личном кабинете</a>.\n\n' +
+  'Для продолжения использования можно продлить её в своем личном кабинете.\n\n' +
   'Спасибо, что пользуетесь ботом 💜';
 
 function moscowParts(ms) {
@@ -530,7 +530,6 @@ async function telegramSendMessage(chatId, text) {
     body: JSON.stringify({
       chat_id: chatId,
       text: text,
-      parse_mode: 'HTML',
       disable_web_page_preview: true,
       reply_markup: {
         inline_keyboard: [[
