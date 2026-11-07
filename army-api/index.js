@@ -549,13 +549,19 @@ async function collectSubscriptionStats() {
   let forever = 0;
   let expired = 0;
 
+  const foreverSet = {};
+  ADMIN_IDS.concat(FOREVER_IDS).forEach(function (id) {
+    if (id) foreverSet[String(id)] = true;
+  });
+
   Object.keys(all).forEach(function (uid) {
     const d = all[uid] || {};
     const note = String(d.note || '');
     // Тестовые превью 2-й страницы в общую статистику не мешаем
     if (note.indexOf('force-') === 0) return;
     counted[uid] = true;
-    if (d.forever) {
+    // В списке бессрочных / админ — всегда «бессрочно», даже если в базе ещё старый trial
+    if (d.forever || foreverSet[uid]) {
       forever += 1;
       return;
     }
@@ -567,8 +573,8 @@ async function collectSubscriptionStats() {
     expired += 1;
   });
 
-  ADMIN_IDS.concat(FOREVER_IDS).forEach(function (id) {
-    if (!id || counted[id]) return;
+  Object.keys(foreverSet).forEach(function (id) {
+    if (counted[id]) return;
     counted[id] = true;
     forever += 1;
   });
