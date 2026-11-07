@@ -380,11 +380,25 @@ registerUserIfNeeded();
     armyMountTopOverlay(overlay);
   }
 
+  function armyMoscowDateKey(ms) {
+    return new Date(ms).toLocaleDateString('en-CA', { timeZone: 'Europe/Moscow' });
+  }
+
+  function armyInclusiveDaysLeft(expiresAt) {
+    const now = Date.now();
+    if (!expiresAt || Number(expiresAt) <= now) return 0;
+    const untilKey = armyMoscowDateKey(Number(expiresAt) - 1);
+    const todayKey = armyMoscowDateKey(now);
+    const until = new Date(untilKey + 'T12:00:00Z').getTime();
+    const today = new Date(todayKey + 'T12:00:00Z').getTime();
+    return Math.max(0, Math.round((until - today) / (24 * 60 * 60 * 1000)) + 1);
+  }
+
   function maybeShowDaysLeftWarn(data) {
     if (!ARMY_USER_ID) return;
     if (!(data && data.ok) || data.forever || data.status === 'admin' || data.status === 'forever') return;
     if (!data.expiresAt) return;
-    const leftDays = Math.ceil((Number(data.expiresAt) - Date.now()) / (24 * 60 * 60 * 1000));
+    const leftDays = armyInclusiveDaysLeft(data.expiresAt);
     if (leftDays !== 1 && leftDays !== 3) return;
     const warnKey = armyDaysLeftWarnKey(leftDays, data.expiresAt);
     try {

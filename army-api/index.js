@@ -300,18 +300,16 @@ app.get('/subscription', async function (req, res) {
 
       if (mode === 'days3') {
         const note = 'force-days3-preview';
-        // Всегда обновляем срок при смене режима, чтобы окошко «3 дня» могло показаться один раз
-        if (prev && prev.note === note && typeof prev.expiresAt === 'number') {
-          const left = Math.ceil((prev.expiresAt - now) / DAY_MS);
-          if (left === 3) {
-            return res.json(buildSubscriptionStatus(uid, prev, false));
-          }
+        // До полуночи через 3 календарных дня: сегодня + ещё 2 = 3 дня включая сегодня
+        const wantExpires = moscowMidnightPlusDays(now, 3);
+        if (prev && prev.note === note && prev.expiresAt === wantExpires) {
+          return res.json(buildSubscriptionStatus(uid, prev, false));
         }
         const entry = {
           active: true,
           trial: false,
           forever: false,
-          expiresAt: now + 3 * DAY_MS,
+          expiresAt: wantExpires,
           createdAt: (prev && prev.createdAt) || now,
           updatedAt: now,
           note: note
@@ -339,19 +337,17 @@ app.get('/subscription', async function (req, res) {
         return res.json(buildSubscriptionStatus(uid, entry, false));
       }
 
-      // paid1 — последний день
+      // paid1 — последний день = до конца сегодняшнего дня по Москве
       const notePaid = 'force-paid-one-day-test';
-      if (prev && prev.note === notePaid && typeof prev.expiresAt === 'number') {
-        const left = Math.ceil((prev.expiresAt - now) / DAY_MS);
-        if (left === 1) {
-          return res.json(buildSubscriptionStatus(uid, prev, false));
-        }
+      const wantExpires = moscowMidnightPlusDays(now, 1);
+      if (prev && prev.note === notePaid && prev.expiresAt === wantExpires) {
+        return res.json(buildSubscriptionStatus(uid, prev, false));
       }
       const paidEntry = {
         active: true,
         trial: false,
         forever: false,
-        expiresAt: now + DAY_MS,
+        expiresAt: wantExpires,
         createdAt: (prev && prev.createdAt) || now,
         updatedAt: now,
         note: notePaid

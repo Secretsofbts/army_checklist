@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=116"></script>
+  <script src="sync.js?v=117"></script>
   <title>Личный кабинет</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -723,15 +723,29 @@
       return 'дней';
     }
 
-    // expiresAt — момент, когда доступ уже кончился (обычно полночь).
+    // expiresAt — момент, когда доступ уже кончился (обычно полночь МСК).
     // Последний день доступа включительно — календарный день до этой точки (МСК).
     function inclusiveUntilMs(expiresAt) {
       return Number(expiresAt) - 1;
     }
 
+    function moscowDateKey(ms) {
+      return new Date(ms).toLocaleDateString('en-CA', { timeZone: 'Europe/Moscow' });
+    }
+
+    // Сколько календарных дней доступа осталось, включая сегодня (МСК).
+    function inclusiveDaysLeft(expiresAt) {
+      const now = Date.now();
+      if (!expiresAt || Number(expiresAt) <= now) return 0;
+      const untilKey = moscowDateKey(Number(expiresAt) - 1);
+      const todayKey = moscowDateKey(now);
+      const until = new Date(untilKey + 'T12:00:00Z').getTime();
+      const today = new Date(todayKey + 'T12:00:00Z').getTime();
+      return Math.max(0, Math.round((until - today) / (24 * 60 * 60 * 1000)) + 1);
+    }
+
     function formatSubDate(ms) {
       try {
-        // Короткий формат в одну строку: 08.11.2026
         return new Date(ms).toLocaleDateString('ru-RU', {
           day: '2-digit',
           month: '2-digit',
@@ -772,7 +786,7 @@
       valueEl.style.lineHeight = '1.3';
       if (renewBtn) renewBtn.style.display = '';
       if (data.ok && data.expiresAt) {
-        const leftDays = Math.max(0, Math.ceil((data.expiresAt - Date.now()) / (24 * 60 * 60 * 1000)));
+        const leftDays = inclusiveDaysLeft(data.expiresAt);
         const until = formatSubDate(inclusiveUntilMs(data.expiresAt));
         valueEl.textContent = leftDays === 1
           ? 'Осталось: последний день'
@@ -781,8 +795,8 @@
         subEl.style.whiteSpace = 'nowrap';
         return;
       }
-      valueEl.textContent = 'Осталось: 0 дней';
-      subEl.textContent = 'Подписка не активна';
+      valueEl.textContent = 'Подписка не активна';
+      subEl.textContent = '';
     }
 
     function loadSubscription() {
