@@ -219,9 +219,6 @@ registerUserIfNeeded();
     } catch (e) {}
   }
 
-  // Тестовый аккаунт — всегда показывать приветствие пробного периода для проверки вида
-  var ARMY_TRIAL_PREVIEW_IDS = { '2055929706': true };
-
   function armyTrialWelcomeKey() {
     return ARMY_USER_ID ? ('armyTrialWelcomeSeen_' + ARMY_USER_ID) : 'armyTrialWelcomeSeen';
   }
@@ -275,9 +272,7 @@ registerUserIfNeeded();
     ].join(';');
     btn.addEventListener('click', function () {
       try {
-        if (!(ARMY_TRIAL_PREVIEW_IDS[String(ARMY_USER_ID)])) {
-          localStorage.setItem(armyTrialWelcomeKey(), '1');
-        }
+        localStorage.setItem(armyTrialWelcomeKey(), '1');
       } catch (e) {}
       armyRemoveEl('army-trial-welcome');
       armyUnlockPageScroll();
@@ -293,19 +288,15 @@ registerUserIfNeeded();
 
   function maybeShowTrialWelcome(data) {
     if (!ARMY_USER_ID) return;
-    const uid = String(ARMY_USER_ID);
-    const isPreview = !!ARMY_TRIAL_PREVIEW_IDS[uid];
-    if (!isPreview) {
-      if (!(data && data.ok && data.trial)) return;
-      try {
-        if (localStorage.getItem(armyTrialWelcomeKey()) === '1') return;
-      } catch (e) {}
-    }
-    const info = Object.assign({}, data || {}, {
-      trialDays: (data && data.trialDays) || (isPreview ? 10 : 10)
+    // Только при активном пробном периоде, строго один раз
+    if (!(data && data.ok && data.trial)) return;
+    if (data.forever || data.status === 'admin' || data.status === 'forever') return;
+    try {
+      if (localStorage.getItem(armyTrialWelcomeKey()) === '1') return;
+    } catch (e) {}
+    showTrialWelcome({
+      trialDays: data.trialDays || 10
     });
-    if (isPreview) info.trialDays = 10;
-    showTrialWelcome(info);
   }
 
   function showSubscriptionPaywall(info) {
