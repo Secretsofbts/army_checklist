@@ -21,6 +21,8 @@
   }
   window.armyCloudFetch = armyCloudFetch;
   window.FIREBASE_URL = FIREBASE_URL;
+  window.ARMY_API_URL = ARMY_API_URL;
+  window.telegramInitData = telegramInitData;
   var STAT_CHECKBOX_IDS = {};
   let ARMY_USER_ID = null;
   if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
@@ -1515,7 +1517,9 @@ function getCombinedYearStats(yearKey) {
       'concerts-2025': 'concerts-2025-2026.html',
       'concerts': 'concerts.html',
       'statistics': 'statistics.html',
-      'stats': 'statistics.html'
+      'stats': 'statistics.html',
+      'cabinet': 'statistics.html',
+      'kabinet': 'statistics.html'
     };
     const key = String(param || '').toLowerCase();
     let target = aliases[key];

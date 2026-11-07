@@ -7,8 +7,8 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=98"></script>
-  <title>Статистика</title>
+  <script src="sync.js?v=101"></script>
+  <title>Личный кабинет</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
    * { box-sizing: border-box; }
@@ -225,7 +225,18 @@
 <body>
   <div class="app">
     <a class="back" href="index.html">← Назад</a>
-       <h1>📊 Статистика 📊</h1>
+       <h1>👤 Личный кабинет</h1>
+
+    <div style="background:#f7f7fa; border-radius:12px; padding:14px; margin-bottom:14px;">
+      <p style="font-size:12px; color:#888; margin:0 0 10px;">Подписка</p>
+      <div style="display:flex; align-items:center; gap:10px;">
+        <div style="flex:1; min-width:0;">
+          <p id="sub-value" style="font-size:16px; font-weight:700; color:#2b2440; margin:0; line-height:1.3;">Загрузка…</p>
+          <p id="sub-sub" style="font-size:12px; color:#888; margin:4px 0 0; line-height:1.35;"></p>
+        </div>
+        <button id="sub-renew-btn" type="button" disabled style="flex-shrink:0; border:none; border-radius:10px; padding:10px 12px; font-size:13px; font-weight:600; background:#ddd6ea; color:#8a7aa8; cursor:default;">Продлить</button>
+      </div>
+    </div>
 
     <div style="background:#f7f7fa; border-radius:12px; padding:14px; margin-bottom:14px;">
       <p style="font-size:12px; color:#888; margin:0 0 8px;">Ваш ник</p>
@@ -703,6 +714,77 @@
       });
     }
 
+    function pluralDaysSub(n) {
+      n = Math.abs(n) % 100;
+      const n1 = n % 10;
+      if (n > 10 && n < 20) return 'дней';
+      if (n1 > 1 && n1 < 5) return 'дня';
+      if (n1 === 1) return 'день';
+      return 'дней';
+    }
+
+    function formatSubDate(ms) {
+      try {
+        return new Date(ms).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+      } catch (e) {
+        return '';
+      }
+    }
+
+    function paintSubscription(data) {
+      const valueEl = document.getElementById('sub-value');
+      const subEl = document.getElementById('sub-sub');
+      const renewBtn = document.getElementById('sub-renew-btn');
+      if (!valueEl || !subEl) return;
+      if (renewBtn) {
+        renewBtn.disabled = true;
+        renewBtn.style.background = '#ddd6ea';
+        renewBtn.style.color = '#8a7aa8';
+        renewBtn.style.cursor = 'default';
+        renewBtn.textContent = 'Продлить';
+      }
+      if (!data || typeof data !== 'object') {
+        valueEl.textContent = '—';
+        subEl.textContent = 'Не удалось проверить срок';
+        return;
+      }
+      if (data.forever || data.status === 'admin' || data.status === 'forever') {
+        valueEl.textContent = '∞';
+        valueEl.style.fontSize = '28px';
+        valueEl.style.lineHeight = '1';
+        subEl.textContent = 'Бессрочный доступ';
+        if (renewBtn) renewBtn.style.display = 'none';
+        return;
+      }
+      valueEl.style.fontSize = '16px';
+      valueEl.style.lineHeight = '1.3';
+      if (renewBtn) renewBtn.style.display = '';
+      if (data.ok && data.expiresAt) {
+        const leftDays = Math.max(0, Math.ceil((data.expiresAt - Date.now()) / (24 * 60 * 60 * 1000)));
+        valueEl.textContent = 'Осталось ' + leftDays + ' ' + pluralDaysSub(leftDays);
+        subEl.textContent = (data.trial ? 'Пробный период' : 'Подписка') + ' до ' + formatSubDate(data.expiresAt);
+        return;
+      }
+      valueEl.textContent = 'Осталось 0 дней';
+      subEl.textContent = 'Подписка не активна';
+    }
+
+    function loadSubscription() {
+      const api = String(window.ARMY_API_URL || '').replace(/\/$/, '');
+      if (!api || !ARMY_USER_ID || typeof telegramInitData !== 'function') {
+        paintSubscription(null);
+        return;
+      }
+      fetch(api + '/subscription', {
+        method: 'GET',
+        headers: { 'X-Telegram-Init-Data': telegramInitData() }
+      })
+        .then(function (res) { return res.ok ? res.json() : null; })
+        .then(paintSubscription)
+        .catch(function () { paintSubscription(null); });
+    }
+
+    loadSubscription();
     loadStats();
 
     if (window.Telegram && window.Telegram.WebApp) { Telegram.WebApp.ready(); Telegram.WebApp.expand(); }
