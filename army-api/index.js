@@ -8,6 +8,11 @@ const ADMIN_IDS = String(process.env.ADMIN_TELEGRAM_IDS || '891936733')
   .split(',')
   .map(function (s) { return s.trim(); })
   .filter(Boolean);
+// Бессрочный доступ без прав админа (подруги и исключения).
+const FOREVER_IDS = String(process.env.FOREVER_TELEGRAM_IDS || '163381553,591051945')
+  .split(',')
+  .map(function (s) { return s.trim(); })
+  .filter(Boolean);
 // Тестовые аккаунты: ровно 1 день доступа (ваша 2-я страница). Убрать ID, когда тест закончите.
 const FORCE_ONE_DAY_IDS = String(process.env.FORCE_ONE_DAY_IDS || '2055929706')
   .split(',')
@@ -263,6 +268,21 @@ app.get('/subscription', async function (req, res) {
         });
       }
       return res.json(buildSubscriptionStatus(uid, { forever: true }, true));
+    }
+    if (FOREVER_IDS.indexOf(uid) !== -1) {
+      const existing = await subscriptionRef(uid).get();
+      if (!existing.exists() || !existing.val() || !existing.val().forever) {
+        await subscriptionRef(uid).set({
+          active: true,
+          trial: false,
+          forever: true,
+          expiresAt: null,
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+          note: 'forever-friend'
+        });
+      }
+      return res.json(buildSubscriptionStatus(uid, { forever: true }, false));
     }
     // Тестовый аккаунт: как будто оплатила, остался 1 день (не сбрасывать при каждом заходе)
     if (FORCE_ONE_DAY_IDS.indexOf(uid) !== -1) {
