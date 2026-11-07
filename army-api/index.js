@@ -15,7 +15,7 @@ const FOREVER_IDS = String(process.env.FOREVER_TELEGRAM_IDS || '163381553,591051
   .filter(Boolean);
 // Тестовый аккаунт (2-я страница): режим превью.
 // days3 = обычный человек, осталось 3 дня; new10 = новый с 10 днями; paid1 = последний день.
-const FORCE_TEST_MODE = String(process.env.FORCE_TEST_MODE || 'days3').trim();
+const FORCE_TEST_MODE = String(process.env.FORCE_TEST_MODE || 'paid1').trim();
 const FORCE_TEST_IDS = String(process.env.FORCE_TEST_IDS || '2055929706')
   .split(',')
   .map(function (s) { return s.trim(); })
