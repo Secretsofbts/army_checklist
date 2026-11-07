@@ -1352,24 +1352,50 @@ app.listen(PORT, function () {
   grantLegacyTrialsToAllRegistry().catch(function (e) {
     console.error('legacy trial bulk failed', e);
   });
-  // Пока только тестовый аккаунт — согласование текста перед рассылкой всем
-  setTimeout(async function () {
+  // Разовая рассылка про 5 дней всем, кто открывал бот (user_registry)
+  setTimeout(function () {
+    broadcastTrial5Announce().catch(function (e) {
+      console.error('trial5 announce broadcast failed', e);
+    });
+  }, 6000);
+});
+
+async function broadcastTrial5Announce() {
+  const metaRef = db.ref('bot_meta/trial5AnnounceBroadcastV1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('trial5 announce broadcast already done', metaSnap.val());
+    return;
+  }
+  // Ставим флаг сразу, чтобы рестарт Render не запустил рассылку второй раз
+  await metaRef.set({ at: Date.now(), status: 'running' });
+
+  const snap = await db.ref('user_registry').get();
+  const ids = snap.exists() ? Object.keys(snap.val() || {}) : [];
+  let sent = 0;
+  let failed = 0;
+
+  for (let i = 0; i < ids.length; i++) {
     try {
-      const metaRef = db.ref('bot_meta/testTrial5AnnounceV2');
-      const metaSnap = await metaRef.get();
-      if (metaSnap.exists()) {
-        console.log('Test trial-5 announce already sent');
-        return;
-      }
-      const testId = FORCE_TEST_IDS[0] || '2055929706';
-      await telegramSendMessage(testId, TRIAL5_ANNOUNCE_TEXT, {
+      await telegramSendMessage(ids[i], TRIAL5_ANNOUNCE_TEXT, {
         text: 'Читать на канале',
         url: CHANNEL_TRIAL_POST
       });
-      await metaRef.set({ at: Date.now(), to: testId });
-      console.log('Test trial-5 announce sent to', testId);
+      sent += 1;
     } catch (e) {
-      console.error('Test trial-5 announce failed', e);
+      failed += 1;
+      console.error('trial5 announce fail', ids[i], String(e.message || e));
     }
-  }, 5000);
-});
+    // Не упираемся в лимит Telegram (~30 сообщений/сек)
+    await new Promise(function (resolve) { setTimeout(resolve, 45); });
+  }
+
+  await metaRef.set({
+    at: Date.now(),
+    status: 'done',
+    sent: sent,
+    failed: failed,
+    total: ids.length
+  });
+  console.log('trial5 announce broadcast done', { sent: sent, failed: failed, total: ids.length });
+}
