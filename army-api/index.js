@@ -488,8 +488,8 @@ app.use('/cloud', async function (req, res) {
 const CABINET_LINK = 'https://t.me/army_checklist_bot?startapp=cabinet';
 const BOT_APP_LINK = 'https://t.me/army_checklist_bot?startapp';
 const ONEDAY_REMIND_TEXT =
-  'Сегодня последний день вашей подписки на чек-лист по архиву BTS.\n\n' +
-  'Для продолжения использования можно продлить её в своем личном кабинете.\n\n' +
+  'Сегодня последний день вашей подписки на чек-лист по архиву BTS\n\n' +
+  'Для продолжения использования можно добавить нужное количество дней в своем личном кабинете\n\n' +
   'Спасибо, что пользуетесь ботом 💜';
 const EXPIRED_REMIND_TEXT =
   'Ваша подписка на чек-лист по архиву BTS закончилась 😢\n\n' +
@@ -707,22 +707,22 @@ function scheduleSubscriptionReminders() {
 app.listen(PORT, function () {
   console.log('army-api listening on ' + PORT);
   scheduleSubscriptionReminders();
-  // После деплоя: тестовое сообщение «подписка закончилась» на 2-ю страницу
+  // После деплоя: тестовое сообщение «последний день» на 2-ю страницу
   setTimeout(async function () {
     try {
       const dayKey = moscowParts(Date.now()).dateKey;
-      const metaRef = db.ref('bot_meta/testExpiredRemindV5');
+      const metaRef = db.ref('bot_meta/testOneDayRemindV6');
       const metaSnap = await metaRef.get();
       if (metaSnap.exists() && metaSnap.val() === dayKey) {
-        console.log('Test expired remind already sent today');
+        console.log('Test last-day remind already sent today');
         return;
       }
       const testId = FORCE_TEST_IDS[0] || '2055929706';
-      const result = await sendExpiredReminderToUser(testId, { force: true });
-      console.log('Test expired remind to', testId, result);
+      const result = await sendOneDayReminderToUser(testId, { force: true });
+      console.log('Test last-day remind to', testId, result);
       if (result.sent) await metaRef.set(dayKey);
     } catch (e) {
-      console.error('Test expired remind failed', e);
+      console.error('Test last-day remind failed', e);
     }
   }, 4000);
 });
