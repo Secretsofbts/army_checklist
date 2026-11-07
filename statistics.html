@@ -775,8 +775,12 @@
         return;
       }
       if (data.forever || data.status === 'admin' || data.status === 'forever') {
-        valueEl.textContent = '∞';
-        valueEl.style.fontSize = '28px';
+        valueEl.innerHTML =
+          '<svg width="36" height="18" viewBox="0 0 100 50" aria-label="Бессрочно" style="display:block;">' +
+          '<path fill="none" stroke="#2b2440" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" ' +
+          'd="M25 25C25 12 38 12 50 25C62 38 75 38 75 25C75 12 62 12 50 25C38 38 25 38 25 25"/>' +
+          '</svg>';
+        valueEl.style.fontSize = '16px';
         valueEl.style.lineHeight = '1';
         subEl.textContent = '';
         if (renewBtn) renewBtn.style.display = 'none';
