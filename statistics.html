@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=115"></script>
+  <script src="sync.js?v=116"></script>
   <title>Личный кабинет</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -774,7 +774,9 @@
       if (data.ok && data.expiresAt) {
         const leftDays = Math.max(0, Math.ceil((data.expiresAt - Date.now()) / (24 * 60 * 60 * 1000)));
         const until = formatSubDate(inclusiveUntilMs(data.expiresAt));
-        valueEl.textContent = 'Осталось: ' + leftDays + ' ' + pluralDaysSub(leftDays);
+        valueEl.textContent = leftDays === 1
+          ? 'Осталось: последний день'
+          : ('Осталось: ' + leftDays + ' ' + pluralDaysSub(leftDays));
         subEl.textContent = until ? ('До ' + until) : '';
         subEl.style.whiteSpace = 'nowrap';
         return;

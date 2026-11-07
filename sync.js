@@ -334,7 +334,7 @@ registerUserIfNeeded();
     emoji.style.cssText = 'font-size:28px;margin:0 0 10px';
 
     const title = document.createElement('div');
-    if (daysLeft === 1) title.textContent = 'Остался 1 день';
+    if (daysLeft === 1) title.textContent = 'Последний день';
     else title.textContent = 'Осталось ' + daysLeft + ' дня';
     title.style.cssText = 'font-size:18px;font-weight:700;color:#2b2440;margin:0 0 10px';
 

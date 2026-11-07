@@ -451,6 +451,181 @@ app.use('/cloud', async function (req, res) {
   }
 });
 
+const CABINET_LINK = 'https://t.me/army_checklist_bot?startapp=cabinet';
+const ONEDAY_REMIND_TEXT =
+  'Сегодня последний день вашей подписки на чек-лист.\n\n' +
+  'Продлить её можно в личном кабинете:\n' + CABINET_LINK;
+
+function moscowParts(ms) {
+  const d = new Date(ms);
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/Moscow',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false
+  }).formatToParts(d);
+  const map = {};
+  parts.forEach(function (p) {
+    if (p.type !== 'literal') map[p.type] = p.value;
+  });
+  return {
+    dateKey: map.year + '-' + map.month + '-' + map.day,
+    hour: parseInt(map.hour, 10) || 0,
+    minute: parseInt(map.minute, 10) || 0
+  };
+}
+
+function isLastInclusiveDayMoscow(expiresAt, now) {
+  now = now || Date.now();
+  if (typeof expiresAt !== 'number' || expiresAt <= now) return false;
+  // Последний день доступа = календарный день expiresAt-1 мс по Москве
+  const untilKey = moscowParts(expiresAt - 1).dateKey;
+  const todayKey = moscowParts(now).dateKey;
+  return untilKey === todayKey;
+}
+
+async function telegramSendMessage(chatId, text) {
+  const url = 'https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage';
+  const res = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      chat_id: chatId,
+      text: text,
+      disable_web_page_preview: true
+    })
+  });
+  const data = await res.json().catch(function () { return null; });
+  if (!res.ok || !data || !data.ok) {
+    const desc = data && data.description ? data.description : ('HTTP ' + res.status);
+    throw new Error('telegram: ' + desc);
+  }
+  return data;
+}
+
+async function sendOneDayReminderToUser(uid, options) {
+  options = options || {};
+  const force = !!options.force;
+  const ref = subscriptionRef(uid);
+  const snap = await ref.get();
+  const data = snap.exists() ? snap.val() : null;
+  if (!force) {
+    if (!data || data.forever) return { sent: false, reason: 'no-sub' };
+    if (!isLastInclusiveDayMoscow(data.expiresAt)) return { sent: false, reason: 'not-last-day' };
+    if (data.oneDayRemindFor === data.expiresAt) return { sent: false, reason: 'already' };
+  }
+  try {
+    await telegramSendMessage(uid, ONEDAY_REMIND_TEXT);
+  } catch (e) {
+    return { sent: false, reason: 'telegram', error: String(e.message || e) };
+  }
+  if (data && typeof data === 'object') {
+    data.oneDayRemindFor = data.expiresAt || Date.now();
+    data.oneDayRemindAt = Date.now();
+    data.updatedAt = Date.now();
+    await ref.set(data);
+  } else if (force) {
+    await db.ref('bot_meta/oneDayRemindLog/' + uid).push({
+      at: Date.now(),
+      force: true
+    });
+  }
+  return { sent: true };
+}
+
+async function runOneDayReminders() {
+  const snap = await db.ref('subscriptions').get();
+  if (!snap.exists()) return { checked: 0, sent: 0 };
+  const all = snap.val() || {};
+  const ids = Object.keys(all);
+  let sent = 0;
+  const errors = [];
+  for (let i = 0; i < ids.length; i++) {
+    const uid = ids[i];
+    try {
+      const result = await sendOneDayReminderToUser(uid, { force: false });
+      if (result.sent) sent++;
+    } catch (e) {
+      errors.push({ uid: uid, error: String(e.message || e) });
+    }
+  }
+  return { checked: ids.length, sent: sent, errors: errors };
+}
+
+// Админ: принудительно отправить напоминание (для теста)
+app.post('/admin/send-oneday-reminder', async function (req, res) {
+  const user = authUser(req);
+  if (!user || !user.isAdmin) return res.status(403).json({ error: 'forbidden' });
+  const targetId = String((req.body && req.body.userId) || '').trim();
+  if (!targetId) return res.status(400).json({ error: 'userId' });
+  try {
+    const result = await sendOneDayReminderToUser(targetId, { force: true });
+    return res.json(result);
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: 'remind' });
+  }
+});
+
+// Cron/ручной запуск: секрет в Render → CRON_SECRET
+app.get('/cron/oneday-reminders', async function (req, res) {
+  const secret = String(process.env.CRON_SECRET || '');
+  if (!secret || req.query.secret !== secret) {
+    return res.status(403).json({ error: 'forbidden' });
+  }
+  try {
+    if (req.query.testUser) {
+      const result = await sendOneDayReminderToUser(String(req.query.testUser), { force: true });
+      return res.json({ mode: 'test', result: result });
+    }
+    const result = await runOneDayReminders();
+    return res.json(result);
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: 'cron' });
+  }
+});
+
+var lastOneDayCronDateKey = '';
+function scheduleOneDayReminders() {
+  setInterval(async function () {
+    try {
+      const parts = moscowParts(Date.now());
+      // 12:00 по Москве, один раз в этот день
+      if (parts.hour === 12 && parts.minute === 0 && lastOneDayCronDateKey !== parts.dateKey) {
+        lastOneDayCronDateKey = parts.dateKey;
+        console.log('Running one-day subscription reminders for', parts.dateKey);
+        const result = await runOneDayReminders();
+        console.log('One-day reminders result', result);
+      }
+    } catch (e) {
+      console.error('one-day cron error', e);
+    }
+  }, 30000);
+}
+
 app.listen(PORT, function () {
   console.log('army-api listening on ' + PORT);
+  scheduleOneDayReminders();
+  // Один раз после деплоя: тестовое сообщение на 2-ю страницу (не чаще раза в сутки)
+  setTimeout(async function () {
+    try {
+      const dayKey = moscowParts(Date.now()).dateKey;
+      const metaRef = db.ref('bot_meta/testOneDayRemindDay');
+      const metaSnap = await metaRef.get();
+      if (metaSnap.exists() && metaSnap.val() === dayKey) {
+        console.log('Test one-day remind already sent today');
+        return;
+      }
+      const testId = FORCE_TEST_IDS[0] || '2055929706';
+      const result = await sendOneDayReminderToUser(testId, { force: true });
+      console.log('Test one-day remind to', testId, result);
+      if (result.sent) await metaRef.set(dayKey);
+    } catch (e) {
+      console.error('Test one-day remind failed', e);
+    }
+  }, 4000);
 });
