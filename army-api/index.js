@@ -31,6 +31,46 @@ const TRIAL_PLAN_TAG = 'legacy5-new10';
 // Можно переопределить в Render: SUBSCRIPTION_LAUNCH_AT = миллисекунды Unix.
 const SUBSCRIPTION_LAUNCH_AT = Number(process.env.SUBSCRIPTION_LAUNCH_AT) ||
   Date.parse('2026-11-06T21:00:00+03:00');
+// Цены: обычно 200 ₽. Первые 14 дней после включения оплаты — 100 ₽ (−50%).
+const FULL_PRICE_RUB = 200;
+const PROMO_PRICE_RUB = 100;
+const PROMO_DAYS = 14;
+// Когда оплата реально заработает — поставьте в Render дату старта, например:
+// PAYMENT_LIVE_AT=2026-11-20T12:00:00+03:00
+// До этой даты на экране уже видна скидка 100 ₽; отсчёт 2 недель идёт с неё.
+const PAYMENT_LIVE_AT = (function () {
+  const raw = String(process.env.PAYMENT_LIVE_AT || '').trim();
+  if (!raw) return 0;
+  const asNum = Number(raw);
+  if (Number.isFinite(asNum) && asNum > 0) return asNum;
+  const asDate = Date.parse(raw);
+  return Number.isFinite(asDate) ? asDate : 0;
+})();
+
+function pricingInfo(now) {
+  now = now || Date.now();
+  const promoEndsAt = PAYMENT_LIVE_AT
+    ? (PAYMENT_LIVE_AT + PROMO_DAYS * DAY_MS)
+    : null;
+  // Пока оплата не включена ИЛИ идут первые 14 дней после включения — показываем 100 ₽
+  const promoActive = !PAYMENT_LIVE_AT || now < promoEndsAt;
+  if (promoActive) {
+    return {
+      priceRub: PROMO_PRICE_RUB,
+      oldPriceRub: FULL_PRICE_RUB,
+      promo: true,
+      promoEndsAt: promoEndsAt,
+      paymentLive: !!(PAYMENT_LIVE_AT && now >= PAYMENT_LIVE_AT)
+    };
+  }
+  return {
+    priceRub: FULL_PRICE_RUB,
+    oldPriceRub: null,
+    promo: false,
+    promoEndsAt: promoEndsAt,
+    paymentLive: true
+  };
+}
 
 if (!process.env.FIREBASE_SERVICE_ACCOUNT) {
   console.error('Нужна переменная FIREBASE_SERVICE_ACCOUNT (JSON ключа сервисного аккаунта)');
@@ -142,6 +182,7 @@ function subscriptionRef(uid) {
 
 function buildSubscriptionStatus(uid, data, isAdmin) {
   const now = Date.now();
+  const price = pricingInfo(now);
   if (isAdmin) {
     return {
       ok: true,
@@ -149,7 +190,10 @@ function buildSubscriptionStatus(uid, data, isAdmin) {
       forever: true,
       expiresAt: null,
       trial: false,
-      priceRub: 200
+      priceRub: price.priceRub,
+      oldPriceRub: price.oldPriceRub,
+      promo: price.promo,
+      promoEndsAt: price.promoEndsAt
     };
   }
   data = data || {};
@@ -160,7 +204,10 @@ function buildSubscriptionStatus(uid, data, isAdmin) {
       forever: true,
       expiresAt: null,
       trial: false,
-      priceRub: 200
+      priceRub: price.priceRub,
+      oldPriceRub: price.oldPriceRub,
+      promo: price.promo,
+      promoEndsAt: price.promoEndsAt
     };
   }
   const expiresAt = typeof data.expiresAt === 'number' ? data.expiresAt : 0;
@@ -173,7 +220,10 @@ function buildSubscriptionStatus(uid, data, isAdmin) {
       expiresAt: expiresAt,
       trial: !!data.trial,
       trialDays: trialDays,
-      priceRub: 200
+      priceRub: price.priceRub,
+      oldPriceRub: price.oldPriceRub,
+      promo: price.promo,
+      promoEndsAt: price.promoEndsAt
     };
   }
   return {
@@ -183,7 +233,10 @@ function buildSubscriptionStatus(uid, data, isAdmin) {
     expiresAt: expiresAt || null,
     trial: !!data.trial,
     trialDays: trialDays,
-    priceRub: 200
+    priceRub: price.priceRub,
+    oldPriceRub: price.oldPriceRub,
+    promo: price.promo,
+    promoEndsAt: price.promoEndsAt
   };
 }
 

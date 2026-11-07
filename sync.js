@@ -213,6 +213,8 @@ registerUserIfNeeded();
         trial: !!(data && data.trial),
         trialDays: data && data.trialDays != null ? data.trialDays : null,
         priceRub: (data && data.priceRub) || 200,
+        oldPriceRub: (data && data.oldPriceRub) || null,
+        promo: !!(data && data.promo),
         status: (data && data.status) || '',
         at: Date.now()
       }));
@@ -470,10 +472,23 @@ registerUserIfNeeded();
       'display:flex', 'justify-content:space-between', 'align-items:center', 'gap:10px'
     ].join(';');
     const monthLabel = document.createElement('span');
-    monthLabel.textContent = (info.priceRub || 200) + ' ₽ — месяц';
+    monthLabel.style.cssText = 'display:inline-flex;align-items:baseline;gap:8px;flex-wrap:wrap';
+    const priceNow = Number(info.priceRub) || 200;
+    const priceOld = Number(info.oldPriceRub) || 0;
+    if (info.promo && priceOld > priceNow) {
+      const oldEl = document.createElement('span');
+      oldEl.textContent = priceOld + ' ₽';
+      oldEl.style.cssText = 'text-decoration:line-through;color:#9a8fb0;font-weight:600';
+      const newEl = document.createElement('span');
+      newEl.textContent = priceNow + ' ₽ — месяц';
+      monthLabel.appendChild(oldEl);
+      monthLabel.appendChild(newEl);
+    } else {
+      monthLabel.textContent = priceNow + ' ₽ — месяц';
+    }
     const monthSoon = document.createElement('span');
     monthSoon.textContent = 'оплата скоро';
-    monthSoon.style.cssText = 'font-size:12px;font-weight:600;color:#8a7aa8';
+    monthSoon.style.cssText = 'font-size:12px;font-weight:600;color:#8a7aa8;flex-shrink:0';
     monthBtn.appendChild(monthLabel);
     monthBtn.appendChild(monthSoon);
     plans.appendChild(monthBtn);
