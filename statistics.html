@@ -238,6 +238,12 @@
       </div>
     </div>
 
+    <div id="admin-sub-stats" style="display:none; background:#fff8e6; border:1px solid #f0dca0; border-radius:12px; padding:14px; margin-bottom:14px;">
+      <p style="font-size:12px; color:#888; margin:0 0 8px;">Активные подписки (только вам)</p>
+      <p id="admin-sub-stats-value" style="font-size:15px; font-weight:700; color:#2b2440; margin:0; line-height:1.45;"></p>
+      <p id="admin-sub-stats-sub" style="font-size:12px; color:#888; margin:6px 0 0; line-height:1.4;"></p>
+    </div>
+
     <div style="background:#f7f7fa; border-radius:12px; padding:14px; margin-bottom:14px;">
       <p style="font-size:12px; color:#888; margin:0 0 8px;">Ваш ник</p>
            <div style="display:flex; gap:8px;">
@@ -803,6 +809,46 @@
       subEl.textContent = '';
     }
 
+    function paintAdminSubStats(stats) {
+      const box = document.getElementById('admin-sub-stats');
+      const valueEl = document.getElementById('admin-sub-stats-value');
+      const subEl = document.getElementById('admin-sub-stats-sub');
+      if (!box || !valueEl || !subEl) return;
+      if (!stats || typeof stats !== 'object') {
+        box.style.display = 'none';
+        return;
+      }
+      box.style.display = '';
+      const total = Number(stats.total) || 0;
+      const trial = Number(stats.trial) || 0;
+      const paid = Number(stats.paid) || 0;
+      const forever = Number(stats.forever) || 0;
+      const expired = Number(stats.expired) || 0;
+      valueEl.textContent = 'С доступом сейчас: ' + total;
+      subEl.textContent =
+        'Пробный: ' + trial +
+        ' · Оплатили: ' + paid +
+        ' · Бессрочно: ' + forever +
+        ' · Истекли: ' + expired;
+    }
+
+    function loadAdminSubStats() {
+      const api = String(window.ARMY_API_URL || '').replace(/\/$/, '');
+      const box = document.getElementById('admin-sub-stats');
+      if (!api || !box || typeof telegramInitData !== 'function') return;
+      fetch(api + '/admin/subscription-stats', {
+        method: 'GET',
+        headers: { 'X-Telegram-Init-Data': telegramInitData() }
+      })
+        .then(function (res) { return res.ok ? res.json() : null; })
+        .then(function (data) {
+          paintAdminSubStats(data && data.stats ? data.stats : null);
+        })
+        .catch(function () {
+          paintAdminSubStats(null);
+        });
+    }
+
     function loadSubscription() {
       const api = String(window.ARMY_API_URL || '').replace(/\/$/, '');
       if (!api || !ARMY_USER_ID || typeof telegramInitData !== 'function') {
@@ -814,7 +860,10 @@
         headers: { 'X-Telegram-Init-Data': telegramInitData() }
       })
         .then(function (res) { return res.ok ? res.json() : null; })
-        .then(paintSubscription)
+        .then(function (data) {
+          paintSubscription(data);
+          if (data && data.status === 'admin') loadAdminSubStats();
+        })
         .catch(function () { paintSubscription(null); });
     }
 

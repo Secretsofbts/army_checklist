@@ -373,6 +373,62 @@ app.get('/subscription', async function (req, res) {
   }
 });
 
+async function collectSubscriptionStats() {
+  const now = Date.now();
+  const snap = await db.ref('subscriptions').get();
+  const all = snap.exists() ? snap.val() : {};
+  const counted = {};
+  let trial = 0;
+  let paid = 0;
+  let forever = 0;
+  let expired = 0;
+
+  Object.keys(all).forEach(function (uid) {
+    const d = all[uid] || {};
+    const note = String(d.note || '');
+    // Тестовые превью 2-й страницы в общую статистику не мешаем
+    if (note.indexOf('force-') === 0) return;
+    counted[uid] = true;
+    if (d.forever) {
+      forever += 1;
+      return;
+    }
+    if (typeof d.expiresAt === 'number' && d.expiresAt > now) {
+      if (d.trial) trial += 1;
+      else paid += 1;
+      return;
+    }
+    expired += 1;
+  });
+
+  ADMIN_IDS.concat(FOREVER_IDS).forEach(function (id) {
+    if (!id || counted[id]) return;
+    counted[id] = true;
+    forever += 1;
+  });
+
+  return {
+    total: trial + paid + forever,
+    trial: trial,
+    paid: paid,
+    forever: forever,
+    expired: expired
+  };
+}
+
+// Статистика подписок — только админ
+app.get('/admin/subscription-stats', async function (req, res) {
+  const user = authUser(req);
+  if (!user || !user.isAdmin) return res.status(403).json({ error: 'forbidden' });
+  try {
+    const stats = await collectSubscriptionStats();
+    return res.json({ ok: true, stats: stats });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: 'stats' });
+  }
+});
+
 // Выдать доступ вручную (только админ). body: { userId, days?, forever? }
 app.post('/admin/grant', async function (req, res) {
   const user = authUser(req);
