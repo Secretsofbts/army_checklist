@@ -9,7 +9,7 @@ const ADMIN_IDS = String(process.env.ADMIN_TELEGRAM_IDS || '891936733')
   .map(function (s) { return s.trim(); })
   .filter(Boolean);
 // Бессрочный доступ без прав админа (подруги и исключения).
-const FOREVER_IDS = String(process.env.FOREVER_TELEGRAM_IDS || '163381553,591051945')
+const FOREVER_IDS = String(process.env.FOREVER_TELEGRAM_IDS || '163381553,591051945,1018991144')
   .split(',')
   .map(function (s) { return s.trim(); })
   .filter(Boolean);
@@ -490,6 +490,11 @@ const ONEDAY_REMIND_TEXT =
   'Сегодня последний день вашей подписки на чек-лист по архиву BTS.\n\n' +
   'Для продолжения использования можно продлить её в своем личном кабинете.\n\n' +
   'Спасибо, что пользуетесь ботом 💜';
+const EXPIRED_REMIND_TEXT =
+  'Ваша подписка на чек-лист по архиву BTS закончилась.\n\n' +
+  'Мы будем ждать вашего возвращения и оберегать все поставленные галочки.\n\n' +
+  'Продлить подписку можно в своем личном кабинете.\n\n' +
+  'Спасибо, что пользуетесь ботом 💜';
 
 function moscowParts(ms) {
   const d = new Date(ms);
@@ -520,6 +525,13 @@ function isLastInclusiveDayMoscow(expiresAt, now) {
   const untilKey = moscowParts(expiresAt - 1).dateKey;
   const todayKey = moscowParts(now).dateKey;
   return untilKey === todayKey;
+}
+
+// Первый календарный день без доступа (день expiresAt по Москве)
+function isFirstExpiredDayMoscow(expiresAt, now) {
+  now = now || Date.now();
+  if (typeof expiresAt !== 'number' || expiresAt > now) return false;
+  return moscowParts(expiresAt).dateKey === moscowParts(now).dateKey;
 }
 
 async function telegramSendMessage(chatId, text) {
@@ -576,33 +588,70 @@ async function sendOneDayReminderToUser(uid, options) {
   return { sent: true };
 }
 
-async function runOneDayReminders() {
+async function sendExpiredReminderToUser(uid, options) {
+  options = options || {};
+  const force = !!options.force;
+  const ref = subscriptionRef(uid);
+  const snap = await ref.get();
+  const data = snap.exists() ? snap.val() : null;
+  if (!force) {
+    if (!data || data.forever) return { sent: false, reason: 'no-sub' };
+    if (!isFirstExpiredDayMoscow(data.expiresAt)) return { sent: false, reason: 'not-expired-day' };
+    if (data.expiredRemindFor === data.expiresAt) return { sent: false, reason: 'already' };
+  }
+  try {
+    await telegramSendMessage(uid, EXPIRED_REMIND_TEXT);
+  } catch (e) {
+    return { sent: false, reason: 'telegram', error: String(e.message || e) };
+  }
+  if (data && typeof data === 'object') {
+    data.expiredRemindFor = data.expiresAt || Date.now();
+    data.expiredRemindAt = Date.now();
+    data.updatedAt = Date.now();
+    await ref.set(data);
+  } else if (force) {
+    await db.ref('bot_meta/expiredRemindLog/' + uid).push({
+      at: Date.now(),
+      force: true
+    });
+  }
+  return { sent: true };
+}
+
+async function runSubscriptionReminders() {
   const snap = await db.ref('subscriptions').get();
-  if (!snap.exists()) return { checked: 0, sent: 0 };
+  if (!snap.exists()) return { checked: 0, lastDaySent: 0, expiredSent: 0 };
   const all = snap.val() || {};
   const ids = Object.keys(all);
-  let sent = 0;
+  let lastDaySent = 0;
+  let expiredSent = 0;
   const errors = [];
   for (let i = 0; i < ids.length; i++) {
     const uid = ids[i];
     try {
-      const result = await sendOneDayReminderToUser(uid, { force: false });
-      if (result.sent) sent++;
+      const lastDay = await sendOneDayReminderToUser(uid, { force: false });
+      if (lastDay.sent) lastDaySent++;
+      const expired = await sendExpiredReminderToUser(uid, { force: false });
+      if (expired.sent) expiredSent++;
     } catch (e) {
       errors.push({ uid: uid, error: String(e.message || e) });
     }
   }
-  return { checked: ids.length, sent: sent, errors: errors };
+  return { checked: ids.length, lastDaySent: lastDaySent, expiredSent: expiredSent, errors: errors };
 }
 
 // Админ: принудительно отправить напоминание (для теста)
+// body: { userId, type?: 'lastDay' | 'expired' }
 app.post('/admin/send-oneday-reminder', async function (req, res) {
   const user = authUser(req);
   if (!user || !user.isAdmin) return res.status(403).json({ error: 'forbidden' });
   const targetId = String((req.body && req.body.userId) || '').trim();
   if (!targetId) return res.status(400).json({ error: 'userId' });
+  const type = String((req.body && req.body.type) || 'lastDay');
   try {
-    const result = await sendOneDayReminderToUser(targetId, { force: true });
+    const result = type === 'expired'
+      ? await sendExpiredReminderToUser(targetId, { force: true })
+      : await sendOneDayReminderToUser(targetId, { force: true });
     return res.json(result);
   } catch (e) {
     console.error(e);
@@ -618,10 +667,14 @@ app.get('/cron/oneday-reminders', async function (req, res) {
   }
   try {
     if (req.query.testUser) {
-      const result = await sendOneDayReminderToUser(String(req.query.testUser), { force: true });
-      return res.json({ mode: 'test', result: result });
+      const type = String(req.query.type || 'lastDay');
+      const uid = String(req.query.testUser);
+      const result = type === 'expired'
+        ? await sendExpiredReminderToUser(uid, { force: true })
+        : await sendOneDayReminderToUser(uid, { force: true });
+      return res.json({ mode: 'test', type: type, result: result });
     }
-    const result = await runOneDayReminders();
+    const result = await runSubscriptionReminders();
     return res.json(result);
   } catch (e) {
     console.error(e);
@@ -629,43 +682,43 @@ app.get('/cron/oneday-reminders', async function (req, res) {
   }
 });
 
-var lastOneDayCronDateKey = '';
-function scheduleOneDayReminders() {
+var lastRemindCronDateKey = '';
+function scheduleSubscriptionReminders() {
   setInterval(async function () {
     try {
       const parts = moscowParts(Date.now());
-      // 12:00 по Москве, один раз в этот день
-      if (parts.hour === 12 && parts.minute === 0 && lastOneDayCronDateKey !== parts.dateKey) {
-        lastOneDayCronDateKey = parts.dateKey;
-        console.log('Running one-day subscription reminders for', parts.dateKey);
-        const result = await runOneDayReminders();
-        console.log('One-day reminders result', result);
+      // 12:00 по Москве: и «последний день», и «подписка закончилась»
+      if (parts.hour === 12 && parts.minute === 0 && lastRemindCronDateKey !== parts.dateKey) {
+        lastRemindCronDateKey = parts.dateKey;
+        console.log('Running subscription reminders for', parts.dateKey);
+        const result = await runSubscriptionReminders();
+        console.log('Subscription reminders result', result);
       }
     } catch (e) {
-      console.error('one-day cron error', e);
+      console.error('subscription remind cron error', e);
     }
   }, 30000);
 }
 
 app.listen(PORT, function () {
   console.log('army-api listening on ' + PORT);
-  scheduleOneDayReminders();
-  // Один раз после деплоя: тестовое сообщение на 2-ю страницу (не чаще раза в сутки)
+  scheduleSubscriptionReminders();
+  // После деплоя: тестовое сообщение «подписка закончилась» на 2-ю страницу
   setTimeout(async function () {
     try {
       const dayKey = moscowParts(Date.now()).dateKey;
-      const metaRef = db.ref('bot_meta/testOneDayRemindV2');
+      const metaRef = db.ref('bot_meta/testExpiredRemindV1');
       const metaSnap = await metaRef.get();
       if (metaSnap.exists() && metaSnap.val() === dayKey) {
-        console.log('Test one-day remind already sent today');
+        console.log('Test expired remind already sent today');
         return;
       }
       const testId = FORCE_TEST_IDS[0] || '2055929706';
-      const result = await sendOneDayReminderToUser(testId, { force: true });
-      console.log('Test one-day remind to', testId, result);
+      const result = await sendExpiredReminderToUser(testId, { force: true });
+      console.log('Test expired remind to', testId, result);
       if (result.sent) await metaRef.set(dayKey);
     } catch (e) {
-      console.error('Test one-day remind failed', e);
+      console.error('Test expired remind failed', e);
     }
   }, 4000);
 });
