@@ -226,12 +226,27 @@ registerUserIfNeeded();
       'font-family:Arial,sans-serif', 'visibility:visible'
     ].join(';');
 
+    const wrap = document.createElement('div');
+    wrap.style.cssText = [
+      'width:100%', 'max-width:340px',
+      'display:flex', 'flex-direction:column', 'align-items:stretch', 'gap:12px'
+    ].join(';');
+
+    const hero = document.createElement('img');
+    hero.src = 'paywall-bts.jpg';
+    hero.alt = 'BTS';
+    hero.style.cssText = [
+      'width:100%', 'height:auto', 'display:block',
+      'border-radius:16px',
+      'box-shadow:0 8px 28px rgba(80,60,120,0.12)'
+    ].join(';');
+
     const card = document.createElement('div');
     card.style.cssText = [
-      'width:100%', 'max-width:340px', 'background:#fff',
+      'width:100%', 'background:#fff',
       'border-radius:18px', 'padding:28px 22px 24px',
       'box-shadow:0 10px 40px rgba(80,60,120,0.12)',
-      'text-align:center'
+      'text-align:center', 'box-sizing:border-box'
     ].join(';');
 
     const title = document.createElement('div');
@@ -271,7 +286,9 @@ registerUserIfNeeded();
     card.appendChild(title);
     card.appendChild(plans);
     card.appendChild(thanks);
-    overlay.appendChild(card);
+    wrap.appendChild(hero);
+    wrap.appendChild(card);
+    overlay.appendChild(wrap);
     armyMountTopOverlay(overlay);
   }
 
