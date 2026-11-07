@@ -8,8 +8,8 @@ const ADMIN_IDS = String(process.env.ADMIN_TELEGRAM_IDS || '891936733')
   .split(',')
   .map(function (s) { return s.trim(); })
   .filter(Boolean);
-// Тестовые аккаунты «как будто не оплачено» (ваша 2-я страница). Убрать ID из списка, когда тест закончите.
-const FORCE_EXPIRED_IDS = String(process.env.FORCE_EXPIRED_IDS || '2055929706')
+// Тестовые аккаунты: ровно 1 день доступа (ваша 2-я страница). Убрать ID, когда тест закончите.
+const FORCE_ONE_DAY_IDS = String(process.env.FORCE_ONE_DAY_IDS || '2055929706')
   .split(',')
   .map(function (s) { return s.trim(); })
   .filter(Boolean);
@@ -214,7 +214,7 @@ async function ensureSubscriptionRecord(uid) {
 
   if (snap.exists() && snap.val()) {
     const existing = snap.val();
-    if (existing.forever || existing.note === 'force-expired-test') return existing;
+    if (existing.forever || existing.note === 'force-expired-test' || existing.note === 'force-one-day-test') return existing;
     // Уже оплативших с trial:false не трогаем. Пробным один раз выставляем актуальный срок.
     if (existing.trial && existing.trialPlan !== TRIAL_PLAN_TAG) {
       existing.expiresAt = computeTrialExpiresAt(firstSeen, now);
@@ -263,23 +263,27 @@ app.get('/subscription', async function (req, res) {
       }
       return res.json(buildSubscriptionStatus(uid, { forever: true }, true));
     }
-    // Принудительно показать экран «нужна подписка» (тест)
-    if (FORCE_EXPIRED_IDS.indexOf(uid) !== -1) {
+    // Тестовый аккаунт: один раз выдать 1 день (не сбрасывать при каждом заходе)
+    if (FORCE_ONE_DAY_IDS.indexOf(uid) !== -1) {
+      const ref = subscriptionRef(uid);
+      const snap = await ref.get();
+      const prev = snap.exists() ? snap.val() : null;
       const now = Date.now();
-      await subscriptionRef(uid).set({
-        active: false,
-        trial: false,
+      if (prev && prev.note === 'force-one-day-test' && typeof prev.expiresAt === 'number') {
+        return res.json(buildSubscriptionStatus(uid, prev, false));
+      }
+      const entry = {
+        active: true,
+        trial: true,
+        trialDays: 1,
         forever: false,
-        expiresAt: now - DAY_MS,
-        createdAt: now,
+        expiresAt: now + DAY_MS,
+        createdAt: (prev && prev.createdAt) || now,
         updatedAt: now,
-        note: 'force-expired-test'
-      });
-      return res.json(buildSubscriptionStatus(uid, {
-        forever: false,
-        trial: false,
-        expiresAt: now - DAY_MS
-      }, false));
+        note: 'force-one-day-test'
+      };
+      await ref.set(entry);
+      return res.json(buildSubscriptionStatus(uid, entry, false));
     }
     const data = await ensureSubscriptionRecord(uid);
     return res.json(buildSubscriptionStatus(uid, data, false));
