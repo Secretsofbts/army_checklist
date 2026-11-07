@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=103"></script>
+  <script src="sync.js?v=104"></script>
   <title>Личный кабинет</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -723,9 +723,20 @@
       return 'дней';
     }
 
+    // expiresAt — момент, когда доступ уже кончился (обычно полночь).
+    // Последний день доступа включительно — календарный день до этой точки (МСК).
+    function inclusiveUntilMs(expiresAt) {
+      return Number(expiresAt) - 1;
+    }
+
     function formatSubDate(ms) {
       try {
-        return new Date(ms).toLocaleDateString('ru-RU', { day: 'numeric', month: 'long', year: 'numeric' });
+        return new Date(ms).toLocaleDateString('ru-RU', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+          timeZone: 'Europe/Moscow'
+        });
       } catch (e) {
         return '';
       }
@@ -761,11 +772,16 @@
       if (renewBtn) renewBtn.style.display = '';
       if (data.ok && data.expiresAt) {
         const leftDays = Math.max(0, Math.ceil((data.expiresAt - Date.now()) / (24 * 60 * 60 * 1000)));
-        valueEl.textContent = 'Осталось ' + leftDays + ' ' + pluralDaysSub(leftDays);
-        subEl.textContent = (data.trial ? 'Пробный период' : 'Подписка') + ' до ' + formatSubDate(data.expiresAt);
+        const until = formatSubDate(inclusiveUntilMs(data.expiresAt));
+        valueEl.textContent = 'Осталось: ' + leftDays + ' ' + pluralDaysSub(leftDays);
+        if (data.trial) {
+          subEl.textContent = 'Пробный период' + (until ? ' до ' + until : '');
+        } else {
+          subEl.textContent = until ? ('Оплачено до ' + until) : 'Оплачено';
+        }
         return;
       }
-      valueEl.textContent = 'Осталось 0 дней';
+      valueEl.textContent = 'Осталось: 0 дней';
       subEl.textContent = 'Подписка не активна';
     }
 
