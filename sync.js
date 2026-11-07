@@ -262,7 +262,7 @@ registerUserIfNeeded();
     const text = document.createElement('div');
     text.textContent = 'Добро пожаловать! У вас есть ' + days + ' ' +
       (days === 1 ? 'день' : (days >= 2 && days <= 4 ? 'дня' : 'дней')) +
-      ' бесплатного доступа ко всему чек-листу. Потом можно будет оформить подписку.';
+      ' бесплатного доступа ко всему чек-листу. Потом можно оформить подписку.';
     text.style.cssText = 'font-size:14px;line-height:1.45;color:#666;margin:0 0 18px';
 
     const btn = document.createElement('button');
