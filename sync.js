@@ -211,11 +211,101 @@ registerUserIfNeeded();
         forever: !!(data && data.forever),
         expiresAt: data && data.expiresAt ? data.expiresAt : null,
         trial: !!(data && data.trial),
+        trialDays: data && data.trialDays != null ? data.trialDays : null,
         priceRub: (data && data.priceRub) || 200,
         status: (data && data.status) || '',
         at: Date.now()
       }));
     } catch (e) {}
+  }
+
+  // Тестовый аккаунт — всегда показывать приветствие пробного периода для проверки вида
+  var ARMY_TRIAL_PREVIEW_IDS = { '2055929706': true };
+
+  function armyTrialWelcomeKey() {
+    return ARMY_USER_ID ? ('armyTrialWelcomeSeen_' + ARMY_USER_ID) : 'armyTrialWelcomeSeen';
+  }
+
+  function showTrialWelcome(info) {
+    info = info || {};
+    if (document.getElementById('army-trial-welcome') || document.getElementById('army-paywall')) return;
+
+    const days = parseInt(info.trialDays, 10) || 10;
+    const overlay = document.createElement('div');
+    overlay.id = 'army-trial-welcome';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.style.cssText = [
+      'position:fixed', 'inset:0', 'z-index:2147483645',
+      'background:rgba(43,36,64,0.35)',
+      'display:flex', 'align-items:center', 'justify-content:center',
+      'padding:24px 18px', 'box-sizing:border-box',
+      'font-family:Arial,sans-serif'
+    ].join(';');
+
+    const card = document.createElement('div');
+    card.style.cssText = [
+      'width:100%', 'max-width:320px', 'background:#fff',
+      'border-radius:18px', 'padding:26px 22px 22px',
+      'box-shadow:0 12px 40px rgba(80,60,120,0.2)',
+      'text-align:center'
+    ].join(';');
+
+    const emoji = document.createElement('div');
+    emoji.textContent = '💜';
+    emoji.style.cssText = 'font-size:28px;margin:0 0 10px';
+
+    const title = document.createElement('div');
+    title.textContent = 'Пробный период';
+    title.style.cssText = 'font-size:18px;font-weight:700;color:#2b2440;margin:0 0 10px';
+
+    const text = document.createElement('div');
+    text.textContent = 'Добро пожаловать! У вас есть ' + days + ' ' +
+      (days === 1 ? 'день' : (days >= 2 && days <= 4 ? 'дня' : 'дней')) +
+      ' бесплатного доступа ко всему чек-листу. Потом можно будет оформить подписку.';
+    text.style.cssText = 'font-size:14px;line-height:1.45;color:#666;margin:0 0 18px';
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.textContent = 'Понятно';
+    btn.style.cssText = [
+      'width:100%', 'border:none', 'border-radius:12px', 'padding:13px 16px',
+      'font-size:15px', 'font-weight:600', 'cursor:pointer',
+      'background:#9b7fd4', 'color:#fff'
+    ].join(';');
+    btn.addEventListener('click', function () {
+      try {
+        if (!(ARMY_TRIAL_PREVIEW_IDS[String(ARMY_USER_ID)])) {
+          localStorage.setItem(armyTrialWelcomeKey(), '1');
+        }
+      } catch (e) {}
+      armyRemoveEl('army-trial-welcome');
+      armyUnlockPageScroll();
+    });
+
+    card.appendChild(emoji);
+    card.appendChild(title);
+    card.appendChild(text);
+    card.appendChild(btn);
+    overlay.appendChild(card);
+    armyMountTopOverlay(overlay);
+  }
+
+  function maybeShowTrialWelcome(data) {
+    if (!ARMY_USER_ID) return;
+    const uid = String(ARMY_USER_ID);
+    const isPreview = !!ARMY_TRIAL_PREVIEW_IDS[uid];
+    if (!isPreview) {
+      if (!(data && data.ok && data.trial)) return;
+      try {
+        if (localStorage.getItem(armyTrialWelcomeKey()) === '1') return;
+      } catch (e) {}
+    }
+    const info = Object.assign({}, data || {}, {
+      trialDays: (data && data.trialDays) || (isPreview ? 10 : 10)
+    });
+    if (isPreview) info.trialDays = 10;
+    showTrialWelcome(info);
   }
 
   function showSubscriptionPaywall(info) {
@@ -307,6 +397,7 @@ registerUserIfNeeded();
     if (data.ok) {
       armyRemoveEl('army-paywall');
       armyUnlockPageScroll();
+      maybeShowTrialWelcome(data);
       return;
     }
     showSubscriptionPaywall(data);

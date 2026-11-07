@@ -160,6 +160,7 @@ function buildSubscriptionStatus(uid, data, isAdmin) {
     };
   }
   const expiresAt = typeof data.expiresAt === 'number' ? data.expiresAt : 0;
+  const trialDays = typeof data.trialDays === 'number' ? data.trialDays : null;
   if (expiresAt > now) {
     return {
       ok: true,
@@ -167,6 +168,7 @@ function buildSubscriptionStatus(uid, data, isAdmin) {
       forever: false,
       expiresAt: expiresAt,
       trial: !!data.trial,
+      trialDays: trialDays,
       priceRub: 200
     };
   }
@@ -176,6 +178,7 @@ function buildSubscriptionStatus(uid, data, isAdmin) {
     forever: false,
     expiresAt: expiresAt || null,
     trial: !!data.trial,
+    trialDays: trialDays,
     priceRub: 200
   };
 }
