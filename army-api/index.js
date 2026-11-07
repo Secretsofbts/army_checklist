@@ -722,6 +722,8 @@ function isBotCommandText(text) {
   return /^\/[a-zA-Zа-яА-ЯёЁ_]+/.test(String(text || '').trim());
 }
 
+const SUPPORT_IDLE_MS = 60 * 60 * 1000; // час без сообщений от пользователя → диалог тихо закрывается
+
 function supportSessionRef(uid) {
   return db.ref('support_sessions/' + uid);
 }
@@ -730,11 +732,10 @@ function supportTicketRef(adminChatId, adminMsgId) {
   return db.ref('support_tickets/' + adminChatId + '_' + adminMsgId);
 }
 
-async function openSupportSession(uid, extra) {
+async function saveSupportSession(uid, extra) {
   const prevSnap = await supportSessionRef(uid).get();
   const prev = prevSnap.exists() ? (prevSnap.val() || {}) : {};
   const entry = Object.assign({}, prev, extra || {}, {
-    active: true,
     updatedAt: Date.now(),
     createdAt: prev.createdAt || Date.now()
   });
@@ -742,10 +743,38 @@ async function openSupportSession(uid, extra) {
   return entry;
 }
 
+async function openSupportSession(uid, extra) {
+  return saveSupportSession(uid, Object.assign({}, extra || {}, { active: true }));
+}
+
+function supportLastUserAt(session) {
+  if (!session || typeof session !== 'object') return 0;
+  return Number(session.lastUserTextAt || session.createdAt || 0) || 0;
+}
+
+// Если пользователь молчит час — закрываем без сообщений. Ответы админа таймер не продлевают.
+async function ensureSupportSessionLive(uid, session) {
+  if (!session || !session.active) return null;
+  const last = supportLastUserAt(session);
+  if (last && (Date.now() - last) <= SUPPORT_IDLE_MS) return session;
+  await supportSessionRef(uid).update({
+    active: false,
+    awaitingFirst: false,
+    closedAt: Date.now(),
+    closeReason: 'user-idle'
+  });
+  return null;
+}
+
 async function deliverSupportMessage(fromUser, questionText, options) {
   options = options || {};
   const uid = String(fromUser.id);
-  const session = await openSupportSession(uid, { awaitingFirst: false });
+  const prevSnap = await supportSessionRef(uid).get();
+  const prev = prevSnap.exists() ? (prevSnap.val() || {}) : {};
+  const session = await openSupportSession(uid, {
+    awaitingFirst: false,
+    lastAdminMsg: prev.lastAdminMsg || {}
+  });
   const name = [fromUser.first_name, fromUser.last_name].filter(Boolean).join(' ') || 'без имени';
   const uname = fromUser.username ? '@' + fromUser.username : 'нет username';
   const isFollowUp = !!options.followUp;
@@ -807,15 +836,20 @@ async function handleAdminSupportReply(msg) {
   }
 
   await telegramSendMessage(userId, 'Ответ поддержки:\n\n' + answer, null);
-  // Диалог остаётся открытым: человек может писать дальше без новой команды
-  await openSupportSession(userId, { awaitingFirst: false });
 
-  // Чтобы следующие сообщения пользователя клеились к этой ветке
+  // Ответ админа не продлевает час ожидания и не открывает диалог заново
   const sessionSnap = await supportSessionRef(userId).get();
   const session = sessionSnap.exists() ? (sessionSnap.val() || {}) : {};
-  const lastByAdmin = Object.assign({}, session.lastAdminMsg || {});
-  lastByAdmin[String(msg.chat.id)] = reply.message_id;
-  await openSupportSession(userId, { lastAdminMsg: lastByAdmin });
+  const live = await ensureSupportSessionLive(userId, session);
+  if (live) {
+    const lastByAdmin = Object.assign({}, live.lastAdminMsg || {});
+    lastByAdmin[String(msg.chat.id)] = reply.message_id;
+    await saveSupportSession(userId, {
+      active: true,
+      awaitingFirst: false,
+      lastAdminMsg: lastByAdmin
+    });
+  }
 
   await telegramSendMessage(msg.chat.id, '✓ Отправлено. Можно продолжать диалог reply-ем.', null);
   return true;
@@ -835,35 +869,40 @@ async function handleSupportFlow(msg) {
   const parsed = parseSupportCommand(text);
   if (parsed) {
     if (!parsed.question) {
-      await openSupportSession(uid, { awaitingFirst: true });
+      await openSupportSession(uid, {
+        awaitingFirst: true,
+        lastUserTextAt: Date.now()
+      });
       await telegramSendMessage(msg.chat.id, SUPPORT_ASK_TEXT, null);
       return true;
     }
     const sessionSnap = await supportSessionRef(uid).get();
-    const already = sessionSnap.exists() && sessionSnap.val() && sessionSnap.val().active;
-    await deliverSupportMessage(msg.from, parsed.question, { followUp: !!already });
+    const raw = sessionSnap.exists() ? sessionSnap.val() : null;
+    const live = raw ? await ensureSupportSessionLive(uid, raw) : null;
+    const already = !!live;
+    await deliverSupportMessage(msg.from, parsed.question, { followUp: already });
     if (!already) await telegramSendMessage(msg.chat.id, SUPPORT_SENT_TEXT, null);
     return true;
   }
 
   const sessionSnap = await supportSessionRef(uid).get();
   if (!sessionSnap.exists()) return false;
-  const session = sessionSnap.val() || {};
-  if (!session.active) return false;
+  const live = await ensureSupportSessionLive(uid, sessionSnap.val() || {});
+  if (!live) return false;
 
   // Команды бота (кроме support) не считаем текстом диалога
   if (isBotCommandText(text) && !parseSupportCommand(text)) return false;
 
   const question = text.trim() || String(msg.caption || '').trim();
   if (!question) {
-    if (session.awaitingFirst) {
+    if (live.awaitingFirst) {
       await telegramSendMessage(msg.chat.id, SUPPORT_EMPTY_TEXT, null);
       return true;
     }
     return false;
   }
 
-  const wasAwaiting = !!session.awaitingFirst;
+  const wasAwaiting = !!live.awaitingFirst;
   await deliverSupportMessage(msg.from, question, { followUp: !wasAwaiting });
   if (wasAwaiting) await telegramSendMessage(msg.chat.id, SUPPORT_SENT_TEXT, null);
   return true;
