@@ -224,7 +224,7 @@ registerUserIfNeeded();
       'position:fixed', 'inset:0', 'z-index:2147483646',
       'background:linear-gradient(165deg,#ebe6f4 0%,#f7f5fb 45%,#efeaf8 100%)',
       'display:flex', 'align-items:flex-start', 'justify-content:center',
-      'padding:36px 18px 24px', 'box-sizing:border-box',
+      'padding:72px 18px 24px', 'box-sizing:border-box',
       'overflow:auto', '-webkit-overflow-scrolling:touch',
       'font-family:Arial,sans-serif', 'visibility:visible'
     ].join(';');
