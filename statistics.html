@@ -350,11 +350,14 @@
           .catch(() => {});
       }
 
-      armyCloudFetch('user_count')
+      // Считаем реальных людей в реестре (не табло user_count — оно могло отставать)
+      armyCloudFetch('user_registry')
         .then(res => res.json())
-        .then(totalUsers => {
+        .then(registry => {
           contentEl.innerHTML = '';
-          totalUsers = totalUsers || 0;
+          const totalUsers = registry && typeof registry === 'object'
+            ? Object.keys(registry).length
+            : 0;
 
           if (myNumber) {
             const badge = getBadge(parseInt(myNumber));
@@ -819,12 +822,13 @@
         return;
       }
       box.style.display = '';
+      const registered = Number(stats.registered) || 0;
       const total = Number(stats.total) || 0;
       const trial = Number(stats.trial) || 0;
       const paid = Number(stats.paid) || 0;
       const forever = Number(stats.forever) || 0;
       const expired = Number(stats.expired) || 0;
-      valueEl.textContent = 'С доступом сейчас: ' + total;
+      valueEl.textContent = 'В приложении: ' + registered + ' · с доступом: ' + total;
       subEl.textContent =
         'Пробный: ' + trial +
         ' · Оплатили: ' + paid +

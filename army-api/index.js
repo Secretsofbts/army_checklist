@@ -541,6 +541,8 @@ async function collectSubscriptionStats() {
   const now = Date.now();
   const snap = await db.ref('subscriptions').get();
   const all = snap.exists() ? snap.val() : {};
+  const regSnap = await db.ref('user_registry').get();
+  const registered = regSnap.exists() ? Object.keys(regSnap.val() || {}).length : 0;
   const counted = {};
   let trial = 0;
   let paid = 0;
@@ -572,6 +574,7 @@ async function collectSubscriptionStats() {
   });
 
   return {
+    registered: registered,
     total: trial + paid + forever,
     trial: trial,
     paid: paid,
@@ -644,6 +647,46 @@ app.post('/admin/grant', async function (req, res) {
   }
 });
 
+async function nextUserNumber() {
+  const countRef = db.ref('user_count');
+  const regSnap = await db.ref('user_registry').get();
+  const all = regSnap.exists() ? (regSnap.val() || {}) : {};
+  let maxNum = 0;
+  Object.keys(all).forEach(function (id) {
+    const n = parseInt(all[id] && all[id].number, 10) || 0;
+    if (n > maxNum) maxNum = n;
+  });
+  const people = Object.keys(all).length;
+  const floor = Math.max(maxNum, people);
+  const result = await countRef.transaction(function (current) {
+    const cur = Number(current) || 0;
+    return Math.max(cur, floor) + 1;
+  });
+  return result.snapshot.val();
+}
+
+async function reconcileUserCount() {
+  const regSnap = await db.ref('user_registry').get();
+  const all = regSnap.exists() ? (regSnap.val() || {}) : {};
+  const people = Object.keys(all).length;
+  let maxNum = 0;
+  Object.keys(all).forEach(function (id) {
+    const n = parseInt(all[id] && all[id].number, 10) || 0;
+    if (n > maxNum) maxNum = n;
+  });
+  const want = Math.max(people, maxNum);
+  const countRef = db.ref('user_count');
+  const curSnap = await countRef.get();
+  const cur = Number(curSnap.val()) || 0;
+  if (want > cur) {
+    await countRef.set(want);
+    console.log('user_count reconciled', cur, '→', want, '(people', people + ')');
+  } else {
+    console.log('user_count ok', cur, '(people', people + ')');
+  }
+  return { people: people, userCount: Math.max(cur, want), maxNum: maxNum };
+}
+
 app.post('/register', async function (req, res) {
   const user = authUser(req);
   if (!user) return res.status(401).json({ error: 'auth' });
@@ -654,11 +697,7 @@ app.post('/register', async function (req, res) {
     if (snap.exists() && snap.val() && snap.val().number) {
       return res.json(snap.val());
     }
-    const countRef = db.ref('user_count');
-    const result = await countRef.transaction(function (current) {
-      return (current || 0) + 1;
-    });
-    const newNumber = result.snapshot.val();
+    const newNumber = await nextUserNumber();
     const firstSeen = Date.now();
     const entry = { number: newNumber, firstSeen: firstSeen };
     await ownRef.set(entry);
@@ -1302,6 +1341,9 @@ app.listen(PORT, function () {
   ensureTelegramWebhook();
   ensureBotCommands();
   applyForceTestAccountOnBoot();
+  reconcileUserCount().catch(function (e) {
+    console.error('user_count reconcile failed', e);
+  });
   grantLegacyTrialsToAllRegistry().catch(function (e) {
     console.error('legacy trial bulk failed', e);
   });
