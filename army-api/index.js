@@ -15,13 +15,14 @@ const FOREVER_IDS = String(process.env.FOREVER_TELEGRAM_IDS || '163381553,591051
   .split(',')
   .map(function (s) { return s.trim(); })
   .filter(Boolean);
-// Тестовый аккаунт (2-я страница): режим превью.
-// days3 = обычный человек, осталось 3 дня; new10 = новый с 10 днями; paid1 = последний день.
-const FORCE_TEST_MODE = String(process.env.FORCE_TEST_MODE || 'paid1').trim();
-const FORCE_TEST_IDS = String(process.env.FORCE_TEST_IDS || '2055929706')
+// Тестовый аккаунт (2-я страница): режим превью. По умолчанию выключен.
+// days3 / new10 / paid1 — только если явно задать FORCE_TEST_MODE в Render.
+const FORCE_TEST_MODE = String(process.env.FORCE_TEST_MODE || 'off').trim().toLowerCase();
+const FORCE_TEST_IDS = String(process.env.FORCE_TEST_IDS || '')
   .split(',')
   .map(function (s) { return s.trim(); })
   .filter(Boolean);
+const FORCE_TEST_MODES = { days3: 1, new10: 1, paid1: 1 };
 const DAY_MS = 24 * 60 * 60 * 1000;
 // Старым: 5 дней с завтра (из‑за задержки с кассой). Новым по-прежнему 10 дней.
 const LEGACY_TRIAL_DAYS = 5;
@@ -287,9 +288,23 @@ async function ensureSubscriptionRecord(uid) {
 
   if (snap.exists() && snap.val()) {
     const existing = snap.val();
-    if (existing.forever || existing.note === 'force-expired-test' ||
-        existing.note === 'force-one-day-test' || existing.note === 'force-paid-one-day-test' ||
-        existing.note === 'force-new10-preview' || existing.note === 'force-days3-preview') return existing;
+    if (existing.forever) return existing;
+    const note = String(existing.note || '');
+    // Старые тестовые превью («нет дней» / последний день и т.п.) → обычный пробный период
+    if (note.indexOf('force-') === 0) {
+      const cleared = {
+        active: true,
+        trial: true,
+        trialDays: days,
+        trialPlan: TRIAL_PLAN_TAG,
+        forever: false,
+        expiresAt: computeTrialExpiresAt(firstSeen, now),
+        createdAt: existing.createdAt || now,
+        updatedAt: now
+      };
+      await ref.set(cleared);
+      return cleared;
+    }
     // Уже оплативших с trial:false не трогаем. Пробным один раз выставляем актуальный срок.
     if (existing.trial && existing.trialPlan !== TRIAL_PLAN_TAG) {
       existing.expiresAt = computeTrialExpiresAt(firstSeen, now);
@@ -353,13 +368,13 @@ app.get('/subscription', async function (req, res) {
       }
       return res.json(buildSubscriptionStatus(uid, { forever: true }, false));
     }
-    // Тестовый аккаунт: превью режимов (days3 / new10 / paid1)
-    if (FORCE_TEST_IDS.indexOf(uid) !== -1) {
+    // Тестовый аккаунт: превью режимов (days3 / new10 / paid1) — только если режим явно включён
+    if (FORCE_TEST_IDS.indexOf(uid) !== -1 && FORCE_TEST_MODES[FORCE_TEST_MODE]) {
       const ref = subscriptionRef(uid);
       const snap = await ref.get();
       const prev = snap.exists() ? snap.val() : null;
       const now = Date.now();
-      const mode = FORCE_TEST_MODE || 'days3';
+      const mode = FORCE_TEST_MODE;
 
       if (mode === 'days3') {
         const note = 'force-days3-preview';
@@ -1164,9 +1179,39 @@ async function ensureBotCommands() {
   }
 }
 
+async function resetTestAccountIfForceOff() {
+  if (FORCE_TEST_MODES[FORCE_TEST_MODE]) return;
+  const testId = '2055929706';
+  try {
+    const data = await ensureSubscriptionRecord(testId);
+    // Если после сброса force- всё ещё нет дней — выдать свежий пробный
+    const now = Date.now();
+    if (!data || data.forever) return;
+    if (typeof data.expiresAt === 'number' && data.expiresAt > now) {
+      console.log('Test account access ok', testId, data.expiresAt);
+      return;
+    }
+    const entry = {
+      active: true,
+      trial: true,
+      trialDays: NEW_TRIAL_DAYS,
+      trialPlan: TRIAL_PLAN_TAG,
+      forever: false,
+      expiresAt: now + NEW_TRIAL_DAYS * DAY_MS,
+      createdAt: (data && data.createdAt) || now,
+      updatedAt: now
+    };
+    await subscriptionRef(testId).set(entry);
+    console.log('Test account restored to trial', testId);
+  } catch (e) {
+    console.error('Test account reset failed', e);
+  }
+}
+
 app.listen(PORT, function () {
   console.log('army-api listening on ' + PORT);
   scheduleSubscriptionReminders();
   ensureTelegramWebhook();
   ensureBotCommands();
+  resetTestAccountIfForceOff();
 });
