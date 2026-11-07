@@ -602,12 +602,15 @@ app.use('/cloud', async function (req, res) {
 
 const CABINET_LINK = 'https://t.me/army_checklist_bot?startapp=cabinet';
 const BOT_APP_LINK = 'https://t.me/army_checklist_bot?startapp';
-// Куда ведёт кнопка «Поддержка» после /start.
-// Лучше поставить личный @username в Render: SUPPORT_URL=https://t.me/ваш_ник
-const SUPPORT_LINK = String(process.env.SUPPORT_URL || 'https://t.me/violent_arhive').trim();
 const START_TEXT =
   'Просто откройте приложение по кнопке снизу "For ARMY 💜"\n\n' +
-  'При возникновении каких-то вопросов или проблем пишите в поддержку';
+  'При возникновении каких-то вопросов или проблем напишите команду /support или слово «поддержка»';
+const SUPPORT_ASK_TEXT =
+  'Напишите ваш вопрос одним следующим сообщением — я передам его в поддержку 💜';
+const SUPPORT_SENT_TEXT =
+  'Сообщение отправлено в поддержку. Ответ придёт сюда же, в этот бот 💜';
+const SUPPORT_EMPTY_TEXT =
+  'Пожалуйста, напишите вопрос текстом.';
 const ONEDAY_REMIND_TEXT =
   'Сегодня последний день вашей подписки на чек-лист по архиву BTS\n\n' +
   'Для продолжения использования можно добавить нужное количество дней в своем личном кабинете\n\n' +
@@ -674,21 +677,24 @@ function isFirstExpiredDayMoscow(expiresAt, now) {
 }
 
 async function telegramSendMessage(chatId, text, button) {
-  button = button || { text: 'Личный кабинет', url: CABINET_LINK };
+  // button === undefined → кнопка «Личный кабинет»
+  // button === null → без кнопок
+  if (button === undefined) button = { text: 'Личный кабинет', url: CABINET_LINK };
+  const payload = {
+    chat_id: chatId,
+    text: text,
+    disable_web_page_preview: true
+  };
+  if (button) {
+    payload.reply_markup = {
+      inline_keyboard: [[{ text: button.text, url: button.url }]]
+    };
+  }
   const url = 'https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage';
   const res = await fetch(url, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      chat_id: chatId,
-      text: text,
-      disable_web_page_preview: true,
-      reply_markup: {
-        inline_keyboard: [[
-          { text: button.text, url: button.url }
-        ]]
-      }
-    })
+    body: JSON.stringify(payload)
   });
   const data = await res.json().catch(function () { return null; });
   if (!res.ok || !data || !data.ok) {
@@ -696,6 +702,122 @@ async function telegramSendMessage(chatId, text, button) {
     throw new Error('telegram: ' + desc);
   }
   return data;
+}
+
+function isAdminTelegramId(id) {
+  return ADMIN_IDS.indexOf(String(id)) !== -1;
+}
+
+function parseSupportCommand(text) {
+  const t = String(text || '').trim();
+  let m = t.match(/^\/(?:support|podderzhka|поддержка)(?:@\w+)?(?:\s+([\s\S]*))?$/i);
+  if (m) return { question: String(m[1] || '').trim() };
+  m = t.match(/^поддержка(?:\s+([\s\S]*))?$/i);
+  if (m) return { question: String(m[1] || '').trim() };
+  return null;
+}
+
+function supportPendingRef(uid) {
+  return db.ref('support_pending/' + uid);
+}
+
+function supportTicketRef(adminChatId, adminMsgId) {
+  return db.ref('support_tickets/' + adminChatId + '_' + adminMsgId);
+}
+
+async function deliverSupportQuestion(fromUser, questionText) {
+  const uid = String(fromUser.id);
+  const name = [fromUser.first_name, fromUser.last_name].filter(Boolean).join(' ') || 'без имени';
+  const uname = fromUser.username ? '@' + fromUser.username : 'нет username';
+  const body =
+    '🆘 Сообщение в поддержку\n' +
+    'От: ' + name + ' (' + uname + ')\n' +
+    'id: ' + uid + '\n\n' +
+    questionText +
+    '\n\n↳ Ответьте reply (ответом) на это сообщение — текст уйдёт человеку.';
+
+  const admins = ADMIN_IDS.length ? ADMIN_IDS : [];
+  if (!admins.length) throw new Error('no-admin');
+
+  for (let i = 0; i < admins.length; i++) {
+    const adminId = admins[i];
+    const sent = await telegramSendMessage(adminId, body, null);
+    const msgId = sent && sent.result && sent.result.message_id;
+    if (msgId) {
+      await supportTicketRef(adminId, msgId).set({
+        userId: uid,
+        userName: name,
+        at: Date.now()
+      });
+    }
+  }
+  await supportPendingRef(uid).remove();
+}
+
+async function handleAdminSupportReply(msg) {
+  if (!msg || !msg.from || !isAdminTelegramId(msg.from.id)) return false;
+  const reply = msg.reply_to_message;
+  if (!reply || !reply.message_id) return false;
+  const snap = await supportTicketRef(msg.chat.id, reply.message_id).get();
+  if (!snap.exists()) return false;
+  const ticket = snap.val() || {};
+  const userId = String(ticket.userId || '');
+  if (!userId) return false;
+
+  let answer = String(msg.text || msg.caption || '').trim();
+  if (!answer) {
+    await telegramSendMessage(msg.chat.id, 'Ответ пока только текстом — напишите текст reply-ем.', null);
+    return true;
+  }
+
+  await telegramSendMessage(
+    userId,
+    'Ответ поддержки:\n\n' + answer,
+    null
+  );
+  await telegramSendMessage(msg.chat.id, '✓ Отправлено пользователю', null);
+  return true;
+}
+
+async function handleSupportFlow(msg) {
+  if (!msg || !msg.chat || !msg.from) return false;
+  if (msg.chat.type !== 'private') return false;
+  const uid = String(msg.from.id);
+  const text = String(msg.text || '');
+
+  // Админ отвечает reply-ем на тикет
+  if (await handleAdminSupportReply(msg)) return true;
+
+  const parsed = parseSupportCommand(text);
+  if (parsed) {
+    if (!parsed.question) {
+      await supportPendingRef(uid).set({ at: Date.now() });
+      await telegramSendMessage(msg.chat.id, SUPPORT_ASK_TEXT, null);
+      return true;
+    }
+    await deliverSupportQuestion(msg.from, parsed.question);
+    await telegramSendMessage(msg.chat.id, SUPPORT_SENT_TEXT, null);
+    return true;
+  }
+
+  // Ждём следующее сообщение после команды «поддержка»
+  const pendingSnap = await supportPendingRef(uid).get();
+  if (pendingSnap.exists()) {
+    if (/^\/start(?:@\w+)?(?:\s|$)/i.test(text)) {
+      await supportPendingRef(uid).remove();
+      return false;
+    }
+    const question = text.trim() || String(msg.caption || '').trim();
+    if (!question) {
+      await telegramSendMessage(msg.chat.id, SUPPORT_EMPTY_TEXT, null);
+      return true;
+    }
+    await deliverSupportQuestion(msg.from, question);
+    await telegramSendMessage(msg.chat.id, SUPPORT_SENT_TEXT, null);
+    return true;
+  }
+
+  return false;
 }
 
 async function telegramSendPhoto(chatId, caption, photoPath) {
@@ -871,16 +993,24 @@ function scheduleSubscriptionReminders() {
 }
 
 async function handleStartCommand(msg) {
-  if (!msg || !msg.chat || !msg.chat.id) return;
+  if (!msg || !msg.chat || !msg.chat.id) return false;
   const text = String(msg.text || '');
-  if (!/^\/start(?:@\w+)?(?:\s|$)/i.test(text)) return;
+  if (!/^\/start(?:@\w+)?(?:\s|$)/i.test(text)) return false;
   try {
-    await telegramSendMessage(msg.chat.id, START_TEXT, {
-      text: 'Поддержка',
-      url: SUPPORT_LINK
-    });
+    await telegramSendMessage(msg.chat.id, START_TEXT, null);
   } catch (e) {
     console.error('start reply failed', e);
+  }
+  return true;
+}
+
+async function handleBotMessage(msg) {
+  if (!msg) return;
+  try {
+    if (await handleSupportFlow(msg)) return;
+    await handleStartCommand(msg);
+  } catch (e) {
+    console.error('bot message handle error', e);
   }
 }
 
@@ -894,7 +1024,7 @@ app.post('/telegram/webhook', async function (req, res) {
   res.json({ ok: true });
   try {
     const update = req.body || {};
-    if (update.message) await handleStartCommand(update.message);
+    if (update.message) await handleBotMessage(update.message);
   } catch (e) {
     console.error('webhook handle error', e);
   }
@@ -927,26 +1057,28 @@ async function ensureTelegramWebhook() {
   }
 }
 
+async function ensureBotCommands() {
+  try {
+    const res = await fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/setMyCommands', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        commands: [
+          { command: 'start', description: 'Как открыть приложение' },
+          { command: 'support', description: 'Написать в поддержку' }
+        ]
+      })
+    });
+    const data = await res.json().catch(function () { return null; });
+    console.log('setMyCommands', data && data.ok ? 'ok' : data);
+  } catch (e) {
+    console.error('setMyCommands failed', e);
+  }
+}
+
 app.listen(PORT, function () {
   console.log('army-api listening on ' + PORT);
   scheduleSubscriptionReminders();
   ensureTelegramWebhook();
-  // После деплоя: тестовое «подписка продлена» с фото на 2-ю страницу
-  setTimeout(async function () {
-    try {
-      const dayKey = moscowParts(Date.now()).dateKey;
-      const metaRef = db.ref('bot_meta/testPaidThanksV2');
-      const metaSnap = await metaRef.get();
-      if (metaSnap.exists() && metaSnap.val() === dayKey) {
-        console.log('Test paid thanks already sent today');
-        return;
-      }
-      const testId = FORCE_TEST_IDS[0] || '2055929706';
-      const result = await sendPaidThanksToUser(testId, 30);
-      console.log('Test paid thanks to', testId, result);
-      if (result.sent) await metaRef.set(dayKey);
-    } catch (e) {
-      console.error('Test paid thanks failed', e);
-    }
-  }, 4000);
+  ensureBotCommands();
 });
