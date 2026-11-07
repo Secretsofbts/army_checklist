@@ -822,13 +822,12 @@
         return;
       }
       box.style.display = '';
-      const registered = Number(stats.registered) || 0;
       const total = Number(stats.total) || 0;
       const trial = Number(stats.trial) || 0;
       const paid = Number(stats.paid) || 0;
       const forever = Number(stats.forever) || 0;
       const expired = Number(stats.expired) || 0;
-      valueEl.textContent = 'В приложении: ' + registered + ' · с доступом: ' + total;
+      valueEl.textContent = 'С доступом сейчас: ' + total;
       subEl.textContent =
         'Пробный: ' + trial +
         ' · Оплатили: ' + paid +
