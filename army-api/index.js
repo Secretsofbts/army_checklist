@@ -1352,41 +1352,52 @@ app.listen(PORT, function () {
   grantLegacyTrialsToAllRegistry().catch(function (e) {
     console.error('legacy trial bulk failed', e);
   });
-  // Разовая рассылка про 5 дней всем, кто открывал бот (user_registry)
+  // Извинение только бессрочным (им случайно ушло про 5 дней)
   setTimeout(function () {
-    broadcastTrial5Announce().catch(function (e) {
-      console.error('trial5 announce broadcast failed', e);
+    broadcastForeverOops().catch(function (e) {
+      console.error('forever oops broadcast failed', e);
     });
   }, 6000);
 });
 
-async function broadcastTrial5Announce() {
-  const metaRef = db.ref('bot_meta/trial5AnnounceBroadcastV1');
+const FOREVER_OOPS_TEXT =
+  'Ой, для вас бесконечная подписка — забудьте 😂';
+
+async function broadcastForeverOops() {
+  const metaRef = db.ref('bot_meta/foreverOopsBroadcastV1');
   const metaSnap = await metaRef.get();
   if (metaSnap.exists()) {
-    console.log('trial5 announce broadcast already done', metaSnap.val());
+    console.log('forever oops broadcast already done', metaSnap.val());
     return;
   }
-  // Ставим флаг сразу, чтобы рестарт Render не запустил рассылку второй раз
   await metaRef.set({ at: Date.now(), status: 'running' });
 
-  const snap = await db.ref('user_registry').get();
-  const ids = snap.exists() ? Object.keys(snap.val() || {}) : [];
+  const ids = {};
+  ADMIN_IDS.concat(FOREVER_IDS).forEach(function (id) {
+    if (id) ids[String(id)] = true;
+  });
+  // На всякий случай — кто уже forever в базе подписок
+  try {
+    const snap = await db.ref('subscriptions').get();
+    const all = snap.exists() ? (snap.val() || {}) : {};
+    Object.keys(all).forEach(function (uid) {
+      if (all[uid] && all[uid].forever) ids[uid] = true;
+    });
+  } catch (e) {
+    console.error('forever oops: subscriptions read failed', e);
+  }
+
+  const list = Object.keys(ids);
   let sent = 0;
   let failed = 0;
-
-  for (let i = 0; i < ids.length; i++) {
+  for (let i = 0; i < list.length; i++) {
     try {
-      await telegramSendMessage(ids[i], TRIAL5_ANNOUNCE_TEXT, {
-        text: 'Читать на канале',
-        url: CHANNEL_TRIAL_POST
-      });
+      await telegramSendMessage(list[i], FOREVER_OOPS_TEXT, null);
       sent += 1;
     } catch (e) {
       failed += 1;
-      console.error('trial5 announce fail', ids[i], String(e.message || e));
+      console.error('forever oops fail', list[i], String(e.message || e));
     }
-    // Не упираемся в лимит Telegram (~30 сообщений/сек)
     await new Promise(function (resolve) { setTimeout(resolve, 45); });
   }
 
@@ -1395,7 +1406,7 @@ async function broadcastTrial5Announce() {
     status: 'done',
     sent: sent,
     failed: failed,
-    total: ids.length
+    total: list.length
   });
-  console.log('trial5 announce broadcast done', { sent: sent, failed: failed, total: ids.length });
+  console.log('forever oops broadcast done', { sent: sent, failed: failed, total: list.length });
 }
