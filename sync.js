@@ -215,10 +215,20 @@ registerUserIfNeeded();
         priceRub: (data && data.priceRub) || 200,
         oldPriceRub: (data && data.oldPriceRub) || null,
         promo: !!(data && data.promo),
+        promoDaysLeft: (data && data.promoDaysLeft != null) ? data.promoDaysLeft : null,
         status: (data && data.status) || '',
         at: Date.now()
       }));
     } catch (e) {}
+  }
+
+  function armyPluralDaysPromo(n) {
+    const num = Math.abs(parseInt(n, 10) || 0);
+    const mod10 = num % 10;
+    const mod100 = num % 100;
+    if (mod10 === 1 && mod100 !== 11) return 'день';
+    if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return 'дня';
+    return 'дней';
   }
 
   function armyTrialWelcomeKey() {
@@ -493,12 +503,21 @@ registerUserIfNeeded();
     monthBtn.appendChild(monthSoon);
     plans.appendChild(monthBtn);
 
+    const promoLeft = parseInt(info.promoDaysLeft, 10);
+    let promoLine = null;
+    if (info.promo && promoLeft > 0) {
+      promoLine = document.createElement('div');
+      promoLine.textContent = 'Акция ещё ' + promoLeft + ' ' + armyPluralDaysPromo(promoLeft);
+      promoLine.style.cssText = 'font-size:13px;line-height:1.35;color:#8a7aa8;margin:-6px 0 14px;text-align:center';
+    }
+
     const thanks = document.createElement('div');
     thanks.textContent = 'Спасибо, что пользуетесь ботом 💜';
     thanks.style.cssText = 'font-size:13px;line-height:1.4;color:#5b4a7a;font-weight:600';
 
     card.appendChild(title);
     card.appendChild(plans);
+    if (promoLine) card.appendChild(promoLine);
     card.appendChild(thanks);
     wrap.appendChild(hero);
     wrap.appendChild(card);
