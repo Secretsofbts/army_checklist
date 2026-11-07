@@ -359,11 +359,6 @@ registerUserIfNeeded();
     ].join(';');
 
     function dismiss(goCabinet) {
-      try {
-        if (window.__armyOneDayWarnExpiresAt) {
-          localStorage.setItem(armyOneDayWarnKey(window.__armyOneDayWarnExpiresAt), '1');
-        }
-      } catch (e) {}
       armyRemoveEl('army-oneday-warn');
       armyUnlockPageScroll();
       if (goCabinet) {
@@ -389,10 +384,12 @@ registerUserIfNeeded();
     if (!data.expiresAt) return;
     const leftDays = Math.ceil((Number(data.expiresAt) - Date.now()) / (24 * 60 * 60 * 1000));
     if (leftDays !== 1) return;
+    const warnKey = armyOneDayWarnKey(data.expiresAt);
     try {
-      if (localStorage.getItem(armyOneDayWarnKey(data.expiresAt)) === '1') return;
+      if (localStorage.getItem(warnKey) === '1') return;
+      // Сразу помечаем «уже показали», даже если уйдут со страницы без кнопки
+      localStorage.setItem(warnKey, '1');
     } catch (e) {}
-    window.__armyOneDayWarnExpiresAt = data.expiresAt;
     showOneDayWarn();
   }
 
