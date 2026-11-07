@@ -515,8 +515,8 @@ function pluralDaysRu(n) {
 function paidThanksCaption(days) {
   const n = Math.max(1, parseInt(days, 10) || 30);
   return (
-    'Подписка успешно продлена на ' + n + ' ' + pluralDaysRu(n) + ' ☺️\n\n' +
-    'Спасибо, что поддерживаете это проект и архив 🫶'
+    'Подписка успешно была оплачена и продлена на ' + n + ' ' + pluralDaysRu(n) + ' ☺️\n\n' +
+    'Спасибо, что поддерживаете данный проект и архив 🫶'
   );
 }
 
@@ -762,7 +762,7 @@ app.listen(PORT, function () {
   setTimeout(async function () {
     try {
       const dayKey = moscowParts(Date.now()).dateKey;
-      const metaRef = db.ref('bot_meta/testPaidThanksV1');
+      const metaRef = db.ref('bot_meta/testPaidThanksV2');
       const metaSnap = await metaRef.get();
       if (metaSnap.exists() && metaSnap.val() === dayKey) {
         console.log('Test paid thanks already sent today');
