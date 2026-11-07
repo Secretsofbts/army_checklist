@@ -1,4 +1,6 @@
 const crypto = require('crypto');
+const fs = require('fs');
+const path = require('path');
 const express = require('express');
 const admin = require('firebase-admin');
 
@@ -411,6 +413,10 @@ app.post('/admin/grant', async function (req, res) {
       };
     }
     await ref.set(entry);
+    if (!forever) {
+      const thanks = await sendPaidThanksToUser(targetId, entry.paidDays || days || 30);
+      if (!thanks.sent) console.error('paid thanks failed', targetId, thanks);
+    }
     return res.json(buildSubscriptionStatus(targetId, entry, false));
   } catch (e) {
     console.error(e);
@@ -495,6 +501,24 @@ const EXPIRED_REMIND_TEXT =
   'Ваша подписка на чек-лист по архиву BTS закончилась 😢\n\n' +
   'Мы будем ждать вашего возвращения и оберегать все поставленные галочки\n\n' +
   'Продлить подписку можно в боте 💜';
+const PAID_THANKS_PHOTO = path.join(__dirname, 'sub-extended.jpg');
+
+function pluralDaysRu(n) {
+  const num = Math.abs(parseInt(n, 10) || 0);
+  const mod10 = num % 10;
+  const mod100 = num % 100;
+  if (mod10 === 1 && mod100 !== 11) return 'день';
+  if (mod10 >= 2 && mod10 <= 4 && (mod100 < 12 || mod100 > 14)) return 'дня';
+  return 'дней';
+}
+
+function paidThanksCaption(days) {
+  const n = Math.max(1, parseInt(days, 10) || 30);
+  return (
+    'Подписка успешно продлена на ' + n + ' ' + pluralDaysRu(n) + ' ☺️\n\n' +
+    'Спасибо, что поддерживаете это проект и архив 🫶'
+  );
+}
 
 function moscowParts(ms) {
   const d = new Date(ms);
@@ -557,6 +581,33 @@ async function telegramSendMessage(chatId, text, button) {
     throw new Error('telegram: ' + desc);
   }
   return data;
+}
+
+async function telegramSendPhoto(chatId, caption, photoPath) {
+  const buf = fs.readFileSync(photoPath || PAID_THANKS_PHOTO);
+  const form = new FormData();
+  form.append('chat_id', String(chatId));
+  form.append('caption', String(caption || ''));
+  form.append('disable_notification', 'false');
+  form.append('photo', new Blob([buf], { type: 'image/jpeg' }), 'sub-extended.jpg');
+  const url = 'https://api.telegram.org/bot' + BOT_TOKEN + '/sendPhoto';
+  const res = await fetch(url, { method: 'POST', body: form });
+  const data = await res.json().catch(function () { return null; });
+  if (!res.ok || !data || !data.ok) {
+    const desc = data && data.description ? data.description : ('HTTP ' + res.status);
+    throw new Error('telegram-photo: ' + desc);
+  }
+  return data;
+}
+
+async function sendPaidThanksToUser(uid, days) {
+  const caption = paidThanksCaption(days);
+  try {
+    await telegramSendPhoto(uid, caption, PAID_THANKS_PHOTO);
+    return { sent: true, days: Math.max(1, parseInt(days, 10) || 30) };
+  } catch (e) {
+    return { sent: false, reason: 'telegram', error: String(e.message || e) };
+  }
 }
 
 async function sendOneDayReminderToUser(uid, options) {
@@ -707,22 +758,22 @@ function scheduleSubscriptionReminders() {
 app.listen(PORT, function () {
   console.log('army-api listening on ' + PORT);
   scheduleSubscriptionReminders();
-  // После деплоя: тестовое сообщение «последний день» на 2-ю страницу
+  // После деплоя: тестовое «подписка продлена» с фото на 2-ю страницу
   setTimeout(async function () {
     try {
       const dayKey = moscowParts(Date.now()).dateKey;
-      const metaRef = db.ref('bot_meta/testOneDayRemindV6');
+      const metaRef = db.ref('bot_meta/testPaidThanksV1');
       const metaSnap = await metaRef.get();
       if (metaSnap.exists() && metaSnap.val() === dayKey) {
-        console.log('Test last-day remind already sent today');
+        console.log('Test paid thanks already sent today');
         return;
       }
       const testId = FORCE_TEST_IDS[0] || '2055929706';
-      const result = await sendOneDayReminderToUser(testId, { force: true });
-      console.log('Test last-day remind to', testId, result);
+      const result = await sendPaidThanksToUser(testId, 30);
+      console.log('Test paid thanks to', testId, result);
       if (result.sent) await metaRef.set(dayKey);
     } catch (e) {
-      console.error('Test last-day remind failed', e);
+      console.error('Test paid thanks failed', e);
     }
   }, 4000);
 });
