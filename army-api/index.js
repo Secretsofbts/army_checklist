@@ -602,6 +602,12 @@ app.use('/cloud', async function (req, res) {
 
 const CABINET_LINK = 'https://t.me/army_checklist_bot?startapp=cabinet';
 const BOT_APP_LINK = 'https://t.me/army_checklist_bot?startapp';
+// Куда ведёт кнопка «Поддержка» после /start.
+// Лучше поставить личный @username в Render: SUPPORT_URL=https://t.me/ваш_ник
+const SUPPORT_LINK = String(process.env.SUPPORT_URL || 'https://t.me/violent_arhive').trim();
+const START_TEXT =
+  'Просто откройте приложение по кнопке снизу "For ARMY 💜"\n\n' +
+  'При возникновении каких-то вопросов или проблем пишите в поддержку';
 const ONEDAY_REMIND_TEXT =
   'Сегодня последний день вашей подписки на чек-лист по архиву BTS\n\n' +
   'Для продолжения использования можно добавить нужное количество дней в своем личном кабинете\n\n' +
@@ -864,9 +870,67 @@ function scheduleSubscriptionReminders() {
   }, 30000);
 }
 
+async function handleStartCommand(msg) {
+  if (!msg || !msg.chat || !msg.chat.id) return;
+  const text = String(msg.text || '');
+  if (!/^\/start(?:@\w+)?(?:\s|$)/i.test(text)) return;
+  try {
+    await telegramSendMessage(msg.chat.id, START_TEXT, {
+      text: 'Поддержка',
+      url: SUPPORT_LINK
+    });
+  } catch (e) {
+    console.error('start reply failed', e);
+  }
+}
+
+// Telegram шлёт сюда все апдейты (команда /start и т.д.)
+app.post('/telegram/webhook', async function (req, res) {
+  const secret = String(process.env.WEBHOOK_SECRET || '');
+  if (secret) {
+    const got = String(req.get('x-telegram-bot-api-secret-token') || '');
+    if (got !== secret) return res.status(403).json({ error: 'forbidden' });
+  }
+  res.json({ ok: true });
+  try {
+    const update = req.body || {};
+    if (update.message) await handleStartCommand(update.message);
+  } catch (e) {
+    console.error('webhook handle error', e);
+  }
+});
+
+async function ensureTelegramWebhook() {
+  const base = String(
+    process.env.PUBLIC_BASE_URL ||
+    process.env.RENDER_EXTERNAL_URL ||
+    'https://army-checklist.onrender.com'
+  ).replace(/\/$/, '');
+  const webhookUrl = base + '/telegram/webhook';
+  const secret = String(process.env.WEBHOOK_SECRET || '');
+  const body = {
+    url: webhookUrl,
+    allowed_updates: ['message'],
+    drop_pending_updates: false
+  };
+  if (secret) body.secret_token = secret;
+  try {
+    const res = await fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/setWebhook', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    const data = await res.json().catch(function () { return null; });
+    console.log('setWebhook', webhookUrl, data && data.ok ? 'ok' : data);
+  } catch (e) {
+    console.error('setWebhook failed', e);
+  }
+}
+
 app.listen(PORT, function () {
   console.log('army-api listening on ' + PORT);
   scheduleSubscriptionReminders();
+  ensureTelegramWebhook();
   // После деплоя: тестовое «подписка продлена» с фото на 2-ю страницу
   setTimeout(async function () {
     try {
