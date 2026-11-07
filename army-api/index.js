@@ -11,7 +11,7 @@ const ADMIN_IDS = String(process.env.ADMIN_TELEGRAM_IDS || '891936733')
   .map(function (s) { return s.trim(); })
   .filter(Boolean);
 // Бессрочный доступ без прав админа (подруги и исключения).
-const FOREVER_IDS = String(process.env.FOREVER_TELEGRAM_IDS || '163381553,591051945,1018991144')
+const FOREVER_IDS = String(process.env.FOREVER_TELEGRAM_IDS || '163381553,591051945,1018991144,5107937805,299076099')
   .split(',')
   .map(function (s) { return s.trim(); })
   .filter(Boolean);
