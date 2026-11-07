@@ -156,7 +156,7 @@ function registerUserIfNeeded() {
 registerUserIfNeeded();
 
   // Проверка подписки: без оплаты — экран-заглушка. Галочки и прогресс НЕ стираем.
-  // Сразу закрываем экран, чтобы не мелькал чеклист до ответа сервера.
+  // Без сиреневой «заглушки ожидания» на каждой странице — только экран оплаты, если доступа нет.
   function armyMountTopOverlay(el) {
     function go() {
       const host = document.body || document.documentElement;
@@ -183,37 +183,43 @@ registerUserIfNeeded();
     } catch (e) {}
   }
 
-  function showSubscriptionGateLock() {
-    if (document.getElementById('army-sub-lock') || document.getElementById('army-paywall')) return;
-    document.documentElement.classList.add('army-await-sub');
-    if (!document.getElementById('army-sub-lock-css')) {
-      const css = document.createElement('style');
-      css.id = 'army-sub-lock-css';
-      css.textContent = 'html.army-await-sub body{visibility:hidden!important}html.army-await-sub #army-sub-lock,html.army-await-sub #army-paywall{visibility:visible!important}';
-      (document.head || document.documentElement).appendChild(css);
-    }
-    const lock = document.createElement('div');
-    lock.id = 'army-sub-lock';
-    lock.style.cssText = [
-      'position:fixed', 'inset:0', 'z-index:2147483646',
-      'background:linear-gradient(165deg,#ebe6f4 0%,#f7f5fb 45%,#efeaf8 100%)',
-      'pointer-events:auto'
-    ].join(';');
-    armyMountTopOverlay(lock);
+  function armySubCacheKey() {
+    return ARMY_USER_ID ? ('armySubCache_' + ARMY_USER_ID) : 'armySubCache';
   }
 
-  function clearSubscriptionGateLock() {
-    document.documentElement.classList.remove('army-await-sub');
-    armyRemoveEl('army-sub-lock');
-    armyRemoveEl('army-sub-lock-css');
-    if (!document.getElementById('army-paywall')) armyUnlockPageScroll();
+  function readSubscriptionCache() {
+    try {
+      const raw = sessionStorage.getItem(armySubCacheKey());
+      if (!raw) return null;
+      const o = JSON.parse(raw);
+      if (!o || typeof o !== 'object') return null;
+      if (Date.now() - (o.at || 0) > 180000) return null;
+      if (o.ok && o.expiresAt && Number(o.expiresAt) <= Date.now()) {
+        o.ok = false;
+        o.status = 'expired';
+      }
+      return o;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function writeSubscriptionCache(data) {
+    try {
+      sessionStorage.setItem(armySubCacheKey(), JSON.stringify({
+        ok: !!(data && data.ok),
+        forever: !!(data && data.forever),
+        expiresAt: data && data.expiresAt ? data.expiresAt : null,
+        trial: !!(data && data.trial),
+        priceRub: (data && data.priceRub) || 200,
+        status: (data && data.status) || '',
+        at: Date.now()
+      }));
+    } catch (e) {}
   }
 
   function showSubscriptionPaywall(info) {
     info = info || {};
-    armyRemoveEl('army-sub-lock');
-    document.documentElement.classList.remove('army-await-sub');
-    armyRemoveEl('army-sub-lock-css');
     if (document.getElementById('army-paywall')) return;
 
     const overlay = document.createElement('div');
@@ -295,10 +301,27 @@ registerUserIfNeeded();
     armyMountTopOverlay(overlay);
   }
 
+  function applySubscriptionResult(data) {
+    if (!data || typeof data !== 'object') return;
+    writeSubscriptionCache(data);
+    if (data.ok) {
+      armyRemoveEl('army-paywall');
+      armyUnlockPageScroll();
+      return;
+    }
+    showSubscriptionPaywall(data);
+  }
+
   function checkSubscriptionAccess() {
     const api = String(ARMY_API_URL || '').replace(/\/$/, '');
     if (!api || !ARMY_USER_ID) return;
-    showSubscriptionGateLock();
+
+    const cached = readSubscriptionCache();
+    if (cached && cached.ok === false) {
+      showSubscriptionPaywall(cached);
+    }
+    // Если доступ уже подтверждён кэшем — страницу не блокируем, только тихо обновляем.
+
     fetch(api + '/subscription', {
       method: 'GET',
       headers: {
@@ -311,19 +334,10 @@ registerUserIfNeeded();
         return res.json();
       })
       .then(function (data) {
-        if (!data || typeof data !== 'object') {
-          clearSubscriptionGateLock();
-          return;
-        }
-        if (data.ok) {
-          clearSubscriptionGateLock();
-          return;
-        }
-        showSubscriptionPaywall(data);
+        if (!data || typeof data !== 'object') return;
+        applySubscriptionResult(data);
       })
-      .catch(function () {
-        clearSubscriptionGateLock();
-      });
+      .catch(function () {});
   }
   checkSubscriptionAccess();
 
