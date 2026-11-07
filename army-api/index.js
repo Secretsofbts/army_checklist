@@ -14,8 +14,10 @@ const FORCE_EXPIRED_IDS = String(process.env.FORCE_EXPIRED_IDS || '2055929706')
   .map(function (s) { return s.trim(); })
   .filter(Boolean);
 const DAY_MS = 24 * 60 * 60 * 1000;
-const LEGACY_TRIAL_DAYS = 3;
+// Старым: 5 дней с завтра (из‑за задержки с кассой). Новым по-прежнему 10 дней.
+const LEGACY_TRIAL_DAYS = 5;
 const NEW_TRIAL_DAYS = 10;
+const TRIAL_PLAN_TAG = 'legacy5-new10';
 // Момент «запуска оплаты» (фиксированная дата, иначе при рестарте Render всё сбросится).
 // Можно переопределить в Render: SUBSCRIPTION_LAUNCH_AT = миллисекунды Unix.
 const SUBSCRIPTION_LAUNCH_AT = Number(process.env.SUBSCRIPTION_LAUNCH_AT) ||
@@ -181,53 +183,59 @@ function moscowMidnightPlusDays(ms, days) {
   return startOfDay + days * DAY_MS;
 }
 
-// Старым: сегодняшний день не считаем, 3 полных дня с завтра (до полуночи после 3-го дня).
+// Старым: сегодняшний день не считаем, 5 полных дней с завтра.
 function legacyTrialExpiresAt(now) {
-  // завтра 00:00 МСК + 3 дня = конец 3-го бесплатного дня
   return moscowMidnightPlusDays(now, 1 + LEGACY_TRIAL_DAYS);
+}
+
+function isLegacyUser(firstSeen) {
+  return firstSeen < SUBSCRIPTION_LAUNCH_AT;
+}
+
+function computeTrialExpiresAt(firstSeen, now) {
+  if (isLegacyUser(firstSeen)) return legacyTrialExpiresAt(now);
+  let expiresAt = firstSeen + NEW_TRIAL_DAYS * DAY_MS;
+  if (expiresAt < now) expiresAt = now + NEW_TRIAL_DAYS * DAY_MS;
+  return expiresAt;
+}
+
+function trialDaysFor(firstSeen) {
+  return isLegacyUser(firstSeen) ? LEGACY_TRIAL_DAYS : NEW_TRIAL_DAYS;
 }
 
 async function ensureSubscriptionRecord(uid) {
   const ref = subscriptionRef(uid);
   const snap = await ref.get();
-  if (snap.exists() && snap.val()) {
-    const existing = snap.val();
-    // Если пробный период старым уже записали «со сегодня» — подвинем на «с завтра», если новый срок позже
-    if (existing.trial && existing.trialDays === LEGACY_TRIAL_DAYS && !existing.forever &&
-        existing.note !== 'force-expired-test') {
-      const fixed = legacyTrialExpiresAt(Date.now());
-      if (!existing.expiresAt || existing.expiresAt < fixed) {
-        existing.expiresAt = fixed;
-        existing.active = true;
-        existing.updatedAt = Date.now();
-        await ref.set(existing);
-      }
-    }
-    return existing;
-  }
-
   const registrySnap = await db.ref('user_registry/' + uid).get();
   const registry = registrySnap.exists() ? registrySnap.val() : null;
   const firstSeen = registry && registry.firstSeen ? Number(registry.firstSeen) : Date.now();
-  const isLegacy = firstSeen < SUBSCRIPTION_LAUNCH_AT;
-  const trialDays = isLegacy ? LEGACY_TRIAL_DAYS : NEW_TRIAL_DAYS;
   const now = Date.now();
-  // Старым: сегодня бесплатно «в подарок», 3 дня считаем с завтра.
-  // Новым: 10 дней от первой регистрации (не меньше «сейчас + 10»).
-  let expiresAt;
-  if (isLegacy) {
-    expiresAt = legacyTrialExpiresAt(now);
-  } else {
-    expiresAt = firstSeen + trialDays * DAY_MS;
-    if (expiresAt < now) expiresAt = now + trialDays * DAY_MS;
+  const days = trialDaysFor(firstSeen);
+
+  if (snap.exists() && snap.val()) {
+    const existing = snap.val();
+    if (existing.forever || existing.note === 'force-expired-test') return existing;
+    // Уже оплативших с trial:false не трогаем. Пробным один раз выставляем актуальный срок.
+    if (existing.trial && existing.trialPlan !== TRIAL_PLAN_TAG) {
+      existing.expiresAt = computeTrialExpiresAt(firstSeen, now);
+      existing.trialDays = days;
+      existing.trialPlan = TRIAL_PLAN_TAG;
+      existing.active = true;
+      existing.updatedAt = now;
+      delete existing.bonusTag;
+      delete existing.bonusTags;
+      await ref.set(existing);
+    }
+    return existing;
   }
 
   const entry = {
     active: true,
     trial: true,
-    trialDays: trialDays,
+    trialDays: days,
+    trialPlan: TRIAL_PLAN_TAG,
     forever: false,
-    expiresAt: expiresAt,
+    expiresAt: computeTrialExpiresAt(firstSeen, now),
     createdAt: now,
     updatedAt: now
   };
