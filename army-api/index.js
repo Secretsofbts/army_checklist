@@ -24,14 +24,18 @@ const FORCE_TEST_IDS = String(process.env.FORCE_TEST_IDS || '')
   .filter(Boolean);
 const FORCE_TEST_MODES = { days3: 1, new10: 1, paid1: 1 };
 const DAY_MS = 24 * 60 * 60 * 1000;
-// Старым: 5 дней с завтра (из‑за задержки с кассой). Новым по-прежнему 10 дней.
+// Старым (уже были в реестре до запуска): ровно 5 дней с завтра после якоря — один общий срок.
+// Совершенно новым: 10 дней с первого захода.
 const LEGACY_TRIAL_DAYS = 5;
 const NEW_TRIAL_DAYS = 10;
-const TRIAL_PLAN_TAG = 'legacy5-new10';
+const TRIAL_PLAN_TAG = 'legacy5-fixed-new10';
 // Момент «запуска оплаты» (фиксированная дата, иначе при рестарте Render всё сбросится).
 // Можно переопределить в Render: SUBSCRIPTION_LAUNCH_AT = миллисекунды Unix.
 const SUBSCRIPTION_LAUNCH_AT = Number(process.env.SUBSCRIPTION_LAUNCH_AT) ||
   Date.parse('2026-11-06T21:00:00+03:00');
+// Якорь для старых: «завтра» считается от этого дня (7.11 вечер → старт 8.11, 5 дней).
+const LEGACY_TRIAL_ANCHOR_AT = Number(process.env.LEGACY_TRIAL_ANCHOR_AT) ||
+  Date.parse('2026-11-07T21:00:00+03:00');
 // Цены: обычно 200 ₽. Первые 14 дней после включения оплаты — 100 ₽ (−50%).
 const FULL_PRICE_RUB = 200;
 const PROMO_PRICE_RUB = 100;
@@ -257,9 +261,9 @@ function paidExpiresAtFrom(fromMs, paidDays) {
   return moscowMidnightPlusDays(base, days + 1);
 }
 
-// Старым: сегодняшний день не считаем, 5 полных дней с завтра.
-function legacyTrialExpiresAt(now) {
-  return moscowMidnightPlusDays(now, 1 + LEGACY_TRIAL_DAYS);
+// Старым: один общий срок — 5 полных дней с завтра после якоря (сегодня не входит).
+function legacyTrialExpiresAt() {
+  return moscowMidnightPlusDays(LEGACY_TRIAL_ANCHOR_AT, 1 + LEGACY_TRIAL_DAYS);
 }
 
 function isLegacyUser(firstSeen) {
@@ -267,7 +271,7 @@ function isLegacyUser(firstSeen) {
 }
 
 function computeTrialExpiresAt(firstSeen, now) {
-  if (isLegacyUser(firstSeen)) return legacyTrialExpiresAt(now);
+  if (isLegacyUser(firstSeen)) return legacyTrialExpiresAt();
   let expiresAt = firstSeen + NEW_TRIAL_DAYS * DAY_MS;
   if (expiresAt < now) expiresAt = now + NEW_TRIAL_DAYS * DAY_MS;
   return expiresAt;
@@ -277,6 +281,20 @@ function trialDaysFor(firstSeen) {
   return isLegacyUser(firstSeen) ? LEGACY_TRIAL_DAYS : NEW_TRIAL_DAYS;
 }
 
+function buildTrialEntry(firstSeen, now, prev) {
+  return {
+    active: true,
+    trial: true,
+    trialDays: trialDaysFor(firstSeen),
+    trialPlan: TRIAL_PLAN_TAG,
+    forever: false,
+    expiresAt: computeTrialExpiresAt(firstSeen, now),
+    createdAt: (prev && prev.createdAt) || now,
+    updatedAt: now,
+    note: isLegacyUser(firstSeen) ? 'legacy-trial' : 'new-trial'
+  };
+}
+
 async function ensureSubscriptionRecord(uid) {
   const ref = subscriptionRef(uid);
   const snap = await ref.get();
@@ -284,53 +302,96 @@ async function ensureSubscriptionRecord(uid) {
   const registry = registrySnap.exists() ? registrySnap.val() : null;
   const firstSeen = registry && registry.firstSeen ? Number(registry.firstSeen) : Date.now();
   const now = Date.now();
-  const days = trialDaysFor(firstSeen);
 
   if (snap.exists() && snap.val()) {
     const existing = snap.val();
     if (existing.forever) return existing;
-    const note = String(existing.note || '');
-    // Старые тестовые превью («нет дней» / последний день и т.п.) → обычный пробный период
-    if (note.indexOf('force-') === 0) {
-      const cleared = {
-        active: true,
-        trial: true,
-        trialDays: days,
-        trialPlan: TRIAL_PLAN_TAG,
-        forever: false,
-        expiresAt: computeTrialExpiresAt(firstSeen, now),
-        createdAt: existing.createdAt || now,
-        updatedAt: now
-      };
-      await ref.set(cleared);
-      return cleared;
+    // Кто уже был на платной (даже если срок вышел) — новый пробный не даём
+    if (existing.trial === false && typeof existing.expiresAt === 'number') {
+      return existing;
     }
-    // Уже оплативших с trial:false не трогаем. Пробным один раз выставляем актуальный срок.
-    if (existing.trial && existing.trialPlan !== TRIAL_PLAN_TAG) {
-      existing.expiresAt = computeTrialExpiresAt(firstSeen, now);
-      existing.trialDays = days;
-      existing.trialPlan = TRIAL_PLAN_TAG;
-      existing.active = true;
-      existing.updatedAt = now;
-      delete existing.bonusTag;
-      delete existing.bonusTags;
-      await ref.set(existing);
+    const note = String(existing.note || '');
+    const isForce = note.indexOf('force-') === 0;
+    const legacyMismatch =
+      !!existing.trial &&
+      isLegacyUser(firstSeen) &&
+      existing.expiresAt !== legacyTrialExpiresAt();
+    const needsRefresh =
+      isForce ||
+      existing.trialPlan !== TRIAL_PLAN_TAG ||
+      legacyMismatch;
+
+    if (needsRefresh) {
+      const entry = buildTrialEntry(firstSeen, now, existing);
+      await ref.set(entry);
+      return entry;
     }
     return existing;
   }
 
-  const entry = {
-    active: true,
-    trial: true,
-    trialDays: days,
-    trialPlan: TRIAL_PLAN_TAG,
-    forever: false,
-    expiresAt: computeTrialExpiresAt(firstSeen, now),
-    createdAt: now,
-    updatedAt: now
-  };
+  const entry = buildTrialEntry(firstSeen, now, null);
   await ref.set(entry);
   return entry;
+}
+
+// Один раз: всем из user_registry (старым) выдать общий пробный на 5 дней с завтра
+async function grantLegacyTrialsToAllRegistry() {
+  const metaRef = db.ref('bot_meta/legacyTrialGrantV2');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('Legacy trial bulk grant already done');
+    return;
+  }
+  const snap = await db.ref('user_registry').get();
+  if (!snap.exists()) {
+    await metaRef.set({ at: Date.now(), count: 0, empty: true });
+    return;
+  }
+  const all = snap.val() || {};
+  const expiresAt = legacyTrialExpiresAt();
+  const now = Date.now();
+  let count = 0;
+  let skipped = 0;
+  const ids = Object.keys(all);
+  for (let i = 0; i < ids.length; i++) {
+    const uid = ids[i];
+    if (ADMIN_IDS.indexOf(uid) !== -1 || FOREVER_IDS.indexOf(uid) !== -1) {
+      skipped += 1;
+      continue;
+    }
+    const reg = all[uid] || {};
+    const firstSeen = reg.firstSeen ? Number(reg.firstSeen) : SUBSCRIPTION_LAUNCH_AT - 1;
+    // Совершенно новых (после запуска оплаты) не затираем — им 10 дней при заходе
+    if (!isLegacyUser(firstSeen)) {
+      skipped += 1;
+      continue;
+    }
+    const ref = subscriptionRef(uid);
+    const subSnap = await ref.get();
+    const prev = subSnap.exists() ? subSnap.val() : null;
+    if (prev && prev.forever) {
+      skipped += 1;
+      continue;
+    }
+    if (prev && prev.trial === false && typeof prev.expiresAt === 'number' && prev.expiresAt > now) {
+      skipped += 1;
+      continue;
+    }
+    await ref.set({
+      active: true,
+      trial: true,
+      trialDays: LEGACY_TRIAL_DAYS,
+      trialPlan: TRIAL_PLAN_TAG,
+      forever: false,
+      expiresAt: expiresAt,
+      createdAt: (prev && prev.createdAt) || now,
+      updatedAt: now,
+      note: 'legacy-trial-bulk'
+    });
+    count += 1;
+  }
+  await metaRef.set({ at: now, count: count, skipped: skipped, expiresAt: expiresAt });
+  console.log('Legacy trial bulk grant', { count: count, skipped: skipped, expiresAt: expiresAt });
 }
 
 app.get('/subscription', async function (req, res) {
@@ -1214,4 +1275,7 @@ app.listen(PORT, function () {
   ensureTelegramWebhook();
   ensureBotCommands();
   resetTestAccountIfForceOff();
+  grantLegacyTrialsToAllRegistry().catch(function (e) {
+    console.error('legacy trial bulk failed', e);
+  });
 });
