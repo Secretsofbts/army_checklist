@@ -193,6 +193,14 @@ function moscowMidnightPlusDays(ms, days) {
   return startOfDay + days * DAY_MS;
 }
 
+// Оплаченные дни: день оплаты НЕ входит в счёт.
+// Пример: оплата на 30 дней 7 ноября → доступ до 7 декабря включительно (30 + день оплаты).
+function paidExpiresAtFrom(fromMs, paidDays) {
+  const days = Math.max(1, parseInt(paidDays, 10) || 30);
+  const base = Math.max(Date.now(), Number(fromMs) || 0);
+  return moscowMidnightPlusDays(base, days + 1);
+}
+
 // Старым: сегодняшний день не считаем, 5 полных дней с завтра.
 function legacyTrialExpiresAt(now) {
   return moscowMidnightPlusDays(now, 1 + LEGACY_TRIAL_DAYS);
@@ -388,13 +396,15 @@ app.post('/admin/grant', async function (req, res) {
         grantedBy: String(user.id)
       };
     } else {
+      const paidDays = days || 30;
       const base = Math.max(now, (prev && prev.expiresAt) || 0);
-      const expiresAt = base + (days || 30) * DAY_MS;
+      const expiresAt = paidExpiresAtFrom(base, paidDays);
       entry = {
         active: true,
         trial: false,
         forever: false,
         expiresAt: expiresAt,
+        paidDays: paidDays,
         createdAt: (prev && prev.createdAt) || now,
         updatedAt: now,
         grantedBy: String(user.id)
