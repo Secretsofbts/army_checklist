@@ -286,16 +286,24 @@ registerUserIfNeeded();
     armyMountTopOverlay(overlay);
   }
 
+  // Тестовый аккаунт: показывать приветствие нового пользователя для проверки вида
+  var ARMY_TRIAL_PREVIEW_IDS = { '2055929706': true };
+
   function maybeShowTrialWelcome(data) {
     if (!ARMY_USER_ID) return;
-    // Только при активном пробном периоде, строго один раз
-    if (!(data && data.ok && data.trial)) return;
-    if (data.forever || data.status === 'admin' || data.status === 'forever') return;
-    try {
-      if (localStorage.getItem(armyTrialWelcomeKey()) === '1') return;
-    } catch (e) {}
+    const isPreview = !!ARMY_TRIAL_PREVIEW_IDS[String(ARMY_USER_ID)];
+    if (!isPreview) {
+      // Только при активном пробном периоде, строго один раз
+      if (!(data && data.ok && data.trial)) return;
+      if (data.forever || data.status === 'admin' || data.status === 'forever') return;
+      try {
+        if (localStorage.getItem(armyTrialWelcomeKey()) === '1') return;
+      } catch (e) {}
+    } else if (!(data && data.ok)) {
+      return;
+    }
     showTrialWelcome({
-      trialDays: data.trialDays || 10
+      trialDays: (data && data.trialDays) || 10
     });
   }
 

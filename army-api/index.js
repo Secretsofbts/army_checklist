@@ -13,8 +13,9 @@ const FOREVER_IDS = String(process.env.FOREVER_TELEGRAM_IDS || '163381553,591051
   .split(',')
   .map(function (s) { return s.trim(); })
   .filter(Boolean);
-// Тестовые аккаунты: ровно 1 день доступа (ваша 2-я страница). Убрать ID, когда тест закончите.
-const FORCE_ONE_DAY_IDS = String(process.env.FORCE_ONE_DAY_IDS || '2055929706')
+// Тестовый аккаунт (2-я страница): режим превью. new10 = как новый с 10 днями.
+const FORCE_TEST_MODE = String(process.env.FORCE_TEST_MODE || 'new10').trim();
+const FORCE_TEST_IDS = String(process.env.FORCE_TEST_IDS || '2055929706')
   .split(',')
   .map(function (s) { return s.trim(); })
   .filter(Boolean);
@@ -223,7 +224,8 @@ async function ensureSubscriptionRecord(uid) {
   if (snap.exists() && snap.val()) {
     const existing = snap.val();
     if (existing.forever || existing.note === 'force-expired-test' ||
-        existing.note === 'force-one-day-test' || existing.note === 'force-paid-one-day-test') return existing;
+        existing.note === 'force-one-day-test' || existing.note === 'force-paid-one-day-test' ||
+        existing.note === 'force-new10-preview') return existing;
     // Уже оплативших с trial:false не трогаем. Пробным один раз выставляем актуальный срок.
     if (existing.trial && existing.trialPlan !== TRIAL_PLAN_TAG) {
       existing.expiresAt = computeTrialExpiresAt(firstSeen, now);
@@ -287,26 +289,47 @@ app.get('/subscription', async function (req, res) {
       }
       return res.json(buildSubscriptionStatus(uid, { forever: true }, false));
     }
-    // Тестовый аккаунт: как будто оплатила, остался 1 день (не сбрасывать при каждом заходе)
-    if (FORCE_ONE_DAY_IDS.indexOf(uid) !== -1) {
+    // Тестовый аккаунт: превью режимов (new10 / paid1)
+    if (FORCE_TEST_IDS.indexOf(uid) !== -1) {
       const ref = subscriptionRef(uid);
       const snap = await ref.get();
       const prev = snap.exists() ? snap.val() : null;
       const now = Date.now();
-      if (prev && prev.note === 'force-paid-one-day-test' && typeof prev.expiresAt === 'number') {
+      const mode = FORCE_TEST_MODE || 'new10';
+      if (mode === 'new10') {
+        const note = 'force-new10-preview';
+        if (prev && prev.note === note && prev.trial && typeof prev.expiresAt === 'number' && prev.expiresAt > now) {
+          return res.json(buildSubscriptionStatus(uid, prev, false));
+        }
+        const entry = {
+          active: true,
+          trial: true,
+          trialDays: NEW_TRIAL_DAYS,
+          forever: false,
+          expiresAt: now + NEW_TRIAL_DAYS * DAY_MS,
+          createdAt: (prev && prev.createdAt) || now,
+          updatedAt: now,
+          note: note
+        };
+        await ref.set(entry);
+        return res.json(buildSubscriptionStatus(uid, entry, false));
+      }
+      // paid1 — оплачено, остался 1 день
+      const notePaid = 'force-paid-one-day-test';
+      if (prev && prev.note === notePaid && typeof prev.expiresAt === 'number') {
         return res.json(buildSubscriptionStatus(uid, prev, false));
       }
-      const entry = {
+      const paidEntry = {
         active: true,
         trial: false,
         forever: false,
         expiresAt: now + DAY_MS,
         createdAt: (prev && prev.createdAt) || now,
         updatedAt: now,
-        note: 'force-paid-one-day-test'
+        note: notePaid
       };
-      await ref.set(entry);
-      return res.json(buildSubscriptionStatus(uid, entry, false));
+      await ref.set(paidEntry);
+      return res.json(buildSubscriptionStatus(uid, paidEntry, false));
     }
     const data = await ensureSubscriptionRecord(uid);
     return res.json(buildSubscriptionStatus(uid, data, false));
