@@ -299,6 +299,103 @@ registerUserIfNeeded();
     });
   }
 
+  function armyOneDayWarnKey(expiresAt) {
+    return 'armyOneDayWarn_' + ARMY_USER_ID + '_' + String(expiresAt || '');
+  }
+
+  function showOneDayWarn() {
+    if (document.getElementById('army-oneday-warn') ||
+        document.getElementById('army-paywall') ||
+        document.getElementById('army-trial-welcome')) return;
+
+    const overlay = document.createElement('div');
+    overlay.id = 'army-oneday-warn';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.style.cssText = [
+      'position:fixed', 'inset:0', 'z-index:2147483645',
+      'background:rgba(43,36,64,0.35)',
+      'display:flex', 'align-items:center', 'justify-content:center',
+      'padding:24px 18px', 'box-sizing:border-box',
+      'font-family:Arial,sans-serif'
+    ].join(';');
+
+    const card = document.createElement('div');
+    card.style.cssText = [
+      'width:100%', 'max-width:320px', 'background:#fff',
+      'border-radius:18px', 'padding:26px 22px 22px',
+      'box-shadow:0 12px 40px rgba(80,60,120,0.2)',
+      'text-align:center'
+    ].join(';');
+
+    const emoji = document.createElement('div');
+    emoji.textContent = '⏳';
+    emoji.style.cssText = 'font-size:28px;margin:0 0 10px';
+
+    const title = document.createElement('div');
+    title.textContent = 'Остался 1 день';
+    title.style.cssText = 'font-size:18px;font-weight:700;color:#2b2440;margin:0 0 10px';
+
+    const text = document.createElement('div');
+    text.textContent = 'Доступ скоро закончится. Продлить подписку можно в личном кабинете.';
+    text.style.cssText = 'font-size:14px;line-height:1.45;color:#666;margin:0 0 18px';
+
+    const btnCabinet = document.createElement('button');
+    btnCabinet.type = 'button';
+    btnCabinet.textContent = 'В личный кабинет';
+    btnCabinet.style.cssText = [
+      'width:100%', 'border:none', 'border-radius:12px', 'padding:13px 16px',
+      'font-size:15px', 'font-weight:600', 'cursor:pointer',
+      'background:#9b7fd4', 'color:#fff', 'margin:0 0 8px'
+    ].join(';');
+
+    const btnOk = document.createElement('button');
+    btnOk.type = 'button';
+    btnOk.textContent = 'Понятно';
+    btnOk.style.cssText = [
+      'width:100%', 'border:none', 'border-radius:12px', 'padding:12px 16px',
+      'font-size:14px', 'font-weight:600', 'cursor:pointer',
+      'background:#ebe6f4', 'color:#5b4a7a'
+    ].join(';');
+
+    function dismiss(goCabinet) {
+      try {
+        if (window.__armyOneDayWarnExpiresAt) {
+          localStorage.setItem(armyOneDayWarnKey(window.__armyOneDayWarnExpiresAt), '1');
+        }
+      } catch (e) {}
+      armyRemoveEl('army-oneday-warn');
+      armyUnlockPageScroll();
+      if (goCabinet) {
+        try { location.href = 'statistics.html'; } catch (e2) {}
+      }
+    }
+
+    btnCabinet.addEventListener('click', function () { dismiss(true); });
+    btnOk.addEventListener('click', function () { dismiss(false); });
+
+    card.appendChild(emoji);
+    card.appendChild(title);
+    card.appendChild(text);
+    card.appendChild(btnCabinet);
+    card.appendChild(btnOk);
+    overlay.appendChild(card);
+    armyMountTopOverlay(overlay);
+  }
+
+  function maybeShowOneDayWarn(data) {
+    if (!ARMY_USER_ID) return;
+    if (!(data && data.ok) || data.forever || data.status === 'admin' || data.status === 'forever') return;
+    if (!data.expiresAt) return;
+    const leftDays = Math.ceil((Number(data.expiresAt) - Date.now()) / (24 * 60 * 60 * 1000));
+    if (leftDays !== 1) return;
+    try {
+      if (localStorage.getItem(armyOneDayWarnKey(data.expiresAt)) === '1') return;
+    } catch (e) {}
+    window.__armyOneDayWarnExpiresAt = data.expiresAt;
+    showOneDayWarn();
+  }
+
   function showSubscriptionPaywall(info) {
     info = info || {};
     if (document.getElementById('army-paywall')) return;
@@ -389,6 +486,7 @@ registerUserIfNeeded();
       armyRemoveEl('army-paywall');
       armyUnlockPageScroll();
       maybeShowTrialWelcome(data);
+      maybeShowOneDayWarn(data);
       return;
     }
     showSubscriptionPaywall(data);
