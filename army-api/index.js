@@ -15,14 +15,14 @@ const FOREVER_IDS = String(process.env.FOREVER_TELEGRAM_IDS || '163381553,591051
   .split(',')
   .map(function (s) { return s.trim(); })
   .filter(Boolean);
-// Тестовый аккаунт (2-я страница): режим превью. По умолчанию выключен.
-// days3 / new10 / paid1 — только если явно задать FORCE_TEST_MODE в Render.
-const FORCE_TEST_MODE = String(process.env.FORCE_TEST_MODE || 'off').trim().toLowerCase();
-const FORCE_TEST_IDS = String(process.env.FORCE_TEST_IDS || '')
+// Тестовый аккаунт (2-я страница): режим превью.
+// expired = нет дней; days3 / new10 / paid1; off = как обычный.
+const FORCE_TEST_MODE = String(process.env.FORCE_TEST_MODE || 'expired').trim().toLowerCase();
+const FORCE_TEST_IDS = String(process.env.FORCE_TEST_IDS || '2055929706')
   .split(',')
   .map(function (s) { return s.trim(); })
   .filter(Boolean);
-const FORCE_TEST_MODES = { days3: 1, new10: 1, paid1: 1 };
+const FORCE_TEST_MODES = { days3: 1, new10: 1, paid1: 1, expired: 1 };
 const DAY_MS = 24 * 60 * 60 * 1000;
 // Старым (уже были в реестре до запуска): ровно 5 дней с завтра после якоря — один общий срок.
 // Совершенно новым: 10 дней с первого захода.
@@ -355,7 +355,8 @@ async function grantLegacyTrialsToAllRegistry() {
   const ids = Object.keys(all);
   for (let i = 0; i < ids.length; i++) {
     const uid = ids[i];
-    if (ADMIN_IDS.indexOf(uid) !== -1 || FOREVER_IDS.indexOf(uid) !== -1) {
+    if (ADMIN_IDS.indexOf(uid) !== -1 || FOREVER_IDS.indexOf(uid) !== -1 ||
+        FORCE_TEST_IDS.indexOf(uid) !== -1) {
       skipped += 1;
       continue;
     }
@@ -429,13 +430,32 @@ app.get('/subscription', async function (req, res) {
       }
       return res.json(buildSubscriptionStatus(uid, { forever: true }, false));
     }
-    // Тестовый аккаунт: превью режимов (days3 / new10 / paid1) — только если режим явно включён
+    // Тестовый аккаунт: превью режимов (expired / days3 / new10 / paid1)
     if (FORCE_TEST_IDS.indexOf(uid) !== -1 && FORCE_TEST_MODES[FORCE_TEST_MODE]) {
       const ref = subscriptionRef(uid);
       const snap = await ref.get();
       const prev = snap.exists() ? snap.val() : null;
       const now = Date.now();
       const mode = FORCE_TEST_MODE;
+
+      if (mode === 'expired') {
+        const note = 'force-expired-test';
+        const wantExpires = now - DAY_MS;
+        if (prev && prev.note === note && typeof prev.expiresAt === 'number' && prev.expiresAt <= now) {
+          return res.json(buildSubscriptionStatus(uid, prev, false));
+        }
+        const entry = {
+          active: false,
+          trial: false,
+          forever: false,
+          expiresAt: wantExpires,
+          createdAt: (prev && prev.createdAt) || now,
+          updatedAt: now,
+          note: note
+        };
+        await ref.set(entry);
+        return res.json(buildSubscriptionStatus(uid, entry, false));
+      }
 
       if (mode === 'days3') {
         const note = 'force-days3-preview';
@@ -1240,32 +1260,24 @@ async function ensureBotCommands() {
   }
 }
 
-async function resetTestAccountIfForceOff() {
-  if (FORCE_TEST_MODES[FORCE_TEST_MODE]) return;
-  const testId = '2055929706';
+async function applyForceTestAccountOnBoot() {
+  const testId = FORCE_TEST_IDS[0] || '2055929706';
+  if (!FORCE_TEST_MODES[FORCE_TEST_MODE]) return;
+  if (FORCE_TEST_MODE !== 'expired') return;
   try {
-    const data = await ensureSubscriptionRecord(testId);
-    // Если после сброса force- всё ещё нет дней — выдать свежий пробный
     const now = Date.now();
-    if (!data || data.forever) return;
-    if (typeof data.expiresAt === 'number' && data.expiresAt > now) {
-      console.log('Test account access ok', testId, data.expiresAt);
-      return;
-    }
-    const entry = {
-      active: true,
-      trial: true,
-      trialDays: NEW_TRIAL_DAYS,
-      trialPlan: TRIAL_PLAN_TAG,
+    await subscriptionRef(testId).set({
+      active: false,
+      trial: false,
       forever: false,
-      expiresAt: now + NEW_TRIAL_DAYS * DAY_MS,
-      createdAt: (data && data.createdAt) || now,
-      updatedAt: now
-    };
-    await subscriptionRef(testId).set(entry);
-    console.log('Test account restored to trial', testId);
+      expiresAt: now - DAY_MS,
+      createdAt: now,
+      updatedAt: now,
+      note: 'force-expired-test'
+    });
+    console.log('Test account forced expired (no days)', testId);
   } catch (e) {
-    console.error('Test account reset failed', e);
+    console.error('Test account force expired failed', e);
   }
 }
 
@@ -1274,7 +1286,7 @@ app.listen(PORT, function () {
   scheduleSubscriptionReminders();
   ensureTelegramWebhook();
   ensureBotCommands();
-  resetTestAccountIfForceOff();
+  applyForceTestAccountOnBoot();
   grantLegacyTrialsToAllRegistry().catch(function (e) {
     console.error('legacy trial bulk failed', e);
   });
