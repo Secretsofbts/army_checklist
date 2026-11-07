@@ -1298,7 +1298,7 @@ const YEAR_OWN_TOTALS = {
   'other-shows-2020-2022': 12,
   'other-shows-2023-2024': 26,
   'other-shows-2025': 10,
-   'other-shows-2026': 12
+   'other-shows-2026': 13
 };
 
   const STAT_TOTALS = {
@@ -1412,7 +1412,7 @@ const YEAR_OWN_TOTALS = {
   'bts-episode-other-namjoon': 1,
   'bts-episode-other-jin': 11,
   'bts-episode-other-taehyung': 8,
-  'bts-episode-other-somepeople': 23,
+  'bts-episode-other-somepeople': 24,
   'reaction-to-self': 31,
   'photo-folio-jungkook': 2,
   'photo-folio-namjoon': 3,
@@ -1458,7 +1458,7 @@ const YEAR_OWN_TOTALS = {
   'mcountdown-2023': 3,
     'mcountdown-2025': 1,
   'sleepy-interview': 7,
-  'interviews-2026': 1,
+  'interviews-2026': 2,
   'learn-korean': 20,
     'fm-0613': 16,
   'bts-festa-2014': 5,
