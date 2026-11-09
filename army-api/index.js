@@ -977,6 +977,11 @@ const EXPIRED_REMIND_TEXT =
   'Мы будем ждать вашего возвращения и оберегать все поставленные галочки\n\n' +
   'Продлить подписку можно в боте 💜';
 const PAID_THANKS_PHOTO = path.join(__dirname, 'sub-extended.jpg');
+const REFERRAL_INVITE_PHOTO = path.join(__dirname, 'referral-invite.jpg');
+const REFERRAL_INVITE_TEXT =
+  'Ваш друг пригласил вас в чек-лист по архиву BTS с русскими субтитрами 🥰\n\n' +
+  'Для начала использования откройте приложение кнопкой снизу «For ARMY 💜» — у вас начнётся пробный период\n\n' +
+  'Если вам понравится и вы потом оформите подписку, то вам и тому, кто пригласил, начислятся бонусные 30 дней каждому =)';
 
 function pluralDaysRu(n) {
   const num = Math.abs(parseInt(n, 10) || 0);
@@ -1445,10 +1450,23 @@ async function handleStartCommand(msg) {
     const parts = text.trim().split(/\s+/);
     const payload = parts.length > 1 ? parts.slice(1).join(' ') : '';
     const fromId = msg.from && msg.from.id != null ? msg.from.id : msg.chat.id;
+    var skipDefaultStart = false;
     try {
       const captured = await captureReferralFromStart(fromId, payload);
       if (captured && captured.saved) {
         console.log('referral captured', String(fromId), '←', captured.referrerId);
+        try {
+          await telegramSendPhoto(msg.chat.id, REFERRAL_INVITE_TEXT, REFERRAL_INVITE_PHOTO);
+          skipDefaultStart = true;
+        } catch (inviteErr) {
+          console.error('referral invite notify failed', fromId, inviteErr);
+          try {
+            await telegramSendMessage(msg.chat.id, REFERRAL_INVITE_TEXT, null);
+            skipDefaultStart = true;
+          } catch (inviteTextErr) {
+            console.error('referral invite text failed', fromId, inviteTextErr);
+          }
+        }
       } else if (captured && captured.reason === 'not-new') {
         try {
           await telegramSendMessage(msg.chat.id, REFERRAL_NOT_NEW_TEXT, null);
@@ -1459,7 +1477,9 @@ async function handleStartCommand(msg) {
     } catch (refErr) {
       console.error('referral capture failed', fromId, refErr);
     }
-    await telegramSendMessage(msg.chat.id, START_TEXT, null);
+    if (!skipDefaultStart) {
+      await telegramSendMessage(msg.chat.id, START_TEXT, null);
+    }
   } catch (e) {
     console.error('start reply failed', e);
   }
@@ -1575,6 +1595,23 @@ async function applyForceTestAccountOnBoot() {
   }
 }
 
+async function sendReferralInvitePreviewToTest() {
+  const metaRef = db.ref('bot_meta/referralInvitePreviewV1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('referral invite preview already sent', metaSnap.val());
+    return;
+  }
+  const testId = FORCE_TEST_IDS[0] || '2055929706';
+  try {
+    await telegramSendPhoto(testId, REFERRAL_INVITE_TEXT, REFERRAL_INVITE_PHOTO);
+    await metaRef.set({ at: Date.now(), to: testId });
+    console.log('referral invite preview sent to', testId);
+  } catch (e) {
+    console.error('referral invite preview failed', e);
+  }
+}
+
 app.listen(PORT, function () {
   console.log('army-api listening on ' + PORT);
   scheduleSubscriptionReminders();
@@ -1590,6 +1627,12 @@ app.listen(PORT, function () {
   extendLegacyTrialsPlusOneDay().catch(function (e) {
     console.error('legacy trial +1 day failed', e);
   });
+  // Превью реферального сообщения на тестовый аккаунт (один раз)
+  setTimeout(function () {
+    sendReferralInvitePreviewToTest().catch(function (e) {
+      console.error('referral invite preview boot failed', e);
+    });
+  }, 5000);
   // Извинение только бессрочным (им случайно ушло про 5 дней)
   setTimeout(function () {
     broadcastForeverOops().catch(function (e) {
