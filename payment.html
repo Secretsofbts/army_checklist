@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=139"></script>
+  <script src="sync.js?v=140"></script>
   <title>Оплата подписки</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -81,6 +81,7 @@
       line-height: 1.3;
     }
     .plan-note { font-size: 12px; color: #8a7aa8; line-height: 1.4; margin: 0 0 10px; }
+    #promo-note:empty { visibility: hidden; min-height: 1.4em; }
     .plan-btn {
       width: 100%;
       border: none;
@@ -138,7 +139,7 @@
         <span>100 ₽</span>
       </div>
       <p class="plan-once">разовая оплата</p>
-      <p class="plan-note" id="promo-note">Акция −50% за 30 дней</p>
+      <p class="plan-note" id="promo-note"></p>
       <button type="button" class="plan-btn" disabled>Оплата настраивается</button>
     </div>
 
@@ -200,6 +201,24 @@
       return 'дней';
     }
 
+    // Те же даты, что в army-api — сразу рисуем «Ещё N дней», без моргания после fetch
+    var PROMO_COUNTDOWN_START_AT = Date.parse('2026-11-07T22:00:00+03:00');
+    var PROMO_DAYS_TOTAL = 14;
+    var DAY_MS_LOCAL = 24 * 60 * 60 * 1000;
+
+    function localPricingInfo() {
+      var leftMs = PROMO_COUNTDOWN_START_AT + PROMO_DAYS_TOTAL * DAY_MS_LOCAL - Date.now();
+      if (leftMs <= 0) {
+        return { priceRub: 200, oldPriceRub: null, promo: false, promoDaysLeft: 0 };
+      }
+      return {
+        priceRub: 100,
+        oldPriceRub: 200,
+        promo: true,
+        promoDaysLeft: Math.max(1, Math.ceil(leftMs / DAY_MS_LOCAL))
+      };
+    }
+
     function paintPricing(info) {
       info = info || {};
       var priceEl = document.getElementById('price-30');
@@ -210,31 +229,34 @@
       var priceNow = Number(info.priceRub) || 200;
       var priceOld = Number(info.oldPriceRub) || 0;
       var promo = !!(info.promo && priceOld > priceNow);
+      var nextPriceHtml;
+      var nextNote;
+      var nextBadgeDisplay;
 
       if (promo) {
-        priceEl.innerHTML =
+        nextPriceHtml =
           '<span class="old">' + priceOld + ' ₽</span>' +
           '<span>' + priceNow + ' ₽</span>';
-        if (badge) badge.style.display = '';
-        if (note) {
-          var left = parseInt(info.promoDaysLeft, 10);
-          note.textContent = (left > 0)
-            ? ('Акция −50%. Ещё ' + left + ' ' + pluralDays(left))
-            : 'Акция −50% за 30 дней';
-        }
+        nextBadgeDisplay = '';
+        var left = parseInt(info.promoDaysLeft, 10);
+        nextNote = (left > 0)
+          ? ('Акция −50%. Ещё ' + left + ' ' + pluralDays(left))
+          : 'Акция −50% за 30 дней';
       } else {
-        priceEl.innerHTML = '<span>' + priceNow + ' ₽</span>';
-        if (badge) badge.style.display = 'none';
-        if (note) note.textContent = 'Обычная цена за 30 дней доступа';
+        nextPriceHtml = '<span>' + priceNow + ' ₽</span>';
+        nextBadgeDisplay = 'none';
+        nextNote = 'Обычная цена за 30 дней доступа';
       }
+
+      if (priceEl.innerHTML !== nextPriceHtml) priceEl.innerHTML = nextPriceHtml;
+      if (badge && badge.style.display !== nextBadgeDisplay) badge.style.display = nextBadgeDisplay;
+      if (note && note.textContent !== nextNote) note.textContent = nextNote;
     }
 
     function loadPricing() {
+      paintPricing(localPricingInfo());
       var api = String(window.ARMY_API_URL || '').replace(/\/$/, '');
-      if (!api) {
-        paintPricing({ priceRub: 100, oldPriceRub: 200, promo: true, promoDaysLeft: null });
-        return;
-      }
+      if (!api) return;
       var headers = {};
       try {
         var initData = (window.Telegram && Telegram.WebApp && Telegram.WebApp.initData) || '';
@@ -244,11 +266,8 @@
         .then(function (res) { return res.ok ? res.json() : null; })
         .then(function (data) {
           if (data && typeof data === 'object') paintPricing(data);
-          else paintPricing({ priceRub: 100, oldPriceRub: 200, promo: true, promoDaysLeft: null });
         })
-        .catch(function () {
-          paintPricing({ priceRub: 100, oldPriceRub: 200, promo: true, promoDaysLeft: null });
-        });
+        .catch(function () {});
     }
 
     loadPricing();
