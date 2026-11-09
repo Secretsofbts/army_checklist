@@ -117,6 +117,9 @@ function registerUserIfNeeded() {
           localStorage.setItem('userNumber_' + ARMY_USER_ID, existing.number);
           if (existing.firstSeen) localStorage.setItem('userFirstSeen_' + ARMY_USER_ID, existing.firstSeen);
         }
+        if (existing && existing.nickname) {
+          localStorage.setItem('nickname_' + ARMY_USER_ID, existing.nickname);
+        }
       })
       .catch(function () {});
     return;
@@ -129,6 +132,7 @@ function registerUserIfNeeded() {
         // уже был зарегистрирован раньше (с этого или другого устройства) — просто запоминаем локально
         localStorage.setItem('userNumber_' + ARMY_USER_ID, existing.number);
         localStorage.setItem('userFirstSeen_' + ARMY_USER_ID, existing.firstSeen);
+        if (existing.nickname) localStorage.setItem('nickname_' + ARMY_USER_ID, existing.nickname);
         return;
       }
       // новый пользователь — узнаём текущий счётчик и увеличиваем
