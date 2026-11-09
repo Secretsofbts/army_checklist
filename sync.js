@@ -488,18 +488,7 @@ registerUserIfNeeded();
     const monthLabel = document.createElement('span');
     monthLabel.style.cssText = 'display:inline-flex;align-items:baseline;gap:8px;flex-wrap:wrap';
     const priceNow = Number(info.priceRub) || 200;
-    const priceOld = Number(info.oldPriceRub) || 0;
-    if (info.promo && priceOld > priceNow) {
-      const oldEl = document.createElement('span');
-      oldEl.textContent = priceOld + ' ₽';
-      oldEl.style.cssText = 'text-decoration:line-through;color:#9a8fb0;font-weight:600';
-      const newEl = document.createElement('span');
-      newEl.textContent = priceNow + ' ₽ — месяц';
-      monthLabel.appendChild(oldEl);
-      monthLabel.appendChild(newEl);
-    } else {
-      monthLabel.textContent = priceNow + ' ₽ — месяц';
-    }
+    monthLabel.textContent = priceNow + ' ₽ — месяц';
     const monthSoon = document.createElement('span');
     monthSoon.textContent = 'оплата скоро';
     monthSoon.style.cssText = 'font-size:12px;font-weight:600;color:#8a7aa8;flex-shrink:0';
