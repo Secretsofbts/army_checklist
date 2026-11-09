@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const admin = require('firebase-admin');
+const { startChannelGuard } = require('./channel-guard');
 
 const PORT = process.env.PORT || 3000;
 const BOT_TOKEN = process.env.BOT_TOKEN || '';
@@ -1364,6 +1365,12 @@ app.listen(PORT, function () {
       console.error('forever oops broadcast failed', e);
     });
   }, 6000);
+  // Сторож канала — только если заданы GUARD_BOT_TOKEN + CHANNEL_ID (чек-лист не трогает)
+  try {
+    startChannelGuard();
+  } catch (e) {
+    console.error('Channel guard start failed', e);
+  }
 });
 
 const FOREVER_OOPS_TEXT =
