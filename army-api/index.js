@@ -746,6 +746,182 @@ app.get('/subscription', async function (req, res) {
   }
 });
 
+function startOfMoscowDay(ms) {
+  const d = new Date(ms || Date.now());
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Europe/Moscow',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).formatToParts(d);
+  const map = {};
+  parts.forEach(function (p) { map[p.type] = p.value; });
+  return Date.parse(map.year + '-' + map.month + '-' + map.day + 'T00:00:00+03:00');
+}
+
+async function logPaymentEvent(ev) {
+  ev = ev || {};
+  const at = typeof ev.at === 'number' ? ev.at : Date.now();
+  const userId = String(ev.userId || '').trim();
+  if (!userId) return;
+  const row = {
+    at: at,
+    userId: userId,
+    method: String(ev.method || 'unknown'),
+    days: Math.max(0, parseInt(ev.days, 10) || 0),
+    stars: Math.max(0, parseInt(ev.stars, 10) || 0),
+    amountRub: Math.max(0, Number(ev.amountRub) || 0),
+    chargeId: ev.chargeId ? String(ev.chargeId) : null,
+    payload: ev.payload ? String(ev.payload).slice(0, 128) : null,
+    test: !!ev.test
+  };
+  const key = (row.chargeId || (userId + '_' + at + '_' + row.method)).replace(/[.#$/\[\]]/g, '_');
+  try {
+    await db.ref('payments/' + key).set(row);
+  } catch (e) {
+    console.error('payment log failed', e);
+  }
+}
+
+function emptyPayBucket() {
+  return {
+    payments: 0,
+    people: 0,
+    stars: 0,
+    amountRub: 0,
+    byDays: {},
+    manual: 0,
+    referralBonuses: 0
+  };
+}
+
+function addPayToBucket(bucket, p) {
+  if (!p || p.test) return;
+  if (String(p.method) === 'manual') {
+    bucket.manual += 1;
+    return;
+  }
+  bucket.payments += 1;
+  bucket.stars += Math.max(0, parseInt(p.stars, 10) || 0);
+  bucket.amountRub += Math.max(0, Number(p.amountRub) || 0);
+  const d = String(Math.max(0, parseInt(p.days, 10) || 0));
+  if (d !== '0') bucket.byDays[d] = (bucket.byDays[d] || 0) + 1;
+}
+
+async function collectPaymentStats() {
+  const now = Date.now();
+  const dayStart = startOfMoscowDay(now);
+  const weekStart = dayStart - 6 * DAY_MS;
+  const monthStart = dayStart - 29 * DAY_MS;
+
+  const list = [];
+  const seen = {};
+
+  function pushPay(p) {
+    if (!p || !p.userId) return;
+    const charge = p.chargeId ? ('c:' + p.chargeId) : null;
+    const fallback = 'u:' + p.userId + ':' + p.at + ':' + p.method + ':' + p.days;
+    const key = charge || fallback;
+    if (seen[key]) return;
+    seen[key] = true;
+    list.push(p);
+  }
+
+  const paySnap = await db.ref('payments').get();
+  if (paySnap.exists()) {
+    const all = paySnap.val() || {};
+    Object.keys(all).forEach(function (k) { pushPay(all[k]); });
+  }
+
+  // Старые оплаты Stars, пока писался только lastStarsPayment
+  const subSnap = await db.ref('subscriptions').get();
+  if (subSnap.exists()) {
+    const all = subSnap.val() || {};
+    Object.keys(all).forEach(function (uid) {
+      const last = all[uid] && all[uid].lastStarsPayment;
+      if (!last || typeof last.at !== 'number') return;
+      const payload = String(last.payload || '');
+      pushPay({
+        at: last.at,
+        userId: uid,
+        method: 'stars',
+        days: last.days || 0,
+        stars: last.stars || 0,
+        amountRub: 0,
+        chargeId: last.chargeId || null,
+        payload: payload || null,
+        test: payload.indexOf('stars_test:') === 0
+      });
+    });
+  }
+
+  const day = emptyPayBucket();
+  const week = emptyPayBucket();
+  const month = emptyPayBucket();
+  const allTime = emptyPayBucket();
+  const peopleDay = {};
+  const peopleWeek = {};
+  const peopleMonth = {};
+  const peopleAll = {};
+
+  list.forEach(function (p) {
+    if (!p || p.test) return;
+    const at = typeof p.at === 'number' ? p.at : 0;
+    addPayToBucket(allTime, p);
+    if (String(p.method) !== 'manual') peopleAll[p.userId] = true;
+    if (at >= monthStart) {
+      addPayToBucket(month, p);
+      if (String(p.method) !== 'manual') peopleMonth[p.userId] = true;
+    }
+    if (at >= weekStart) {
+      addPayToBucket(week, p);
+      if (String(p.method) !== 'manual') peopleWeek[p.userId] = true;
+    }
+    if (at >= dayStart) {
+      addPayToBucket(day, p);
+      if (String(p.method) !== 'manual') peopleDay[p.userId] = true;
+    }
+  });
+  day.people = Object.keys(peopleDay).length;
+  week.people = Object.keys(peopleWeek).length;
+  month.people = Object.keys(peopleMonth).length;
+  allTime.people = Object.keys(peopleAll).length;
+
+  const refSnap = await db.ref('referrals').get();
+  let refDay = 0;
+  let refWeek = 0;
+  let refMonth = 0;
+  let refAll = 0;
+  if (refSnap.exists()) {
+    const refs = refSnap.val() || {};
+    Object.keys(refs).forEach(function (friendId) {
+      const r = refs[friendId] || {};
+      if (!r.rewarded) return;
+      refAll += 1;
+      const at = typeof r.rewardedAt === 'number' ? r.rewardedAt : 0;
+      if (at >= monthStart) refMonth += 1;
+      if (at >= weekStart) refWeek += 1;
+      if (at >= dayStart) refDay += 1;
+    });
+  }
+  day.referralBonuses = refDay;
+  week.referralBonuses = refWeek;
+  month.referralBonuses = refMonth;
+  allTime.referralBonuses = refAll;
+
+  return {
+    day: day,
+    week: week,
+    month: month,
+    all: allTime,
+    ranges: {
+      dayFrom: dayStart,
+      weekFrom: weekStart,
+      monthFrom: monthStart
+    }
+  };
+}
+
 async function collectSubscriptionStats() {
   const now = Date.now();
   const snap = await db.ref('subscriptions').get();
@@ -811,6 +987,19 @@ app.get('/admin/subscription-stats', async function (req, res) {
   }
 });
 
+// Статистика оплат — только админ
+app.get('/admin/payment-stats', async function (req, res) {
+  const user = authUser(req);
+  if (!user || !user.isAdmin) return res.status(403).json({ error: 'forbidden' });
+  try {
+    const stats = await collectPaymentStats();
+    return res.json({ ok: true, stats: stats });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: 'payment-stats' });
+  }
+});
+
 // Выдать доступ вручную (только админ). body: { userId, days?, forever? }
 app.post('/admin/grant', async function (req, res) {
   const user = authUser(req);
@@ -852,6 +1041,17 @@ app.post('/admin/grant', async function (req, res) {
     }
     await ref.set(entry);
     if (!forever) {
+      await logPaymentEvent({
+        at: now,
+        userId: targetId,
+        method: 'manual',
+        days: entry.paidDays || days || 30,
+        stars: 0,
+        amountRub: 0,
+        chargeId: null,
+        payload: 'manual:' + String(user.id),
+        test: false
+      });
       const thanks = await sendPaidThanksToUser(targetId, entry.paidDays || days || 30);
       if (!thanks.sent) console.error('paid thanks failed', targetId, thanks);
       // Пауза, чтобы другу сначала дошла «оплата», и только потом «+30 бонус»
@@ -1869,6 +2069,18 @@ async function grantPaidDaysFromStars(uid, days, payment) {
     }
   };
   await ref.set(entry);
+  const payloadStr = payment && payment.invoice_payload ? String(payment.invoice_payload) : '';
+  await logPaymentEvent({
+    at: now,
+    userId: uid,
+    method: 'stars',
+    days: paidDays,
+    stars: payment && payment.total_amount,
+    amountRub: 0,
+    chargeId: payment && payment.telegram_payment_charge_id,
+    payload: payloadStr,
+    test: payloadStr.indexOf('stars_test:') === 0
+  });
   try {
     await applyReferralBonusOnFirstPaid(uid);
   } catch (e) {
