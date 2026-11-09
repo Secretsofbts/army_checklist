@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js?v=121"></script>
+  <title>Оферта и реквизиты</title>
+  <style>
+    body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
+    .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
+    h1 { font-size: 18px; margin: 0 0 12px; }
+    h2 { font-size: 14px; margin: 18px 0 8px; color: #2b2440; }
+    p, li { font-size: 13px; color: #444; line-height: 1.55; margin: 0 0 8px; }
+    ul { margin: 0 0 8px; padding-left: 18px; }
+    .box { background: #f7f7fa; border-radius: 12px; padding: 12px 14px; margin: 10px 0 0; }
+    .box strong { color: #2b2440; }
+    a { color: #7b5fb3; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="index.html">← Назад</a>
+    <h1>Оферта и реквизиты</h1>
+
+    <h2>Что продаётся</h2>
+    <p>Подписка на цифровой сервис — чек-лист архива BTS в Telegram Mini App (@army_checklist_bot).</p>
+    <p>Стоимость: <strong>200 ₽</strong> за 30 дней доступа. В период акции может действовать цена <strong>100 ₽</strong> за 30 дней.</p>
+
+    <h2>Как получают услугу</h2>
+    <p>После оплаты доступ открывается в Telegram-боте @army_checklist_bot (Mini App). Доставка товара не нужна — услуга оказывается онлайн.</p>
+
+    <h2>Реквизиты исполнителя</h2>
+    <div class="box">
+      <p><strong>Статус:</strong> плательщик налога на профессиональный доход (самозанятый)</p>
+      <p><strong>ИНН:</strong> 324107085372</p>
+      <p><strong>Контакты:</strong> бот <a href="https://t.me/army_checklist_bot" target="_blank">@army_checklist_bot</a>, канал <a href="https://t.me/violent_arhive" target="_blank">t.me/violent_arhive</a></p>
+      <p style="margin:0;">Поддержка: команда /support в боте</p>
+    </div>
+
+    <h2>Публичная оферта (кратко)</h2>
+    <ul>
+      <li>Оплачивая подписку, пользователь принимает эти условия.</li>
+      <li>Услуга — доступ к чек-листу на оплаченный срок.</li>
+      <li>Отметки (галочки) пользователя сохраняются.</li>
+      <li>Срок доступа считается с момента успешной оплаты по правилам сервиса.</li>
+      <li>По вопросам оплаты и доступа пишите в поддержку бота (/support).</li>
+      <li>Исполнитель вправе менять стоимость с уведомлением в боте или на канале; уже оплаченный срок не уменьшается.</li>
+    </ul>
+    <p>Сайт сервиса: <a href="https://secretsofbts.github.io/army_checklist/">secretsofbts.github.io/army_checklist</a></p>
+  </div>
+  <script>
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+  </script>
+</body>
+</html>
