@@ -203,7 +203,7 @@ function referralRef(friendId) {
   return db.ref('referrals/' + String(friendId));
 }
 
-const REFERRAL_BONUS_DAYS = 30;
+const REFERRAL_BONUS_DAYS = 50;
 
 async function isExistingBotUser(friendId) {
   const uid = String(friendId || '');
@@ -255,7 +255,7 @@ async function extendSubscriptionByDays(uid, days) {
   return { skipped: false, expiresAt: expiresAt };
 }
 
-// После первой платной выдачи другу: +30 дней другу и пригласившему (один раз).
+// После первой платной выдачи другу: +50 дней другу и пригласившему (один раз).
 async function applyReferralBonusOnFirstPaid(friendId) {
   const friendKey = String(friendId || '');
   if (!friendKey) return { applied: false, reason: 'no-friend' };
