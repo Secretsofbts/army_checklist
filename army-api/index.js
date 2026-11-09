@@ -1386,10 +1386,15 @@ async function sendExpiredReminderToUser(uid, options) {
     if (data.expiredRemindFor === data.expiresAt) return { sent: false, reason: 'already' };
   }
   try {
-    await telegramSendMessage(uid, EXPIRED_REMIND_TEXT, {
-      text: 'Открыть бот',
-      url: BOT_APP_LINK
-    });
+    try {
+      await telegramSendPhoto(uid, EXPIRED_REMIND_TEXT, EXPIRED_REMIND_PHOTO);
+    } catch (photoErr) {
+      console.error('expired remind photo failed', uid, photoErr);
+      await telegramSendMessage(uid, EXPIRED_REMIND_TEXT, {
+        text: 'Открыть бот',
+        url: BOT_APP_LINK
+      });
+    }
   } catch (e) {
     return { sent: false, reason: 'telegram', error: String(e.message || e) };
   }
@@ -1764,6 +1769,23 @@ async function sendOnedayRemindPreviewToTest() {
   }
 }
 
+async function sendExpiredRemindPreviewToTest() {
+  const metaRef = db.ref('bot_meta/expiredRemindPreviewV1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('expired remind preview already sent', metaSnap.val());
+    return;
+  }
+  const testId = FORCE_TEST_IDS[0] || '2055929706';
+  try {
+    await telegramSendPhoto(testId, EXPIRED_REMIND_TEXT, EXPIRED_REMIND_PHOTO);
+    await metaRef.set({ at: Date.now(), to: testId });
+    console.log('expired remind preview sent to', testId);
+  } catch (e) {
+    console.error('expired remind preview failed', e);
+  }
+}
+
 app.listen(PORT, function () {
   console.log('army-api listening on ' + PORT);
   scheduleSubscriptionReminders();
@@ -1810,6 +1832,11 @@ app.listen(PORT, function () {
       console.error('oneday remind preview boot failed', e);
     });
   }, 15000);
+  setTimeout(function () {
+    sendExpiredRemindPreviewToTest().catch(function (e) {
+      console.error('expired remind preview boot failed', e);
+    });
+  }, 17000);
   // Извинение только бессрочным (им случайно ушло про 5 дней)
   setTimeout(function () {
     broadcastForeverOops().catch(function (e) {
