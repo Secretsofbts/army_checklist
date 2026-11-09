@@ -1825,6 +1825,45 @@ async function sendStarsTestInvoiceToTestUser() {
   }
 }
 
+// Если Stars купить нельзя — один раз имитируем успешную оплату на тестовом.
+async function simulateStarsPaymentForTestUser() {
+  const metaRef = db.ref('bot_meta/starsTestSimulatedV1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('stars test simulate already done', metaSnap.val());
+    return;
+  }
+  const testId = FORCE_TEST_IDS[0] || '2055929706';
+  const days = 1;
+  const fakePay = {
+    currency: 'XTR',
+    total_amount: 1,
+    telegram_payment_charge_id: 'simulate_' + Date.now(),
+    invoice_payload: 'stars_test:' + days + ':' + testId + ':' + Date.now()
+  };
+  try {
+    const granted = await grantPaidDaysFromStars(testId, days, fakePay);
+    await metaRef.set({ at: Date.now(), to: testId, days: days, granted: granted });
+    try {
+      await telegramSendMessage(
+        testId,
+        'Тест: оплату Stars засчитали вручную (без покупки звезды) 💜\nДоступ на ' + days + ' ' + pluralDaysRu(days) + '.',
+        undefined
+      );
+    } catch (e) {
+      console.error('stars simulate notify failed', e);
+    }
+    try {
+      await sendPaidThanksToUser(testId, days);
+    } catch (e) {
+      console.error('stars simulate thanks failed', e);
+    }
+    console.log('stars test simulate done', testId, granted);
+  } catch (e) {
+    console.error('stars test simulate failed', e);
+  }
+}
+
 async function ensureBotCommands() {
   try {
     const res = await fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/setMyCommands', {
@@ -2025,12 +2064,17 @@ app.listen(PORT, function () {
     console.error('legacy trial +1 day failed', e);
   });
   // Превью в бот при старте отключены — не мешают деплою. Нужно снова — скажите.
-  // Разовый тест Stars на тестовый аккаунт
+  // Разовый тест Stars: счёт (если получится) + имитация оплаты без покупки звезды
   setTimeout(function () {
     sendStarsTestInvoiceToTestUser().catch(function (e) {
       console.error('stars test invoice boot failed', e);
     });
   }, 8000);
+  setTimeout(function () {
+    simulateStarsPaymentForTestUser().catch(function (e) {
+      console.error('stars test simulate boot failed', e);
+    });
+  }, 10000);
   // Извинение только бессрочным (им случайно ушло про 5 дней)
   setTimeout(function () {
     broadcastForeverOops().catch(function (e) {
