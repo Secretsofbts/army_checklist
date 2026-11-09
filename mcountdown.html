@@ -1,4 +1,4 @@
-п»ї<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=121"></script>
+  <script src="sync.js?v=122"></script>
   <title>M!Countdown</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -23,28 +23,28 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="misc.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџЋµ M!COUNTDOWN рџЋµ</h1>
-    <p class="intro">Р®Р¶РЅРѕРєРѕСЂРµР№СЃРєР°СЏ РјСѓР·С‹РєР°Р»СЊРЅР°СЏ С‚РµР»РµРІРёР·РёРѕРЅРЅР°СЏ РїСЂРѕРіСЂР°РјРјР°, РёРґСѓС‰Р°СЏ РЅР° С‚РµР»РµРєР°РЅР°Р»Рµ Mnet. РќР° С€РѕСѓ РІС‹СЃС‚СѓРїР°СЋС‚ Р°СЂС‚РёСЃС‚С‹, РєРѕС‚РѕСЂС‹Рµ РїСЂРѕРґРІРёРіР°СЋС‚ СЃРІРѕРё РїРµСЃРЅРё РёР· РЅРµРґР°РІРЅРѕ РІС‹С€РµРґС€РµРіРѕ Р°Р»СЊР±РѕРјР°</p>
+    <a class="back" href="misc.html">< Назад</a>
+    <h1>?? M!COUNTDOWN ??</h1>
+    <p class="intro">Южнокорейская музыкальная телевизионная программа, идущая на телеканале Mnet. На шоу выступают артисты, которые продвигают свои песни из недавно вышедшего альбома</p>
 
     <div id="list"></div>
 
-    <a class="footer-link" href="misc.html">Р’СЃСЏРєРѕРµ РґСЂСѓРіРѕРµ в¬…пёЏ</a>
+    <a class="footer-link" href="misc.html">Всякое другое ??</a>
   </div>
 
   <script>
     const navItems = [
-      { text: "2013 РіРѕРґ", link: "mcountdown-2013.html", statKey: "mcountdown-2013" },
-      { text: "2014 РіРѕРґ", link: "mcountdown-2014.html", statKey: "mcountdown-2014" },
-      { text: "2015 РіРѕРґ", link: "mcountdown-2015.html", statKey: "mcountdown-2015" },
-      { text: "2016 РіРѕРґ", link: "mcountdown-2016.html", statKey: "mcountdown-2016" },
-      { text: "2017 РіРѕРґ", link: "mcountdown-2017.html", statKey: "mcountdown-2017" },
-      { text: "2018 РіРѕРґ", link: "mcountdown-2018.html", statKey: "mcountdown-2018" },
-      { text: "2019 РіРѕРґ", link: "mcountdown-2019.html", statKey: "mcountdown-2019" },
-      { text: "2020 РіРѕРґ", link: "mcountdown-2020.html", statKey: "mcountdown-2020" },
-      { text: "2022 РіРѕРґ", link: "mcountdown-2022.html", statKey: "mcountdown-2022" },
-      { text: "2023 РіРѕРґ", link: "mcountdown-2023.html", statKey: "mcountdown-2023" },
-      { text: "2025 РіРѕРґ", link: "mcountdown-2025.html", statKey: "mcountdown-2025" }
+      { text: "2013 год", link: "mcountdown-2013.html", statKey: "mcountdown-2013" },
+      { text: "2014 год", link: "mcountdown-2014.html", statKey: "mcountdown-2014" },
+      { text: "2015 год", link: "mcountdown-2015.html", statKey: "mcountdown-2015" },
+      { text: "2016 год", link: "mcountdown-2016.html", statKey: "mcountdown-2016" },
+      { text: "2017 год", link: "mcountdown-2017.html", statKey: "mcountdown-2017" },
+      { text: "2018 год", link: "mcountdown-2018.html", statKey: "mcountdown-2018" },
+      { text: "2019 год", link: "mcountdown-2019.html", statKey: "mcountdown-2019" },
+      { text: "2020 год", link: "mcountdown-2020.html", statKey: "mcountdown-2020" },
+      { text: "2022 год", link: "mcountdown-2022.html", statKey: "mcountdown-2022" },
+      { text: "2023 год", link: "mcountdown-2023.html", statKey: "mcountdown-2023" },
+      { text: "2025 год", link: "mcountdown-2025.html", statKey: "mcountdown-2025" }
     ];
 
     const listEl = document.getElementById('list');
@@ -67,7 +67,7 @@
       const el = document.getElementById('badge-' + key);
       if (!el || !data || data.total === 0) { if (el) el.textContent = ''; return; }
       if (data.checked === data.total) {
-        el.textContent = 'вњ…';
+        el.textContent = '?';
         el.style.color = '#2e9e5b';
         const card = el.closest('.navlink');
         if (card) card.style.background = '#e3f7e9';

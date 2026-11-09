@@ -1,4 +1,4 @@
-п»ї<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=121"></script>
+  <script src="sync.js?v=122"></script>
   <title>BTS Festa 2026</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -42,30 +42,30 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="bts-festa.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџЋ‰ BTS FESTA 2026 рџЋ‰</h1>
+    <a class="back" href="bts-festa.html">< Назад</a>
+    <h1>?? BTS FESTA 2026 ??</h1>
 
     <div id="list"></div>
 
-    <a class="footer-link" href="bts-festa.html">BTS FESTA в¬…пёЏ</a>
+    <a class="footer-link" href="bts-festa.html">BTS FESTA ??</a>
   </div>
 
   <script>
     const items = [
-      { text: "РЎРµРјРµР№РЅС‹Рµ С„РѕС‚РѕРіСЂР°С„РёРё", icon: "рџ“·", link: "https://vk.com/album-211624546_312706342", noCheckbox: true },
-      { text: "РџРµСЂС„РѕСЂРјР°РЅСЃ-РІРёРґРµРѕ В«HOOLIGANВ»", icon: "рџ•єрџЏ»", link: "https://t.me/violent_arhive/5517" },
-           { liveLink: true, text: "Р’Р»РѕРіРё В«NORMAL LOGВ»", icon: "рџЋҐ", link: "normal-log.html", statKey: "normal-log" },
-      { text: "BTS 13 SIDE FILM", icon: "рџ“·", link: "https://vk.com/album-211624546_312738460", noCheckbox: true },
-      { text: "РЈР¶РёРЅ Р¤РµСЃС‚С‹ 2.0", icon: "рџЋ‚", link: "https://t.me/violent_arhive/5523" },
-      { text: "Come Over", icon: "рџЋ¶", links: [
+      { text: "Семейные фотографии", icon: "??", link: "https://vk.com/album-211624546_312706342", noCheckbox: true },
+      { text: "Перформанс-видео «HOOLIGAN»", icon: "????", link: "https://t.me/violent_arhive/5517" },
+           { liveLink: true, text: "Влоги «NORMAL LOG»", icon: "??", link: "normal-log.html", statKey: "normal-log" },
+      { text: "BTS 13 SIDE FILM", icon: "??", link: "https://vk.com/album-211624546_312738460", noCheckbox: true },
+      { text: "Ужин Фесты 2.0", icon: "??", link: "https://t.me/violent_arhive/5523" },
+      { text: "Come Over", icon: "??", links: [
         { label: "Spotify", link: "https://open.spotify.com/album/2xXG0abKT34biU7L9siPde" },
-        { label: "РџРµСЂРµРІРѕРґ", link: "https://t.me/violent_arhive/5536" }
+        { label: "Перевод", link: "https://t.me/violent_arhive/5536" }
       ]},
-      { text: "ARIRANG Busan D-1", icon: "рџЋ¤", link: "https://t.me/violent_arhive/5524" },
-      { text: "Р®РЅРіРё \"РЁРµСЃС‚СЊРѕРґРёРЅС‚СЂРё\"",  icon: "рџЋҐ", link: "https://t.me/violent_arhive/5531" },
-      { text: "ARIRANG Busan D-2", icon: "рџЋ¤", link: "https://t.me/violent_arhive/5525" },
-      { text: "РџРѕСЃС‚ РҐРѕСЃРѕРєР°", icon: "рџ“ќ", link: "https://t.me/secretsofbts/76131", noCheckbox: true },
-      { text: "РџРёСЃСЊРјРѕ РќР°РјРґР¶СѓРЅР°", icon: "вњ‰пёЏ", link: "https://t.me/secretsofbts/76156", noCheckbox: true }
+      { text: "ARIRANG Busan D-1", icon: "??", link: "https://t.me/violent_arhive/5524" },
+      { text: "Юнги \"Шестьодинтри\"",  icon: "??", link: "https://t.me/violent_arhive/5531" },
+      { text: "ARIRANG Busan D-2", icon: "??", link: "https://t.me/violent_arhive/5525" },
+      { text: "Пост Хосока", icon: "??", link: "https://t.me/secretsofbts/76131", noCheckbox: true },
+      { text: "Письмо Намджуна", icon: "??", link: "https://t.me/secretsofbts/76156", noCheckbox: true }
     ];
 
        function renderItem(container, item) {
@@ -127,7 +127,7 @@
         icon.textContent = item.icon || '';
         const link = document.createElement('span');
         link.className = 'link';
-        link.textContent = 'рџ”—';
+        link.textContent = '??';
         a.appendChild(spacer);
         a.appendChild(span);
         if (icon.textContent) a.appendChild(icon);
@@ -196,7 +196,7 @@
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
-        link.textContent = 'рџ”—';
+        link.textContent = '??';
         row.appendChild(link);
       }
 

@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=121"></script>
+  <script src="sync.js?v=122"></script>
   <title>Личный кабинет</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -219,6 +219,45 @@
       font-size: 9px;
       color: #888;
       line-height: 1.25;
+    }
+    .heat-day.is-clickable { cursor: pointer; }
+    .heat-day.is-selected { box-shadow: inset 0 0 0 2px #9b7fd4; }
+    .day-marks {
+      margin-top: 12px;
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 12px;
+      padding: 12px;
+    }
+    .day-marks-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #7b5fb3;
+      margin: 0 0 8px;
+    }
+    .day-marks-empty {
+      font-size: 12px;
+      color: #999;
+      margin: 0;
+    }
+    .day-marks-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .day-marks-list li {
+      font-size: 13px;
+      color: #333;
+      line-height: 1.35;
+      padding: 7px 0;
+      border-top: 1px solid #f0eef5;
+    }
+    .day-marks-list li:first-child { border-top: none; }
+    .day-marks-meta {
+      display: block;
+      font-size: 11px;
+      color: #9a8fb0;
+      margin-top: 2px;
     }
   </style>
 </head>
@@ -663,6 +702,19 @@
             }
             const dateText = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
             cell.title = n ? (dateText + ' · ' + n + ' ' + pluralMarks(n)) : (dateText + ' · нет отметок');
+            cell.classList.add('is-clickable');
+            cell.setAttribute('role', 'button');
+            cell.tabIndex = 0;
+            cell.dataset.dayKey = key;
+            cell.addEventListener('click', function () {
+              showDayMarks(key, dateText, cell);
+            });
+            cell.addEventListener('keydown', function (e) {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                showDayMarks(key, dateText, cell);
+              }
+            });
           }
           days.appendChild(cell);
         }
@@ -672,6 +724,12 @@
       }
 
       card.appendChild(scroll);
+
+      const dayMarks = document.createElement('div');
+      dayMarks.id = 'day-marks-panel';
+      dayMarks.className = 'day-marks';
+      dayMarks.style.display = 'none';
+      card.appendChild(dayMarks);
 
       const legend = document.createElement('div');
       legend.className = 'heatmap-legend';
@@ -730,6 +788,55 @@
       if (n1 > 1 && n1 < 5) return 'дня';
       if (n1 === 1) return 'день';
       return 'дней';
+    }
+
+    function showDayMarks(dayKey, dateText, cell) {
+      const panel = document.getElementById('day-marks-panel');
+      if (!panel) return;
+      document.querySelectorAll('.heat-day.is-selected').forEach(function (el) {
+        el.classList.remove('is-selected');
+      });
+      if (cell) cell.classList.add('is-selected');
+
+      const items = (typeof getCheckMarksForDay === 'function') ? getCheckMarksForDay(dayKey) : [];
+      panel.style.display = '';
+      panel.innerHTML = '';
+
+      const title = document.createElement('p');
+      title.className = 'day-marks-title';
+      title.textContent = dateText + (items.length ? (' · ' + items.length + ' ' + pluralMarks(items.length)) : '');
+      panel.appendChild(title);
+
+      if (!items.length) {
+        const empty = document.createElement('p');
+        empty.className = 'day-marks-empty';
+        empty.textContent = 'В этот день отметок нет (или это были старые галочки без даты).';
+        panel.appendChild(empty);
+        panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        return;
+      }
+
+      const list = document.createElement('ul');
+      list.className = 'day-marks-list';
+      items.forEach(function (item) {
+        const li = document.createElement('li');
+        li.textContent = item.title || item.id;
+        if (item.count > 1 || item.rewatch) {
+          const meta = document.createElement('span');
+          meta.className = 'day-marks-meta';
+          if (item.count > 1) meta.textContent = 'отмечено ×' + item.count;
+          else meta.textContent = 'повторный просмотр';
+          li.appendChild(meta);
+        } else if (!item.hasName) {
+          const meta = document.createElement('span');
+          meta.className = 'day-marks-meta';
+          meta.textContent = 'название появится у новых отметок';
+          li.appendChild(meta);
+        }
+        list.appendChild(li);
+      });
+      panel.appendChild(list);
+      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
 
     // expiresAt — момент, когда доступ уже кончился (обычно полночь МСК).

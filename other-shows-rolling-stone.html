@@ -1,4 +1,4 @@
-ï»¿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,8 +7,8 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=121"></script>
-  <title>Ğ˜Ğ½Ñ‚ĞµÑ€Ğ²ÑŒÑ Ğ´Ğ»Ñ Rolling Stone</title>
+  <script src="sync.js?v=122"></script>
+  <title>Èíòåğâüş äëÿ Rolling Stone</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
     .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
@@ -24,22 +24,22 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="other-shows-2026.html">â† ĞĞ°Ğ·Ğ°Ğ´</a>
-    <h1>ğŸ©· Rolling Stone ğŸ©·</h1>
+    <a class="back" href="other-shows-2026.html">< Íàçàä</a>
+    <h1>?? Rolling Stone ??</h1>
     <div id="list"></div>
-    <a class="footer-link" href="other-shows-2026.html">Ğ”Ñ€ÑƒĞ³Ğ¸Ğµ ÑˆĞ¾Ñƒ (2026) â¬…ï¸</a>
+    <a class="footer-link" href="other-shows-2026.html">Äğóãèå øîó (2026) ??</a>
   </div>
 
   <script>
        const items = [
-      { text: "â¤ï¸ BTS", link: "https://t.me/violent_arhive/5553" },
-      { text: "ğŸ’› Ğ§Ğ¸Ğ¼Ğ¸Ğ½", link: "https://t.me/violent_arhive/5491" },
-      { text: "ğŸ–¤ Ğ®Ğ½Ğ³Ğ¸", link: "https://t.me/violent_arhive/5492" },
-      { text: "ğŸ’œ Ğ§Ğ¾Ğ½Ğ³ÑƒĞº", link: "https://t.me/violent_arhive/5488" },
-      { text: "ğŸ’™ ĞĞ°Ğ¼Ğ´Ğ¶ÑƒĞ½", link: "https://t.me/violent_arhive/5483" },
-      { text: "ğŸ’š Ğ¢ÑÑ…Ñ‘Ğ½", link: "https://t.me/violent_arhive/5489" },
-      { text: "ğŸ¤ Ğ¥Ğ¾ÑĞ¾Ğº", link: "https://t.me/violent_arhive/5490" },
-      { text: "ğŸ’• Ğ”Ğ¶Ğ¸Ğ½", link: "https://t.me/violent_arhive/5482" }
+      { text: "?? BTS", link: "https://t.me/violent_arhive/5553" },
+      { text: "?? ×èìèí", link: "https://t.me/violent_arhive/5491" },
+      { text: "?? Şíãè", link: "https://t.me/violent_arhive/5492" },
+      { text: "?? ×îíãóê", link: "https://t.me/violent_arhive/5488" },
+      { text: "?? Íàìäæóí", link: "https://t.me/violent_arhive/5483" },
+      { text: "?? Òıõ¸í", link: "https://t.me/violent_arhive/5489" },
+      { text: "?? Õîñîê", link: "https://t.me/violent_arhive/5490" },
+      { text: "?? Äæèí", link: "https://t.me/violent_arhive/5482" }
     ];
 
     const listEl = document.getElementById('list');
@@ -61,7 +61,7 @@
       });
       span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
       const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = 'ğŸ”—';
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '??';
       row.appendChild(box); row.appendChild(span); row.appendChild(link);
       listEl.appendChild(row);
     });

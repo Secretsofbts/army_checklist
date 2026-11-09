@@ -1,4 +1,4 @@
-п»ї<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,8 +7,8 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=121"></script>
-  <title>РРЅС‚РµСЂРІСЊСЋ</title>
+  <script src="sync.js?v=122"></script>
+  <title>Интервью</title>
   <style>
     body {
       background: #f2f0f7;
@@ -63,28 +63,28 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="misc.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>РРЅС‚РµСЂРІСЊСЋ</h1>
-    <p class="intro">РЎРїРёСЃРєРё Р±СѓРґСѓС‚ СЃРѕР±РёСЂР°С‚СЊСЃСЏ РєРѕРіРґР°-С‚Рѕ...</p>
+    <a class="back" href="misc.html">< Назад</a>
+    <h1>Интервью</h1>
+    <p class="intro">Списки будут собираться когда-то...</p>
     <div id="list"></div>
   </div>
 
   <script>
     const navItems = [
-      { text: "2013 РіРѕРґ", link: "interviews-2013.html", statKey: "interviews-2013" },
-      { text: "2014 РіРѕРґ", link: "interviews-2014.html", statKey: "interviews-2014" },
-      { text: "2015 РіРѕРґ", link: "interviews-2015.html", statKey: "interviews-2015" },
-      { text: "2016 РіРѕРґ", link: "interviews-2016.html", statKey: "interviews-2016" },
-      { text: "2017 РіРѕРґ", link: "interviews-2017.html", statKey: "interviews-2017" },
-      { text: "2018 РіРѕРґ", link: "interviews-2018.html", statKey: "interviews-2018" },
-      { text: "2019 РіРѕРґ", link: "interviews-2019.html", statKey: "interviews-2019" },
-      { text: "2020 РіРѕРґ", link: "interviews-2020.html", statKey: "interviews-2020" },
-      { text: "2021 РіРѕРґ", link: "interviews-2021.html", statKey: "interviews-2021" },
-      { text: "2022 РіРѕРґ", link: "interviews-2022.html", statKey: "interviews-2022" },
-      { text: "2023 РіРѕРґ", link: "interviews-2023.html", statKey: "interviews-2023" },
-      { text: "2024 РіРѕРґ", link: "interviews-2024.html", statKey: "interviews-2024" },
-      { text: "2025 РіРѕРґ", link: "interviews-2025.html", statKey: "interviews-2025" },
-      { text: "2026 РіРѕРґ", link: "interviews-2026.html", statKey: "interviews-2026" }
+      { text: "2013 год", link: "interviews-2013.html", statKey: "interviews-2013" },
+      { text: "2014 год", link: "interviews-2014.html", statKey: "interviews-2014" },
+      { text: "2015 год", link: "interviews-2015.html", statKey: "interviews-2015" },
+      { text: "2016 год", link: "interviews-2016.html", statKey: "interviews-2016" },
+      { text: "2017 год", link: "interviews-2017.html", statKey: "interviews-2017" },
+      { text: "2018 год", link: "interviews-2018.html", statKey: "interviews-2018" },
+      { text: "2019 год", link: "interviews-2019.html", statKey: "interviews-2019" },
+      { text: "2020 год", link: "interviews-2020.html", statKey: "interviews-2020" },
+      { text: "2021 год", link: "interviews-2021.html", statKey: "interviews-2021" },
+      { text: "2022 год", link: "interviews-2022.html", statKey: "interviews-2022" },
+      { text: "2023 год", link: "interviews-2023.html", statKey: "interviews-2023" },
+      { text: "2024 год", link: "interviews-2024.html", statKey: "interviews-2024" },
+      { text: "2025 год", link: "interviews-2025.html", statKey: "interviews-2025" },
+      { text: "2026 год", link: "interviews-2026.html", statKey: "interviews-2026" }
     ];
 
     const listEl = document.getElementById('list');
@@ -116,7 +116,7 @@
       var el = document.getElementById('badge-' + key);
       if (!el || !data || data.total === 0) { if (el) el.textContent = ''; return; }
       if (data.checked === data.total) {
-        el.textContent = 'вњ…';
+        el.textContent = '?';
         el.style.color = '#2e9e5b';
         var card = el.closest('.navlink');
         if (card) card.style.background = '#e3f7e9';

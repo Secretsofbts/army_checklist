@@ -1,4 +1,4 @@
-ï»¿  <!DOCTYPE html>
+  <!DOCTYPE html>
   <html lang="ru">
   <head>
     <meta charset="UTF-8">
@@ -7,7 +7,7 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <script src="sync.js?v=121"></script>
+    <script src="sync.js?v=122"></script>
     <title>Idol's True Colors</title>
     <style>
       body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -24,15 +24,15 @@
   </head>
   <body>
     <div class="app">
-      <a class="back" href="other-shows-2013-2015.html">â† ĞĞ°Ğ·Ğ°Ğ´</a>
-      <h1>ğŸ¨ Idol's True Colors ğŸ¨</h1>
+      <a class="back" href="other-shows-2013-2015.html">< Íàçàä</a>
+      <h1>?? Idol's True Colors ??</h1>
       <div id="list"></div>
-      <a class="footer-link" href="other-shows-2013-2015.html">Ğ”Ñ€ÑƒĞ³Ğ¸Ğµ ÑˆĞ¾Ñƒ (2013 - 2015) â¬…ï¸</a>
+      <a class="footer-link" href="other-shows-2013-2015.html">Äğóãèå øîó (2013 - 2015) ??</a>
     </div>
     <script>
       const items = [
-        { text: "13 ÑĞµÑ€Ğ¸Ñ", link: "https://t.me/violent_arhive/2225" },
-        { text: "47 ÑĞµÑ€Ğ¸Ñ", link: "https://t.me/violent_arhive/111" }
+        { text: "13 ñåğèÿ", link: "https://t.me/violent_arhive/2225" },
+        { text: "47 ñåğèÿ", link: "https://t.me/violent_arhive/111" }
       ];
       const listEl = document.getElementById('list');
       items.forEach((item) => {
@@ -53,7 +53,7 @@
         });
         span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
         const link = document.createElement('a');
-        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = 'ğŸ”—';
+        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '??';
         row.appendChild(box); row.appendChild(span); row.appendChild(link);
         listEl.appendChild(row);
       });

@@ -1,4 +1,4 @@
-п»ї<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=121"></script>
+  <script src="sync.js?v=122"></script>
   <title>BTS Festa 2019</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -26,37 +26,37 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="bts-festa.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџЋ‰ BTS FESTA 2019 рџЋ‰</h1>
+    <a class="back" href="bts-festa.html">< Назад</a>
+    <h1>?? BTS FESTA 2019 ??</h1>
 
     <div id="list"></div>
-    <a class="footer-link" href="bts-festa.html">BTS FESTA в¬…пёЏ</a>
+    <a class="footer-link" href="bts-festa.html">BTS FESTA ??</a>
   </div>
 
   <script>
     const items = [
-      { text: "Р¦РµСЂРµРјРѕРЅРёСЏ РѕС‚РєСЂС‹С‚РёСЏ", icon: "рџ“·", link: "https://www.facebook.com/media/set/?set=a.2757867114228533&type=3", noCheckbox: true },
-      { text: "Photo Collection", icon: "рџ“·", link: "https://www.facebook.com/media/set/?set=a.2760419207306657&type=3", noCheckbox: true },
-      { text: "STAGE SELF CAM", sub: "\"Anpanman\" РќСЊСЋ-Р™РѕСЂРє", icon: "рџЋҐ", link: "https://t.me/violent_arhive/1906" },
-      { text: "This Night", sub: "By Jin", icon: "рџЋ¶", links: [
+      { text: "Церемония открытия", icon: "??", link: "https://www.facebook.com/media/set/?set=a.2757867114228533&type=3", noCheckbox: true },
+      { text: "Photo Collection", icon: "??", link: "https://www.facebook.com/media/set/?set=a.2760419207306657&type=3", noCheckbox: true },
+      { text: "STAGE SELF CAM", sub: "\"Anpanman\" Нью-Йорк", icon: "??", link: "https://t.me/violent_arhive/1906" },
+      { text: "This Night", sub: "By Jin", icon: "??", links: [
         { label: "SoundCloud", link: "https://soundcloud.com/bangtan/tonightbyjin" },
-        { label: "РџРµСЂРµРІРѕРґ", link: "https://t.me/violent_arhive/1907" }
+        { label: "Перевод", link: "https://t.me/violent_arhive/1907" }
       ]},
-      { text: "Р”Р¶РёРЅ Р·Р°РїРёСЃС‹РІР°РµС‚ 1 РїРµСЃРЅСЋ \"This Night\"", sub: "СЌС‚Р° Р±РѕРјР±РѕС‡РєР° РЅРµ РЅР° С„РµСЃС‚Сѓ, РЅРѕ СЂРµС€РёР»Р° СЃСЋРґР° РґРѕР±Р°РІРёС‚СЊ", icon: "рџ’Ј", link: "https://t.me/violent_arhive/1908" },
-      { text: "Special Choreography", sub: "MIC Drop (MAMA dance break)", icon: "рџ•є", link: "https://t.me/violent_arhive/1909" },
-      { text: "Р“Р°Р·РµС‚Р° BANGTAN NEWS", icon: "вњ‰пёЏ", link: "https://m.vk.com/wall-163395992_2793", noCheckbox: true },
-      { text: "Special Choreography", sub: "Spring Day (Lovely ver)", icon: "рџ•є", link: "https://t.me/violent_arhive/1910" },
-      { text: "Family Portrait", icon: "рџ“·", link: "https://www.facebook.com/media/set/?set=a.2773381229343788&type=3", noCheckbox: true },
-      { text: "Euphoria", sub: "Piano ver", icon: "рџЋ¶", links: [
+      { text: "Джин записывает 1 песню \"This Night\"", sub: "эта бомбочка не на фесту, но решила сюда добавить", icon: "??", link: "https://t.me/violent_arhive/1908" },
+      { text: "Special Choreography", sub: "MIC Drop (MAMA dance break)", icon: "??", link: "https://t.me/violent_arhive/1909" },
+      { text: "Газета BANGTAN NEWS", icon: "??", link: "https://m.vk.com/wall-163395992_2793", noCheckbox: true },
+      { text: "Special Choreography", sub: "Spring Day (Lovely ver)", icon: "??", link: "https://t.me/violent_arhive/1910" },
+      { text: "Family Portrait", icon: "??", link: "https://www.facebook.com/media/set/?set=a.2773381229343788&type=3", noCheckbox: true },
+      { text: "Euphoria", sub: "Piano ver", icon: "??", links: [
         { label: "SoundCloud", link: "https://soundcloud.com/bangtan/euphoria2019festa" },
-        { label: "РџРµСЂРµРІРѕРґ", link: "https://t.me/violent_arhive/1911" }
+        { label: "Перевод", link: "https://t.me/violent_arhive/1911" }
       ]},
-      { text: "BTS Profile 2019", sub: "С‚Р°Рј РјРЅРѕРіРѕ С„РѕС‚РѕРіСЂР°С„РёР№, РЅРµ РѕРґРёРЅ РїРѕСЃС‚, РїСЂРѕР»РёСЃС‚Р°Р№С‚Рµ РЅРёР¶Рµ", icon: "вњ‰пёЏ", link: "https://t.me/secretsofbts/16061", noCheckbox: true },
-      { text: "Р§РµСЂРґР°Рє Р‘Р°РЅС‚Р°РЅ", sub: "6th BTS birthday", icon: "рџЋ‚", link: "https://t.me/violent_arhive/952" },
-      { text: "FAMILY PORTRAIT", icon: "рџ“·", link: "https://www.facebook.com/media/set/?set=a.2781689961846248&type=3", noCheckbox: true },
-      { text: "Р­РїРёР·РѕРґ \"РЎСЉС‘РјРєР° РЎРµРјРµР№РЅРѕРіРѕ РџРѕСЂС‚СЂРµС‚Р° #1\"", icon: "рџЋҐ", link: "https://t.me/violent_arhive/1914" },
-      { text: "Р­РїРёР·РѕРґ \"РЎСЉС‘РјРєР° РЎРµРјРµР№РЅРѕРіРѕ РџРѕСЂС‚СЂРµС‚Р° #2\"", icon: "рџЋҐ", link: "https://t.me/violent_arhive/1915" },
-      { text: "РЎРµРјРµР№РЅС‹Р№ РїРѕСЂС‚СЂРµС‚", sub: "Р·Р° РєР°РґСЂРѕРј вЂ” СЃ Memories 2019", icon: "рџЋҐ", link: "https://t.me/violent_arhive/1653" }
+      { text: "BTS Profile 2019", sub: "там много фотографий, не один пост, пролистайте ниже", icon: "??", link: "https://t.me/secretsofbts/16061", noCheckbox: true },
+      { text: "Чердак Бантан", sub: "6th BTS birthday", icon: "??", link: "https://t.me/violent_arhive/952" },
+      { text: "FAMILY PORTRAIT", icon: "??", link: "https://www.facebook.com/media/set/?set=a.2781689961846248&type=3", noCheckbox: true },
+      { text: "Эпизод \"Съёмка Семейного Портрета #1\"", icon: "??", link: "https://t.me/violent_arhive/1914" },
+      { text: "Эпизод \"Съёмка Семейного Портрета #2\"", icon: "??", link: "https://t.me/violent_arhive/1915" },
+      { text: "Семейный портрет", sub: "за кадром — с Memories 2019", icon: "??", link: "https://t.me/violent_arhive/1653" }
     ];
 
     function renderItem(container, item) {
@@ -85,7 +85,7 @@
         icon.textContent = item.icon || '';
         const link = document.createElement('span');
         link.className = 'link';
-        link.textContent = 'рџ”—';
+        link.textContent = '??';
         a.appendChild(spacer);
         a.appendChild(span);
         if (icon.textContent) a.appendChild(icon);
@@ -154,7 +154,7 @@
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
-        link.textContent = 'рџ”—';
+        link.textContent = '??';
         row.appendChild(link);
       }
 

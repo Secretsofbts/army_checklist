@@ -1,4 +1,4 @@
-п»ї<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=121"></script>
+  <script src="sync.js?v=122"></script>
   <title>BTS Festa 2021</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -26,41 +26,41 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="bts-festa.html">в†ђ РќР°Р·Р°Рґ</a>
-    <h1>рџЋ‰ BTS FESTA 2021 рџЋ‰</h1>
+    <a class="back" href="bts-festa.html">< Назад</a>
+    <h1>?? BTS FESTA 2021 ??</h1>
 
     <div id="list"></div>
 
 
-    <a class="footer-link" href="bts-festa.html">BTS FESTA в¬…пёЏ</a>
+    <a class="footer-link" href="bts-festa.html">BTS FESTA ??</a>
   </div>
 
   <script>
     const items = [
-      { text: "Р¦РµСЂРµРјРѕРЅРёСЏ РѕС‚РєСЂС‹С‚РёСЏ СЃРµРјРµР№РЅС‹РјРё С„РѕС‚Рѕ #1", icon: "рџ“·", link: "https://www.facebook.com/media/set/?set=a.336233524527372&type=3", noCheckbox: true },
-      { text: "РЎРµРјРµР№РЅС‹Рµ С„РѕС‚Рѕ #2", icon: "рџ“·", link: "https://btsarmy.ru/novosti/bts-news/bts-festa-2021-family-portrait-2", noCheckbox: true },
-      { text: "Profile 2021", icon: "вњ‰пёЏ", link: "https://btsarmy.ru/novosti/bts-news/bts-festa-2021-bts-profile", noCheckbox: true },
-      { text: "Special Choreography", sub: "Dynamite (Cute & Lovely ver)", icon: "рџ•є", link: "https://t.me/violent_arhive/927" },
-      { text: "Special Choreography", sub: "2020 MMA \"Black Swan\" Intro", icon: "рџ•є", link: "https://t.me/violent_arhive/915" },
-      { text: "Special Choreography", sub: "\"N.O\" Dance break ON:E", icon: "рџ•є", link: "https://t.me/violent_arhive/913" },
-      { text: "Mission! BTS 4 Cuts", icon: "рџЋҐ", link: "https://t.me/violent_arhive/929" },
-      { text: "Р¤РѕС‚Рѕ Mission! BTS 4 Cuts", icon: "рџ“·", link: "https://btsarmy.ru/novosti/bts-news/bts-festa-2021-mission-bts-4-cuts", noCheckbox: true },
-      { text: "Bicycle", sub: "By RM", icon: "рџЋ¶", links: [
+      { text: "Церемония открытия семейными фото #1", icon: "??", link: "https://www.facebook.com/media/set/?set=a.336233524527372&type=3", noCheckbox: true },
+      { text: "Семейные фото #2", icon: "??", link: "https://btsarmy.ru/novosti/bts-news/bts-festa-2021-family-portrait-2", noCheckbox: true },
+      { text: "Profile 2021", icon: "??", link: "https://btsarmy.ru/novosti/bts-news/bts-festa-2021-bts-profile", noCheckbox: true },
+      { text: "Special Choreography", sub: "Dynamite (Cute & Lovely ver)", icon: "??", link: "https://t.me/violent_arhive/927" },
+      { text: "Special Choreography", sub: "2020 MMA \"Black Swan\" Intro", icon: "??", link: "https://t.me/violent_arhive/915" },
+      { text: "Special Choreography", sub: "\"N.O\" Dance break ON:E", icon: "??", link: "https://t.me/violent_arhive/913" },
+      { text: "Mission! BTS 4 Cuts", icon: "??", link: "https://t.me/violent_arhive/929" },
+      { text: "Фото Mission! BTS 4 Cuts", icon: "??", link: "https://btsarmy.ru/novosti/bts-news/bts-festa-2021-mission-bts-4-cuts", noCheckbox: true },
+      { text: "Bicycle", sub: "By RM", icon: "??", links: [
         { label: "SoundCloud", link: "https://soundcloud.com/bangtan/bicycleforarmy" },
-        { label: "РџРµСЂРµРІРѕРґ", link: "https://t.me/violent_arhive/1917" }
+        { label: "Перевод", link: "https://t.me/violent_arhive/1917" }
       ]},
-      { text: "Р¤РѕС‚РѕРєРѕР»Р»РµРєС†РёСЏ 20/21", icon: "рџ“·", link: "https://btsarmy.ru/novosti/bts-news/bts-festa-2021-photo-collection-20-21", noCheckbox: true },
-      { text: "2021 FESTA СЃСЉС‘РјРєРё СЃРµРјРµР№РЅРѕРіРѕ РїРѕСЂС‚СЂРµС‚Р°", icon: "рџЋҐ", link: "https://t.me/violent_arhive/1403" },
-      { text: "ARMY Profile", icon: "вњ‰пёЏ", link: "https://btsarmy.ru/novosti/bts-news/bts-festa-2021-army-profile", noCheckbox: true },
-      { text: "Р­РєР·Р°РјРµРЅ FESTA 2021", icon: "вњ‰пёЏ", link: "https://btsarmy.ru/novosti/bts-news/bts-festa-2021-exam", noCheckbox: true },
-      { text: "Р­РєР·Р°РјРµРЅ FESTA 2021", sub: "Behind", icon: "рџ’Ј", link: "https://t.me/violent_arhive/951" },
-      { text: "Р¤РѕС‚Рѕ BTS ROOM LIVE", icon: "рџ“·", link: "https://btsarmy.ru/novosti/bts-news/bts-festa-2021-room-live", noCheckbox: true },
-      { text: "BTS ROOM LIVE", icon: "рџЋҐ", link: "https://t.me/violent_arhive/1919" },
-      { text: "Mikrokosmos", sub: "SY IN SEOUL", icon: "рџЋҐ", link: "https://t.me/violent_arhive/1921" },
-      { text: "РњР°РіР°Р·РёРЅС‡РёРє РђР РњР", sub: "8th BTS birthday", icon: "рџЋ‚", link: "https://t.me/violent_arhive/953" },
-      { text: "Р¦РµСЂРµРјРѕРЅРёСЏ Р·Р°РєСЂС‹С‚РёСЏ", icon: "вњ‰пёЏ", link: "https://btsarmy.ru/novosti/bts-news/bts-festa-2021-closing-ceremony", noCheckbox: true },
-      { text: "SOWOOZOO D-1", sub: "РѕС‚ 13.06.2021 вЂ” СЃ СЂСѓСЃ. СЃСѓР±", icon: "рџ–Ґ", link: "https://t.me/violent_arhive/3607" },
-{ text: "SOWOOZOO D-2", sub: "РѕС‚ 14.06.2021 вЂ” Р±РµР· СЃСѓР±С‚РёС‚СЂРѕРІ", icon: "рџ–Ґ", link: "https://t.me/violent_arhive/964" }
+      { text: "Фотоколлекция 20/21", icon: "??", link: "https://btsarmy.ru/novosti/bts-news/bts-festa-2021-photo-collection-20-21", noCheckbox: true },
+      { text: "2021 FESTA съёмки семейного портрета", icon: "??", link: "https://t.me/violent_arhive/1403" },
+      { text: "ARMY Profile", icon: "??", link: "https://btsarmy.ru/novosti/bts-news/bts-festa-2021-army-profile", noCheckbox: true },
+      { text: "Экзамен FESTA 2021", icon: "??", link: "https://btsarmy.ru/novosti/bts-news/bts-festa-2021-exam", noCheckbox: true },
+      { text: "Экзамен FESTA 2021", sub: "Behind", icon: "??", link: "https://t.me/violent_arhive/951" },
+      { text: "Фото BTS ROOM LIVE", icon: "??", link: "https://btsarmy.ru/novosti/bts-news/bts-festa-2021-room-live", noCheckbox: true },
+      { text: "BTS ROOM LIVE", icon: "??", link: "https://t.me/violent_arhive/1919" },
+      { text: "Mikrokosmos", sub: "SY IN SEOUL", icon: "??", link: "https://t.me/violent_arhive/1921" },
+      { text: "Магазинчик АРМИ", sub: "8th BTS birthday", icon: "??", link: "https://t.me/violent_arhive/953" },
+      { text: "Церемония закрытия", icon: "??", link: "https://btsarmy.ru/novosti/bts-news/bts-festa-2021-closing-ceremony", noCheckbox: true },
+      { text: "SOWOOZOO D-1", sub: "от 13.06.2021 — с рус. суб", icon: "??", link: "https://t.me/violent_arhive/3607" },
+{ text: "SOWOOZOO D-2", sub: "от 14.06.2021 — без субтитров", icon: "??", link: "https://t.me/violent_arhive/964" }
       
     ];
 
@@ -90,7 +90,7 @@
         icon.textContent = item.icon || '';
         const link = document.createElement('span');
         link.className = 'link';
-        link.textContent = 'рџ”—';
+        link.textContent = '??';
         a.appendChild(spacer);
         a.appendChild(span);
         if (icon.textContent) a.appendChild(icon);
@@ -159,7 +159,7 @@
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
-        link.textContent = 'рџ”—';
+        link.textContent = '??';
         row.appendChild(link);
       }
 
