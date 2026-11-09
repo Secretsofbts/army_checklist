@@ -1292,12 +1292,12 @@ async function sendStarsInvoiceToUser(userId, stars, days, meta) {
   await telegramSendMessage(
     userId,
     'Вам выставили счёт на оплату 💜\n' +
-      stars + ' Stars = ' + days + ' ' + pluralDaysRu(days) + ' доступа' + promoMark + '.\n' +
+      stars + ' Stars = ' + days + ' ' + pluralDaysRu(days) + promoMark + '.\n' +
       'Нажмите Pay на сообщении ниже.',
     null
   );
   await telegramSendStarsInvoice(userId, {
-    title: days + ' ' + pluralDaysRu(days) + ' доступа',
+    title: days + ' ' + pluralDaysRu(days),
     description: 'Подписка на чек-лист по BTS',
     label: days + ' ' + pluralDaysRu(days),
     stars: stars,
@@ -1894,17 +1894,15 @@ async function handleSuccessfulStarsPayment(msg) {
     const granted = await grantPaidDaysFromStars(uid, days, pay);
     console.log('stars payment ok', uid, days, pay.total_amount, granted);
     try {
-      await telegramSendMessage(
-        uid,
-        'Оплата Stars прошла 💜 Доступ продлён на ' + days + ' ' + pluralDaysRu(days) + '.',
-        undefined
-      );
-    } catch (e) {
-      console.error('stars thanks text failed', e);
-    }
-    try {
       const thanks = await sendPaidThanksToUser(uid, days);
-      if (!thanks.sent) console.error('stars paid thanks photo failed', thanks);
+      if (!thanks.sent) {
+        console.error('stars paid thanks photo failed', thanks);
+        await telegramSendMessage(
+          uid,
+          'Оплата прошла 💜 Доступ продлён на ' + days + ' ' + pluralDaysRu(days) + '.',
+          undefined
+        );
+      }
     } catch (e) {
       console.error('stars paid thanks failed', e);
     }
