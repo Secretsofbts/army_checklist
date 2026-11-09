@@ -424,8 +424,29 @@ registerUserIfNeeded();
     showDaysLeftWarn(leftDays);
   }
 
+  function armyCurrentHtmlFile() {
+    try {
+      const path = String((location && location.pathname) || '');
+      let file = path.split('/').pop() || '';
+      if (!file) file = 'index.html';
+      if (file.indexOf('.html') === -1 && file.indexOf('.') === -1) {
+        file = file ? (file + '.html') : 'index.html';
+      }
+      return file;
+    } catch (e) {
+      return '';
+    }
+  }
+
+  // Страница оплаты и оферта всегда доступны даже без подписки
+  function armyIsAlwaysOpenPage() {
+    const file = armyCurrentHtmlFile();
+    return file === 'payment.html' || file === 'oferta.html';
+  }
+
   function showSubscriptionPaywall(info) {
     info = info || {};
+    if (armyIsAlwaysOpenPage()) return;
     if (document.getElementById('army-paywall')) return;
 
     const overlay = document.createElement('div');
@@ -469,96 +490,49 @@ registerUserIfNeeded();
     title.style.cssText = [
       'font-family:Arial,sans-serif',
       'font-size:18px', 'font-weight:700',
-      'color:#2b2440', 'margin:0 0 18px', 'line-height:1.3',
+      'color:#2b2440', 'margin:0 0 12px', 'line-height:1.3',
       'text-align:center'
     ].join(';');
 
-    const plans = document.createElement('div');
-    plans.style.cssText = 'display:flex;flex-direction:column;gap:10px;margin:0 0 18px';
-
-    const monthBtn = document.createElement('button');
-    monthBtn.type = 'button';
-    monthBtn.disabled = true;
-    monthBtn.style.cssText = [
-      'width:100%', 'border:none', 'border-radius:12px', 'padding:14px 16px',
-      'font-size:15px', 'font-weight:600', 'cursor:default', 'text-align:left',
-      'background:#ebe6f4', 'color:#2b2440',
-      'display:flex', 'justify-content:space-between', 'align-items:center', 'gap:10px'
-    ].join(';');
-    const monthLabel = document.createElement('span');
-    monthLabel.style.cssText = 'display:inline-flex;align-items:baseline;gap:8px;flex-wrap:wrap';
     const priceNow = Number(info.priceRub) || 200;
     const priceOld = Number(info.oldPriceRub) || 0;
-    const monthMain = document.createElement('span');
-    monthMain.style.cssText = 'display:flex;flex-direction:column;align-items:flex-start;gap:2px;';
-    const monthTop = document.createElement('span');
-    monthTop.style.cssText = 'display:inline-flex;align-items:baseline;gap:8px;flex-wrap:wrap';
+    const priceHint = document.createElement('div');
     if (info.promo && priceOld > priceNow) {
-      const oldEl = document.createElement('span');
-      oldEl.textContent = priceOld + ' ₽';
-      oldEl.style.cssText = 'text-decoration:line-through;color:#9a8fb0;font-weight:600';
-      const newEl = document.createElement('span');
-      newEl.textContent = priceNow + ' ₽ — 30 дней';
-      monthTop.appendChild(oldEl);
-      monthTop.appendChild(newEl);
+      priceHint.innerHTML =
+        '<span style="text-decoration:line-through;color:#9a8fb0;font-weight:600;margin-right:8px;">' +
+        priceOld + ' ₽</span><span style="font-weight:700;color:#2b2440;">' +
+        priceNow + ' ₽</span><span style="color:#8a7aa8;"> за 30 дней</span>';
     } else {
-      monthTop.textContent = priceNow + ' ₽ — 30 дней';
+      priceHint.textContent = priceNow + ' ₽ за 30 дней';
     }
-    const monthOnce = document.createElement('span');
-    monthOnce.textContent = 'разовая оплата';
-    monthOnce.style.cssText = 'font-size:11px;font-weight:600;color:#8a7aa8';
-    monthMain.appendChild(monthTop);
-    monthMain.appendChild(monthOnce);
-    monthLabel.appendChild(monthMain);
-    const monthSoon = document.createElement('span');
-    monthSoon.textContent = 'оплата скоро';
-    monthSoon.style.cssText = 'font-size:12px;font-weight:600;color:#8a7aa8;flex-shrink:0';
-    monthBtn.appendChild(monthLabel);
-    monthBtn.appendChild(monthSoon);
-    plans.appendChild(monthBtn);
-
-    [60, 90, 180].forEach(function (days) {
-      const btn = document.createElement('button');
-      btn.type = 'button';
-      btn.disabled = true;
-      btn.style.cssText = [
-        'width:100%', 'border:none', 'border-radius:12px', 'padding:14px 16px',
-        'font-size:15px', 'font-weight:600', 'cursor:default', 'text-align:left',
-        'background:#f4f1f8', 'color:#5b4a7a',
-        'display:flex', 'justify-content:space-between', 'align-items:center', 'gap:10px'
-      ].join(';');
-      const labWrap = document.createElement('span');
-      labWrap.style.cssText = 'display:flex;flex-direction:column;align-items:flex-start;gap:2px;';
-      const lab = document.createElement('span');
-      lab.textContent = days + ' дней';
-      const once = document.createElement('span');
-      once.textContent = 'разовая оплата';
-      once.style.cssText = 'font-size:11px;font-weight:600;color:#8a7aa8';
-      labWrap.appendChild(lab);
-      labWrap.appendChild(once);
-      const soon = document.createElement('span');
-      soon.textContent = 'скоро';
-      soon.style.cssText = 'font-size:12px;font-weight:600;color:#8a7aa8;flex-shrink:0';
-      btn.appendChild(labWrap);
-      btn.appendChild(soon);
-      plans.appendChild(btn);
-    });
+    priceHint.style.cssText = 'font-size:15px;line-height:1.35;margin:0 0 16px;color:#5b4a7a';
 
     const promoLeft = parseInt(info.promoDaysLeft, 10);
     let promoLine = null;
     if (info.promo && promoLeft > 0) {
       promoLine = document.createElement('div');
       promoLine.textContent = 'Акция ещё ' + promoLeft + ' ' + armyPluralDaysPromo(promoLeft);
-      promoLine.style.cssText = 'font-size:13px;line-height:1.35;color:#8a7aa8;margin:-6px 0 14px;text-align:center';
+      promoLine.style.cssText = 'font-size:13px;line-height:1.35;color:#8a7aa8;margin:-8px 0 14px;text-align:center';
     }
+
+    const payLink = document.createElement('a');
+    payLink.href = 'payment.html?v=29';
+    payLink.textContent = 'Перейти к оплате';
+    payLink.style.cssText = [
+      'display:block', 'width:100%', 'box-sizing:border-box',
+      'text-decoration:none', 'border-radius:12px', 'padding:14px 16px',
+      'font-size:15px', 'font-weight:700', 'text-align:center',
+      'background:#9b7fd4', 'color:#fff', 'margin:0 0 14px'
+    ].join(';');
 
     const thanks = document.createElement('div');
     thanks.textContent = 'Спасибо, что пользуетесь ботом 💜';
     thanks.style.cssText = 'font-size:13px;line-height:1.4;color:#5b4a7a;font-weight:600';
 
     card.appendChild(title);
-    card.appendChild(plans);
+    card.appendChild(priceHint);
     if (promoLine) card.appendChild(promoLine);
+    card.appendChild(payLink);
     card.appendChild(thanks);
     wrap.appendChild(hero);
     wrap.appendChild(card);
@@ -582,9 +556,10 @@ registerUserIfNeeded();
   function checkSubscriptionAccess() {
     const api = String(ARMY_API_URL || '').replace(/\/$/, '');
     if (!api || !ARMY_USER_ID) return;
+    const alwaysOpen = armyIsAlwaysOpenPage();
 
     const cached = readSubscriptionCache();
-    if (cached && cached.ok === false) {
+    if (!alwaysOpen && cached && cached.ok === false) {
       showSubscriptionPaywall(cached);
     }
     // Если доступ уже подтверждён кэшем — страницу не блокируем, только тихо обновляем.
@@ -602,6 +577,10 @@ registerUserIfNeeded();
       })
       .then(function (data) {
         if (!data || typeof data !== 'object') return;
+        if (alwaysOpen) {
+          writeSubscriptionCache(data);
+          return;
+        }
         applySubscriptionResult(data);
       })
       .catch(function () {});
