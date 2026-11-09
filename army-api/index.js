@@ -975,9 +975,19 @@ app.use('/cloud', async function (req, res) {
 
 const CABINET_LINK = 'https://t.me/army_checklist_bot?startapp=cabinet';
 const BOT_APP_LINK = 'https://t.me/army_checklist_bot?startapp';
+const PAYMENT_LINK = 'https://t.me/army_checklist_bot?startapp=payment';
+const HELP_TEXT =
+  'Команды бота:\n' +
+  '/app — открыть чек-лист\n' +
+  '/cabinet — личный кабинет\n' +
+  '/pay — страница оплаты\n' +
+  '/support — написать в поддержку\n' +
+  '/help — это меню\n\n' +
+  'Приложение также открывается кнопкой снизу «For ARMY 💜»';
 const START_TEXT =
   'Просто откройте приложение по кнопке снизу "For ARMY 💜"\n\n' +
-  'При возникновении каких-то вопросов или проблем напишите /support или слово «поддержка»';
+  'Или выберите команду в меню (кнопка / слева внизу).\n\n' +
+  'При возникновении вопросов — /support или слово «поддержка»';
 const REFERRAL_NOT_NEW_TEXT =
   'Вы уже пользовались когда-то чек-листом и есть в базе, поэтому ссылка не подходит под условия бонуса «Приведи друга»...\n\n' +
   'Но если захотите вернуться, то мы всегда рады и храним ваши галочки, если вы их ставили 😇';
@@ -1704,10 +1714,62 @@ async function handleStartCommand(msg) {
   return true;
 }
 
+async function handleMenuCommands(msg) {
+  if (!msg || !msg.chat || !msg.from) return false;
+  if (msg.chat.type !== 'private') return false;
+  const text = String(msg.text || '').trim();
+  // /stars без reply — только подсказка админу (счёт выставляется reply на тикет)
+  if (isAdminTelegramId(msg.from.id)) {
+    const starsAlone = parseStarsAdminCommand(text);
+    if (starsAlone && starsAlone.help && !msg.reply_to_message) {
+      try {
+        await telegramSendMessage(msg.chat.id, starsAlone.text, null);
+      } catch (e) {
+        console.error('stars help failed', e);
+      }
+      return true;
+    }
+  }
+  const m = text.match(/^\/(help|menu|app|checklist|cabinet|kabinet|pay|payment|oplata)(?:@\w+)?(?:\s|$)/i);
+  if (!m) return false;
+  const cmd = String(m[1] || '').toLowerCase();
+  try {
+    if (cmd === 'help' || cmd === 'menu') {
+      await telegramSendMessage(msg.chat.id, HELP_TEXT, null);
+      return true;
+    }
+    if (cmd === 'app' || cmd === 'checklist') {
+      await telegramSendMessage(msg.chat.id, 'Открыть чек-лист 👇', {
+        text: 'For ARMY 💜',
+        url: BOT_APP_LINK
+      });
+      return true;
+    }
+    if (cmd === 'cabinet' || cmd === 'kabinet') {
+      await telegramSendMessage(msg.chat.id, 'Личный кабинет 👇', {
+        text: 'Личный кабинет',
+        url: CABINET_LINK
+      });
+      return true;
+    }
+    if (cmd === 'pay' || cmd === 'payment' || cmd === 'oplata') {
+      await telegramSendMessage(msg.chat.id, 'Страница оплаты 👇', {
+        text: 'Оплата подписки',
+        url: PAYMENT_LINK
+      });
+      return true;
+    }
+  } catch (e) {
+    console.error('menu command failed', cmd, e);
+  }
+  return true;
+}
+
 async function handleBotMessage(msg) {
   if (!msg) return;
   try {
     if (await handleSupportFlow(msg)) return;
+    if (await handleMenuCommands(msg)) return;
     await handleStartCommand(msg);
   } catch (e) {
     console.error('bot message handle error', e);
@@ -1982,21 +2044,45 @@ async function simulateStarsPaymentForTestUser() {
 }
 
 async function ensureBotCommands() {
+  const userCommands = [
+    { command: 'start', description: 'Как открыть приложение' },
+    { command: 'app', description: 'Открыть чек-лист' },
+    { command: 'cabinet', description: 'Личный кабинет' },
+    { command: 'pay', description: 'Оплата подписки' },
+    { command: 'support', description: 'Написать в поддержку' },
+    { command: 'help', description: 'Список команд' }
+  ];
+  const adminCommands = userCommands.concat([
+    { command: 'stars', description: 'Счёт Stars (reply на тикет: /stars 30)' }
+  ]);
   try {
     const res = await fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/setMyCommands', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        commands: [
-          { command: 'start', description: 'Как открыть приложение' },
-          { command: 'support', description: 'Написать в поддержку' }
-        ]
-      })
+      body: JSON.stringify({ commands: userCommands })
     });
     const data = await res.json().catch(function () { return null; });
     console.log('setMyCommands', data && data.ok ? 'ok' : data);
   } catch (e) {
     console.error('setMyCommands failed', e);
+  }
+  for (let i = 0; i < ADMIN_IDS.length; i++) {
+    const adminId = ADMIN_IDS[i];
+    if (!adminId) continue;
+    try {
+      const res = await fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/setMyCommands', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          commands: adminCommands,
+          scope: { type: 'chat', chat_id: Number(adminId) || adminId }
+        })
+      });
+      const data = await res.json().catch(function () { return null; });
+      console.log('setMyCommands admin', adminId, data && data.ok ? 'ok' : data);
+    } catch (e) {
+      console.error('setMyCommands admin failed', adminId, e);
+    }
   }
 }
 

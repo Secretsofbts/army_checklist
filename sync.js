@@ -1960,7 +1960,10 @@ function getCombinedYearStats(yearKey) {
       'statistics': 'statistics.html',
       'stats': 'statistics.html',
       'cabinet': 'statistics.html',
-      'kabinet': 'statistics.html'
+      'kabinet': 'statistics.html',
+      'payment': 'payment.html',
+      'pay': 'payment.html',
+      'oplata': 'payment.html'
     };
     const key = String(param || '').toLowerCase();
     let target = aliases[key];
