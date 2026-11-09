@@ -982,6 +982,9 @@ const SUPPORT_SENT_TEXT =
   'Сообщение отправлено в поддержку. Можно писать дальше сюда же — это диалог. Ответ придёт в этот бот 💜';
 const SUPPORT_EMPTY_TEXT =
   'Пожалуйста, напишите вопрос текстом.';
+const SUPPORT_CLOSED_TEXT =
+  'Диалог с поддержкой закрыт — долго не было сообщений, поэтому новые сообщения сюда больше не доходят.\n\n' +
+  'Чтобы написать снова, отправьте /support или слово «поддержка».';
 const ONEDAY_REMIND_TEXT =
   'Сегодня последний день вашей подписки на чек-лист по архиву BTS\n\n' +
   'Для продолжения использования можно добавить нужное количество дней в своем личном кабинете\n\n' +
@@ -1108,7 +1111,7 @@ function isBotCommandText(text) {
   return /^\/[a-zA-Zа-яА-ЯёЁ_]+/.test(String(text || '').trim());
 }
 
-const SUPPORT_IDLE_MS = 60 * 60 * 1000; // час без сообщений от пользователя → диалог тихо закрывается
+const SUPPORT_IDLE_MS = 60 * 60 * 1000; // час без сообщений от пользователя → диалог закрывается
 
 function supportSessionRef(uid) {
   return db.ref('support_sessions/' + uid);
@@ -1138,18 +1141,19 @@ function supportLastUserAt(session) {
   return Number(session.lastUserTextAt || session.createdAt || 0) || 0;
 }
 
-// Если пользователь молчит час — закрываем без сообщений. Ответы админа таймер не продлевают.
+// Если пользователь молчит час — закрываем. Ответы админа таймер не продлевают.
+// Возвращает { live, justClosed }.
 async function ensureSupportSessionLive(uid, session) {
-  if (!session || !session.active) return null;
+  if (!session || !session.active) return { live: null, justClosed: false };
   const last = supportLastUserAt(session);
-  if (last && (Date.now() - last) <= SUPPORT_IDLE_MS) return session;
+  if (last && (Date.now() - last) <= SUPPORT_IDLE_MS) return { live: session, justClosed: false };
   await supportSessionRef(uid).update({
     active: false,
     awaitingFirst: false,
     closedAt: Date.now(),
     closeReason: 'user-idle'
   });
-  return null;
+  return { live: null, justClosed: true };
 }
 
 async function deliverSupportMessage(fromUser, questionText, options) {
@@ -1226,9 +1230,9 @@ async function handleAdminSupportReply(msg) {
   // Ответ админа не продлевает час ожидания и не открывает диалог заново
   const sessionSnap = await supportSessionRef(userId).get();
   const session = sessionSnap.exists() ? (sessionSnap.val() || {}) : {};
-  const live = await ensureSupportSessionLive(userId, session);
-  if (live) {
-    const lastByAdmin = Object.assign({}, live.lastAdminMsg || {});
+  const ensured = await ensureSupportSessionLive(userId, session);
+  if (ensured.live) {
+    const lastByAdmin = Object.assign({}, ensured.live.lastAdminMsg || {});
     lastByAdmin[String(msg.chat.id)] = reply.message_id;
     await saveSupportSession(userId, {
       active: true,
@@ -1264,8 +1268,8 @@ async function handleSupportFlow(msg) {
     }
     const sessionSnap = await supportSessionRef(uid).get();
     const raw = sessionSnap.exists() ? sessionSnap.val() : null;
-    const live = raw ? await ensureSupportSessionLive(uid, raw) : null;
-    const already = !!live;
+    const ensured = raw ? await ensureSupportSessionLive(uid, raw) : { live: null, justClosed: false };
+    const already = !!ensured.live;
     await deliverSupportMessage(msg.from, parsed.question, { followUp: already });
     if (!already) await telegramSendMessage(msg.chat.id, SUPPORT_SENT_TEXT, null);
     return true;
@@ -1273,8 +1277,21 @@ async function handleSupportFlow(msg) {
 
   const sessionSnap = await supportSessionRef(uid).get();
   if (!sessionSnap.exists()) return false;
-  const live = await ensureSupportSessionLive(uid, sessionSnap.val() || {});
-  if (!live) return false;
+  const ensured = await ensureSupportSessionLive(uid, sessionSnap.val() || {});
+  if (!ensured.live) {
+    // Команды бота (кроме support) не трогаем — пусть обработает /start и т.д.
+    if (isBotCommandText(text) && !parseSupportCommand(text)) return false;
+    const stray = text.trim() || String(msg.caption || '').trim();
+    if (!stray) return false;
+    try {
+      await telegramSendMessage(msg.chat.id, SUPPORT_CLOSED_TEXT, null);
+    } catch (e) {
+      console.error('support closed notify failed', uid, e);
+    }
+    return true;
+  }
+
+  const live = ensured.live;
 
   // Команды бота (кроме support) не считаем текстом диалога
   if (isBotCommandText(text) && !parseSupportCommand(text)) return false;
