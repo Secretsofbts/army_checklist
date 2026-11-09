@@ -955,8 +955,8 @@ const START_TEXT =
   'Просто откройте приложение по кнопке снизу "For ARMY 💜"\n\n' +
   'При возникновении каких-то вопросов или проблем напишите /support или слово «поддержка»';
 const REFERRAL_NOT_NEW_TEXT =
-  'Вы уже есть в базе чек-листа, поэтому эта реферальная ссылка не подходит под условия бонуса.\n\n' +
-  'Бонус действует только для тех, кто раньше ни разу не пользовался чек-листом.';
+  'Вы уже пользовались когда-то чек-листом и есть в базе, поэтому ссылка не подходит под условия бонуса «Приведи друга»...\n\n' +
+  'Но если захотите вернуться, то мы всегда рады и храним ваши галочки, если вы их ставили 😇';
 const CHANNEL_TRIAL_POST = 'https://t.me/violent_arhive/5708';
 // Рассылка про 5 дней пробного — сначала только тест, массово после вашего «ок»
 const TRIAL5_ANNOUNCE_TEXT =
@@ -978,8 +978,9 @@ const EXPIRED_REMIND_TEXT =
   'Продлить подписку можно в боте 💜';
 const PAID_THANKS_PHOTO = path.join(__dirname, 'sub-extended.jpg');
 const REFERRAL_INVITE_PHOTO = path.join(__dirname, 'referral-invite.jpg');
+const REFERRAL_NOT_NEW_PHOTO = path.join(__dirname, 'referral-not-new.jpg');
 const REFERRAL_INVITE_TEXT =
-  'Ваш друг пригласил вас в чек-лист по архиву BTS с русскими субтитрами 🥰\n\n' +
+  'Ваш друг пригласил вас в чек-лист по архиву BTS 🥰\n\n' +
   'Для начала использования откройте приложение кнопкой снизу «For ARMY 💜» — у вас начнётся пробный период\n\n' +
   'Если вам понравится и вы потом оформите подписку, то вам и тому, кто пригласил, начислятся бонусные 30 дней каждому =)';
 
@@ -1469,9 +1470,16 @@ async function handleStartCommand(msg) {
         }
       } else if (captured && captured.reason === 'not-new') {
         try {
-          await telegramSendMessage(msg.chat.id, REFERRAL_NOT_NEW_TEXT, null);
+          await telegramSendPhoto(msg.chat.id, REFERRAL_NOT_NEW_TEXT, REFERRAL_NOT_NEW_PHOTO);
+          skipDefaultStart = true;
         } catch (notifyErr) {
-          console.error('referral not-new notify failed', fromId, notifyErr);
+          console.error('referral not-new photo failed', fromId, notifyErr);
+          try {
+            await telegramSendMessage(msg.chat.id, REFERRAL_NOT_NEW_TEXT, null);
+            skipDefaultStart = true;
+          } catch (textErr) {
+            console.error('referral not-new text failed', fromId, textErr);
+          }
         }
       }
     } catch (refErr) {
@@ -1596,7 +1604,7 @@ async function applyForceTestAccountOnBoot() {
 }
 
 async function sendReferralInvitePreviewToTest() {
-  const metaRef = db.ref('bot_meta/referralInvitePreviewV1');
+  const metaRef = db.ref('bot_meta/referralInvitePreviewV2');
   const metaSnap = await metaRef.get();
   if (metaSnap.exists()) {
     console.log('referral invite preview already sent', metaSnap.val());
@@ -1609,6 +1617,23 @@ async function sendReferralInvitePreviewToTest() {
     console.log('referral invite preview sent to', testId);
   } catch (e) {
     console.error('referral invite preview failed', e);
+  }
+}
+
+async function sendReferralNotNewPreviewToTest() {
+  const metaRef = db.ref('bot_meta/referralNotNewPreviewV1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('referral not-new preview already sent', metaSnap.val());
+    return;
+  }
+  const testId = FORCE_TEST_IDS[0] || '2055929706';
+  try {
+    await telegramSendPhoto(testId, REFERRAL_NOT_NEW_TEXT, REFERRAL_NOT_NEW_PHOTO);
+    await metaRef.set({ at: Date.now(), to: testId });
+    console.log('referral not-new preview sent to', testId);
+  } catch (e) {
+    console.error('referral not-new preview failed', e);
   }
 }
 
@@ -1627,12 +1652,17 @@ app.listen(PORT, function () {
   extendLegacyTrialsPlusOneDay().catch(function (e) {
     console.error('legacy trial +1 day failed', e);
   });
-  // Превью реферального сообщения на тестовый аккаунт (один раз)
+  // Превью реферальных сообщений на тестовый аккаунт (по одному разу каждое)
   setTimeout(function () {
     sendReferralInvitePreviewToTest().catch(function (e) {
       console.error('referral invite preview boot failed', e);
     });
   }, 5000);
+  setTimeout(function () {
+    sendReferralNotNewPreviewToTest().catch(function (e) {
+      console.error('referral not-new preview boot failed', e);
+    });
+  }, 7000);
   // Извинение только бессрочным (им случайно ушло про 5 дней)
   setTimeout(function () {
     broadcastForeverOops().catch(function (e) {
