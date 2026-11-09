@@ -36,8 +36,8 @@
       text-align: left;
     }
     .plan.is-main {
-      background: #ebe6f4;
-      border-color: #ddd6ea;
+      background: #faf9fd;
+      border-color: #ece7f5;
     }
     .plan-top {
       display: flex;
@@ -169,7 +169,7 @@
 
     <p class="footer-note">
       Условия и реквизиты — в <a href="oferta.html">оферте</a>.
-      Вопросы по доступу: /support в боте.
+      Вопросы по доступу: /support в <a href="https://t.me/army_checklist_bot" target="_blank" rel="noopener">боте</a>.
     </p>
   </div>
 
@@ -207,8 +207,8 @@
         if (note) {
           var left = parseInt(info.promoDaysLeft, 10);
           note.textContent = (left > 0)
-            ? ('Акция −50%: вместо ' + priceOld + ' ₽ — ' + priceNow + ' ₽. Ещё ' + left + ' ' + pluralDays(left))
-            : ('Акция −50%: вместо ' + priceOld + ' ₽ — ' + priceNow + ' ₽ за месяц');
+            ? ('Акция −50%. Ещё ' + left + ' ' + pluralDays(left))
+            : 'Акция −50% за 30 дней';
         }
       } else {
         priceEl.innerHTML = '<span>' + priceNow + ' ₽</span>';
