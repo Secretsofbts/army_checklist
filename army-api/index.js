@@ -1517,6 +1517,21 @@ async function handleStartCommand(msg) {
     const payload = parts.length > 1 ? parts.slice(1).join(' ') : '';
     const fromId = msg.from && msg.from.id != null ? msg.from.id : msg.chat.id;
     var skipDefaultStart = false;
+
+    // Ссылка с оплаты: t.me/...?start=support → сразу режим поддержки
+    if (/^(support|podderzhka)$/i.test(String(payload || '').trim())) {
+      try {
+        await openSupportSession(String(fromId), {
+          awaitingFirst: true,
+          lastUserTextAt: Date.now()
+        });
+        await telegramSendMessage(msg.chat.id, SUPPORT_ASK_TEXT, null);
+        return true;
+      } catch (supportStartErr) {
+        console.error('start support payload failed', fromId, supportStartErr);
+      }
+    }
+
     try {
       const captured = await captureReferralFromStart(fromId, payload);
       if (captured && captured.saved) {
