@@ -488,10 +488,22 @@ registerUserIfNeeded();
     const monthLabel = document.createElement('span');
     monthLabel.style.cssText = 'display:inline-flex;align-items:baseline;gap:8px;flex-wrap:wrap';
     const priceNow = Number(info.priceRub) || 200;
+    const priceOld = Number(info.oldPriceRub) || 0;
     const monthMain = document.createElement('span');
     monthMain.style.cssText = 'display:flex;flex-direction:column;align-items:flex-start;gap:2px;';
     const monthTop = document.createElement('span');
-    monthTop.textContent = priceNow + ' ₽ — 30 дней';
+    monthTop.style.cssText = 'display:inline-flex;align-items:baseline;gap:8px;flex-wrap:wrap';
+    if (info.promo && priceOld > priceNow) {
+      const oldEl = document.createElement('span');
+      oldEl.textContent = priceOld + ' ₽';
+      oldEl.style.cssText = 'text-decoration:line-through;color:#9a8fb0;font-weight:600';
+      const newEl = document.createElement('span');
+      newEl.textContent = priceNow + ' ₽ — 30 дней';
+      monthTop.appendChild(oldEl);
+      monthTop.appendChild(newEl);
+    } else {
+      monthTop.textContent = priceNow + ' ₽ — 30 дней';
+    }
     const monthOnce = document.createElement('span');
     monthOnce.textContent = 'разовая оплата';
     monthOnce.style.cssText = 'font-size:11px;font-weight:600;color:#8a7aa8';

@@ -7,14 +7,15 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=131"></script>
+  <script src="sync.js?v=132"></script>
   <title>Оплата подписки</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
     * { box-sizing: border-box; }
     .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
     .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
-    h1 { font-size: 18px; margin: 0 0 14px; color: #2b2440; line-height: 1.35; }
+    h1 { font-size: 18px; margin: 0 0 8px; color: #2b2440; line-height: 1.35; }
+    .lead { font-size: 13px; color: #666; line-height: 1.45; margin: 0 0 14px; }
     .notice {
       background: #f3eefb;
       border-radius: 12px;
@@ -57,10 +58,20 @@
       line-height: 1;
     }
     .plan-price {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
       margin: 0 0 4px;
       font-size: 16px;
       font-weight: 700;
       color: #2b2440;
+    }
+    .plan-price .old {
+      text-decoration: line-through;
+      color: #9a8fb0;
+      font-weight: 600;
+      font-size: 14px;
     }
     .plan-once {
       font-size: 12px;
@@ -94,7 +105,8 @@
 <body>
   <div class="app">
     <a class="back" href="statistics.html">← В личный кабинет</a>
-    <h1>Выберите срок доступа к чек-листу</h1>
+    <h1>Оплата подписки</h1>
+    <p class="lead">Выберите срок доступа к чек-листу</p>
 
     <div class="notice">Оплата пока что настраивается</div>
 
@@ -103,7 +115,10 @@
         <div class="plan-title">30 дней</div>
         <div class="plan-badge" id="promo-badge">акция</div>
       </div>
-      <div class="plan-price" id="price-30">100 ₽</div>
+      <div class="plan-price" id="price-30">
+        <span class="old">200 ₽</span>
+        <span>100 ₽</span>
+      </div>
       <p class="plan-once">разовая оплата</p>
       <p class="plan-note" id="promo-note">Акция ещё действует</p>
       <button type="button" class="plan-btn" disabled>Оплата настраивается</button>
@@ -184,18 +199,22 @@
       if (!priceEl) return;
 
       var priceNow = Number(info.priceRub) || 200;
-      var promo = !!info.promo;
-      priceEl.textContent = priceNow + ' ₽';
+      var priceOld = Number(info.oldPriceRub) || 0;
+      var promo = !!(info.promo && priceOld > priceNow);
 
       if (promo) {
+        priceEl.innerHTML =
+          '<span class="old">' + priceOld + ' ₽</span>' +
+          '<span>' + priceNow + ' ₽</span>';
         if (badge) badge.style.display = '';
         if (note) {
           var left = parseInt(info.promoDaysLeft, 10);
           note.textContent = (left > 0)
-            ? ('Акция ещё ' + left + ' ' + pluralDays(left))
-            : 'Акция ещё действует';
+            ? ('Акция −50%: вместо ' + priceOld + ' ₽ — ' + priceNow + ' ₽. Ещё ' + left + ' ' + pluralDays(left))
+            : ('Акция −50%: вместо ' + priceOld + ' ₽ — ' + priceNow + ' ₽ за месяц');
         }
       } else {
+        priceEl.innerHTML = '<span>' + priceNow + ' ₽</span>';
         if (badge) badge.style.display = 'none';
         if (note) note.textContent = 'Обычная цена за 30 дней доступа';
       }
@@ -204,7 +223,7 @@
     function loadPricing() {
       var api = String(window.ARMY_API_URL || '').replace(/\/$/, '');
       if (!api) {
-        paintPricing({ priceRub: 100, promo: true, promoDaysLeft: null });
+        paintPricing({ priceRub: 100, oldPriceRub: 200, promo: true, promoDaysLeft: null });
         return;
       }
       var headers = {};
@@ -216,10 +235,10 @@
         .then(function (res) { return res.ok ? res.json() : null; })
         .then(function (data) {
           if (data && typeof data === 'object') paintPricing(data);
-          else paintPricing({ priceRub: 100, promo: true, promoDaysLeft: null });
+          else paintPricing({ priceRub: 100, oldPriceRub: 200, promo: true, promoDaysLeft: null });
         })
         .catch(function () {
-          paintPricing({ priceRub: 100, promo: true, promoDaysLeft: null });
+          paintPricing({ priceRub: 100, oldPriceRub: 200, promo: true, promoDaysLeft: null });
         });
     }
 
