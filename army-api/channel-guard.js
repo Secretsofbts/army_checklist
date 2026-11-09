@@ -56,9 +56,10 @@ function startChannelGuard() {
   });
 
   bot.start({
-    allowed_updates: ['chat_member']
-  }).then(function () {
-    console.log('Channel guard: запущен, канал', channelId);
+    allowed_updates: ['chat_member'],
+    onStart: function () {
+      console.log('Channel guard: запущен, канал', channelId);
+    }
   }).catch(function (e) {
     console.error('Channel guard: не запустился', e.message || e);
   });
