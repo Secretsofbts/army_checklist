@@ -7,14 +7,29 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=128"></script>
+  <script src="sync.js?v=129"></script>
   <title>Оплата подписки</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
     * { box-sizing: border-box; }
     .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
     .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
-    h1 { font-size: 18px; margin: 0 0 16px; color: #2b2440; line-height: 1.35; }
+    h1 { font-size: 18px; margin: 0 0 14px; color: #2b2440; line-height: 1.35; }
+    .plans { list-style: none; margin: 0 0 16px; padding: 0; }
+    .plans li {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 10px;
+      padding: 12px 0;
+      border-bottom: 1px solid #f0eef5;
+      font-size: 15px;
+      color: #2b2440;
+      font-weight: 600;
+    }
+    .plans li:first-child { padding-top: 0; }
+    .plans li:last-child { border-bottom: none; }
+    .plans .once { font-size: 13px; font-weight: 600; color: #8a7aa8; }
     .notice {
       background: #f3eefb;
       border-radius: 12px;
@@ -30,6 +45,12 @@
   <div class="app">
     <a class="back" href="statistics.html">← В личный кабинет</a>
     <h1>Выберите срок доступа к чек-листу</h1>
+    <ul class="plans">
+      <li><span>30 дней</span><span class="once">разовая</span></li>
+      <li><span>60 дней</span><span class="once">разовая</span></li>
+      <li><span>90 дней</span><span class="once">разовая</span></li>
+      <li><span>180 дней</span><span class="once">разовая</span></li>
+    </ul>
     <div class="notice">Оплата пока что настраивается</div>
   </div>
 

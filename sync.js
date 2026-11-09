@@ -488,13 +488,33 @@ registerUserIfNeeded();
     const monthLabel = document.createElement('span');
     monthLabel.style.cssText = 'display:inline-flex;align-items:baseline;gap:8px;flex-wrap:wrap';
     const priceNow = Number(info.priceRub) || 200;
-    monthLabel.textContent = priceNow + ' ₽ — месяц';
+    monthLabel.textContent = priceNow + ' ₽ — 30 дней, разовая';
     const monthSoon = document.createElement('span');
     monthSoon.textContent = 'оплата скоро';
     monthSoon.style.cssText = 'font-size:12px;font-weight:600;color:#8a7aa8;flex-shrink:0';
     monthBtn.appendChild(monthLabel);
     monthBtn.appendChild(monthSoon);
     plans.appendChild(monthBtn);
+
+    [60, 90, 180].forEach(function (days) {
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.disabled = true;
+      btn.style.cssText = [
+        'width:100%', 'border:none', 'border-radius:12px', 'padding:14px 16px',
+        'font-size:15px', 'font-weight:600', 'cursor:default', 'text-align:left',
+        'background:#f4f1f8', 'color:#5b4a7a',
+        'display:flex', 'justify-content:space-between', 'align-items:center', 'gap:10px'
+      ].join(';');
+      const lab = document.createElement('span');
+      lab.textContent = days + ' дней, разовая';
+      const soon = document.createElement('span');
+      soon.textContent = 'скоро';
+      soon.style.cssText = 'font-size:12px;font-weight:600;color:#8a7aa8;flex-shrink:0';
+      btn.appendChild(lab);
+      btn.appendChild(soon);
+      plans.appendChild(btn);
+    });
 
     const promoLeft = parseInt(info.promoDaysLeft, 10);
     let promoLine = null;
