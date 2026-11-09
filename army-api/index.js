@@ -981,9 +981,14 @@ const HELP_TEXT =
   '/app — открыть чек-лист\n' +
   '/cabinet — личный кабинет\n' +
   '/pay — страница оплаты\n' +
+  '/friend — акция «Приведи друга»\n' +
   '/support — написать в поддержку\n' +
   '/help — это меню\n\n' +
   'Приложение также открывается кнопкой снизу «For ARMY 💜»';
+const FRIEND_CMD_TEXT =
+  'Акция «Приведи друга» 💜\n\n' +
+  'Отправьте подруге свою ссылку. Если она раньше не пользовалась чек-листом и потом оплатит подписку — вам обоим по +30 дней.\n\n' +
+  'Ваша ссылка:\n';
 const START_TEXT =
   'Просто откройте приложение по кнопке снизу "For ARMY 💜"\n\n' +
   'Или начните писать / в поле сообщения — появится список команд.\n\n' +
@@ -1730,7 +1735,7 @@ async function handleMenuCommands(msg) {
       return true;
     }
   }
-  const m = text.match(/^\/(help|menu|app|checklist|cabinet|kabinet|pay|payment|oplata)(?:@\w+)?(?:\s|$)/i);
+  const m = text.match(/^\/(help|menu|app|checklist|cabinet|kabinet|pay|payment|oplata|friend|referral|invite)(?:@\w+)?(?:\s|$)/i);
   if (!m) return false;
   const cmd = String(m[1] || '').toLowerCase();
   try {
@@ -1755,6 +1760,17 @@ async function handleMenuCommands(msg) {
     if (cmd === 'pay' || cmd === 'payment' || cmd === 'oplata') {
       await telegramSendMessage(msg.chat.id, 'Страница оплаты 👇', {
         text: 'Оплата подписки',
+        url: PAYMENT_LINK
+      });
+      return true;
+    }
+    if (cmd === 'friend' || cmd === 'referral' || cmd === 'invite') {
+      const uid = msg.from && msg.from.id;
+      const link = uid
+        ? ('https://t.me/army_checklist_bot?start=ref_' + uid)
+        : PAYMENT_LINK;
+      await telegramSendMessage(msg.chat.id, FRIEND_CMD_TEXT + link, {
+        text: 'Подробнее на странице оплаты',
         url: PAYMENT_LINK
       });
       return true;
@@ -2047,6 +2063,7 @@ async function ensureBotCommands() {
     { command: 'app', description: 'Открыть чек-лист' },
     { command: 'cabinet', description: 'Личный кабинет' },
     { command: 'pay', description: 'Оплата подписки' },
+    { command: 'friend', description: 'Акция «Приведи друга»' },
     { command: 'support', description: 'Написать в поддержку' },
     { command: 'help', description: 'Список команд' }
   ];
