@@ -624,16 +624,45 @@ registerUserIfNeeded();
     }
   }
 
+  function truncateCheckTitle(raw) {
+    const t = String(raw || '').replace(/\s+/g, ' ').trim();
+    if (!t) return '';
+    return t.length > 140 ? (t.slice(0, 137) + '…') : t;
+  }
+
   function titleFromChecklistRow(id) {
     try {
       const row = document.querySelector('[data-id="' + String(id).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"]');
       if (!row) return '';
-      const link = row.querySelector('a');
-      const raw = ((link && link.textContent) || (row.querySelector('.text') && row.querySelector('.text').textContent) || row.textContent || '')
-        .replace(/\s+/g, ' ')
-        .trim();
-      if (!raw) return '';
-      return raw.length > 140 ? (raw.slice(0, 137) + '…') : raw;
+
+      // Сначала подпись пункта (.text), а не «Озвучка/Субтитры/🔗»
+      const textEl = row.querySelector('.text');
+      if (textEl) {
+        const clone = textEl.cloneNode(true);
+        const subs = clone.querySelectorAll('.sub');
+        for (let i = 0; i < subs.length; i++) subs[i].remove();
+        const fromText = truncateCheckTitle(clone.textContent || '');
+        if (fromText) return fromText;
+      }
+
+      const nameEl = row.querySelector('.name');
+      if (nameEl) {
+        const fromName = truncateCheckTitle(nameEl.textContent || '');
+        if (fromName) return fromName;
+      }
+
+      const links = row.querySelectorAll('a');
+      for (let i = 0; i < links.length; i++) {
+        const label = truncateCheckTitle(links[i].textContent || '');
+        if (!label) continue;
+        if (/^(озвучка|субтитры|ссылка|vk|youtube|🔗|link)$/i.test(label)) continue;
+        return label;
+      }
+
+      const cloneRow = row.cloneNode(true);
+      const drop = cloneRow.querySelectorAll('input, .links-wrap, .sub, button');
+      for (let i = 0; i < drop.length; i++) drop[i].remove();
+      return truncateCheckTitle(cloneRow.textContent || '');
     } catch (e) {
       return '';
     }
@@ -920,10 +949,18 @@ registerUserIfNeeded();
           if (!state.rewatchLog) state.rewatchLog = {};
           state.rewatchLog[id] = snap.rewatchLog.slice();
         }
+        rememberCheckTitle(state, id);
         saveCheckActivityState(state);
         return;
       }
-      if (state.byId[id]) return;
+      if (state.byId[id]) {
+        // Старая отметка без названия — допишем имя при повторном заходе на страницу
+        if (!state.titlesById || !state.titlesById[id]) {
+          rememberCheckTitle(state, id);
+          if (state.titlesById && state.titlesById[id]) saveCheckActivityState(state);
+        }
+        return;
+      }
       state.byId[id] = today;
       if (!state.markLog) state.markLog = {};
       state.markLog[id] = [today];
@@ -1179,10 +1216,31 @@ registerUserIfNeeded();
     if (document.body) obs.observe(document.body, { childList: true, subtree: true });
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setupCheckboxRewatchHold);
-  } else {
+  function backfillMissingCheckTitles() {
+    try {
+      const state = getCheckActivityState();
+      if (!state.titlesById || typeof state.titlesById !== 'object') state.titlesById = {};
+      let changed = false;
+      Object.keys(state.byId || {}).forEach(function (id) {
+        if (state.titlesById[id]) return;
+        if (localStorage.getItem(id) !== 'true') return;
+        if (!document.querySelector('[data-id="' + String(id).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"]')) return;
+        rememberCheckTitle(state, id);
+        if (state.titlesById[id]) changed = true;
+      });
+      if (changed) saveCheckActivityState(state);
+    } catch (e) {}
+  }
+
+  function setupCheckActivityUi() {
     setupCheckboxRewatchHold();
+    backfillMissingCheckTitles();
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', setupCheckActivityUi);
+  } else {
+    setupCheckActivityUi();
   }
 
   function setProgress(key, value) {
