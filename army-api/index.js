@@ -1005,7 +1005,7 @@ const REFERRAL_BONUS_REFERRER_TEXT =
   'Ура! Ваш приглашенный друг первый раз оформил подписку 💜\n\n' +
   'Вам начислено +' + REFERRAL_BONUS_DAYS + ' бонусных дней)';
 const REFERRAL_BONUS_FRIEND_TEXT =
-  'Вам начислено еще +' + REFERRAL_BONUS_DAYS + ' бонусных дней за участие в акции «Приведи друга» 💜';
+  'Вам начислено еще +' + REFERRAL_BONUS_DAYS + ' бонусных дней за участие в акции «Приведи друга». Приятного времяпровождения 💜';
 
 function pluralDaysRu(n) {
   const num = Math.abs(parseInt(n, 10) || 0);
@@ -1691,7 +1691,7 @@ async function sendReferralBonusReferrerPreviewToTest() {
 }
 
 async function sendReferralBonusFriendPreviewToTest() {
-  const metaRef = db.ref('bot_meta/referralBonusFriendPreviewV1');
+  const metaRef = db.ref('bot_meta/referralBonusFriendPreviewV2');
   const metaSnap = await metaRef.get();
   if (metaSnap.exists()) {
     console.log('referral bonus friend preview already sent', metaSnap.val());
