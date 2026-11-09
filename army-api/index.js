@@ -987,13 +987,14 @@ const SUPPORT_CLOSED_TEXT =
   'Чтобы написать снова, отправьте /support или слово «поддержка».';
 const ONEDAY_REMIND_TEXT =
   'Сегодня последний день вашей подписки на чек-лист по архиву BTS\n\n' +
-  'Для продолжения использования можно добавить нужное количество дней в своем личном кабинете\n\n' +
-  'Спасибо, что пользуетесь ботом 💜';
+  'Для продолжения использования можно добавить нужное количество дней в своем личном кабинете 💜';
 const EXPIRED_REMIND_TEXT =
   'Ваша подписка на чек-лист по архиву BTS закончилась 😢\n\n' +
   'Мы будем ждать вашего возвращения и оберегать все поставленные галочки\n\n' +
   'Продлить подписку можно в боте 💜';
 const PAID_THANKS_PHOTO = path.join(__dirname, 'sub-extended.jpg');
+const ONEDAY_REMIND_PHOTO = path.join(__dirname, 'oneday-remind.jpg');
+const EXPIRED_REMIND_PHOTO = path.join(__dirname, 'expired-remind.jpg');
 const REFERRAL_INVITE_PHOTO = path.join(__dirname, 'referral-invite.jpg');
 const REFERRAL_NOT_NEW_PHOTO = path.join(__dirname, 'referral-not-new.jpg');
 const REFERRAL_BONUS_REFERRER_PHOTO = path.join(__dirname, 'referral-bonus-referrer.jpg');
@@ -1350,7 +1351,12 @@ async function sendOneDayReminderToUser(uid, options) {
     if (data.oneDayRemindFor === data.expiresAt) return { sent: false, reason: 'already' };
   }
   try {
-    await telegramSendMessage(uid, ONEDAY_REMIND_TEXT);
+    try {
+      await telegramSendPhoto(uid, ONEDAY_REMIND_TEXT, ONEDAY_REMIND_PHOTO);
+    } catch (photoErr) {
+      console.error('oneday remind photo failed', uid, photoErr);
+      await telegramSendMessage(uid, ONEDAY_REMIND_TEXT);
+    }
   } catch (e) {
     return { sent: false, reason: 'telegram', error: String(e.message || e) };
   }
@@ -1741,6 +1747,23 @@ async function sendReferralSelfPreviewToTest() {
   }
 }
 
+async function sendOnedayRemindPreviewToTest() {
+  const metaRef = db.ref('bot_meta/onedayRemindPreviewV1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('oneday remind preview already sent', metaSnap.val());
+    return;
+  }
+  const testId = FORCE_TEST_IDS[0] || '2055929706';
+  try {
+    await telegramSendPhoto(testId, ONEDAY_REMIND_TEXT, ONEDAY_REMIND_PHOTO);
+    await metaRef.set({ at: Date.now(), to: testId });
+    console.log('oneday remind preview sent to', testId);
+  } catch (e) {
+    console.error('oneday remind preview failed', e);
+  }
+}
+
 app.listen(PORT, function () {
   console.log('army-api listening on ' + PORT);
   scheduleSubscriptionReminders();
@@ -1782,6 +1805,11 @@ app.listen(PORT, function () {
       console.error('referral self preview boot failed', e);
     });
   }, 13000);
+  setTimeout(function () {
+    sendOnedayRemindPreviewToTest().catch(function (e) {
+      console.error('oneday remind preview boot failed', e);
+    });
+  }, 15000);
   // Извинение только бессрочным (им случайно ушло про 5 дней)
   setTimeout(function () {
     broadcastForeverOops().catch(function (e) {
