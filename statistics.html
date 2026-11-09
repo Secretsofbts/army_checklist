@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=126"></script>
+  <script src="sync.js?v=127"></script>
   <title>Личный кабинет</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -259,6 +259,15 @@
       color: #9a8fb0;
       margin-top: 2px;
     }
+    .day-marks-page {
+      display: inline-block;
+      font-size: 11px;
+      color: #7b5fb3;
+      text-decoration: none;
+      margin-top: 4px;
+      font-weight: 600;
+    }
+    .day-marks-page:active { opacity: 0.75; }
   </style>
 </head>
 <body>
@@ -852,7 +861,9 @@
       list.className = 'day-marks-list';
       items.forEach(function (item) {
         const li = document.createElement('li');
-        li.textContent = item.title || item.id;
+        const titleLine = document.createElement('div');
+        titleLine.textContent = item.title || item.id;
+        li.appendChild(titleLine);
         if (item.count > 1 || item.rewatch) {
           const meta = document.createElement('span');
           meta.className = 'day-marks-meta';
@@ -863,6 +874,18 @@
           const meta = document.createElement('span');
           meta.className = 'day-marks-meta';
           meta.textContent = 'название появится у новых отметок';
+          li.appendChild(meta);
+        }
+        if (item.pageHref) {
+          const pageLink = document.createElement('a');
+          pageLink.className = 'day-marks-page';
+          pageLink.href = item.pageHref;
+          pageLink.textContent = '→ ' + (item.pageName || 'открыть раздел');
+          li.appendChild(pageLink);
+        } else if (item.hasName) {
+          const meta = document.createElement('span');
+          meta.className = 'day-marks-meta';
+          meta.textContent = 'ссылка на раздел появится у новых отметок';
           li.appendChild(meta);
         }
         list.appendChild(li);

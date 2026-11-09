@@ -599,7 +599,7 @@ registerUserIfNeeded();
   }
 
   function getCheckActivityState() {
-    const empty = { days: {}, byId: {}, rewatchById: {}, rewatchLog: {}, markLog: {}, titlesById: {}, undoById: {}, bestStreak: 0, bestDayCount: 0 };
+    const empty = { days: {}, byId: {}, rewatchById: {}, rewatchLog: {}, markLog: {}, titlesById: {}, pagesById: {}, undoById: {}, bestStreak: 0, bestDayCount: 0 };
     const raw = localStorage.getItem('progress:checkActivity');
     if (!raw) return empty;
     try {
@@ -611,14 +611,15 @@ registerUserIfNeeded();
         const rewatchLog = (data.rewatchLog && typeof data.rewatchLog === 'object' && !Array.isArray(data.rewatchLog)) ? data.rewatchLog : {};
         const markLog = (data.markLog && typeof data.markLog === 'object' && !Array.isArray(data.markLog)) ? data.markLog : {};
         const titlesById = (data.titlesById && typeof data.titlesById === 'object' && !Array.isArray(data.titlesById)) ? data.titlesById : {};
+        const pagesById = (data.pagesById && typeof data.pagesById === 'object' && !Array.isArray(data.pagesById)) ? data.pagesById : {};
         const undoById = (data.undoById && typeof data.undoById === 'object' && !Array.isArray(data.undoById)) ? data.undoById : {};
-        return { days: data.days, byId: byId, rewatchById: rewatchById, rewatchLog: rewatchLog, markLog: markLog, titlesById: titlesById, undoById: undoById, bestStreak: parseInt(data.bestStreak, 10) || 0, bestDayCount: parseInt(data.bestDayCount, 10) || 0 };
+        return { days: data.days, byId: byId, rewatchById: rewatchById, rewatchLog: rewatchLog, markLog: markLog, titlesById: titlesById, pagesById: pagesById, undoById: undoById, bestStreak: parseInt(data.bestStreak, 10) || 0, bestDayCount: parseInt(data.bestDayCount, 10) || 0 };
       }
       const days = {};
       Object.keys(data).forEach(function (k) {
         if (/^\d{4}-\d{2}-\d{2}$/.test(k)) days[k] = parseInt(data[k], 10) || 0;
       });
-      return { days: days, byId: {}, rewatchById: {}, rewatchLog: {}, markLog: {}, titlesById: {}, undoById: {}, bestStreak: 0, bestDayCount: 0 };
+      return { days: days, byId: {}, rewatchById: {}, rewatchLog: {}, markLog: {}, titlesById: {}, pagesById: {}, undoById: {}, bestStreak: 0, bestDayCount: 0 };
     } catch (e) {
       return empty;
     }
@@ -668,10 +669,33 @@ registerUserIfNeeded();
     }
   }
 
+  function currentChecklistPageInfo() {
+    try {
+      const path = String((location && location.pathname) || '');
+      let file = path.split('/').pop() || '';
+      if (!file || file === '') file = 'index.html';
+      if (file.indexOf('.html') === -1 && file.indexOf('.') === -1) file = file ? (file + '.html') : 'index.html';
+      if (file === 'statistics.html' || file === 'payment.html' || file === 'oferta.html' || file === 'index.html') {
+        return null;
+      }
+      let name = '';
+      const h1 = document.querySelector('h1');
+      if (h1) name = truncateCheckTitle(h1.textContent || '');
+      if (!name && document.title) name = truncateCheckTitle(String(document.title).replace(/\s*[|—–-]\s*BTS.*$/i, ''));
+      if (!name) name = file.replace(/\.html$/i, '').replace(/-/g, ' ');
+      return { href: file, name: name };
+    } catch (e) {
+      return null;
+    }
+  }
+
   function rememberCheckTitle(state, id) {
     if (!state.titlesById || typeof state.titlesById !== 'object') state.titlesById = {};
+    if (!state.pagesById || typeof state.pagesById !== 'object') state.pagesById = {};
     const title = titleFromChecklistRow(id);
     if (title) state.titlesById[id] = title;
+    const page = currentChecklistPageInfo();
+    if (page && page.href) state.pagesById[id] = { href: page.href, name: page.name || page.href };
   }
 
   function prettyCheckId(id) {
@@ -685,16 +709,20 @@ registerUserIfNeeded();
     if (!dayKey || !/^\d{4}-\d{2}-\d{2}$/.test(dayKey)) return [];
     const state = getCheckActivityState();
     const titles = state.titlesById || {};
+    const pages = state.pagesById || {};
     const found = {};
     function add(id, asRewatch) {
       if (!(String(id).indexOf('video-') === 0 || String(id).indexOf('noline-') === 0)) return;
       if (localStorage.getItem(id) !== 'true') return;
       if (!found[id]) {
+        const page = pages[id] && typeof pages[id] === 'object' ? pages[id] : null;
         found[id] = {
           id: id,
           title: titles[id] || prettyCheckId(id),
           count: 0,
-          hasName: !!titles[id]
+          hasName: !!titles[id],
+          pageHref: page && page.href ? String(page.href) : '',
+          pageName: page && page.name ? String(page.name) : ''
         };
       }
       found[id].count += 1;
@@ -890,6 +918,7 @@ registerUserIfNeeded();
     if (!state.rewatchLog || typeof state.rewatchLog !== 'object') state.rewatchLog = {};
     if (!state.markLog || typeof state.markLog !== 'object') state.markLog = {};
     if (!state.titlesById || typeof state.titlesById !== 'object') state.titlesById = {};
+    if (!state.pagesById || typeof state.pagesById !== 'object') state.pagesById = {};
     if (!state.undoById || typeof state.undoById !== 'object') state.undoById = {};
     Object.keys(state.undoById).forEach(function (id) {
       const snap = state.undoById[id];
@@ -907,6 +936,9 @@ registerUserIfNeeded();
     Object.keys(state.titlesById).forEach(function (id) {
       if (!state.byId[id]) delete state.titlesById[id];
     });
+    Object.keys(state.pagesById).forEach(function (id) {
+      if (!state.byId[id]) delete state.pagesById[id];
+    });
     rebuildActivityDays(state);
     state.bestStreak = Math.max(longestMarkedStreak(state.days), currentMarkedStreak(state.days));
     let maxDay = 0;
@@ -915,7 +947,7 @@ registerUserIfNeeded();
       if (n > maxDay) maxDay = n;
     });
     state.bestDayCount = maxDay;
-    setProgress('checkActivity', { days: state.days, byId: state.byId, rewatchById: state.rewatchById, rewatchLog: state.rewatchLog, markLog: state.markLog, titlesById: state.titlesById, undoById: state.undoById, bestStreak: state.bestStreak, bestDayCount: state.bestDayCount });
+    setProgress('checkActivity', { days: state.days, byId: state.byId, rewatchById: state.rewatchById, rewatchLog: state.rewatchLog, markLog: state.markLog, titlesById: state.titlesById, pagesById: state.pagesById, undoById: state.undoById, bestStreak: state.bestStreak, bestDayCount: state.bestDayCount });
   }
 
   function dropActivityDay(state, key) {
@@ -954,10 +986,14 @@ registerUserIfNeeded();
         return;
       }
       if (state.byId[id]) {
-        // Старая отметка без названия — допишем имя при повторном заходе на страницу
-        if (!state.titlesById || !state.titlesById[id]) {
+        // Старая отметка без названия/раздела — допишем при повторном заходе на страницу
+        const hadTitle = !!(state.titlesById && state.titlesById[id]);
+        const hadPage = !!(state.pagesById && state.pagesById[id] && state.pagesById[id].href);
+        if (!hadTitle || !hadPage) {
           rememberCheckTitle(state, id);
-          if (state.titlesById && state.titlesById[id]) saveCheckActivityState(state);
+          const gotTitle = !!(state.titlesById && state.titlesById[id]);
+          const gotPage = !!(state.pagesById && state.pagesById[id] && state.pagesById[id].href);
+          if ((!hadTitle && gotTitle) || (!hadPage && gotPage)) saveCheckActivityState(state);
         }
         return;
       }
@@ -1220,13 +1256,18 @@ registerUserIfNeeded();
     try {
       const state = getCheckActivityState();
       if (!state.titlesById || typeof state.titlesById !== 'object') state.titlesById = {};
+      if (!state.pagesById || typeof state.pagesById !== 'object') state.pagesById = {};
       let changed = false;
       Object.keys(state.byId || {}).forEach(function (id) {
-        if (state.titlesById[id]) return;
         if (localStorage.getItem(id) !== 'true') return;
         if (!document.querySelector('[data-id="' + String(id).replace(/\\/g, '\\\\').replace(/"/g, '\\"') + '"]')) return;
+        const hadTitle = !!state.titlesById[id];
+        const hadPage = !!(state.pagesById[id] && state.pagesById[id].href);
+        if (hadTitle && hadPage) return;
         rememberCheckTitle(state, id);
-        if (state.titlesById[id]) changed = true;
+        if ((!hadTitle && state.titlesById[id]) || (!hadPage && state.pagesById[id] && state.pagesById[id].href)) {
+          changed = true;
+        }
       });
       if (changed) saveCheckActivityState(state);
     } catch (e) {}
