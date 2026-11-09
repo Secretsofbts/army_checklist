@@ -199,6 +199,84 @@ function subscriptionRef(uid) {
   return db.ref('subscriptions/' + uid);
 }
 
+function referralRef(friendId) {
+  return db.ref('referrals/' + String(friendId));
+}
+
+const REFERRAL_BONUS_DAYS = 30;
+
+async function captureReferralFromStart(friendId, payload) {
+  const m = String(payload || '').trim().match(/^ref_(\d+)$/i);
+  if (!m) return { saved: false, reason: 'no-payload' };
+  const referrerId = String(m[1]);
+  const friendKey = String(friendId || '');
+  if (!friendKey || !referrerId || referrerId === friendKey) {
+    return { saved: false, reason: 'self-or-empty' };
+  }
+  const ref = referralRef(friendKey);
+  const snap = await ref.get();
+  if (snap.exists()) return { saved: false, reason: 'already' };
+  await ref.set({
+    referrerId: referrerId,
+    createdAt: Date.now(),
+    rewarded: false
+  });
+  return { saved: true, referrerId: referrerId };
+}
+
+async function extendSubscriptionByDays(uid, days) {
+  const ref = subscriptionRef(uid);
+  const snap = await ref.get();
+  const prev = snap.exists() ? (snap.val() || {}) : {};
+  if (prev.forever) return { skipped: true, reason: 'forever' };
+  const now = Date.now();
+  const base = Math.max(now, typeof prev.expiresAt === 'number' ? prev.expiresAt : 0);
+  const expiresAt = paidExpiresAtFrom(base, days);
+  await ref.update({
+    active: true,
+    expiresAt: expiresAt,
+    updatedAt: now
+  });
+  return { skipped: false, expiresAt: expiresAt };
+}
+
+// После первой платной выдачи другу: +30 дней другу и пригласившему (один раз).
+async function applyReferralBonusOnFirstPaid(friendId) {
+  const friendKey = String(friendId || '');
+  if (!friendKey) return { applied: false, reason: 'no-friend' };
+  const ref = referralRef(friendKey);
+  const snap = await ref.get();
+  if (!snap.exists()) return { applied: false, reason: 'none' };
+  const data = snap.val() || {};
+  if (data.rewarded) return { applied: false, reason: 'already' };
+  const referrerId = String(data.referrerId || '');
+  if (!referrerId || referrerId === friendKey) {
+    return { applied: false, reason: 'bad-referrer' };
+  }
+
+  const friendExt = await extendSubscriptionByDays(friendKey, REFERRAL_BONUS_DAYS);
+  const referrerExt = await extendSubscriptionByDays(referrerId, REFERRAL_BONUS_DAYS);
+  await ref.update({
+    rewarded: true,
+    rewardedAt: Date.now(),
+    friendExtended: !friendExt.skipped,
+    referrerExtended: !referrerExt.skipped
+  });
+
+  const text = 'Бонус за друга: +' + REFERRAL_BONUS_DAYS + ' дней доступа 💜';
+  try {
+    await telegramSendMessage(friendKey, text, undefined);
+  } catch (e) {
+    console.error('referral notify friend failed', friendKey, e);
+  }
+  try {
+    await telegramSendMessage(referrerId, text, undefined);
+  } catch (e) {
+    console.error('referral notify referrer failed', referrerId, e);
+  }
+  return { applied: true, referrerId: referrerId, friendExt: friendExt, referrerExt: referrerExt };
+}
+
 function buildSubscriptionStatus(uid, data, isAdmin) {
   const now = Date.now();
   const price = pricingInfo(now);
@@ -739,6 +817,12 @@ app.post('/admin/grant', async function (req, res) {
     if (!forever) {
       const thanks = await sendPaidThanksToUser(targetId, entry.paidDays || days || 30);
       if (!thanks.sent) console.error('paid thanks failed', targetId, thanks);
+      try {
+        const bonus = await applyReferralBonusOnFirstPaid(targetId);
+        if (bonus && bonus.applied) console.log('referral bonus applied', targetId, bonus.referrerId);
+      } catch (bonusErr) {
+        console.error('referral bonus failed', targetId, bonusErr);
+      }
     }
     return res.json(buildSubscriptionStatus(targetId, entry, false));
   } catch (e) {
@@ -1340,6 +1424,17 @@ async function handleStartCommand(msg) {
   const text = String(msg.text || '');
   if (!/^\/start(?:@\w+)?(?:\s|$)/i.test(text)) return false;
   try {
+    const parts = text.trim().split(/\s+/);
+    const payload = parts.length > 1 ? parts.slice(1).join(' ') : '';
+    const fromId = msg.from && msg.from.id != null ? msg.from.id : msg.chat.id;
+    try {
+      const captured = await captureReferralFromStart(fromId, payload);
+      if (captured && captured.saved) {
+        console.log('referral captured', String(fromId), '←', captured.referrerId);
+      }
+    } catch (refErr) {
+      console.error('referral capture failed', fromId, refErr);
+    }
     await telegramSendMessage(msg.chat.id, START_TEXT, null);
   } catch (e) {
     console.error('start reply failed', e);

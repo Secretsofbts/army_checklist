@@ -100,6 +100,24 @@
       text-align: center;
     }
     .footer-note a { color: #7b5fb3; text-decoration: none; }
+    .ref-link-box {
+      width: 100%;
+      border: 1px solid #e4dcf3;
+      border-radius: 10px;
+      background: #fff;
+      padding: 10px 12px;
+      font-size: 12px;
+      color: #5b4a7a;
+      word-break: break-all;
+      line-height: 1.4;
+      margin: 0 0 10px;
+    }
+    .plan-btn.is-copy {
+      background: #9b7fd4;
+      color: #fff;
+      cursor: pointer;
+    }
+    .plan-btn.is-copy:active { opacity: 0.9; }
   </style>
 </head>
 <body>
@@ -158,12 +176,13 @@
       </div>
       <p class="plan-note" style="margin-bottom:8px;">Расскажите подруге про чек-лист — и получите дополнительные дни доступа.</p>
       <ul style="margin:0 0 10px; padding-left:18px; font-size:12px; color:#5b4a7a; line-height:1.5;">
-        <li>Друг должен зайти в бота по вашей реферальной ссылке (ссылку пока готовим).</li>
+        <li>Друг должен зайти в бота по вашей реферальной ссылке.</li>
         <li>У друга начинается свой пробный период как у нового пользователя.</li>
         <li>Когда друг оплатит подписку, вам и вашему другу начислятся бонусные 30 дней каждому.</li>
         <li>На себя и без оплаты бонус не действует.</li>
       </ul>
-      <button type="button" class="plan-btn" disabled>Пока готовим</button>
+      <div class="ref-link-box" id="ref-link">Откройте страницу из бота, чтобы увидеть свою ссылку</div>
+      <button type="button" class="plan-btn is-copy" id="ref-copy-btn" disabled>Скопировать ссылку</button>
     </div>
 
     <p class="footer-note">
@@ -239,6 +258,39 @@
     }
 
     loadPricing();
+
+    function setupReferralLink() {
+      var box = document.getElementById('ref-link');
+      var btn = document.getElementById('ref-copy-btn');
+      if (!box || !btn) return;
+      var uid = window.ARMY_USER_ID;
+      if (!uid) {
+        try {
+          uid = window.Telegram && Telegram.WebApp && Telegram.WebApp.initDataUnsafe &&
+            Telegram.WebApp.initDataUnsafe.user && Telegram.WebApp.initDataUnsafe.user.id;
+        } catch (e) {}
+      }
+      if (!uid) return;
+      var link = 'https://t.me/army_checklist_bot?start=ref_' + uid;
+      box.textContent = link;
+      btn.disabled = false;
+      btn.addEventListener('click', function () {
+        var done = function () {
+          btn.textContent = 'Ссылка скопирована';
+          setTimeout(function () { btn.textContent = 'Скопировать ссылку'; }, 1800);
+        };
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(link).then(done).catch(function () {
+            window.prompt('Скопируйте ссылку:', link);
+          });
+        } else {
+          window.prompt('Скопируйте ссылку:', link);
+          done();
+        }
+      });
+    }
+
+    setupReferralLink();
   </script>
 </body>
 </html>
