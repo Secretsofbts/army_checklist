@@ -9,8 +9,8 @@
        <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-     <link href="https://fonts.googleapis.com/css2?family=Marck+Script&display=optional" rel="stylesheet">
-  <script src="sync.js?v=124"></script>
+     <link href="https://fonts.googleapis.com/css2?family=Marck+Script&display=swap" rel="stylesheet">
+  <script src="sync.js?v=125"></script>
   <title>BTS Tracker</title>
   <style>
     body {
@@ -69,6 +69,34 @@
       color: #999;
     }
   </style>
+<script>
+(function () {
+  function isGarbled() {
+    var root = document.body;
+    if (!root) return false;
+    var t = root.innerText || '';
+    if (t.indexOf('\uFFFD') !== -1) return true;
+    if (/Ð|Ñ/.test(t) && /ÐÐ¾Ð¸|ÐÑÐµ|ÑÐ¿Ð¸ÑÐº/.test(t)) return true;
+    var h = document.querySelector('h1');
+    if (h) {
+      var ht = h.textContent || '';
+      if (/BTS/.test(ht) && !/Мои|списки|Lists|lists/.test(ht)) return true;
+    }
+    return false;
+  }
+  function fix() {
+    if (!isGarbled()) return;
+    try {
+      if (sessionStorage.getItem('army_enc_fix') === '1') return;
+      sessionStorage.setItem('army_enc_fix', '1');
+    } catch (e) {}
+    var url = location.pathname + '?_cb=' + Date.now() + (location.hash || '');
+    location.replace(url);
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', fix);
+  else fix();
+})();
+</script>
 </head>
 <body>
       <div class="app">
