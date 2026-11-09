@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -61,19 +61,19 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="interviews.html">< Все интервью</a>
+    <a class="back" href="interviews.html">← Все интервью</a>
     <h1>Интервью: 2026</h1>
     <p class="legend">тут будет текст?</p>
     <div id="list"></div>
-    <a class="footer-link" href="interviews.html">Все интервью ??</a>
+    <a class="footer-link" href="interviews.html">Все интервью ⬅️</a>
 
   </div>
 
   <script>
     const items = [
       // Скопируйте строку ниже, вставьте новой. У предыдущей строки в конце нужна запятая.
-      { text: "Для Elle", heart: "??", sub: "от 22 июля", link: "https://t.me/violent_arhive/5558" },
-      { text: "Cazetv + Испытания", sub: "от 03 ноября", heart: "без ????", link: "https://t.me/violent_arhive/5711" }
+      { text: "Для Elle", heart: "💕", sub: "от 22 июля", link: "https://t.me/violent_arhive/5558" },
+      { text: "Cazétv + Испытания", sub: "от 03 ноября", heart: "без 🖤💕", link: "https://t.me/violent_arhive/5711" }
     ];
 
     const listEl = document.getElementById('list');
@@ -114,7 +114,7 @@
       link.className = 'link';
       link.href = item.link;
       link.target = '_blank';
-      link.textContent = '??';
+      link.textContent = '🔗';
 
       const side = document.createElement('span');
       side.className = 'heart-link';

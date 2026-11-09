@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -27,35 +27,35 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="bts-festa.html">< Назад</a>
-    <h1>?? BTS FESTA 2018 ??</h1>
+    <a class="back" href="bts-festa.html">← Назад</a>
+    <h1>🎉 BTS FESTA 2018 🎉</h1>
 
     <div id="list"></div>
 
     <p class="section-title">2018 BTS PROM PARTY Unit Stages — специальные бомбочки</p>
     <div id="list-bombs"></div>
-    <a class="footer-link" href="bts-festa.html">BTS FESTA ??</a>
+    <a class="footer-link" href="bts-festa.html">BTS FESTA ⬅️</a>
   </div>
 
   <script>
     const items = [
-      { text: "Spring Day Rock Remix", sub: "церемония открытия", icon: "??", link: "https://soundcloud.com/bangtan/springdayfesta" },
-      { text: "Photo Collection", icon: "??", link: "https://www.facebook.com/media/set/?set=a.2163011767047407&type=3", noCheckbox: true },
-      { text: "Special Choreography", sub: "Golden Disk Awards 2018", icon: "??", link: "https://t.me/violent_arhive/1855" },
-      { text: "Family Portrait Pt. 1", icon: "??", link: "https://www.facebook.com/media/set/?set=a.2165590920122825&type=3", noCheckbox: true },
-      { text: "Family Portrait Pt. 2", icon: "??", link: "https://www.facebook.com/media/set/?set=a.2166230096725574&type=3", noCheckbox: true },
-      { text: "In Front of the Post Office", sub: "Jin Cover", icon: "??", links: [
+      { text: "Spring Day Rock Remix", sub: "церемония открытия", icon: "🎶", link: "https://soundcloud.com/bangtan/springdayfesta" },
+      { text: "Photo Collection", icon: "📷", link: "https://www.facebook.com/media/set/?set=a.2163011767047407&type=3", noCheckbox: true },
+      { text: "Special Choreography", sub: "Golden Disk Awards 2018", icon: "🕺", link: "https://t.me/violent_arhive/1855" },
+      { text: "Family Portrait Pt. 1", icon: "📷", link: "https://www.facebook.com/media/set/?set=a.2165590920122825&type=3", noCheckbox: true },
+      { text: "Family Portrait Pt. 2", icon: "📷", link: "https://www.facebook.com/media/set/?set=a.2166230096725574&type=3", noCheckbox: true },
+      { text: "In Front of the Post Office", sub: "Jin Cover", icon: "🎶", links: [
         { label: "SoundCloud", link: "https://soundcloud.com/bangtan/jin2018btsfesta" },
         { label: "Перевод", link: "https://t.me/violent_arhive/1856" }
       ]},
-      { text: "Special Choreography", sub: "Best Of Me из 4th Muster", icon: "??", link: "https://t.me/violent_arhive/1857" },
-      { text: "Ddaeng", sub: "RM, Suga, J-Hope", icon: "??", links: [
+      { text: "Special Choreography", sub: "Best Of Me из 4th Muster", icon: "🕺", link: "https://t.me/violent_arhive/1857" },
+      { text: "Ddaeng", sub: "RM, Suga, J-Hope", icon: "🎶", links: [
         { label: "SoundCloud", link: "https://soundcloud.com/bangtan/ddceremony" },
         { label: "Перевод", link: "https://t.me/violent_arhive/1858" }
       ]},
-      { text: "Небольшое интервью со списком счастья", icon: "??", link: "https://t.me/violent_arhive/1865" },
-      { text: "Званый ужин", sub: "5th BTS birthday", icon: "??", link: "https://t.me/violent_arhive/1798" },
-      { text: "2018 BTS PROM PARTY", icon: "??", link: "https://t.me/violent_arhive/1881" }
+      { text: "Небольшое интервью со списком счастья", icon: "📝", link: "https://t.me/violent_arhive/1865" },
+      { text: "Званый ужин", sub: "5th BTS birthday", icon: "🎂", link: "https://t.me/violent_arhive/1798" },
+      { text: "2018 BTS PROM PARTY", icon: "✌️", link: "https://t.me/violent_arhive/1881" }
     ];
 
     const bombItems = [
@@ -93,7 +93,7 @@
         icon.textContent = item.icon || iconOverride || '';
         const link = document.createElement('span');
         link.className = 'link';
-        link.textContent = '??';
+        link.textContent = '🔗';
         a.appendChild(spacer);
         a.appendChild(span);
         if (icon.textContent) a.appendChild(icon);
@@ -162,7 +162,7 @@
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
-        link.textContent = '??';
+        link.textContent = '🔗';
         row.appendChild(link);
       }
 
@@ -173,7 +173,7 @@
     items.forEach((item) => renderItem(listEl, item));
 
     const bombsListEl = document.getElementById('list-bombs');
-    bombItems.forEach((item) => renderItem(bombsListEl, item, '??'));
+    bombItems.forEach((item) => renderItem(bombsListEl, item, '💣'));
 
     function updateProgress() {
       const all = document.querySelectorAll('.row input[type="checkbox"]:not([disabled])');

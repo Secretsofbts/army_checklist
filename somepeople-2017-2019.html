@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -66,36 +66,36 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="somepeople.html">< Назад</a>
+    <a class="back" href="somepeople.html">← Назад</a>
     <h1>Несколько: 2017 – 2019</h1>
     <p class="legend">Цвет сердечек говорит вам о том, кто на трансляции (это цвета старых микрофонов):<br>
-      ?? Чонгук &nbsp; ?? Чимин &nbsp; ?? Джин<br>
-      ?? Тэхён &nbsp; ?? Намджун<br>
-      ?? Юнги &nbsp; ?? Хосок
+      💜 Чонгук &nbsp; 💛 Чимин &nbsp; 💕 Джин<br>
+      💚 Тэхён &nbsp; 💙 Намджун<br>
+      🖤 Юнги &nbsp; 🤍 Хосок
     </p>
     <div id="list"></div>
-    <a class="footer-link" href="somepeople.html">Все эфиры "Несколько человек" ??</a>
+    <a class="footer-link" href="somepeople.html">Все эфиры "Несколько человек" ⬅️</a>
   </div>
 
   <script>
        const data = [
       { year: "2017", items: [
-        { text: "EatJin +JM&JK", sub: "от 23.04", hearts: "??????", link: "https://t.me/violent_arhive/832" },
-        { text: "Филиппины", sub: "от 05.05", hearts: "????", link: "https://t.me/violent_arhive/831" },
-        { text: "Косметические процедуры Юнсоков", sub: "от 23.06", hearts: "????", link: "https://t.me/violent_arhive/282" },
-        { text: "R&V Live", sub: "от 16.10", hearts: "????", link: "https://t.me/violent_arhive/803" },
-        { text: "JM & JK Live!", sub: "от 08.12", hearts: "????", link: "https://t.me/violent_arhive/797" }
+        { text: "EatJin +JM&JK", sub: "от 23.04", hearts: "💜💛💕", link: "https://t.me/violent_arhive/832" },
+        { text: "Филиппины", sub: "от 05.05", hearts: "🤍🖤", link: "https://t.me/violent_arhive/831" },
+        { text: "Косметические процедуры Юнсоков", sub: "от 23.06", hearts: "🤍🖤", link: "https://t.me/violent_arhive/282" },
+        { text: "R&V Live", sub: "от 16.10", hearts: "💙💚", link: "https://t.me/violent_arhive/803" },
+        { text: "JM & JK Live!", sub: "от 08.12", hearts: "💛💜", link: "https://t.me/violent_arhive/797" }
       ]},
       { year: "2018", items: [
-        { text: "Парижская ночь", sub: "от 21.11", hearts: "????", link: "https://t.me/violent_arhive/752" },
-        { text: "Тэхён, Тани и Чимин", sub: "от 06.12", hearts: "??????", link: "https://t.me/violent_arhive/748" }
+        { text: "Парижская ночь", sub: "от 21.11", hearts: "💚🤍", link: "https://t.me/violent_arhive/752" },
+        { text: "Тэхён, Тани и Чимин", sub: "от 06.12", hearts: "💛💚🤎", link: "https://t.me/violent_arhive/748" }
       ]},
       { year: "2019", items: [
-        { text: "Экскурсия по студии Мона 1 часть", sub: "от 20.02 (2 часть в трансляциях - Намджун)", hearts: "??????", link: "https://t.me/violent_arhive/738" },
-        { text: "SOPE: о распаде", sub: "от 01.04", hearts: "????", link: "https://t.me/violent_arhive/731" },
-        { text: "EatJin с Чимином", sub: "от 19.05", hearts: "????", link: "https://t.me/violent_arhive/724" },
-        { text: "МиниМони", sub: "от 07.06", hearts: "????", link: "https://t.me/violent_arhive/713" },
-        { text: "VOPE", sub: "от 09.06", hearts: "????", link: "https://t.me/violent_arhive/711" }
+        { text: "Экскурсия по студии Мона 1 часть", sub: "от 20.02 (2 часть в трансляциях - Намджун)", hearts: "💙💚💛", link: "https://t.me/violent_arhive/738" },
+        { text: "SOPE: о распаде", sub: "от 01.04", hearts: "🖤🤍", link: "https://t.me/violent_arhive/731" },
+        { text: "EatJin с Чимином", sub: "от 19.05", hearts: "💛💕", link: "https://t.me/violent_arhive/724" },
+        { text: "МиниМони", sub: "от 07.06", hearts: "💛💙", link: "https://t.me/violent_arhive/713" },
+        { text: "VOPE", sub: "от 09.06", hearts: "💚🤍", link: "https://t.me/violent_arhive/711" }
       ]}
     ];
 
@@ -147,7 +147,7 @@
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
-        link.textContent = '??';
+        link.textContent = '🔗';
 
         row.appendChild(box);
         row.appendChild(span);

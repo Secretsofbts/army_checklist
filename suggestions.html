@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -33,9 +33,9 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="index.html">< Назад</a>
-    <h1>?? Ваши предложения ??</h1>
-    <p class="intro">Здесь вы можете оставить любые предложения по сотрудничеству и по чек-листу — что поправить, какие видео дополнить в коллекцию или может даже захотите что-то сами перевести для драгоценного архива. Каждое предложение я читаю лично, отвечаю в личные сообщения или тут. Очень ценю ваше время и заботу о проекте ??</p>
+    <a class="back" href="index.html">← Назад</a>
+    <h1>✍️ Ваши предложения ✍️</h1>
+    <p class="intro">Здесь вы можете оставить любые предложения по сотрудничеству и по чек-листу — что поправить, какие видео дополнить в коллекцию или может даже захотите что-то сами перевести для драгоценного архива. Каждое предложение я читаю лично, отвечаю в личные сообщения или тут. Очень ценю ваше время и заботу о проекте 💜</p>
 
     <textarea id="suggestion-input" placeholder="Ваше предложение..."></textarea>
     <button class="send-btn" id="send-btn">Отправить</button>
@@ -44,7 +44,7 @@
     <div id="admin-section"></div>
 
         <p class="section-title">Опубликованные предложения</p>
-    <input type="text" id="search-input" placeholder="?? Поиск по предложениям..." style="width:100%; box-sizing:border-box; border:1px solid #e0e0e0; border-radius:10px; padding:8px 10px; font-size:13px; margin-bottom:10px;">
+    <input type="text" id="search-input" placeholder="🔍 Поиск по предложениям..." style="width:100%; box-sizing:border-box; border:1px solid #e0e0e0; border-radius:10px; padding:8px 10px; font-size:13px; margin-bottom:10px;">
     <div id="published-list"><p class="empty-note">Загрузка...</p></div>
   </div>
 
@@ -74,7 +74,7 @@
         .then(res => res.json())
         .then(() => {
           input.value = '';
-          statusMsg.textContent = 'Спасибо! Ваше предложение отправлено ??';
+          statusMsg.textContent = 'Спасибо! Ваше предложение отправлено 💜';
           statusMsg.style.color = '#2e9e5b';
           btn.disabled = false;
         })
@@ -121,7 +121,7 @@
         div.className = 'qa-item';
         const q = document.createElement('p');
         q.className = 'qa-question';
-        q.innerHTML = '<span style="color:#9b7fd4; font-weight:700;">??</span> ' + entry.text;
+        q.innerHTML = '<span style="color:#9b7fd4; font-weight:700;">💡</span> ' + entry.text;
         const a = document.createElement('p');
         a.className = 'qa-answer';
         a.textContent = entry.answer;
@@ -132,7 +132,7 @@
           const controls = document.createElement('div');
           controls.style.cssText = 'margin-top:8px; display:flex; gap:8px;';
           const editBtn = document.createElement('button');
-          editBtn.textContent = '?? Изменить ответ';
+          editBtn.textContent = '✏️ Изменить ответ';
           editBtn.style.cssText = 'font-size:12px; background:#eee; border:none; border-radius:6px; padding:6px 10px; cursor:pointer;';
           editBtn.addEventListener('click', () => {
             const newAnswer = prompt('Изменить ответ:', entry.answer);
@@ -143,7 +143,7 @@
             }).then(() => loadAll());
           });
           const delBtn = document.createElement('button');
-          delBtn.textContent = '?? Удалить';
+          delBtn.textContent = '🗑 Удалить';
           delBtn.style.cssText = 'font-size:12px; background:#fbe4e4; border:none; border-radius:6px; padding:6px 10px; cursor:pointer; color:#c25a5a;';
           delBtn.addEventListener('click', () => deleteEntry(key));
           controls.appendChild(editBtn);
@@ -171,7 +171,7 @@
         box.className = 'admin-box';
         const q = document.createElement('p');
         q.className = 'admin-question';
-        q.innerHTML = '<span style="color:#9b7fd4; font-weight:700;">??</span> ' + entry.text;
+        q.innerHTML = '<span style="color:#9b7fd4; font-weight:700;">💡</span> ' + entry.text;
         const askerLabel = document.createElement('p');
         askerLabel.style.cssText = 'font-size:11px; color:#999; margin:-4px 0 8px;';
         askerLabel.textContent = 'От: ' + (entry.askerName || 'Неизвестный');
@@ -193,7 +193,7 @@
         });
         const rejectBtn = document.createElement('button');
         rejectBtn.className = 'del-btn';
-        rejectBtn.textContent = '?? Удалить без публикации';
+        rejectBtn.textContent = '🗑 Удалить без публикации';
         rejectBtn.addEventListener('click', () => deleteEntry(key));
         box.appendChild(q);
         box.appendChild(askerLabel);

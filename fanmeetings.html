@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -154,11 +154,11 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="concerts.html">< Назад</a>
-    <h1>?? ФАНМИТИНГИ BTS ??</h1>
+    <a class="back" href="concerts.html">← Назад</a>
+    <h1>🌟 ФАНМИТИНГИ BTS 🌟</h1>
     <p class="intro">Разные встречи с фанатами в виде концертов. Существуют Muster и Japan Fanmeeting, которые включают в себя выступления, обычно со старыми песнями, которые не шли в рамках тура, и развлекательные конкурсы или сценки, чтобы повеселить фанатов</p>
     <div id="list"></div>
-    <a class="footer-link" href="concerts.html">Все концерты BTS ??</a>
+    <a class="footer-link" href="concerts.html">Все концерты BTS ⬅️</a>
   </div>
 
   <script>
@@ -265,7 +265,7 @@
       link.className = 'link';
       link.href = item.link;
       link.target = '_blank';
-      link.textContent = '??';
+      link.textContent = '🔗';
 
       row.appendChild(box);
       row.appendChild(span);
@@ -329,7 +329,7 @@
           } else {
             const arrow = document.createElement('span');
             arrow.className = 'arrow';
-            arrow.textContent = '?';
+            arrow.textContent = '↗';
             a.appendChild(arrow);
           }
           listEl.appendChild(a);

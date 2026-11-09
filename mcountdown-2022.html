@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -26,22 +26,22 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="mcountdown.html">< Назад</a>
-    <h1>?? M!Countdown: 2022 ??</h1>
+    <a class="back" href="mcountdown.html">← Назад</a>
+    <h1>🎵 M!Countdown: 2022 🎵</h1>
      <p class="intro">Где написано число и в скобках название песни, там не только выступление, а сборная солянка: может быть начало, интервью, фанмитинг, фанкамы, переводы, концовки, закадровые или бомбочки. Нажмите и посмотрите, что именно там находится</p>
-    <p class="legend">?? — выступление<br>??? — выступление и солянка<br>?? — бомбочка<br>?? — закадровые или ещё что-то</p>
+    <p class="legend">🎵 — выступление<br>🎵➕ — выступление и солянка<br>💣 — бомбочка<br>◾️ — закадровые или ещё что-то</p>
     <div id="list"></div>
-    <a class="footer-link" href="mcountdown.html">M!Countdown ??</a>
+    <a class="footer-link" href="mcountdown.html">M!Countdown ⬅️</a>
   </div>
 
   <script>
     const items = [
-      { text: "?? Yet To Come", link: "https://t.me/violent_arhive/2776" },
-      { text: "?? For Youth", link: "https://t.me/violent_arhive/2775" }
+      { text: "🎵 Yet To Come", link: "https://t.me/violent_arhive/2776" },
+      { text: "🎵 For Youth", link: "https://t.me/violent_arhive/2775" }
     ];
 
         function extractIcon(text) {
-      const prefixes = ['??? ', '?? ', '?? ', '?? '];
+      const prefixes = ['🎵➕ ', '🎵 ', '💣 ', '◾️ '];
       for (const p of prefixes) {
         if (text.startsWith(p)) {
           return { icon: p.trim(), rest: text.slice(p.length) };
@@ -73,7 +73,7 @@
       icon.style.cssText = 'font-size:13px; flex-shrink:0;';
       icon.textContent = parsed.icon;
       const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '??';
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
       row.appendChild(box); row.appendChild(span); row.appendChild(icon); row.appendChild(link);
       listEl.appendChild(row);
     });

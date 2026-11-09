@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -52,8 +52,8 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="bangtantv.html">< Назад</a>
-    <h1>?? РЕАКЦИЯ НА СЕБЯ ??</h1>
+    <a class="back" href="bangtantv.html">← Назад</a>
+    <h1>👀 РЕАКЦИЯ НА СЕБЯ 👀</h1>
     <p class="intro">Самые большие фанаты бантан — это сами бантаны!</p>
 
     <div id="list-main"></div>
@@ -70,9 +70,9 @@
     <p class="section-title">Реакции от других людей</p>
     <div id="list-others"></div>
 
-    <p class="note">Если знаете ещё реакции, можете сообщить, я поищу) Пока только это нашла ??</p>
+    <p class="note">Если знаете ещё реакции, можете сообщить, я поищу) Пока только это нашла 💙</p>
 
-    <a class="footer-link" href="bangtantv.html">BangtanTV ??</a>
+    <a class="footer-link" href="bangtantv.html">BangtanTV ⬅️</a>
   </div>
 
   <script>
@@ -103,9 +103,9 @@
       { text: "Обмен альбомами МиниМони", sub: "версия \"MUSE\" Чимин", link: "https://t.me/violent_arhive/4648" }
     ];
     const concertItems = [
-      { text: "? 2017 The Wings in Seoul", link: "https://t.me/violent_arhive/2633" },
-      { text: "? 2018 LY in Seoul", link: "https://t.me/violent_arhive/2671" },
-      { text: "? 2019 LY:SY the Final", link: "https://t.me/violent_arhive/3361" }
+      { text: "✨ 2017 The Wings in Seoul", link: "https://t.me/violent_arhive/2633" },
+      { text: "✨ 2018 LY in Seoul", link: "https://t.me/violent_arhive/2671" },
+      { text: "✨ 2019 LY:SY the Final", link: "https://t.me/violent_arhive/3361" }
     ];
 
     const docsItems = [
@@ -147,7 +147,7 @@
         });
         span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
         const link = document.createElement('a');
-        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '??';
+        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
         row.appendChild(box); row.appendChild(span); row.appendChild(link);
         listEl.appendChild(row);
       });

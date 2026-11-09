@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -26,33 +26,33 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="bts-festa.html">< Назад</a>
-    <h1>?? BTS FESTA 2020 ??</h1>
+    <a class="back" href="bts-festa.html">← Назад</a>
+    <h1>🎉 BTS FESTA 2020 🎉</h1>
 
     <div id="list"></div>
-    <a class="footer-link" href="bts-festa.html">BTS FESTA ??</a>
+    <a class="footer-link" href="bts-festa.html">BTS FESTA ⬅️</a>
   </div>
 
   <script>
     const items = [
-      { text: "Церемония открытия: Airplane pt. 2", sub: "Summer ver.", icon: "??", link: "https://t.me/violent_arhive/555" },
-      { text: "Family Portrait", icon: "??", link: "https://www.facebook.com/media/set/?set=a.3635145719833997&type=3", noCheckbox: true },
-      { text: "Special Choreography", sub: "Репетиция \"Dionysus\" и 2018 MAMA \"Fake Love\"", icon: "??", link: "https://t.me/violent_arhive/560" },
-      { text: "Photo Collection 19/20", icon: "??", link: "https://www.facebook.com/media/set/?set=a.3643101272371775&type=3", noCheckbox: true },
-      { text: "Still With You", sub: "by JK", icon: "??", links: [
+      { text: "Церемония открытия: Airplane pt. 2", sub: "Summer ver.", icon: "🎥", link: "https://t.me/violent_arhive/555" },
+      { text: "Family Portrait", icon: "📷", link: "https://www.facebook.com/media/set/?set=a.3635145719833997&type=3", noCheckbox: true },
+      { text: "Special Choreography", sub: "Репетиция \"Dionysus\" и 2018 MAMA \"Fake Love\"", icon: "🕺", link: "https://t.me/violent_arhive/560" },
+      { text: "Photo Collection 19/20", icon: "📷", link: "https://www.facebook.com/media/set/?set=a.3643101272371775&type=3", noCheckbox: true },
+      { text: "Still With You", sub: "by JK", icon: "🎶", links: [
         { label: "SoundCloud", link: "https://soundcloud.com/bangtan/thankyouarmy2020" },
         { label: "Перевод", link: "https://t.me/violent_arhive/1912" }
       ]},
-      { text: "BTS Profile #1", icon: "??", link: "https://btsarmy.ru/novosti/bts-news/bts-festa-2020-profile-1", noCheckbox: true },
-      { text: "Фотографии BTS 3 Units", icon: "??", link: "https://www.facebook.com/media/set/?set=a.3635145719833997&type=3", noCheckbox: true },
-      { text: "Answer: BTS 3 UNITS", sub: "разговаривают о своих песнях: Respect, Jamais Vu и Friends", icon: "??", link: "https://t.me/violent_arhive/558" },
-      { text: "BTS Profile #2", icon: "??", link: "https://btsarmy.ru/novosti/bts-news/bts-festa-2020-profile-2", noCheckbox: true },
-      { text: "Map of the soul: 7", sub: "караоке", icon: "??", link: "https://t.me/violent_arhive/553" },
-      { text: "Map of the soul: 7", sub: "Behind the Scenes", icon: "??", link: "https://t.me/violent_arhive/554" },
-      { text: "Episode \"Семейная портретная съёмка\"", icon: "??", link: "https://t.me/violent_arhive/552" },
-      { text: "We are bulletproof: the Eternal", sub: "клип, который показывает, как тесно связаны Арми и BTS", icon: "??", link: "https://t.me/violent_arhive/559" },
-      { text: "7th BTS birthday", icon: "??", link: "https://t.me/violent_arhive/551" },
-      { text: "Церемония закрытия", icon: "??", link: "https://btsarmy.ru/novosti/bts-news/bts-festa-2020-rolling-paper", noCheckbox: true },
+      { text: "BTS Profile #1", icon: "✉️", link: "https://btsarmy.ru/novosti/bts-news/bts-festa-2020-profile-1", noCheckbox: true },
+      { text: "Фотографии BTS 3 Units", icon: "📷", link: "https://www.facebook.com/media/set/?set=a.3635145719833997&type=3", noCheckbox: true },
+      { text: "Answer: BTS 3 UNITS", sub: "разговаривают о своих песнях: Respect, Jamais Vu и Friends", icon: "🎥", link: "https://t.me/violent_arhive/558" },
+      { text: "BTS Profile #2", icon: "✉️", link: "https://btsarmy.ru/novosti/bts-news/bts-festa-2020-profile-2", noCheckbox: true },
+      { text: "Map of the soul: 7", sub: "караоке", icon: "🎥", link: "https://t.me/violent_arhive/553" },
+      { text: "Map of the soul: 7", sub: "Behind the Scenes", icon: "💣", link: "https://t.me/violent_arhive/554" },
+      { text: "Episode \"Семейная портретная съёмка\"", icon: "🎥", link: "https://t.me/violent_arhive/552" },
+      { text: "We are bulletproof: the Eternal", sub: "клип, который показывает, как тесно связаны Арми и BTS", icon: "🎥", link: "https://t.me/violent_arhive/559" },
+      { text: "7th BTS birthday", icon: "🎂", link: "https://t.me/violent_arhive/551" },
+      { text: "Церемония закрытия", icon: "✉️", link: "https://btsarmy.ru/novosti/bts-news/bts-festa-2020-rolling-paper", noCheckbox: true },
       { text: "BANG BANG CON", links: [
         { label: "англ.суб 1080", link: "https://t.me/violent_arhive/1747" },
         { label: "рус.суб 720 (заедает)", link: "https://t.me/violent_arhive/1679" }
@@ -85,7 +85,7 @@
         icon.textContent = item.icon || '';
         const link = document.createElement('span');
         link.className = 'link';
-        link.textContent = '??';
+        link.textContent = '🔗';
         a.appendChild(spacer);
         a.appendChild(span);
         if (icon.textContent) a.appendChild(icon);
@@ -154,7 +154,7 @@
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
-        link.textContent = '??';
+        link.textContent = '🔗';
         row.appendChild(link);
       }
 

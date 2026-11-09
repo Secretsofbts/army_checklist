@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -27,33 +27,33 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="bts-festa.html">< Назад</a>
-    <h1>?? BTS FESTA 2015 ??</h1>
+    <a class="back" href="bts-festa.html">← Назад</a>
+    <h1>🎉 BTS FESTA 2015 🎉</h1>
 
     <div id="list"></div>
 
        <a href="bts-memories-2016.html" style="display:flex; align-items:center; justify-content:space-between; gap:10px; background:#f0edf9; border:1px solid #d9cdf0; border-radius:10px; padding:10px 12px; margin:6px 0 16px; font-size:13px; color:#333; text-decoration:none;">
-      <span>?? Сам BTS 2nd MUSTER — смотрите в BTS Memories 2016</span>
-      <span style="color:#9b7fd4;">></span>
+      <span>🔮 Сам BTS 2nd MUSTER — смотрите в BTS Memories 2016</span>
+      <span style="color:#9b7fd4;">→</span>
     </a>
 
-    <a class="footer-link" href="bts-festa.html">BTS FESTA ??</a>
+    <a class="footer-link" href="bts-festa.html">BTS FESTA ⬅️</a>
   </div>
 
   <script>
     const items = [
-      { text: "Hug Me", sub: "studio ver. by V & J-hope — церемония открытия", icon: "??", link: "https://t.me/violent_arhive/1812" },
-      { text: "Photo Album", sub: "Sophomore", icon: "??", link: "https://www.facebook.com/media/set/?set=a.1074041042611157&type=3", noCheckbox: true },
-      { text: "Special Choreography #1", sub: "War of Hormone", icon: "??", link: "https://t.me/violent_arhive/1813" },
-      { text: "Special Choreography #2", sub: "Embarrassed", icon: "??", link: "https://t.me/violent_arhive/1814" },
-      { text: "Песня We Are Bulletproof Pt.1", icon: "??", links: [
+      { text: "Hug Me", sub: "studio ver. by V & J-hope — церемония открытия", icon: "🎥", link: "https://t.me/violent_arhive/1812" },
+      { text: "Photo Album", sub: "Sophomore", icon: "📷", link: "https://www.facebook.com/media/set/?set=a.1074041042611157&type=3", noCheckbox: true },
+      { text: "Special Choreography #1", sub: "War of Hormone", icon: "🕺", link: "https://t.me/violent_arhive/1813" },
+      { text: "Special Choreography #2", sub: "Embarrassed", icon: "🕺", link: "https://t.me/violent_arhive/1814" },
+      { text: "Песня We Are Bulletproof Pt.1", icon: "🎶", links: [
         { label: "SoundCloud", link: "https://soundcloud.com/bangtan/we-are-bulletproof-pt1-4-begins-ruff" },
         { label: "Перевод", link: "https://t.me/violent_arhive/1815" }
       ]},
-      { text: "2nd Anniversary", sub: "Family Picture", icon: "??", link: "https://www.facebook.com/media/set/?set=a.1078243125524282&type=3", noCheckbox: true },
-      { text: "Репетиция \"Tomorrow\"", icon: "??", link: "https://t.me/violent_arhive/1816" },
-      { text: "BHC Radio FM 06.13", sub: "2nd BTS birthday", icon: "??", link: "https://t.me/violent_arhive/1796" },
-      { text: "BTS 2nd MUSTER приглашение Арми", icon: "??", link: "https://t.me/violent_arhive/1817" }
+      { text: "2nd Anniversary", sub: "Family Picture", icon: "📷", link: "https://www.facebook.com/media/set/?set=a.1078243125524282&type=3", noCheckbox: true },
+      { text: "Репетиция \"Tomorrow\"", icon: "🎥", link: "https://t.me/violent_arhive/1816" },
+      { text: "BHC Radio FM 06.13", sub: "2nd BTS birthday", icon: "🎙", link: "https://t.me/violent_arhive/1796" },
+      { text: "BTS 2nd MUSTER приглашение Арми", icon: "🎥", link: "https://t.me/violent_arhive/1817" }
     ];
 
     const listEl = document.getElementById('list');
@@ -83,7 +83,7 @@
         icon.textContent = item.icon;
         const link = document.createElement('span');
         link.className = 'link';
-        link.textContent = '??';
+        link.textContent = '🔗';
         a.appendChild(spacer);
         a.appendChild(span);
         a.appendChild(icon);
@@ -150,7 +150,7 @@
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
-        link.textContent = '??';
+        link.textContent = '🔗';
         row.appendChild(link);
       }
 

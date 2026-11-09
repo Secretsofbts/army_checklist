@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -26,31 +26,31 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="mcountdown.html">< Назад</a>
-    <h1>?? M!Countdown: 2013 ??</h1>
+    <a class="back" href="mcountdown.html">← Назад</a>
+    <h1>🎵 M!Countdown: 2013 🎵</h1>
      <p class="intro">Где написано число и в скобках название песни, там не только выступление, а сборная солянка: может быть начало, интервью, фанмитинг, фанкамы, переводы, концовки, закадровые или бомбочки. Нажмите и посмотрите, что именно там находится</p>
-    <p class="legend">?? — выступление<br>??? — выступление и солянка<br>?? — бомбочка<br>?? — закадровые или ещё что-то</p>
+    <p class="legend">🎵 — выступление<br>🎵➕ — выступление и солянка<br>💣 — бомбочка<br>◾️ — закадровые или ещё что-то</p>
     <div id="list"></div>
-    <a class="footer-link" href="mcountdown.html">M!Countdown ??</a>
+    <a class="footer-link" href="mcountdown.html">M!Countdown ⬅️</a>
   </div>
 
   <script>
     const items = [
-      { text: "?? Debut Stage", link: "https://t.me/violent_arhive/3375" },
-      { text: "?? No More Dream", link: "https://t.me/violent_arhive/3377" },
-      { text: "?? Interview with Jimin + Special Dance", link: "https://t.me/violent_arhive/3378" },
-      { text: "?? No More Dream", link: "https://t.me/violent_arhive/3379" },
-     { text: "?? 8 июля", sub: "закадровые", link: "https://t.me/violent_arhive/3381" },
-      { text: "?? We Are Bulletproof", link: "https://t.me/violent_arhive/3382" },
-      { text: "?? Wide Behind", link: "https://t.me/violent_arhive/3383" },
-      { text: "?? Meet the Bangtan Boys", link: "https://t.me/violent_arhive/3384" },
-      { text: "?? N.O", link: "https://t.me/violent_arhive/3387" },
-      { text: "?? The Rise of Bangtan", link: "https://t.me/violent_arhive/3390" },
-      { text: "?? Attack on Bangtan", link: "https://t.me/violent_arhive/3391" }
+      { text: "🎵 Debut Stage", link: "https://t.me/violent_arhive/3375" },
+      { text: "🎵 No More Dream", link: "https://t.me/violent_arhive/3377" },
+      { text: "◾️ Interview with Jimin + Special Dance", link: "https://t.me/violent_arhive/3378" },
+      { text: "🎵 No More Dream", link: "https://t.me/violent_arhive/3379" },
+     { text: "◾️ 8 июля", sub: "закадровые", link: "https://t.me/violent_arhive/3381" },
+      { text: "🎵 We Are Bulletproof", link: "https://t.me/violent_arhive/3382" },
+      { text: "◾️ Wide Behind", link: "https://t.me/violent_arhive/3383" },
+      { text: "◾️ Meet the Bangtan Boys", link: "https://t.me/violent_arhive/3384" },
+      { text: "🎵 N.O", link: "https://t.me/violent_arhive/3387" },
+      { text: "🎵 The Rise of Bangtan", link: "https://t.me/violent_arhive/3390" },
+      { text: "🎵 Attack on Bangtan", link: "https://t.me/violent_arhive/3391" }
     ];
 
        function extractIcon(text) {
-      const prefixes = ['??? ', '?? ', '?? ', '?? '];
+      const prefixes = ['🎵➕ ', '🎵 ', '💣 ', '◾️ '];
       for (const p of prefixes) {
         if (text.startsWith(p)) {
           return { icon: p.trim(), rest: text.slice(p.length) };
@@ -88,7 +88,7 @@
       icon.style.cssText = 'font-size:13px; flex-shrink:0;';
       icon.textContent = parsed.icon;
       const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '??';
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
       row.appendChild(box); row.appendChild(span); row.appendChild(icon); row.appendChild(link);
       listEl.appendChild(row);
     });

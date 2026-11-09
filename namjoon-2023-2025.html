@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -65,10 +65,10 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="namjoon.html">< Назад</a>
-    <h1>Намджун: 2023 – 2025 ??</h1>
+    <a class="back" href="namjoon.html">← Назад</a>
+    <h1>Намджун: 2023 – 2025 💙</h1>
     <div id="list"></div>
-    <a class="footer-link" href="namjoon.html">Все эфиры Намджуна ??</a>
+    <a class="footer-link" href="namjoon.html">Все эфиры Намджуна ⬅️</a>
   </div>
 
   <script>
@@ -80,7 +80,7 @@
         { text: "Привет, привет", sub: "от 16.07", link: "https://t.me/violent_arhive/4110" },
         { text: "Лысая головушка", sub: "от 12.08", link: "https://t.me/violent_arhive/4167" },
         { text: "Лысый в дождик", sub: "от 30.08", link: "https://t.me/violent_arhive/4189" },
-        { text: "Запоздалый эфир на день рождения ??", sub: "от 14.08", link: "https://t.me/violent_arhive/4242" },
+        { text: "Запоздалый эфир на день рождения 🎂", sub: "от 14.08", link: "https://t.me/violent_arhive/4242" },
         { text: "Хай", sub: "от 10.10", link: "https://t.me/violent_arhive/4262" },
         { text: "Хайхай и Эй", sub: "от 18.10", link: "https://t.me/violent_arhive/4280" },
         { text: "Хай-хай", sub: "от 14.11", link: "https://t.me/violent_arhive/4371" }
@@ -89,7 +89,7 @@
       { year: "2025", items: [
         { text: "Давно не виделись, на связи Намджун", sub: "от 10.06", link: "https://t.me/violent_arhive/5170" },
         { text: "Приветик", sub: "от 07.07", link: "https://t.me/violent_arhive/5196" },
-        { text: "Спасибочки ??", sub: "от 12.09", link: "https://t.me/violent_arhive/5263" },
+        { text: "Спасибочки 🎂", sub: "от 12.09", link: "https://t.me/violent_arhive/5263" },
         { text: "С Чусоком!", sub: "от 05.10", link: "https://t.me/violent_arhive/5275" },
         { text: "Хахаха", sub: "от 13.11", link: "https://t.me/violent_arhive/5319" },
         { text: "Лайв", sub: "от 06.12", link: "https://t.me/violent_arhive/5338" },
@@ -107,7 +107,7 @@
       if (block.items.length === 0) {
         const empty = document.createElement('div');
         empty.className = 'empty';
-        empty.textContent = 'Служба в армии ???';
+        empty.textContent = 'Служба в армии 🎖️';
         listEl.appendChild(empty);
         return;
       }
@@ -149,7 +149,7 @@
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
-        link.textContent = '??';
+        link.textContent = '🔗';
 
         row.appendChild(box);
         row.appendChild(span);

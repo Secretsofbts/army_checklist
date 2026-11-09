@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -71,12 +71,12 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="bangtantv.html">< Назад</a>
-    <h1>?? BTS EPISODE ??</h1>
+    <a class="back" href="bangtantv.html">← Назад</a>
+    <h1>📽 BTS EPISODE 📽</h1>
     <p class="intro">Самые важные и интересные моменты из истории группы в эпизодах</p>
     <div id="list"></div>
     <p class="note">Серии расположены в примерном хронологическом порядке (где 1 серия — это 2013 год, а 123 серия — это 2021 год). Нумерация моя личная, для удобства </p>
-    <a class="footer-link" href="bangtantv.html">BangtanTV ??</a>
+    <a class="footer-link" href="bangtantv.html">BangtanTV ⬅️</a>
   </div>
        <script>
     const items = [
@@ -120,7 +120,7 @@
       const el = document.getElementById('badge-' + key);
       if (!el || !data || data.total === 0) { if (el) el.textContent = ''; return; }
       if (data.checked === data.total) {
-        el.textContent = '?';
+        el.textContent = '✅';
         el.style.color = '#2e9e5b';
         el.closest('.navlink').style.background = '#e3f7e9';
       } else {
@@ -145,7 +145,7 @@
       });
       if (total === 0) { el.textContent = ''; return; }
       if (allKnown && checked === total) {
-        el.textContent = '?';
+        el.textContent = '✅';
         el.style.color = '#2e9e5b';
         el.closest('.navlink').style.background = '#e3f7e9';
       } else {

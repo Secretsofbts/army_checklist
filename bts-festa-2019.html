@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -26,37 +26,37 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="bts-festa.html">< Назад</a>
-    <h1>?? BTS FESTA 2019 ??</h1>
+    <a class="back" href="bts-festa.html">← Назад</a>
+    <h1>🎉 BTS FESTA 2019 🎉</h1>
 
     <div id="list"></div>
-    <a class="footer-link" href="bts-festa.html">BTS FESTA ??</a>
+    <a class="footer-link" href="bts-festa.html">BTS FESTA ⬅️</a>
   </div>
 
   <script>
     const items = [
-      { text: "Церемония открытия", icon: "??", link: "https://www.facebook.com/media/set/?set=a.2757867114228533&type=3", noCheckbox: true },
-      { text: "Photo Collection", icon: "??", link: "https://www.facebook.com/media/set/?set=a.2760419207306657&type=3", noCheckbox: true },
-      { text: "STAGE SELF CAM", sub: "\"Anpanman\" Нью-Йорк", icon: "??", link: "https://t.me/violent_arhive/1906" },
-      { text: "This Night", sub: "By Jin", icon: "??", links: [
+      { text: "Церемония открытия", icon: "📷", link: "https://www.facebook.com/media/set/?set=a.2757867114228533&type=3", noCheckbox: true },
+      { text: "Photo Collection", icon: "📷", link: "https://www.facebook.com/media/set/?set=a.2760419207306657&type=3", noCheckbox: true },
+      { text: "STAGE SELF CAM", sub: "\"Anpanman\" Нью-Йорк", icon: "🎥", link: "https://t.me/violent_arhive/1906" },
+      { text: "This Night", sub: "By Jin", icon: "🎶", links: [
         { label: "SoundCloud", link: "https://soundcloud.com/bangtan/tonightbyjin" },
         { label: "Перевод", link: "https://t.me/violent_arhive/1907" }
       ]},
-      { text: "Джин записывает 1 песню \"This Night\"", sub: "эта бомбочка не на фесту, но решила сюда добавить", icon: "??", link: "https://t.me/violent_arhive/1908" },
-      { text: "Special Choreography", sub: "MIC Drop (MAMA dance break)", icon: "??", link: "https://t.me/violent_arhive/1909" },
-      { text: "Газета BANGTAN NEWS", icon: "??", link: "https://m.vk.com/wall-163395992_2793", noCheckbox: true },
-      { text: "Special Choreography", sub: "Spring Day (Lovely ver)", icon: "??", link: "https://t.me/violent_arhive/1910" },
-      { text: "Family Portrait", icon: "??", link: "https://www.facebook.com/media/set/?set=a.2773381229343788&type=3", noCheckbox: true },
-      { text: "Euphoria", sub: "Piano ver", icon: "??", links: [
+      { text: "Джин записывает 1 песню \"This Night\"", sub: "эта бомбочка не на фесту, но решила сюда добавить", icon: "💣", link: "https://t.me/violent_arhive/1908" },
+      { text: "Special Choreography", sub: "MIC Drop (MAMA dance break)", icon: "🕺", link: "https://t.me/violent_arhive/1909" },
+      { text: "Газета BANGTAN NEWS", icon: "✉️", link: "https://m.vk.com/wall-163395992_2793", noCheckbox: true },
+      { text: "Special Choreography", sub: "Spring Day (Lovely ver)", icon: "🕺", link: "https://t.me/violent_arhive/1910" },
+      { text: "Family Portrait", icon: "📷", link: "https://www.facebook.com/media/set/?set=a.2773381229343788&type=3", noCheckbox: true },
+      { text: "Euphoria", sub: "Piano ver", icon: "🎶", links: [
         { label: "SoundCloud", link: "https://soundcloud.com/bangtan/euphoria2019festa" },
         { label: "Перевод", link: "https://t.me/violent_arhive/1911" }
       ]},
-      { text: "BTS Profile 2019", sub: "там много фотографий, не один пост, пролистайте ниже", icon: "??", link: "https://t.me/secretsofbts/16061", noCheckbox: true },
-      { text: "Чердак Бантан", sub: "6th BTS birthday", icon: "??", link: "https://t.me/violent_arhive/952" },
-      { text: "FAMILY PORTRAIT", icon: "??", link: "https://www.facebook.com/media/set/?set=a.2781689961846248&type=3", noCheckbox: true },
-      { text: "Эпизод \"Съёмка Семейного Портрета #1\"", icon: "??", link: "https://t.me/violent_arhive/1914" },
-      { text: "Эпизод \"Съёмка Семейного Портрета #2\"", icon: "??", link: "https://t.me/violent_arhive/1915" },
-      { text: "Семейный портрет", sub: "за кадром — с Memories 2019", icon: "??", link: "https://t.me/violent_arhive/1653" }
+      { text: "BTS Profile 2019", sub: "там много фотографий, не один пост, пролистайте ниже", icon: "✉️", link: "https://t.me/secretsofbts/16061", noCheckbox: true },
+      { text: "Чердак Бантан", sub: "6th BTS birthday", icon: "🎂", link: "https://t.me/violent_arhive/952" },
+      { text: "FAMILY PORTRAIT", icon: "📷", link: "https://www.facebook.com/media/set/?set=a.2781689961846248&type=3", noCheckbox: true },
+      { text: "Эпизод \"Съёмка Семейного Портрета #1\"", icon: "🎥", link: "https://t.me/violent_arhive/1914" },
+      { text: "Эпизод \"Съёмка Семейного Портрета #2\"", icon: "🎥", link: "https://t.me/violent_arhive/1915" },
+      { text: "Семейный портрет", sub: "за кадром — с Memories 2019", icon: "🎥", link: "https://t.me/violent_arhive/1653" }
     ];
 
     function renderItem(container, item) {
@@ -85,7 +85,7 @@
         icon.textContent = item.icon || '';
         const link = document.createElement('span');
         link.className = 'link';
-        link.textContent = '??';
+        link.textContent = '🔗';
         a.appendChild(spacer);
         a.appendChild(span);
         if (icon.textContent) a.appendChild(icon);
@@ -154,7 +154,7 @@
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
-        link.textContent = '??';
+        link.textContent = '🔗';
         row.appendChild(link);
       }
 

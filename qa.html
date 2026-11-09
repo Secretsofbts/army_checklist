@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -32,9 +32,9 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="index.html">< Назад</a>
-    <h1>? Вопрос-ответ ?</h1>
-    <p class="intro">Задайте любой вопрос — я отвечу, и он появится здесь для всех ??</p>
+    <a class="back" href="index.html">← Назад</a>
+    <h1>❓ Вопрос-ответ ❓</h1>
+    <p class="intro">Задайте любой вопрос — я отвечу, и он появится здесь для всех 💜</p>
 
     <textarea id="question-input" placeholder="Ваш вопрос..."></textarea>
     <button class="send-btn" id="send-btn">Отправить вопрос</button>
@@ -43,7 +43,7 @@
        <div id="admin-section"></div>
 
         <p class="section-title">Опубликованные вопросы</p>
-    <input type="text" id="search-input" placeholder="?? Поиск по вопросам..." style="width:100%; box-sizing:border-box; border:1px solid #e0e0e0; border-radius:10px; padding:8px 10px; font-size:13px; margin-bottom:10px;">
+    <input type="text" id="search-input" placeholder="🔍 Поиск по вопросам..." style="width:100%; box-sizing:border-box; border:1px solid #e0e0e0; border-radius:10px; padding:8px 10px; font-size:13px; margin-bottom:10px;">
     <div id="published-list"><p class="empty-note">Загрузка...</p></div>
   </div>
 
@@ -135,7 +135,7 @@
         if (entry.askerNickname) {
           const nick = document.createElement('p');
           nick.style.cssText = 'font-size:11px; color:#9b7fd4; margin:6px 0 0; font-weight:600;';
-          nick.textContent = '?? ' + entry.askerNickname;
+          nick.textContent = '💜 ' + entry.askerNickname;
           div.appendChild(nick);
         }
 
@@ -143,7 +143,7 @@
           const controls = document.createElement('div');
           controls.style.cssText = 'margin-top:8px; display:flex; gap:8px;';
           const editBtn = document.createElement('button');
-          editBtn.textContent = '?? Изменить ответ';
+          editBtn.textContent = '✏️ Изменить ответ';
           editBtn.style.cssText = 'font-size:12px; background:#eee; border:none; border-radius:6px; padding:6px 10px; cursor:pointer;';
           editBtn.addEventListener('click', () => {
             const newAnswer = prompt('Изменить ответ:', entry.answer);
@@ -154,7 +154,7 @@
             }).then(() => loadAll());
           });
           const delBtn = document.createElement('button');
-          delBtn.textContent = '?? Удалить';
+          delBtn.textContent = '🗑 Удалить';
           delBtn.style.cssText = 'font-size:12px; background:#fbe4e4; border:none; border-radius:6px; padding:6px 10px; cursor:pointer; color:#c25a5a;';
           delBtn.addEventListener('click', () => deleteEntry(key));
           controls.appendChild(editBtn);
@@ -203,7 +203,7 @@
             .catch(() => { publishBtn.disabled = false; });
         });
         const rejectBtn = document.createElement('button');
-        rejectBtn.textContent = '?? Удалить без публикации';
+        rejectBtn.textContent = '🗑 Удалить без публикации';
         rejectBtn.style.cssText = 'margin-top:8px; margin-left:8px; background:#fbe4e4; color:#c25a5a; border:none; border-radius:8px; padding:8px 14px; font-size:13px; cursor:pointer;';
         rejectBtn.addEventListener('click', () => deleteEntry(key));
                 box.appendChild(q);

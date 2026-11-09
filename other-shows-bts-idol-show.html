@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -24,10 +24,10 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="other-shows.html">< Назад</a>
-    <h1>?? BTS Idol Show ??</h1>
+    <a class="back" href="other-shows.html">← Назад</a>
+    <h1>⭐️ BTS Idol Show ⭐️</h1>
     <div id="list"></div>
-    <a class="footer-link" href="other-shows-2013-2015.html">Другие шоу (2013 - 2015) ??</a>
+    <a class="footer-link" href="other-shows-2013-2015.html">Другие шоу (2013 - 2015) ⬅️</a>
   </div>
   <script>
     const items = [
@@ -53,7 +53,7 @@
       });
       span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
       const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '??';
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
       row.appendChild(box); row.appendChild(span); row.appendChild(link);
       listEl.appendChild(row);
     });

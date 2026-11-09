@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -26,37 +26,37 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="mcountdown.html">< Назад</a>
-    <h1>?? M!Countdown: 2014 ??</h1>
+    <a class="back" href="mcountdown.html">← Назад</a>
+    <h1>🎵 M!Countdown: 2014 🎵</h1>
      <p class="intro">Где написано число и в скобках название песни, там не только выступление, а сборная солянка: может быть начало, интервью, фанмитинг, фанкамы, переводы, концовки, закадровые или бомбочки. Нажмите и посмотрите, что именно там находится</p>
-    <p class="legend">?? — выступление<br>??? — выступление и солянка<br>?? — бомбочка<br>?? — закадровые или ещё что-то</p>
+    <p class="legend">🎵 — выступление<br>🎵➕ — выступление и солянка<br>💣 — бомбочка<br>◾️ — закадровые или ещё что-то</p>
     <div id="list"></div>
-    <a class="footer-link" href="mcountdown.html">M!Countdown ??</a>
+    <a class="footer-link" href="mcountdown.html">M!Countdown ⬅️</a>
   </div>
 
   <script>
            const items = [
-      { text: "?? Boy In Luv", sub: "13 и 20 февраля", link: "https://t.me/violent_arhive/3393" },
-      { text: "?? Boy In Luv + 100 Song", sub: "17 февраля", link: "https://t.me/violent_arhive/3395" },
-      { text: "?? Boy In Luv", sub: "6, 13 и 20 марта", link: "https://t.me/violent_arhive/3396" },
-      { text: "??? Just One Day + Ending", link: "https://t.me/violent_arhive/3399" },
-      { text: "?? 25 апреля", sub: "закадровые", link: "https://t.me/violent_arhive/3401" },
-      { text: "?? KCON", sub: "Attack on Bangtan, Boy In Luv, Ft. Rap Moster of BTS", link: "https://t.me/violent_arhive/3402" },
-      { text: "?? Danger", link: "https://t.me/violent_arhive/3405" },
-      { text: "?? Hormone War + Ending", link: "https://t.me/violent_arhive/3411" },
-      { text: "?? Несколько FANCAM", link: "https://t.me/violent_arhive/3412" },
-      { text: "??? Mini Fanmeeting + Hormone War", link: "https://t.me/violent_arhive/3417" },
-      { text: "?? Begins", sub: "6 ноября", link: "https://t.me/violent_arhive/3419" },
-      { text: "?? Begins", sub: "13 ноября", link: "https://t.me/violent_arhive/3420" },
-      { text: "?? Begins", sub: "09 октября", link: "https://t.me/violent_arhive/3421" },
-      { text: "?? 30 августа", sub: "закадровые", link: "https://t.me/violent_arhive/3422" },
-      { text: "?? Begin Last Stage", link: "https://t.me/violent_arhive/3423" },
-      { text: "?? Japan 5 сентября", sub: "закадровые", link: "https://t.me/violent_arhive/3424" },
-      { text: "?? Just One Day + War of Hormone", link: "https://t.me/violent_arhive/3425" }
+      { text: "🎵 Boy In Luv", sub: "13 и 20 февраля", link: "https://t.me/violent_arhive/3393" },
+      { text: "🎵 Boy In Luv + 100 Song", sub: "17 февраля", link: "https://t.me/violent_arhive/3395" },
+      { text: "🎵 Boy In Luv", sub: "6, 13 и 20 марта", link: "https://t.me/violent_arhive/3396" },
+      { text: "🎵➕ Just One Day + Ending", link: "https://t.me/violent_arhive/3399" },
+      { text: "◾️ 25 апреля", sub: "закадровые", link: "https://t.me/violent_arhive/3401" },
+      { text: "🎵 KCON", sub: "Attack on Bangtan, Boy In Luv, Ft. Rap Moster of BTS", link: "https://t.me/violent_arhive/3402" },
+      { text: "🎵 Danger", link: "https://t.me/violent_arhive/3405" },
+      { text: "🎵 Hormone War + Ending", link: "https://t.me/violent_arhive/3411" },
+      { text: "◾️ Несколько FANCAM", link: "https://t.me/violent_arhive/3412" },
+      { text: "🎵➕ Mini Fanmeeting + Hormone War", link: "https://t.me/violent_arhive/3417" },
+      { text: "◾️ Begins", sub: "6 ноября", link: "https://t.me/violent_arhive/3419" },
+      { text: "◾️ Begins", sub: "13 ноября", link: "https://t.me/violent_arhive/3420" },
+      { text: "◾️ Begins", sub: "09 октября", link: "https://t.me/violent_arhive/3421" },
+      { text: "◾️ 30 августа", sub: "закадровые", link: "https://t.me/violent_arhive/3422" },
+      { text: "◾️ Begin Last Stage", link: "https://t.me/violent_arhive/3423" },
+      { text: "◾️ Japan 5 сентября", sub: "закадровые", link: "https://t.me/violent_arhive/3424" },
+      { text: "🎵 Just One Day + War of Hormone", link: "https://t.me/violent_arhive/3425" }
     ];
 
        function extractIcon(text) {
-      const prefixes = ['??? ', '?? ', '?? ', '?? '];
+      const prefixes = ['🎵➕ ', '🎵 ', '💣 ', '◾️ '];
       for (const p of prefixes) {
         if (text.startsWith(p)) {
           return { icon: p.trim(), rest: text.slice(p.length) };
@@ -94,7 +94,7 @@
       icon.style.cssText = 'font-size:13px; flex-shrink:0;';
       icon.textContent = parsed.icon;
       const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '??';
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
       row.appendChild(box); row.appendChild(span); row.appendChild(icon); row.appendChild(link);
       listEl.appendChild(row);
     });

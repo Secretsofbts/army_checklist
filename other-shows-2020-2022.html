@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -76,10 +76,10 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="other-shows.html">< Назад</a>
-    <h1>?? 2020-2022 год ??</h1>
+    <a class="back" href="other-shows.html">← Назад</a>
+    <h1>📺 2020-2022 год 📺</h1>
     <div id="list"></div>
-    <a class="footer-link" href="other-shows.html">Другие шоу с BTS за все года ??</a>
+    <a class="footer-link" href="other-shows.html">Другие шоу с BTS за все года ⬅️</a>
   </div>
 
   <script>
@@ -98,20 +98,20 @@
       { navlink: true, text: "Running Man", link: "other-shows-running-man.html", statKey: "other-shows-running-man" },
       { navlink: true, text: "WORKOUT with BTS", sub: "тренировки с BTS", link: "other-shows-workout.html", statKey: "other-shows-workout" },
       { navlink: true, text: "Kiss The Radio / Sukira", sub: "бантаны на радио", link: "other-shows-kiss-the-radio.html", statKey: "other-shows-kiss-the-radio" },
-      { text: "Crush x J-Hope", hearts: "??", sub: "1 эпизод", link: "https://t.me/violent_arhive/3136" },
-      { text: "Шоу IU \"The Palette\"", hearts: "??", link: "https://t.me/violent_arhive/2900" },
+      { text: "Crush x J-Hope", hearts: "🤍", sub: "1 эпизод", link: "https://t.me/violent_arhive/3136" },
+      { text: "Шоу IU \"The Palette\"", hearts: "🤍", link: "https://t.me/violent_arhive/2900" },
       { text: "\"Do You Know Me?\"", link: "https://t.me/violent_arhive/2796" },
-      { text: "Алкогольный дневник", hearts: "??", link: "https://t.me/violent_arhive/3216" },
+      { text: "Алкогольный дневник", hearts: "💕", link: "https://t.me/violent_arhive/3216" },
       { navlink: true, text: "Шоу с Джимми Фэллоном", link: "other-shows-jimmy-fallon.html", statKey: "other-shows-jimmy-fallon" },
       { navlink: true, text: "Шоу с Джеймсом Корденом", link: "other-shows-james-corden.html", statKey: "other-shows-james-corden" },
       { navlink: true, text: "Ли Хён стал менеджером BTS на один день", link: "other-shows-lee-hyun-manager.html", statKey: "other-shows-lee-hyun-manager" },
       { navlink: true, text: "Game of Money", link: "other-shows-game-of-money.html", statKey: "other-shows-game-of-money" },
       { text: "Викторина с Бантанами", link: "https://t.me/violent_arhive/3277" },
-      { text: "Джин в гостях у Мёнсу", hearts: "??", link: "https://t.me/violent_arhive/3291" },
-      { navlink: true, text: "Посиделки под градусом", hearts: "??", link: "other-shows-drinking-party.html", statKey: "other-shows-drinking-party" },
-      { text: "Спец. коллекция \"The Astronaut\"", hearts: "????", link: "https://t.me/violent_arhive/3334" },
-      { navlink: true, text: "Словарь бесполезных человеческих знаний", hearts: "??", link: "other-shows-useless-knowledge-dictionary.html", statKey: "other-shows-useless-knowledge-dictionary" },
-      { text: "Psick Show с RM из BTS", hearts: "??", link: "https://t.me/violent_arhive/3559" }
+      { text: "Джин в гостях у Мёнсу", hearts: "💕", link: "https://t.me/violent_arhive/3291" },
+      { navlink: true, text: "Посиделки под градусом", hearts: "💕", link: "other-shows-drinking-party.html", statKey: "other-shows-drinking-party" },
+      { text: "Спец. коллекция \"The Astronaut\"", hearts: "💕🤍", link: "https://t.me/violent_arhive/3334" },
+      { navlink: true, text: "Словарь бесполезных человеческих знаний", hearts: "💙", link: "other-shows-useless-knowledge-dictionary.html", statKey: "other-shows-useless-knowledge-dictionary" },
+      { text: "Psick Show с RM из BTS", hearts: "💙", link: "https://t.me/violent_arhive/3559" }
     ];
 
     const listEl = document.getElementById('list');
@@ -250,7 +250,7 @@
       link.className = 'link';
       link.href = item.link;
       link.target = '_blank';
-      link.textContent = '??';
+      link.textContent = '🔗';
 
       row.appendChild(box);
       row.appendChild(span);

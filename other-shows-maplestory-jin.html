@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -25,12 +25,12 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="other-shows-maplestory.html">< Назад</a>
-    <h1>?? MapleStory X Jin ??</h1>
+    <a class="back" href="other-shows-maplestory.html">← Назад</a>
+    <h1>🎮 MapleStory X Jin 🎮</h1>
     <p class="intro">Год выпуска: 2022</p>
     <p class="intro">Джин из BTS стал одним из судей конкурса дизайна персонажей его любимой онлайн-игры Maple Story. Он увлекался этой игрой много лет. В одной из трансляций он рассказал: «Я начал играть в Maple Story, когда мне было 12 лет, я учился в 5-м классе»</p>
     <div id="list"></div>
-    <a class="footer-link" href="other-shows-maplestory.html">MapleStory X BTS ??</a>
+    <a class="footer-link" href="other-shows-maplestory.html">MapleStory X BTS ⬅️</a>
   </div>
   <script>
     const items = [
@@ -63,7 +63,7 @@
       });
       span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
       const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '??';
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
       row.appendChild(box); row.appendChild(span); row.appendChild(link);
       listEl.appendChild(row);
     });

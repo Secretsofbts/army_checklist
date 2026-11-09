@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -36,12 +36,12 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="index.html">< Назад</a>
-    <h1>?? Поддержка бота ??</h1>
-    <p class="intro">Этот чек-лист создан с большой любовью ?? Если вам нравится им пользоваться и вы хотите поддержать его развитие — буду очень благодарна. Но в любом случае приложение останется бесплатным для всех!</p>
+    <a class="back" href="index.html">← Назад</a>
+    <h1>💜 Поддержка бота 💜</h1>
+    <p class="intro">Этот чек-лист создан с большой любовью 😌 Если вам нравится им пользоваться и вы хотите поддержать его развитие — буду очень благодарна. Но в любом случае приложение останется бесплатным для всех!</p>
 
-    <a class="support-btn" href="#" id="tbank-link" target="_blank">?? Поддержать через Т-Банк</a>
-    <a class="support-btn" href="#" id="sber-link" target="_blank">?? Поддержать через Сбербанк</a>
+    <a class="support-btn" href="#" id="tbank-link" target="_blank">🟡 Поддержать через Т-Банк</a>
+    <a class="support-btn" href="#" id="sber-link" target="_blank">🟢 Поддержать через Сбербанк</a>
 
     <p class="section-title">Или переводом на карту</p>
         <div class="card-box">
@@ -50,12 +50,12 @@
       <button class="copy-btn" id="copy-btn">Скопировать номер</button>
     </div>
 
-         <button id="donated-btn" style="width:100%; margin-top:16px; background:#fff3cd; border:1px solid #f0dca0; border-radius:12px; padding:12px; font-size:14px; color:#7a5c00; cursor:pointer;">?? Я поддержал(а) проект</button>
+         <button id="donated-btn" style="width:100%; margin-top:16px; background:#fff3cd; border:1px solid #f0dca0; border-radius:12px; padding:12px; font-size:14px; color:#7a5c00; cursor:pointer;">💜 Я поддержал(а) проект</button>
     <div id="donated-status" style="text-align:center; font-size:12px; color:#2e9e5b; margin-top:8px;"></div>
 
     <div id="angels-section"></div>
 
-   <p class="thanks" style="text-align: center; background: #f7f7fa; border-radius: 12px; padding: 14px; margin-top: 16px;">Спасибо каждому, кто поддерживает — это помогает мне продолжать ??</p>
+   <p class="thanks" style="text-align: center; background: #f7f7fa; border-radius: 12px; padding: 14px; margin-top: 16px;">Спасибо каждому, кто поддерживает — это помогает мне продолжать 💜</p>
   </div>
 
   <script>
@@ -75,7 +75,7 @@
         .then(entry => {
           if (entry && entry.hasDonated) {
             localStorage.setItem('hasDonated_' + ARMY_USER_ID, 'true');
-            donatedBtn.textContent = '?? Спасибо за поддержку!';
+            donatedBtn.textContent = '💜 Спасибо за поддержку!';
             donatedBtn.disabled = true;
             donatedBtn.style.opacity = '0.6';
           }
@@ -84,7 +84,7 @@
     }
 
            donatedBtn.addEventListener('click', () => {
-      if (!confirm('Вы правда перевели поддержку проекту? Это на доверии — отметка для вас самих ??')) return;
+      if (!confirm('Вы правда перевели поддержку проекту? Это на доверии — отметка для вас самих 💜')) return;
       if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
         localStorage.setItem('hasDonated_' + ARMY_USER_ID, 'true');
       }
@@ -94,10 +94,10 @@
           body: JSON.stringify({ hasDonated: true, donatedAt: Date.now() })
         }).then(() => loadAngels());
       }
-      donatedBtn.textContent = '?? Спасибо за поддержку!';
+      donatedBtn.textContent = '💜 Спасибо за поддержку!';
       donatedBtn.disabled = true;
       donatedBtn.style.opacity = '0.6';
-      donatedStatus.textContent = 'Отмечено! Теперь на странице статистики появится ваша благодарственная медаль ??';
+      donatedStatus.textContent = 'Отмечено! Теперь на странице статистики появится ваша благодарственная медаль 🎁';
     });
 
     function loadAngels() {
@@ -109,7 +109,7 @@
             .filter((entry) => entry.hasDonated && entry.nickname)
             .map((entry) => entry.nickname);
           if (names.length === 0) { angelsEl.innerHTML = ''; return; }
-             angelsEl.innerHTML = '<p style="font-size:13px; color:#333; text-align:center; margin-top:20px; line-height:1.6;">?? Спасибо этим ангелам-хранителям:<br><span style="color:#9b7fd4; font-weight:600;">' + names.join(', ') + '</span></p><p style="font-size:11px; color:#999; text-align:center; margin-top:4px;">(в список попадают те, у кого установлен ник)</p>';
+             angelsEl.innerHTML = '<p style="font-size:13px; color:#333; text-align:center; margin-top:20px; line-height:1.6;">🎁 Спасибо этим ангелам-хранителям:<br><span style="color:#9b7fd4; font-weight:600;">' + names.join(', ') + '</span></p><p style="font-size:11px; color:#999; text-align:center; margin-top:4px;">(в список попадают те, у кого установлен ник)</p>';
         })
         .catch(() => {});
     }

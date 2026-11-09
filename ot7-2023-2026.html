@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -65,10 +65,10 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="ot7.html">< Назад</a>
-    <h1>ОТ7: 2023 – 2026 ??</h1>
+    <a class="back" href="ot7.html">← Назад</a>
+    <h1>ОТ7: 2023 – 2026 ❣️</h1>
     <div id="list"></div>
-    <a class="footer-link" href="ot7.html">Все эфиры ОТ7 ??</a>
+    <a class="footer-link" href="ot7.html">Все эфиры ОТ7 ⬅️</a>
   </div>
 
   <script>
@@ -81,15 +81,15 @@
         { text: "2, 3, Бантан!!", sub: "от 16.12", link: "https://t.me/violent_arhive/5349" },
         { text: "Мы тут", sub: "от 21.12", link: "https://t.me/violent_arhive/5366" },
         { text: "Одному было скучно", sub: "от 30.12", link: "https://t.me/violent_arhive/5383" },
-        { text: "Ещё разок ??", sub: "от 30.12", link: "https://t.me/violent_arhive/5384" },
+        { text: "Ещё разок 🎂", sub: "от 30.12", link: "https://t.me/violent_arhive/5384" },
         { text: "Чо-то как-то скучно", sub: "от 30.12", link: "https://t.me/violent_arhive/5385" },
         { text: "BTS 2026", sub: "от 31.12", link: "https://t.me/violent_arhive/5365" }
       ]},
       { year: "2026", items: [
         { text: "ARMYRANG ARIRANG", sub: "от 16.01", link: "https://t.me/violent_arhive/5372" },
         { text: "STUDIO NOTES | ARIRANG", sub: "от 20.03", link: "https://t.me/violent_arhive/5426" },
-        { text: "№1 в Биллборд ??", sub: "от 01.04", link: "https://t.me/violent_arhive/5454" },
-        { text: "Наши АРМИ получили награду! ??", sub: "от 26.05", link: "https://t.me/violent_arhive/5504" },
+        { text: "№1 в Биллборд 🥇", sub: "от 01.04", link: "https://t.me/violent_arhive/5454" },
+        { text: "Наши АРМИ получили награду! 🐥", sub: "от 26.05", link: "https://t.me/violent_arhive/5504" },
         { text: "Конец тура по Южной Америке!", sub: "от 01.11", link: "https://t.me/violent_arhive/5712" }
       ]}
     ];
@@ -104,7 +104,7 @@
       if (block.items.length === 0) {
         const empty = document.createElement('div');
         empty.className = 'empty';
-        empty.textContent = 'Служба в армии ???';
+        empty.textContent = 'Служба в армии 🎖️';
         listEl.appendChild(empty);
         return;
       }
@@ -146,7 +146,7 @@
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
-        link.textContent = '??';
+        link.textContent = '🔗';
 
         row.appendChild(box);
         row.appendChild(span);

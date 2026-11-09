@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -25,17 +25,17 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="other-shows-2020-2022.html">< Назад</a>
-    <h1>?? Лаборатория MBTI ??</h1>
-    <p class="intro">Год выпуска: 2022 ??</p>
+    <a class="back" href="other-shows-2020-2022.html">← Назад</a>
+    <h1>📚 Лаборатория MBTI 📚</h1>
+    <p class="intro">Год выпуска: 2022 🕑</p>
     <p class="intro">Тест на определение типа личности Майерс-Бриггс (MBTI) стал одним из самых популярных в мире. Люди по всему миру проходят тест, чтобы определить, к какому из 16 типов личности они относятся</p>
     <p class="intro">Бантаны впервые прошли тест в 2017 году, и с тех пор результаты изменились</p>
     <div class="row">
       <span class="text" style="cursor:default;">Ссылка на сам тест</span>
-      <a class="link" href="https://www.16personalities.com/ru/test-lichnosti" target="_blank">??</a>
+      <a class="link" href="https://www.16personalities.com/ru/test-lichnosti" target="_blank">🔗</a>
     </div>
     <div id="list"></div>
-    <a class="footer-link" href="other-shows-2020-2022.html">Другие шоу (2020 - 2022) ??</a>
+    <a class="footer-link" href="other-shows-2020-2022.html">Другие шоу (2020 - 2022) ⬅️</a>
   </div>
 
   <script>
@@ -63,7 +63,7 @@
       });
       span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
       const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '??';
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
       row.appendChild(box); row.appendChild(span); row.appendChild(link);
       listEl.appendChild(row);
     });

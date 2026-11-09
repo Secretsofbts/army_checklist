@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -26,15 +26,15 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="other-shows-2023-2024.html">< Назад</a>
-    <h1>?? У СоДжина / Кухня Юн ??</h1>
-    <p class="intro">Год выпуска: 2023 ??</p>
+    <a class="back" href="other-shows-2023-2024.html">← Назад</a>
+    <h1>🍜 У СоДжина / Кухня Юн 🍜</h1>
+    <p class="intro">Год выпуска: 2023 🕑</p>
     <p class="intro">Шоу Ли Со Джина бросает вызов уличной еде, «корейскому фаст-фуду». Если в существующей «Youn's Kitchen» представлены традиционные корейские блюда, такие как пулькоги и пибимпап, то «Seo Jin's» предлагает зрителям более лёгкое и дружелюбное меню</p>
     <p class="intro">В этом шоу снимается Тэхён. Он был младшим стажёром и выполнял в основном грязную работу: мытьё посуды + помогал на кухне с соусами и овощами</p>
 
     <div class="row" style="margin-bottom: 8px;">
-      <span class="text" style="cursor:default;">?? Тизер</span>
-      <a class="link" href="https://t.me/violent_arhive/3683" target="_blank">??</a>
+      <span class="text" style="cursor:default;">🍲 Тизер</span>
+      <a class="link" href="https://t.me/violent_arhive/3683" target="_blank">🔗</a>
     </div>
 
     <p class="section-title">Само шоу</p>
@@ -46,7 +46,7 @@
     <p class="section-title">Спин-офф</p>
     <div id="list-spinoff"></div>
 
-    <a class="footer-link" href="other-shows-2023-2024.html">Другие шоу (2023 - 2024) ??</a>
+    <a class="footer-link" href="other-shows-2023-2024.html">Другие шоу (2023 - 2024) ⬅️</a>
   </div>
 
   <script>
@@ -94,7 +94,7 @@
         });
         span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
         const link = document.createElement('a');
-        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '??';
+        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
         row.appendChild(box); row.appendChild(span); row.appendChild(link);
         listEl.appendChild(row);
       });

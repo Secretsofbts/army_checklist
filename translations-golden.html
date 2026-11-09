@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -28,10 +28,10 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="translations-songs.html">< Назад</a>
-    <h1>?? GOLDEN ??</h1>
+    <a class="back" href="translations-songs.html">← Назад</a>
+    <h1>🎵 GOLDEN 🎵</h1>
     <p class="intro">Первый сольный альбом Чонгука</p>
-    <p class="intro">Релиз альбома: 03.11.2023 ??</p>
+    <p class="intro">Релиз альбома: 03.11.2023 🕑</p>
     <p class="intro">Полный разнообразных жанров и настроений, «GOLDEN» воплощает в себе «золотые моменты» сольного исполнителя Чонгука. Он тщательно прорабатывал каждый трек, вкладывая всю душу в процесс создания своего первого сольного альбома, и сотрудничал с известными мировыми исполнителями, чтобы обеспечить высочайшее качество альбома</p>
 
     <p class="section-title">Трек-лист</p>
@@ -43,14 +43,14 @@
     </blockquote>
 
     <div class="extra">
-      <span style="flex:1;">?? Обсуждение альбома</span>
-      <a class="link" href="https://t.me/violent_arhive/4338" target="_blank">??</a>
+      <span style="flex:1;">🗨 Обсуждение альбома</span>
+      <a class="link" href="https://t.me/violent_arhive/4338" target="_blank">🔗</a>
     </div>
 
     <p class="section-title">Дополнительное к альбому</p>
     <div id="extra-list"></div>
 
-    <a class="footer-link" href="translations-songs.html">Переводы всех песен ??</a>
+    <a class="footer-link" href="translations-songs.html">Переводы всех песен ⬅️</a>
   </div>
 
   <script>
@@ -95,7 +95,7 @@
       { text: "Приключения Чонгука в поисках монет для оплаты", sub: "от spotify", link: "https://t.me/violent_arhive/4328", idSuffix: "-seven" },
       { text: "О Seven на Elvis Duran Show", link: "https://t.me/violent_arhive/4119" },
       { text: "Съёмки клипа 'Seven'", link: "https://t.me/violent_arhive/4114" },
-      { text: "Эфир после выхода Seven: \"Семь дней в неделю ??\"", link: "https://t.me/violent_arhive/4109" },
+      { text: "Эфир после выхода Seven: \"Семь дней в неделю 💜\"", link: "https://t.me/violent_arhive/4109" },
       { text: "Шучвита", sub: "после выхода Seven", link: "https://t.me/violent_arhive/4143" },
       { text: "Хореография \"Seven\"", link: "https://t.me/violent_arhive/4344" },
       { text: "Хореография \"3D\"", link: "https://t.me/violent_arhive/4345" },
@@ -135,7 +135,7 @@
         });
         span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
         const link = document.createElement('a');
-        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '??';
+        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
         row.appendChild(box); row.appendChild(span); row.appendChild(link);
         listEl.appendChild(row);
       });

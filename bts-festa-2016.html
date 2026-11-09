@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -27,8 +27,8 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="bts-festa.html">< Назад</a>
-    <h1>?? BTS FESTA 2016 ??</h1>
+    <a class="back" href="bts-festa.html">← Назад</a>
+    <h1>🎉 BTS FESTA 2016 🎉</h1>
 
     <div id="list"></div>
 
@@ -36,24 +36,24 @@
     <div id="list-bombs"></div>
 
 
-    <a class="footer-link" href="bts-festa.html">BTS FESTA ??</a>
+    <a class="footer-link" href="bts-festa.html">BTS FESTA ⬅️</a>
   </div>
 
   <script>
     const items = [
-      { text: "I Know", sub: "By RM & JK", icon: "??", links: [
+      { text: "I Know", sub: "By RM & JK", icon: "🎶", links: [
         { label: "SoundCloud", link: "https://soundcloud.com/bangtan/sothatiloveyou" },
         { label: "Перевод", link: "https://t.me/violent_arhive/1819" }
       ]},
-      { text: "Special Choreography", sub: "Baepsae", icon: "??", link: "https://t.me/violent_arhive/1820" },
-      { text: "Photo Album", sub: "3 июня", icon: "??", link: "https://www.facebook.com/media/set/?set=a.1308053172543275&type=3", noCheckbox: true },
-      { text: "3-я годовщина", sub: "Семейная фотография", icon: "??", link: "https://www.facebook.com/media/set/?set=a.1308766775805248&type=3", noCheckbox: true },
-      { text: "J-hope Dance Practice", sub: "for 2015 Begins Concert", icon: "??", link: "https://t.me/violent_arhive/1821" },
-      { text: "Эпизод \"Настоящая семейная фотосессия\"", icon: "??", link: "https://t.me/violent_arhive/1822" },
-      { text: "\"3 года BTS ??\"", sub: "Прямой эфир", icon: "??", link: "https://t.me/violent_arhive/934" },
-      { text: "BHC Radio FM 06.13", sub: "3rd BTS birthday", icon: "??", link: "https://t.me/violent_arhive/1797" },
-      { text: "Happy BTS Day Party", icon: "??", link: "https://t.me/violent_arhive/1834" },
-      { text: "Young Forever", sub: "Unplugged Ver.", icon: "??", links: [
+      { text: "Special Choreography", sub: "Baepsae", icon: "🕺", link: "https://t.me/violent_arhive/1820" },
+      { text: "Photo Album", sub: "3 июня", icon: "📷", link: "https://www.facebook.com/media/set/?set=a.1308053172543275&type=3", noCheckbox: true },
+      { text: "3-я годовщина", sub: "Семейная фотография", icon: "📷", link: "https://www.facebook.com/media/set/?set=a.1308766775805248&type=3", noCheckbox: true },
+      { text: "J-hope Dance Practice", sub: "for 2015 Begins Concert", icon: "🕺", link: "https://t.me/violent_arhive/1821" },
+      { text: "Эпизод \"Настоящая семейная фотосессия\"", icon: "🎥", link: "https://t.me/violent_arhive/1822" },
+      { text: "\"3 года BTS 🎉\"", sub: "Прямой эфир", icon: "🎂", link: "https://t.me/violent_arhive/934" },
+      { text: "BHC Radio FM 06.13", sub: "3rd BTS birthday", icon: "🎙", link: "https://t.me/violent_arhive/1797" },
+      { text: "Happy BTS Day Party", icon: "✌️", link: "https://t.me/violent_arhive/1834" },
+      { text: "Young Forever", sub: "Unplugged Ver.", icon: "🎶", links: [
         { label: "SoundCloud", link: "https://soundcloud.com/bangtan/youngforeverfor0613" },
         { label: "Перевод", link: "https://t.me/violent_arhive/1823" }
       ]}
@@ -98,7 +98,7 @@
         icon.textContent = item.icon || iconOverride || '';
         const link = document.createElement('span');
         link.className = 'link';
-        link.textContent = '??';
+        link.textContent = '🔗';
         a.appendChild(spacer);
         a.appendChild(span);
         if (icon.textContent) a.appendChild(icon);
@@ -167,7 +167,7 @@
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
-        link.textContent = '??';
+        link.textContent = '🔗';
         row.appendChild(link);
       }
 
@@ -178,7 +178,7 @@
     items.forEach((item) => renderItem(listEl, item));
 
     const bombsListEl = document.getElementById('list-bombs');
-    bombItems.forEach((item) => renderItem(bombsListEl, item, '??'));
+    bombItems.forEach((item) => renderItem(bombsListEl, item, '💣'));
 
     function updateProgress() {
       const all = document.querySelectorAll('.row input[type="checkbox"]:not([disabled])');

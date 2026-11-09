@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -76,17 +76,17 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="index.html">< Назад</a>
+    <a class="back" href="index.html">← Назад</a>
     <div class="list">
             <a class="card" href="translations-songs.html" style="text-decoration:none; color:inherit;">
-        <div class="icon">??</div>
+        <div class="icon">🎶</div>
         <div class="text">
           <div class="name">Переводы всех песен</div>
           <div class="desc"></div>
         </div>
       </a>
            <a class="card" href="fm-0613.html" style="text-decoration:none; color:inherit;">
-        <div class="icon">??</div>
+        <div class="icon">🔈</div>
         <div class="text">
           <div class="name">FM 06.13</div>
           <div class="desc">рубрика Юнги + важные события</div>
@@ -94,7 +94,7 @@
         <span class="badge" id="badge-fm" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
            <a class="card" href="mcountdown.html" style="text-decoration:none; color:inherit;">
-        <div class="icon">??</div>
+        <div class="icon">🎵</div>
         <div class="text">
           <div class="name">M!Countdown</div>
           <div class="desc">выступления, победы</div>
@@ -102,7 +102,7 @@
         <span class="badge" id="badge-mcountdown" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
       <a class="card" href="sleepy-interview.html" style="text-decoration:none; color:inherit;">
-        <div class="icon">??</div>
+        <div class="icon">💤</div>
         <div class="text">
           <div class="name">Сонное интервью</div>
           <div class="desc"></div>
@@ -110,7 +110,7 @@
             <span class="badge" id="badge-sleepy" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
             <a class="card" href="learn-korean.html" style="text-decoration:none; color:inherit;">
-        <div class="icon">????</div>
+        <div class="icon">🇰🇷</div>
         <div class="text">
           <div class="name">Learn Korean with BTS</div>
           <div class="desc"></div>
@@ -118,7 +118,7 @@
         <span class="badge" id="badge-korean" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
             <a class="card" href="halloween.html" style="text-decoration:none; color:inherit;">
-        <div class="icon">??</div>
+        <div class="icon">🎃</div>
         <div class="text">
           <div class="name">Halloween</div>
           <div class="desc"></div>
@@ -126,7 +126,7 @@
         <span class="badge" id="badge-halloween" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
             <a class="card" href="hwarang.html" style="text-decoration:none; color:inherit;">
-        <div class="icon">??</div>
+        <div class="icon">🔵</div>
         <div class="text">
           <div class="name">Отряд Хваран</div>
           <div class="desc">сериал с Тэхёном</div>
@@ -134,7 +134,7 @@
         <span class="badge" id="badge-hwarang" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
             <a class="card" href="beginns-youth.html" style="text-decoration:none; color:inherit;">
-        <div class="icon">??</div>
+        <div class="icon">🪐</div>
         <div class="text">
           <div class="name">Beginns ≠ Youth</div>
           <div class="desc">дорама про вселенную BTS</div>
@@ -142,7 +142,7 @@
         <span class="badge" id="badge-beginns" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
       <a class="card" href="td-stories.html" style="text-decoration:none; color:inherit;">
-        <div class="icon">??</div>
+        <div class="icon">🗣</div>
         <div class="text">
           <div class="name">Истории отдела T&D</div>
           <div class="desc"></div>
@@ -150,7 +150,7 @@
         <span class="badge" id="badge-td" style="margin-left:auto; font-size:12px; color:#999;"></span>
       </a>
       <a class="card" href="interviews.html" style="text-decoration:none; color:inherit;">
-        <div class="icon">??</div>
+        <div class="icon">🎙</div>
         <div class="text">
           <div class="name">Интервью</div>
           <div class="desc">тут ничего нет еще</div>
@@ -170,7 +170,7 @@
       const total = known !== null ? known : (d ? d.total : 0);
       if (total === 0) return;
       if (checked === total) {
-        el.textContent = '?';
+        el.textContent = '✅';
         el.style.color = '#2e9e5b';
         const card = el.closest('.card');
         if (card) card.style.background = '#e3f7e9';
@@ -208,7 +208,7 @@
       });
       if (total === 0) { el.textContent = ''; return; }
       if (allKnown && checked === total) {
-        el.textContent = '?';
+        el.textContent = '✅';
         el.style.color = '#2e9e5b';
         const card = el.closest('.card');
         if (card) card.style.background = '#e3f7e9';

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -28,8 +28,8 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="documentaries.html">< Назад</a>
-    <h1>?? HOPE ON THE STREET ??</h1>
+    <a class="back" href="documentaries.html">← Назад</a>
+    <h1>🕺 HOPE ON THE STREET 🕺</h1>
     <p class="intro">Год выпуска: 2024</p>
     <p class="intro">Во время съёмок этого сериала Хосок посетил Осаку, Париж, Нью-Йорк и свой родной город Кванджу, чтобы пообщаться и потанцевать с уличными танцорами. Хоби рассказывает о том, что решил обратиться к своим корням. Вспомнить, кто он. Ведь всё началось именно с танцев</p>
        <blockquote style="margin: 16px 0; padding: 14px 16px; background: #f7f7fa; border-radius: 12px; font-family: Georgia, 'Times New Roman', serif; font-style: italic; font-size: 13px; color: #333; line-height: 1.5;">
@@ -38,8 +38,8 @@
     </blockquote>
 
     <div class="row">
-      <span class="text" style="cursor:default;">?? Главный трейлер</span>
-      <a class="link" href="https://t.me/violent_arhive/4546" target="_blank">??</a>
+      <span class="text" style="cursor:default;">🎥 Главный трейлер</span>
+      <a class="link" href="https://t.me/violent_arhive/4546" target="_blank">🔗</a>
     </div>
 
     <p class="section-title">Дополнительный материал</p>
@@ -49,16 +49,16 @@
     <p class="section-title">Сериал</p>
     <div id="list-episodes"></div>
 
-    <a class="footer-link" href="translations-hots.html">Альбом HOTS Vol.1 ??</a>
-    <a class="footer-link" href="documentaries.html">Документальные проекты ??</a>
+    <a class="footer-link" href="translations-hots.html">Альбом HOTS Vol.1 ⬅️</a>
+    <a class="footer-link" href="documentaries.html">Документальные проекты ⬅️</a>
   </div>
 
   <script>
         const extraItems = [
-      { text: "Мини-интервью", hearts: "??", link: "https://t.me/violent_arhive/4545" },
-      { text: "Представление танцоров", hearts: "??", link: "https://t.me/violent_arhive/4558" },
-      { text: "Закулисье записи альбома", hearts: "??", link: "https://t.me/violent_arhive/4561" },
-      { text: "Съёмки на постер", hearts: "??", link: "https://t.me/violent_arhive/4551" }
+      { text: "Мини-интервью", hearts: "🗨", link: "https://t.me/violent_arhive/4545" },
+      { text: "Представление танцоров", hearts: "🤝", link: "https://t.me/violent_arhive/4558" },
+      { text: "Закулисье записи альбома", hearts: "🎥", link: "https://t.me/violent_arhive/4561" },
+      { text: "Съёмки на постер", hearts: "📷", link: "https://t.me/violent_arhive/4551" }
     ];
 
     const episodeItems = [
@@ -93,7 +93,7 @@
         hearts.style.cssText = 'font-size:13px; flex-shrink:0;';
         hearts.textContent = item.hearts || '';
         const link = document.createElement('a');
-        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '??';
+        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
         row.appendChild(box); row.appendChild(span); row.appendChild(hearts); row.appendChild(link);
         listEl.appendChild(row);
       });

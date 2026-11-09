@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -27,8 +27,8 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="documentaries.html">< Назад</a>
-    <h1>?? Bring The Soul ??</h1>
+    <a class="back" href="documentaries.html">← Назад</a>
+    <h1>🎬 Bring The Soul 🎬</h1>
     <p class="intro">Год выпуска: 2019</p>
     <p class="intro">Документальный сериал, в котором показали эпизоды турне LOVE YOURSELF. В сериал вошли новые эпизоды и закулисные моменты, которые не попали в фильм Bring The Soul</p>
     <p class="intro">Чимин: «Именно они привели меня на вершину и сделали меня таким, какой я сейчас. Поэтому они – моё всё. Они – всё, что у меня есть»</p>
@@ -39,7 +39,7 @@
     <p class="section-title">Фильм</p>
     <div id="list-film"></div>
 
-    <a class="footer-link" href="documentaries.html">Документальные проекты ??</a>
+    <a class="footer-link" href="documentaries.html">Документальные проекты ⬅️</a>
   </div>
 
   <script>
@@ -83,7 +83,7 @@
         });
         span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
         const link = document.createElement('a');
-        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '??';
+        link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
         row.appendChild(box); row.appendChild(span); row.appendChild(link);
         listEl.appendChild(row);
       });

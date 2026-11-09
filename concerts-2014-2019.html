@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -123,11 +123,11 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="concerts.html">< Назад</a>
+    <a class="back" href="concerts.html">← Назад</a>
     <h1>КОНЦЕРТЫ 2014-2019 ГОД</h1>
     <p class="intro">Старые концерты ребят</p>
     <div id="list"></div>
-    <a class="footer-link" href="concerts.html">Все концерты BTS ??</a>
+    <a class="footer-link" href="concerts.html">Все концерты BTS ⬅️</a>
   </div>
 
   <script>
@@ -232,7 +232,7 @@
           link.className = 'link';
           link.href = l.link;
           link.target = '_blank';
-          link.textContent = '??';
+          link.textContent = '🔗';
           row.appendChild(label);
           row.appendChild(link);
         });
@@ -241,7 +241,7 @@
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
-        link.textContent = '??';
+        link.textContent = '🔗';
         row.appendChild(link);
       }
 
@@ -309,7 +309,7 @@
           } else {
             const arrow = document.createElement('span');
             arrow.className = 'arrow';
-            arrow.textContent = '?';
+            arrow.textContent = '↗';
             a.appendChild(arrow);
           }
           listEl.appendChild(a);

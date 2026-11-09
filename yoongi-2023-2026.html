@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -65,20 +65,20 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="yoongi.html">< Назад</a>
-    <h1>Юнги: 2023 – 2026 ??</h1>
+    <a class="back" href="yoongi.html">← Назад</a>
+    <h1>Юнги: 2023 – 2026 🖤</h1>
     <div id="list"></div>
-    <a class="footer-link" href="yoongi.html">Все эфиры Юнги ??</a>
+    <a class="footer-link" href="yoongi.html">Все эфиры Юнги ⬅️</a>
   </div>
 
   <script>
         const data = [
       { year: "2023", items: [
         { text: "День святого Валентина", sub: "от 14.02", link: "https://t.me/violent_arhive/3694" },
-        { text: "Мой день рождения ??", sub: "от 09.03", link: "https://t.me/violent_arhive/3768" },
-        { text: "Радиошоу ??", sub: "от 07.04", link: "https://t.me/violent_arhive/3943" },
+        { text: "Мой день рождения 🎂", sub: "от 09.03", link: "https://t.me/violent_arhive/3768" },
+        { text: "Радиошоу 🎙", sub: "от 07.04", link: "https://t.me/violent_arhive/3943" },
         { text: "SUGA 'D-DAY' Live", sub: "от 25.04", link: "https://t.me/violent_arhive/3987" },
-        { text: "Первый город — завершено", sub: "от 30.04 с ??", link: "https://t.me/violent_arhive/3990" },
+        { text: "Первый город — завершено", sub: "от 30.04 с 💛", link: "https://t.me/violent_arhive/3990" },
         { text: "Чикаго, конец!!!", sub: "от 07.05", link: "https://t.me/violent_arhive/4007" },
         { text: "Давайте говорить друг другу не 'пока', а 'привет'", sub: "от 18.05", link: "https://t.me/violent_arhive/4018" },
         { text: "Последняя ночь в Бангкоке", sub: "от 11.06", link: "https://t.me/violent_arhive/4074" },
@@ -91,7 +91,7 @@
         { text: "Ну и холодрыга", sub: "от 28.12", link: "https://t.me/violent_arhive/5371" }
       ]},
       { year: "2026", items: [
-        { text: "С ДР ШУГА ??", sub: "от 09.03", link: "https://t.me/violent_arhive/5398" },
+        { text: "С ДР ШУГА 🎂", sub: "от 09.03", link: "https://t.me/violent_arhive/5398" },
         { text: "Шестьодинтри", sub: "от 13.06", link: "https://t.me/violent_arhive/5531" },
         { text: "Приветпривет", sub: "от 16.08", link: "https://t.me/violent_arhive/5644" }
       ]}
@@ -107,7 +107,7 @@
       if (block.items.length === 0) {
         const empty = document.createElement('div');
         empty.className = 'empty';
-        empty.textContent = 'Служба в армии ???';
+        empty.textContent = 'Служба в армии 🎖️';
         listEl.appendChild(empty);
         return;
       }
@@ -149,7 +149,7 @@
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
-        link.textContent = '??';
+        link.textContent = '🔗';
 
         row.appendChild(box);
         row.appendChild(span);

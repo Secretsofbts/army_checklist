@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -39,8 +39,8 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="misc.html">< Назад</a>
-    <h1>?? HALLOWEEN ??</h1>
+    <a class="back" href="misc.html">← Назад</a>
+    <h1>🎃 HALLOWEEN 🎃</h1>
     <p class="intro">Хэллоуин — весёлый и мистический праздник, отмечают во многих странах мира в ночь с 31 октября на 1 ноября</p>
     <p class="intro">Вот вам небольшая подборка бантан, связанная с этим праздником</p>
 
@@ -52,7 +52,7 @@
     </div>
 
 
-    <a class="footer-link" href="misc.html">Всякое другое ??</a>
+    <a class="footer-link" href="misc.html">Всякое другое ⬅️</a>
   </div>
 
    <script>
@@ -107,7 +107,7 @@
       {
         year: "2022",
         items: [
-          { text: "Пост в inst от Хоси", link: "https://t.me/secretsofbts/31576", noCheckbox: true, icon: "??" }
+          { text: "Пост в inst от Хоси", link: "https://t.me/secretsofbts/31576", noCheckbox: true, icon: "🔗" }
         ]
       }
     ];
@@ -128,7 +128,7 @@
       span.textContent = item.text;
       const link = document.createElement('span');
       link.className = 'link';
-      link.textContent = item.icon || '?? ??';
+      link.textContent = item.icon || '📷 🔗';
       a.appendChild(spacer);
       a.appendChild(span);
       a.appendChild(link);
@@ -189,7 +189,7 @@
         link.className = 'link';
         link.href = item.link;
         link.target = '_blank';
-        link.textContent = '??';
+        link.textContent = '🔗';
 
         row.appendChild(box);
         row.appendChild(span);

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -24,15 +24,15 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="other-shows.html">< Назад</a>
-    <h1>?? Spotipoly с Чонгуком ??</h1>
+    <a class="back" href="other-shows.html">← Назад</a>
+    <h1>🎲 Spotipoly с Чонгуком 🎲</h1>
     <div id="list"></div>
-    <a class="footer-link" href="other-shows-2023-2024.html">Другие шоу (2023 - 2024) ??</a>
+    <a class="footer-link" href="other-shows-2023-2024.html">Другие шоу (2023 - 2024) ⬅️</a>
   </div>
 
   <script>
     const items = [
-      { text: "?? Spotipoly", link: "https://t.me/violent_arhive/4327" }
+      { text: "💜 Spotipoly", link: "https://t.me/violent_arhive/4327" }
     ];
 
     const listEl = document.getElementById('list');
@@ -54,7 +54,7 @@
       });
       span.addEventListener('click', () => { box.checked = !box.checked; box.dispatchEvent(new Event('change')); });
       const link = document.createElement('a');
-      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '??';
+      link.className = 'link'; link.href = item.link; link.target = '_blank'; link.textContent = '🔗';
       row.appendChild(box); row.appendChild(span); row.appendChild(link);
       listEl.appendChild(row);
     });

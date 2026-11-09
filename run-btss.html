@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -64,8 +64,8 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="run-bts.html">< Назад</a>
-    <h1>?? RUN BTS ??</h1>
+    <a class="back" href="run-bts.html">← Назад</a>
+    <h1>🏃 RUN BTS 🏃</h1>
     <p class="note">1 видео — это сам выпуск<br>
       2 видео — закадровые<br>
       Там, где нет закадровых, значит их либо не существует, либо никто не перевёл<br>
@@ -79,7 +79,7 @@
       <a class="card" href="run-bts-136-155.html">С 136 по 155 эпизод <span class="badge" id="badge-136-155" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
       <a class="card" href="run-bts-156-165.html">С 156 по 165 эпизод (спецвыпуски) <span class="badge" id="badge-156-165" style="margin-left:auto; font-size:12px; color:#999;"></span></a>
     </div>
-    <a class="footer-link" href="run-bts.html">Пост всех Run BTS ??</a>
+    <a class="footer-link" href="run-bts.html">Пост всех Run BTS ⬅️</a>
   </div>
 
   <script>
@@ -91,7 +91,7 @@
       var data = { checked: rawData ? rawData.checked : 0, total: known !== null ? known : (rawData ? rawData.total : 0) };
       if (data.total === 0) { el.textContent = ''; return; }
       if (data.checked === data.total) {
-        el.textContent = '?';
+        el.textContent = '✅';
         el.style.color = '#2e9e5b';
         el.closest('.card').classList.add('row-done');
       } else {
