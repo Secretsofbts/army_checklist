@@ -221,8 +221,11 @@ async function captureReferralFromStart(friendId, payload) {
   if (!m) return { saved: false, reason: 'no-payload' };
   const referrerId = String(m[1]);
   const friendKey = String(friendId || '');
-  if (!friendKey || !referrerId || referrerId === friendKey) {
-    return { saved: false, reason: 'self-or-empty' };
+  if (!friendKey || !referrerId) {
+    return { saved: false, reason: 'empty' };
+  }
+  if (referrerId === friendKey) {
+    return { saved: false, reason: 'self' };
   }
   // Бонус только для абсолютно нового id — кто уже пользовался ботом/чек-листом, не считается.
   if (await isExistingBotUser(friendKey)) {
@@ -841,6 +844,8 @@ app.post('/admin/grant', async function (req, res) {
     if (!forever) {
       const thanks = await sendPaidThanksToUser(targetId, entry.paidDays || days || 30);
       if (!thanks.sent) console.error('paid thanks failed', targetId, thanks);
+      // Пауза, чтобы другу сначала дошла «оплата», и только потом «+30 бонус»
+      await new Promise(function (resolve) { setTimeout(resolve, 800); });
       try {
         const bonus = await applyReferralBonusOnFirstPaid(targetId);
         if (bonus && bonus.applied) console.log('referral bonus applied', targetId, bonus.referrerId);
@@ -990,6 +995,8 @@ const REFERRAL_INVITE_PHOTO = path.join(__dirname, 'referral-invite.jpg');
 const REFERRAL_NOT_NEW_PHOTO = path.join(__dirname, 'referral-not-new.jpg');
 const REFERRAL_BONUS_REFERRER_PHOTO = path.join(__dirname, 'referral-bonus-referrer.jpg');
 const REFERRAL_BONUS_FRIEND_PHOTO = path.join(__dirname, 'referral-bonus-friend.jpg');
+const REFERRAL_SELF_PHOTO = path.join(__dirname, 'referral-self.jpg');
+const REFERRAL_SELF_TEXT = 'Хитрюжка, на себя нельзя 😁';
 const REFERRAL_INVITE_TEXT =
   'Ваш друг пригласил вас в чек-лист по архиву BTS 🥰\n\n' +
   'Для начала использования откройте приложение кнопкой снизу «For ARMY 💜» — у вас начнётся пробный период\n\n' +
@@ -1497,6 +1504,19 @@ async function handleStartCommand(msg) {
             console.error('referral not-new text failed', fromId, textErr);
           }
         }
+      } else if (captured && captured.reason === 'self') {
+        try {
+          await telegramSendPhoto(msg.chat.id, REFERRAL_SELF_TEXT, REFERRAL_SELF_PHOTO);
+          skipDefaultStart = true;
+        } catch (selfErr) {
+          console.error('referral self photo failed', fromId, selfErr);
+          try {
+            await telegramSendMessage(msg.chat.id, REFERRAL_SELF_TEXT, null);
+            skipDefaultStart = true;
+          } catch (selfTextErr) {
+            console.error('referral self text failed', fromId, selfTextErr);
+          }
+        }
       }
     } catch (refErr) {
       console.error('referral capture failed', fromId, refErr);
@@ -1687,6 +1707,23 @@ async function sendReferralBonusFriendPreviewToTest() {
   }
 }
 
+async function sendReferralSelfPreviewToTest() {
+  const metaRef = db.ref('bot_meta/referralSelfPreviewV1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('referral self preview already sent', metaSnap.val());
+    return;
+  }
+  const testId = FORCE_TEST_IDS[0] || '2055929706';
+  try {
+    await telegramSendPhoto(testId, REFERRAL_SELF_TEXT, REFERRAL_SELF_PHOTO);
+    await metaRef.set({ at: Date.now(), to: testId });
+    console.log('referral self preview sent to', testId);
+  } catch (e) {
+    console.error('referral self preview failed', e);
+  }
+}
+
 app.listen(PORT, function () {
   console.log('army-api listening on ' + PORT);
   scheduleSubscriptionReminders();
@@ -1723,6 +1760,11 @@ app.listen(PORT, function () {
       console.error('referral bonus friend preview boot failed', e);
     });
   }, 11000);
+  setTimeout(function () {
+    sendReferralSelfPreviewToTest().catch(function (e) {
+      console.error('referral self preview boot failed', e);
+    });
+  }, 13000);
   // Извинение только бессрочным (им случайно ушло про 5 дней)
   setTimeout(function () {
     broadcastForeverOops().catch(function (e) {
