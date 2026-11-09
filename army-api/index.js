@@ -1314,12 +1314,16 @@ async function handleSupportFlow(msg) {
 }
 
 async function telegramSendPhoto(chatId, caption, photoPath) {
-  const buf = fs.readFileSync(photoPath || PAID_THANKS_PHOTO);
+  const filePath = photoPath || PAID_THANKS_PHOTO;
+  if (!fs.existsSync(filePath)) {
+    throw new Error('telegram-photo: file missing ' + filePath);
+  }
+  const buf = fs.readFileSync(filePath);
   const form = new FormData();
   form.append('chat_id', String(chatId));
   form.append('caption', String(caption || ''));
   form.append('disable_notification', 'false');
-  form.append('photo', new Blob([buf], { type: 'image/jpeg' }), 'sub-extended.jpg');
+  form.append('photo', new Blob([buf], { type: 'image/jpeg' }), path.basename(filePath) || 'photo.jpg');
   const url = 'https://api.telegram.org/bot' + BOT_TOKEN + '/sendPhoto';
   const res = await fetch(url, { method: 'POST', body: form });
   const data = await res.json().catch(function () { return null; });
@@ -1787,12 +1791,21 @@ async function sendExpiredRemindPreviewToTest() {
   }
 }
 
+process.on('uncaughtException', function (err) {
+  console.error('uncaughtException', err && err.stack ? err.stack : err);
+});
+process.on('unhandledRejection', function (err) {
+  console.error('unhandledRejection', err && err.stack ? err.stack : err);
+});
+
 app.listen(PORT, function () {
   console.log('army-api listening on ' + PORT);
   scheduleSubscriptionReminders();
   ensureTelegramWebhook();
   ensureBotCommands();
-  applyForceTestAccountOnBoot();
+  applyForceTestAccountOnBoot().catch(function (e) {
+    console.error('force test account boot failed', e);
+  });
   reconcileUserCount().catch(function (e) {
     console.error('user_count reconcile failed', e);
   });
@@ -1802,42 +1815,7 @@ app.listen(PORT, function () {
   extendLegacyTrialsPlusOneDay().catch(function (e) {
     console.error('legacy trial +1 day failed', e);
   });
-  // Превью реферальных сообщений на тестовый аккаунт (по одному разу каждое)
-  setTimeout(function () {
-    sendReferralInvitePreviewToTest().catch(function (e) {
-      console.error('referral invite preview boot failed', e);
-    });
-  }, 5000);
-  setTimeout(function () {
-    sendReferralNotNewPreviewToTest().catch(function (e) {
-      console.error('referral not-new preview boot failed', e);
-    });
-  }, 7000);
-  setTimeout(function () {
-    sendReferralBonusReferrerPreviewToTest().catch(function (e) {
-      console.error('referral bonus referrer preview boot failed', e);
-    });
-  }, 9000);
-  setTimeout(function () {
-    sendReferralBonusFriendPreviewToTest().catch(function (e) {
-      console.error('referral bonus friend preview boot failed', e);
-    });
-  }, 11000);
-  setTimeout(function () {
-    sendReferralSelfPreviewToTest().catch(function (e) {
-      console.error('referral self preview boot failed', e);
-    });
-  }, 13000);
-  setTimeout(function () {
-    sendOnedayRemindPreviewToTest().catch(function (e) {
-      console.error('oneday remind preview boot failed', e);
-    });
-  }, 15000);
-  setTimeout(function () {
-    sendExpiredRemindPreviewToTest().catch(function (e) {
-      console.error('expired remind preview boot failed', e);
-    });
-  }, 17000);
+  // Превью в бот при старте отключены — не мешают деплою. Нужно снова — скажите.
   // Извинение только бессрочным (им случайно ушло про 5 дней)
   setTimeout(function () {
     broadcastForeverOops().catch(function (e) {
