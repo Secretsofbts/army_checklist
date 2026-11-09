@@ -1221,46 +1221,68 @@ async function deliverSupportMessage(fromUser, questionText, options) {
 }
 
 // Админ reply на тикет: /stars 30  или  /stars 100 30
-const STARS_DEFAULT_BY_DAYS = {
+// Обычные цены Stars. На акции (−50% как в рублях) 30 дней = 50 вместо 100.
+const STARS_FULL_BY_DAYS = {
   1: 1,
   30: 100,
   60: 180,
   90: 250,
   180: 450
 };
+const STARS_PROMO_BY_DAYS = {
+  1: 1,
+  30: 50,
+  60: 90,
+  90: 125,
+  180: 225
+};
+
+function starsPriceForDays(days, now) {
+  const d = Math.max(1, parseInt(days, 10) || 30);
+  const price = pricingInfo(now || Date.now());
+  const table = price.promo ? STARS_PROMO_BY_DAYS : STARS_FULL_BY_DAYS;
+  if (table[d]) return { stars: table[d], days: d, promo: !!price.promo };
+  return { stars: Math.max(1, d), days: d, promo: !!price.promo };
+}
 
 function parseStarsAdminCommand(text) {
   const t = String(text || '').trim();
   const m = t.match(/^\/stars(?:@\w+)?(?:\s+(\d+))?(?:\s+(\d+))?$/i);
   if (!m) return null;
+  const price = pricingInfo(Date.now());
   if (!m[1]) {
+    const p30 = starsPriceForDays(30);
     return {
       help: true,
       text:
         'Как выставить счёт Stars (reply на сообщение человека):\n' +
-        '• /stars 30 — 30 дней по цене по умолчанию (100 Stars)\n' +
-        '• /stars 100 30 — 100 Stars за 30 дней\n' +
-        '• /stars 250 90 — 250 Stars за 90 дней\n\n' +
-        'Цены по умолчанию: 30→100, 60→180, 90→250, 180→450'
+        '• /stars 30 — 30 дней по текущей цене (' + p30.stars + ' Stars' +
+        (p30.promo ? ', акция −50%' : '') + ')\n' +
+        '• /stars 100 30 — явно 100 Stars за 30 дней\n' +
+        '• /stars 50 30 — явно 50 Stars за 30 дней\n\n' +
+        (price.promo
+          ? 'Сейчас АКЦИЯ: 30→50, 60→90, 90→125, 180→225 Stars\nОбычно: 30→100, 60→180, 90→250, 180→450'
+          : 'Сейчас обычные цены: 30→100, 60→180, 90→250, 180→450\nНа акции: 30→50, 60→90, 90→125, 180→225')
     };
   }
   if (m[2]) {
     return {
       stars: Math.max(1, parseInt(m[1], 10) || 1),
-      days: Math.max(1, parseInt(m[2], 10) || 30)
+      days: Math.max(1, parseInt(m[2], 10) || 30),
+      promo: false
     };
   }
-  const days = Math.max(1, parseInt(m[1], 10) || 30);
-  const stars = STARS_DEFAULT_BY_DAYS[days] || Math.max(1, days);
-  return { stars: stars, days: days };
+  const priced = starsPriceForDays(m[1]);
+  return { stars: priced.stars, days: priced.days, promo: priced.promo };
 }
 
 async function sendStarsInvoiceToUser(userId, stars, days, meta) {
   const payload = ('stars:' + days + ':' + userId + ':' + Date.now()).slice(0, 128);
+  const promoMark = meta && meta.promo ? ' (акция −50%)' : '';
   await telegramSendMessage(
     userId,
     'Вам выставили счёт на оплату 💜\n' +
-      stars + ' Stars = ' + days + ' ' + pluralDaysRu(days) + ' доступа.\n' +
+      stars + ' Stars = ' + days + ' ' + pluralDaysRu(days) + ' доступа' + promoMark + '.\n' +
       'Нажмите Pay на сообщении ниже.',
     null
   );
@@ -1310,12 +1332,14 @@ async function handleAdminSupportReply(msg) {
     }
     try {
       await sendStarsInvoiceToUser(userId, starsCmd.stars, starsCmd.days, {
-        byAdmin: msg.from.id
+        byAdmin: msg.from.id,
+        promo: !!starsCmd.promo
       });
       await telegramSendMessage(
         msg.chat.id,
         '✓ Счёт Stars отправлен пользователю ' + userId + ':\n' +
-          starsCmd.stars + ' Stars → ' + starsCmd.days + ' ' + pluralDaysRu(starsCmd.days),
+          starsCmd.stars + ' Stars → ' + starsCmd.days + ' ' + pluralDaysRu(starsCmd.days) +
+          (starsCmd.promo ? ' (акция −50%)' : ''),
         null
       );
     } catch (e) {
