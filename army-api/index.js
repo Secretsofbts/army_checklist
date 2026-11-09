@@ -205,6 +205,17 @@ function referralRef(friendId) {
 
 const REFERRAL_BONUS_DAYS = 30;
 
+async function isExistingBotUser(friendId) {
+  const uid = String(friendId || '');
+  if (!uid) return true;
+  const [regSnap, subSnap, supportSnap] = await Promise.all([
+    db.ref('user_registry/' + uid).get(),
+    db.ref('subscriptions/' + uid).get(),
+    db.ref('support_sessions/' + uid).get()
+  ]);
+  return regSnap.exists() || subSnap.exists() || supportSnap.exists();
+}
+
 async function captureReferralFromStart(friendId, payload) {
   const m = String(payload || '').trim().match(/^ref_(\d+)$/i);
   if (!m) return { saved: false, reason: 'no-payload' };
@@ -212,6 +223,10 @@ async function captureReferralFromStart(friendId, payload) {
   const friendKey = String(friendId || '');
   if (!friendKey || !referrerId || referrerId === friendKey) {
     return { saved: false, reason: 'self-or-empty' };
+  }
+  // Бонус только для абсолютно нового id — кто уже пользовался ботом/чек-листом, не считается.
+  if (await isExistingBotUser(friendKey)) {
+    return { saved: false, reason: 'not-new' };
   }
   const ref = referralRef(friendKey);
   const snap = await ref.get();
