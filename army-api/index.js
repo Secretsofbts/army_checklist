@@ -1220,6 +1220,72 @@ async function deliverSupportMessage(fromUser, questionText, options) {
   });
 }
 
+// Админ reply на тикет: /stars 30  или  /stars 100 30
+const STARS_DEFAULT_BY_DAYS = {
+  1: 1,
+  30: 100,
+  60: 180,
+  90: 250,
+  180: 450
+};
+
+function parseStarsAdminCommand(text) {
+  const t = String(text || '').trim();
+  const m = t.match(/^\/stars(?:@\w+)?(?:\s+(\d+))?(?:\s+(\d+))?$/i);
+  if (!m) return null;
+  if (!m[1]) {
+    return {
+      help: true,
+      text:
+        'Как выставить счёт Stars (reply на сообщение человека):\n' +
+        '• /stars 30 — 30 дней по цене по умолчанию (100 Stars)\n' +
+        '• /stars 100 30 — 100 Stars за 30 дней\n' +
+        '• /stars 250 90 — 250 Stars за 90 дней\n\n' +
+        'Цены по умолчанию: 30→100, 60→180, 90→250, 180→450'
+    };
+  }
+  if (m[2]) {
+    return {
+      stars: Math.max(1, parseInt(m[1], 10) || 1),
+      days: Math.max(1, parseInt(m[2], 10) || 30)
+    };
+  }
+  const days = Math.max(1, parseInt(m[1], 10) || 30);
+  const stars = STARS_DEFAULT_BY_DAYS[days] || Math.max(1, days);
+  return { stars: stars, days: days };
+}
+
+async function sendStarsInvoiceToUser(userId, stars, days, meta) {
+  const payload = ('stars:' + days + ':' + userId + ':' + Date.now()).slice(0, 128);
+  await telegramSendMessage(
+    userId,
+    'Вам выставили счёт на оплату Stars 💜\n' +
+      stars + ' Stars = ' + days + ' ' + pluralDaysRu(days) + ' доступа.\n' +
+      'Нажмите Pay на сообщении ниже.',
+    null
+  );
+  await telegramSendStarsInvoice(userId, {
+    title: days + ' ' + pluralDaysRu(days) + ' доступа',
+    description: 'Подписка на чек-лист по архиву BTS',
+    label: days + ' ' + pluralDaysRu(days),
+    stars: stars,
+    days: days,
+    payload: payload
+  });
+  try {
+    await db.ref('stars_invoices/' + userId + '/' + Date.now()).set({
+      stars: stars,
+      days: days,
+      payload: payload,
+      at: Date.now(),
+      byAdmin: meta && meta.byAdmin ? String(meta.byAdmin) : null
+    });
+  } catch (e) {
+    console.error('stars invoice log failed', e);
+  }
+  return { payload: payload, stars: stars, days: days };
+}
+
 async function handleAdminSupportReply(msg) {
   if (!msg || !msg.from || !isAdminTelegramId(msg.from.id)) return false;
   const reply = msg.reply_to_message;
@@ -1233,6 +1299,33 @@ async function handleAdminSupportReply(msg) {
   let answer = String(msg.text || msg.caption || '').trim();
   if (!answer) {
     await telegramSendMessage(msg.chat.id, 'Ответ пока только текстом — напишите текст reply-ем.', null);
+    return true;
+  }
+
+  const starsCmd = parseStarsAdminCommand(answer);
+  if (starsCmd) {
+    if (starsCmd.help) {
+      await telegramSendMessage(msg.chat.id, starsCmd.text, null);
+      return true;
+    }
+    try {
+      await sendStarsInvoiceToUser(userId, starsCmd.stars, starsCmd.days, {
+        byAdmin: msg.from.id
+      });
+      await telegramSendMessage(
+        msg.chat.id,
+        '✓ Счёт Stars отправлен пользователю ' + userId + ':\n' +
+          starsCmd.stars + ' Stars → ' + starsCmd.days + ' ' + pluralDaysRu(starsCmd.days),
+        null
+      );
+    } catch (e) {
+      console.error('admin stars invoice failed', userId, e);
+      await telegramSendMessage(
+        msg.chat.id,
+        'Не удалось отправить счёт: ' + String(e.message || e),
+        null
+      );
+    }
     return true;
   }
 
