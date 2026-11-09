@@ -17,8 +17,9 @@ const FOREVER_IDS = String(process.env.FOREVER_TELEGRAM_IDS || '163381553,591051
   .map(function (s) { return s.trim(); })
   .filter(Boolean);
 // Тестовый аккаунт (2-я страница): режим превью.
-// legacy = как у всех старых (общий 5-дневный срок); expired / days3 / new10 / paid1; off = как обычный.
-const FORCE_TEST_MODE = String(process.env.FORCE_TEST_MODE || 'legacy').trim().toLowerCase();
+// legacy = как у всех старых; expired / days3 / new10 / paid1; off = как обычный.
+// Пока для проверки paywall: тестовый аккаунт с 0 дней (expired).
+const FORCE_TEST_MODE = 'expired';
 const FORCE_TEST_IDS = String(process.env.FORCE_TEST_IDS || '2055929706')
   .split(',')
   .map(function (s) { return s.trim(); })
