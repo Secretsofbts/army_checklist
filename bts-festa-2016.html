@@ -27,12 +27,12 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="bts-festa.html">< Назад</a>
+    <a class="back" href="bts-festa.html">< РќР°Р·Р°Рґ</a>
     <h1>?? BTS FESTA 2016 ??</h1>
 
     <div id="list"></div>
 
-    <p class="section-title">Коллекция BANGTAN BOMB</p>
+    <p class="section-title">РљРѕР»Р»РµРєС†РёСЏ BANGTAN BOMB</p>
     <div id="list-bombs"></div>
 
 
@@ -43,31 +43,31 @@
     const items = [
       { text: "I Know", sub: "By RM & JK", icon: "??", links: [
         { label: "SoundCloud", link: "https://soundcloud.com/bangtan/sothatiloveyou" },
-        { label: "Перевод", link: "https://t.me/violent_arhive/1819" }
+        { label: "РџРµСЂРµРІРѕРґ", link: "https://t.me/violent_arhive/1819" }
       ]},
       { text: "Special Choreography", sub: "Baepsae", icon: "??", link: "https://t.me/violent_arhive/1820" },
-      { text: "Photo Album", sub: "3 июня", icon: "??", link: "https://www.facebook.com/media/set/?set=a.1308053172543275&type=3", noCheckbox: true },
-      { text: "3-я годовщина", sub: "Семейная фотография", icon: "??", link: "https://www.facebook.com/media/set/?set=a.1308766775805248&type=3", noCheckbox: true },
+      { text: "Photo Album", sub: "3 РёСЋРЅСЏ", icon: "??", link: "https://www.facebook.com/media/set/?set=a.1308053172543275&type=3", noCheckbox: true },
+      { text: "3-СЏ РіРѕРґРѕРІС‰РёРЅР°", sub: "РЎРµРјРµР№РЅР°СЏ С„РѕС‚РѕРіСЂР°С„РёСЏ", icon: "??", link: "https://www.facebook.com/media/set/?set=a.1308766775805248&type=3", noCheckbox: true },
       { text: "J-hope Dance Practice", sub: "for 2015 Begins Concert", icon: "??", link: "https://t.me/violent_arhive/1821" },
-      { text: "Эпизод \"Настоящая семейная фотосессия\"", icon: "??", link: "https://t.me/violent_arhive/1822" },
-      { text: "\"3 года BTS ??\"", sub: "Прямой эфир", icon: "??", link: "https://t.me/violent_arhive/934" },
+      { text: "Р­РїРёР·РѕРґ \"РќР°СЃС‚РѕСЏС‰Р°СЏ СЃРµРјРµР№РЅР°СЏ С„РѕС‚РѕСЃРµСЃСЃРёСЏ\"", icon: "??", link: "https://t.me/violent_arhive/1822" },
+      { text: "\"3 РіРѕРґР° BTS ??\"", sub: "РџСЂСЏРјРѕР№ СЌС„РёСЂ", icon: "??", link: "https://t.me/violent_arhive/934" },
       { text: "BHC Radio FM 06.13", sub: "3rd BTS birthday", icon: "??", link: "https://t.me/violent_arhive/1797" },
       { text: "Happy BTS Day Party", icon: "??", link: "https://t.me/violent_arhive/1834" },
       { text: "Young Forever", sub: "Unplugged Ver.", icon: "??", links: [
         { label: "SoundCloud", link: "https://soundcloud.com/bangtan/youngforeverfor0613" },
-        { label: "Перевод", link: "https://t.me/violent_arhive/1823" }
+        { label: "РџРµСЂРµРІРѕРґ", link: "https://t.me/violent_arhive/1823" }
       ]}
     ];
 
     const bombItems = [
-      { text: "Селфи-камера Jimin & V", link: "https://t.me/violent_arhive/1824" },
-      { text: "Сольная съёмка RM", link: "https://t.me/violent_arhive/1825" },
-      { text: "Джей-Хоуп и JK на съёмках клипа", link: "https://t.me/violent_arhive/1826" },
-      { text: "Сольная съёмка Юнги", link: "https://t.me/violent_arhive/1827" },
-      { text: "Давайте дадим автограф", link: "https://t.me/violent_arhive/1828" },
-      { text: "Джин тренируется перед съёмкой", link: "https://t.me/violent_arhive/1829" },
-      { text: "Чимин старше JK LOL", link: "https://t.me/violent_arhive/1830" },
-      { text: "Игра на гитаре", link: "https://t.me/violent_arhive/1831" },
+      { text: "РЎРµР»С„Рё-РєР°РјРµСЂР° Jimin & V", link: "https://t.me/violent_arhive/1824" },
+      { text: "РЎРѕР»СЊРЅР°СЏ СЃСЉС‘РјРєР° RM", link: "https://t.me/violent_arhive/1825" },
+      { text: "Р”Р¶РµР№-РҐРѕСѓРї Рё JK РЅР° СЃСЉС‘РјРєР°С… РєР»РёРїР°", link: "https://t.me/violent_arhive/1826" },
+      { text: "РЎРѕР»СЊРЅР°СЏ СЃСЉС‘РјРєР° Р®РЅРіРё", link: "https://t.me/violent_arhive/1827" },
+      { text: "Р”Р°РІР°Р№С‚Рµ РґР°РґРёРј Р°РІС‚РѕРіСЂР°С„", link: "https://t.me/violent_arhive/1828" },
+      { text: "Р”Р¶РёРЅ С‚СЂРµРЅРёСЂСѓРµС‚СЃСЏ РїРµСЂРµРґ СЃСЉС‘РјРєРѕР№", link: "https://t.me/violent_arhive/1829" },
+      { text: "Р§РёРјРёРЅ СЃС‚Р°СЂС€Рµ JK LOL", link: "https://t.me/violent_arhive/1830" },
+      { text: "РРіСЂР° РЅР° РіРёС‚Р°СЂРµ", link: "https://t.me/violent_arhive/1831" },
       { text: "Lip-sync Big Hit Christmas carol", link: "https://t.me/violent_arhive/1832" },
       { text: "We are bulletproof", link: "https://t.me/violent_arhive/1833" }
     ];
