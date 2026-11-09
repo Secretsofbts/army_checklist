@@ -17,24 +17,26 @@ const FOREVER_IDS = String(process.env.FOREVER_TELEGRAM_IDS || '163381553,591051
   .map(function (s) { return s.trim(); })
   .filter(Boolean);
 // Тестовый аккаунт (2-я страница): режим превью.
-// expired = нет дней; days3 / new10 / paid1; off = как обычный.
-const FORCE_TEST_MODE = String(process.env.FORCE_TEST_MODE || 'expired').trim().toLowerCase();
+// legacy = как у всех старых (общий 5-дневный срок); expired / days3 / new10 / paid1; off = как обычный.
+const FORCE_TEST_MODE = String(process.env.FORCE_TEST_MODE || 'legacy').trim().toLowerCase();
 const FORCE_TEST_IDS = String(process.env.FORCE_TEST_IDS || '2055929706')
   .split(',')
   .map(function (s) { return s.trim(); })
   .filter(Boolean);
-const FORCE_TEST_MODES = { days3: 1, new10: 1, paid1: 1, expired: 1 };
+const FORCE_TEST_MODES = { legacy: 1, days3: 1, new10: 1, paid1: 1, expired: 1 };
 const DAY_MS = 24 * 60 * 60 * 1000;
-// Старым (уже были в реестре до запуска): ровно 5 дней с завтра после якоря — один общий срок.
+// Старым (уже были в реестре до запуска): общий срок с завтра после якоря.
+// Было 5 дней, +1 день (итого 6), чтобы не показывать окно оплаты раньше, чем она готова.
 // Совершенно новым: 10 дней с первого захода.
-const LEGACY_TRIAL_DAYS = 5;
+const LEGACY_TRIAL_DAYS_ORIGINAL = 5;
+const LEGACY_TRIAL_DAYS = 6;
 const NEW_TRIAL_DAYS = 10;
-const TRIAL_PLAN_TAG = 'legacy5-fixed-new10';
+const TRIAL_PLAN_TAG = 'legacy6-fixed-new10';
 // Момент «запуска оплаты» (фиксированная дата, иначе при рестарте Render всё сбросится).
 // Можно переопределить в Render: SUBSCRIPTION_LAUNCH_AT = миллисекунды Unix.
 const SUBSCRIPTION_LAUNCH_AT = Number(process.env.SUBSCRIPTION_LAUNCH_AT) ||
   Date.parse('2026-11-06T21:00:00+03:00');
-// Якорь для старых: «завтра» считается от этого дня (7.11 вечер → старт 8.11, 5 дней).
+// Якорь для старых: «завтра» считается от этого дня (7.11 вечер → старт 8.11).
 const LEGACY_TRIAL_ANCHOR_AT = Number(process.env.LEGACY_TRIAL_ANCHOR_AT) ||
   Date.parse('2026-11-07T21:00:00+03:00');
 // Цены: обычно 200 ₽. Акция −50% (100 ₽) с отсчётом дней.
@@ -277,9 +279,13 @@ function paidExpiresAtFrom(fromMs, paidDays) {
   return moscowMidnightPlusDays(base, days + 1);
 }
 
-// Старым: один общий срок — 5 полных дней с завтра после якоря (сегодня не входит).
+// Старым: один общий срок — N полных дней с завтра после якоря (день якоря не входит).
 function legacyTrialExpiresAt() {
   return moscowMidnightPlusDays(LEGACY_TRIAL_ANCHOR_AT, 1 + LEGACY_TRIAL_DAYS);
+}
+
+function legacyTrialExpiresAtOriginal5() {
+  return moscowMidnightPlusDays(LEGACY_TRIAL_ANCHOR_AT, 1 + LEGACY_TRIAL_DAYS_ORIGINAL);
 }
 
 function isLegacyUser(firstSeen) {
@@ -411,6 +417,72 @@ async function grantLegacyTrialsToAllRegistry() {
   console.log('Legacy trial bulk grant', { count: count, skipped: skipped, expiresAt: expiresAt });
 }
 
+// Один раз: всем со старым общим сроком (5 дней) продлить на +1 день (до нового общего expiresAt).
+async function extendLegacyTrialsPlusOneDay() {
+  const metaRef = db.ref('bot_meta/legacyTrialExtendPlus1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('Legacy trial +1 day already done');
+    return;
+  }
+  const oldExpiresAt = legacyTrialExpiresAtOriginal5();
+  const newExpiresAt = legacyTrialExpiresAt();
+  const now = Date.now();
+  const snap = await db.ref('subscriptions').get();
+  const all = snap.exists() ? snap.val() || {} : {};
+  const ids = Object.keys(all);
+  let count = 0;
+  let skipped = 0;
+  for (let i = 0; i < ids.length; i++) {
+    const uid = ids[i];
+    if (ADMIN_IDS.indexOf(uid) !== -1 || FOREVER_IDS.indexOf(uid) !== -1) {
+      skipped += 1;
+      continue;
+    }
+    const prev = all[uid] || {};
+    if (prev.forever) {
+      skipped += 1;
+      continue;
+    }
+    if (!prev.trial) {
+      skipped += 1;
+      continue;
+    }
+    const exp = typeof prev.expiresAt === 'number' ? prev.expiresAt : 0;
+    const note = String(prev.note || '');
+    // Только общий старый срок (5 дней). Новых с 10 днями не трогаем.
+    if (exp !== oldExpiresAt) {
+      skipped += 1;
+      continue;
+    }
+    await subscriptionRef(uid).set({
+      active: newExpiresAt > now,
+      trial: true,
+      trialDays: LEGACY_TRIAL_DAYS,
+      trialPlan: TRIAL_PLAN_TAG,
+      forever: false,
+      expiresAt: newExpiresAt,
+      createdAt: prev.createdAt || now,
+      updatedAt: now,
+      note: note.indexOf('force-legacy') === 0 ? note : 'legacy-trial-plus1'
+    });
+    count += 1;
+  }
+  await metaRef.set({
+    at: now,
+    count: count,
+    skipped: skipped,
+    oldExpiresAt: oldExpiresAt,
+    newExpiresAt: newExpiresAt
+  });
+  console.log('Legacy trial +1 day', {
+    count: count,
+    skipped: skipped,
+    oldExpiresAt: oldExpiresAt,
+    newExpiresAt: newExpiresAt
+  });
+}
+
 app.get('/subscription', async function (req, res) {
   const user = authUser(req);
   if (!user) return res.status(401).json({ error: 'auth' });
@@ -446,13 +518,34 @@ app.get('/subscription', async function (req, res) {
       }
       return res.json(buildSubscriptionStatus(uid, { forever: true }, false));
     }
-    // Тестовый аккаунт: превью режимов (expired / days3 / new10 / paid1)
+    // Тестовый аккаунт: превью режимов (legacy / expired / days3 / new10 / paid1)
     if (FORCE_TEST_IDS.indexOf(uid) !== -1 && FORCE_TEST_MODES[FORCE_TEST_MODE]) {
       const ref = subscriptionRef(uid);
       const snap = await ref.get();
       const prev = snap.exists() ? snap.val() : null;
       const now = Date.now();
       const mode = FORCE_TEST_MODE;
+
+      if (mode === 'legacy') {
+        const note = 'force-legacy-same-as-all';
+        const wantExpires = legacyTrialExpiresAt();
+        if (prev && prev.note === note && prev.trial && prev.expiresAt === wantExpires) {
+          return res.json(buildSubscriptionStatus(uid, prev, false));
+        }
+        const entry = {
+          active: wantExpires > now,
+          trial: true,
+          trialDays: LEGACY_TRIAL_DAYS,
+          trialPlan: TRIAL_PLAN_TAG,
+          forever: false,
+          expiresAt: wantExpires,
+          createdAt: (prev && prev.createdAt) || now,
+          updatedAt: now,
+          note: note
+        };
+        await ref.set(entry);
+        return res.json(buildSubscriptionStatus(uid, entry, false));
+      }
 
       if (mode === 'expired') {
         const note = 'force-expired-test';
@@ -1329,9 +1422,25 @@ async function ensureBotCommands() {
 async function applyForceTestAccountOnBoot() {
   const testId = FORCE_TEST_IDS[0] || '2055929706';
   if (!FORCE_TEST_MODES[FORCE_TEST_MODE]) return;
-  if (FORCE_TEST_MODE !== 'expired') return;
   try {
     const now = Date.now();
+    if (FORCE_TEST_MODE === 'legacy') {
+      const expiresAt = legacyTrialExpiresAt();
+      await subscriptionRef(testId).set({
+        active: expiresAt > now,
+        trial: true,
+        trialDays: LEGACY_TRIAL_DAYS,
+        trialPlan: TRIAL_PLAN_TAG,
+        forever: false,
+        expiresAt: expiresAt,
+        createdAt: now,
+        updatedAt: now,
+        note: 'force-legacy-same-as-all'
+      });
+      console.log('Test account forced legacy trial (same as old users)', testId, new Date(expiresAt).toISOString());
+      return;
+    }
+    if (FORCE_TEST_MODE !== 'expired') return;
     await subscriptionRef(testId).set({
       active: false,
       trial: false,
@@ -1343,7 +1452,7 @@ async function applyForceTestAccountOnBoot() {
     });
     console.log('Test account forced expired (no days)', testId);
   } catch (e) {
-    console.error('Test account force expired failed', e);
+    console.error('Test account force mode failed', e);
   }
 }
 
@@ -1358,6 +1467,9 @@ app.listen(PORT, function () {
   });
   grantLegacyTrialsToAllRegistry().catch(function (e) {
     console.error('legacy trial bulk failed', e);
+  });
+  extendLegacyTrialsPlusOneDay().catch(function (e) {
+    console.error('legacy trial +1 day failed', e);
   });
   // Извинение только бессрочным (им случайно ушло про 5 дней)
   setTimeout(function () {
