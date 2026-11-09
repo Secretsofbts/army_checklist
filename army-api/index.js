@@ -1259,14 +1259,14 @@ async function sendStarsInvoiceToUser(userId, stars, days, meta) {
   const payload = ('stars:' + days + ':' + userId + ':' + Date.now()).slice(0, 128);
   await telegramSendMessage(
     userId,
-    'Вам выставили счёт на оплату Stars 💜\n' +
+    'Вам выставили счёт на оплату 💜\n' +
       stars + ' Stars = ' + days + ' ' + pluralDaysRu(days) + ' доступа.\n' +
       'Нажмите Pay на сообщении ниже.',
     null
   );
   await telegramSendStarsInvoice(userId, {
     title: days + ' ' + pluralDaysRu(days) + ' доступа',
-    description: 'Подписка на чек-лист по архиву BTS',
+    description: 'Подписка на чек-лист по BTS',
     label: days + ' ' + pluralDaysRu(days),
     stars: stars,
     days: days,
