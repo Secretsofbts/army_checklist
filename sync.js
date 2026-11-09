@@ -516,7 +516,7 @@ registerUserIfNeeded();
     }
 
     const payLink = document.createElement('a');
-    payLink.href = 'payment.html?v=29';
+    payLink.href = 'payment.html?v=30';
     payLink.textContent = 'Перейти к оплате';
     payLink.style.cssText = [
       'display:block', 'width:100%', 'box-sizing:border-box',
