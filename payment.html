@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js?v=121"></script>
+  <title>Оплата подписки</title>
+  <style>
+    body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
+    * { box-sizing: border-box; }
+    .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
+    h1 { font-size: 18px; margin: 0 0 8px; }
+    .lead { font-size: 13px; color: #666; line-height: 1.45; margin: 0 0 16px; }
+    .notice {
+      background: #f3eefb;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin: 0 0 16px;
+      font-size: 13px;
+      color: #5b4a7a;
+      line-height: 1.45;
+      font-weight: 600;
+    }
+    .plan {
+      width: 100%;
+      border: 1px solid #ece7f5;
+      border-radius: 14px;
+      padding: 14px 14px 12px;
+      margin: 0 0 10px;
+      background: #faf9fd;
+      text-align: left;
+    }
+    .plan.is-main {
+      background: #ebe6f4;
+      border-color: #ddd6ea;
+    }
+    .plan-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 6px;
+    }
+    .plan-title { font-size: 15px; font-weight: 700; color: #2b2440; line-height: 1.3; }
+    .plan-badge {
+      flex-shrink: 0;
+      font-size: 11px;
+      font-weight: 700;
+      color: #7b5fb3;
+      background: #fff;
+      border-radius: 999px;
+      padding: 4px 8px;
+      line-height: 1;
+    }
+    .plan-price {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 0 0 8px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #2b2440;
+    }
+    .plan-price .old {
+      text-decoration: line-through;
+      color: #9a8fb0;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .plan-note { font-size: 12px; color: #8a7aa8; line-height: 1.4; margin: 0 0 10px; }
+    .plan-btn {
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      padding: 11px 12px;
+      font-size: 13px;
+      font-weight: 600;
+      background: #ddd6ea;
+      color: #8a7aa8;
+      cursor: default;
+    }
+    .plan.is-soon {
+      background: #fff;
+      opacity: 0.95;
+    }
+    .plan.is-soon .plan-title { color: #5b4a7a; }
+    .footer-note {
+      font-size: 12px;
+      color: #999;
+      line-height: 1.45;
+      margin: 14px 0 0;
+      text-align: center;
+    }
+    .footer-note a { color: #7b5fb3; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="statistics.html">← В личный кабинет</a>
+    <h1>Оплата подписки</h1>
+    <p class="lead">Выберите срок доступа к чек-листу. Сейчас идёт настройка оплаты — кнопки пока неактивны.</p>
+
+    <div class="notice" id="setup-notice">Оплата настраивается. Как только всё подключится — здесь появится кнопка оплаты.</div>
+
+    <div class="plan is-main" id="plan-30">
+      <div class="plan-top">
+        <div class="plan-title">30 дней</div>
+        <div class="plan-badge" id="promo-badge">акция</div>
+      </div>
+      <div class="plan-price" id="price-30">
+        <span class="old">200 ₽</span>
+        <span>100 ₽</span>
+      </div>
+      <p class="plan-note" id="promo-note">Акция −50%: вместо 200 ₽ — 100 ₽ за месяц</p>
+      <button type="button" class="plan-btn" disabled>Оплата настраивается</button>
+    </div>
+
+    <div class="plan is-soon">
+      <div class="plan-top">
+        <div class="plan-title">60 дней</div>
+        <div class="plan-badge">скоро</div>
+      </div>
+      <p class="plan-note">Продление на два месяца — появится вместе с оплатой. Цену сообщим отдельно.</p>
+      <button type="button" class="plan-btn" disabled>скоро</button>
+    </div>
+
+    <div class="plan is-soon">
+      <div class="plan-top">
+        <div class="plan-title">90 дней</div>
+        <div class="plan-badge">скоро</div>
+      </div>
+      <p class="plan-note">Три месяца доступа — в планах. Можно будет выбрать после запуска оплаты.</p>
+      <button type="button" class="plan-btn" disabled>скоро</button>
+    </div>
+
+    <div class="plan is-soon">
+      <div class="plan-top">
+        <div class="plan-title">180 дней</div>
+        <div class="plan-badge">скоро</div>
+      </div>
+      <p class="plan-note">Полгода сразу — тоже будет. Удобно, если не хотите продлевать каждый месяц.</p>
+      <button type="button" class="plan-btn" disabled>скоро</button>
+    </div>
+
+    <div class="plan" style="background:#f7f4fc; border-color:#e4dcf3; margin-top:6px;">
+      <div class="plan-top">
+        <div class="plan-title">Приведи друга</div>
+        <div class="plan-badge">бонус</div>
+      </div>
+      <p class="plan-note" style="margin-bottom:8px;">Расскажите подруге про чек-лист — и получите дополнительные дни доступа.</p>
+      <ul style="margin:0 0 10px; padding-left:18px; font-size:12px; color:#5b4a7a; line-height:1.5;">
+        <li>Друг должен зайти в бота по вашей ссылке (ссылку пока готовим).</li>
+        <li>У друга начинается свой пробный период как у нового пользователя.</li>
+        <li>Когда друг оплатит подписку, вам начислят бонусные дни.</li>
+        <li>Сколько именно дней и как выглядит ссылка — напишем отдельно, когда включим оплату.</li>
+        <li>На себя и накрутки бонус не действует; злоупотребления можем не учитывать.</li>
+      </ul>
+      <button type="button" class="plan-btn" disabled>Пока готовим</button>
+    </div>
+
+    <p class="footer-note">
+      Условия и реквизиты — в <a href="oferta.html">оферте</a>.
+      Вопросы по доступу: /support в боте.
+    </p>
+  </div>
+
+  <script>
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+
+    function pluralDays(n) {
+      n = Math.abs(n) % 100;
+      var n1 = n % 10;
+      if (n > 10 && n < 20) return 'дней';
+      if (n1 > 1 && n1 < 5) return 'дня';
+      if (n1 === 1) return 'день';
+      return 'дней';
+    }
+
+    function paintPricing(info) {
+      info = info || {};
+      var priceEl = document.getElementById('price-30');
+      var badge = document.getElementById('promo-badge');
+      var note = document.getElementById('promo-note');
+      if (!priceEl) return;
+
+      var priceNow = Number(info.priceRub) || 200;
+      var priceOld = Number(info.oldPriceRub) || 0;
+      var promo = !!(info.promo && priceOld > priceNow);
+
+      if (promo) {
+        priceEl.innerHTML =
+          '<span class="old">' + priceOld + ' ₽</span>' +
+          '<span>' + priceNow + ' ₽</span>';
+        if (badge) badge.style.display = '';
+        if (note) {
+          var left = parseInt(info.promoDaysLeft, 10);
+          note.textContent = (left > 0)
+            ? ('Акция −50%: вместо ' + priceOld + ' ₽ — ' + priceNow + ' ₽. Ещё ' + left + ' ' + pluralDays(left))
+            : ('Акция −50%: вместо ' + priceOld + ' ₽ — ' + priceNow + ' ₽ за месяц');
+        }
+      } else {
+        priceEl.innerHTML = '<span>' + priceNow + ' ₽</span>';
+        if (badge) badge.style.display = 'none';
+        if (note) note.textContent = 'Обычная цена за 30 дней доступа';
+      }
+    }
+
+    function loadPricing() {
+      var api = String(window.ARMY_API_URL || '').replace(/\/$/, '');
+      if (!api) {
+        paintPricing({ priceRub: 100, oldPriceRub: 200, promo: true, promoDaysLeft: null });
+        return;
+      }
+      var headers = {};
+      try {
+        var initData = (window.Telegram && Telegram.WebApp && Telegram.WebApp.initData) || '';
+        if (initData) headers['X-Telegram-Init-Data'] = initData;
+      } catch (e) {}
+      fetch(api + '/subscription', { method: 'GET', headers: headers })
+        .then(function (res) { return res.ok ? res.json() : null; })
+        .then(function (data) {
+          if (data && typeof data === 'object') paintPricing(data);
+          else paintPricing({ priceRub: 100, oldPriceRub: 200, promo: true, promoDaysLeft: null });
+        })
+        .catch(function () {
+          paintPricing({ priceRub: 100, oldPriceRub: 200, promo: true, promoDaysLeft: null });
+        });
+    }
+
+    loadPricing();
+  </script>
+</body>
+</html>
