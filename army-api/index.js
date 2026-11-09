@@ -654,6 +654,15 @@ app.get('/subscription', async function (req, res) {
       }
 
       if (mode === 'expired') {
+        // Не затираем уже оплаченный доступ (Stars / ручная выдача)
+        if (
+          prev &&
+          prev.note !== 'force-expired-test' &&
+          typeof prev.expiresAt === 'number' &&
+          prev.expiresAt > now
+        ) {
+          return res.json(buildSubscriptionStatus(uid, prev, false));
+        }
         const note = 'force-expired-test';
         const wantExpires = now - DAY_MS;
         if (prev && prev.note === note && typeof prev.expiresAt === 'number' && prev.expiresAt <= now) {
@@ -1573,6 +1582,151 @@ async function handleBotMessage(msg) {
   }
 }
 
+async function telegramApi(method, body) {
+  const res = await fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/' + method, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(body || {})
+  });
+  const data = await res.json().catch(function () { return null; });
+  if (!res.ok || !data || !data.ok) {
+    const desc = data && data.description ? data.description : ('HTTP ' + res.status);
+    throw new Error('telegram ' + method + ': ' + desc);
+  }
+  return data;
+}
+
+async function telegramSendStarsInvoice(chatId, options) {
+  options = options || {};
+  const stars = Math.max(1, parseInt(options.stars, 10) || 1);
+  const days = Math.max(1, parseInt(options.days, 10) || 30);
+  const payload = String(options.payload || ('stars:' + days + ':' + chatId + ':' + Date.now())).slice(0, 128);
+  return telegramApi('sendInvoice', {
+    chat_id: chatId,
+    title: String(options.title || 'Подписка').slice(0, 32),
+    description: String(options.description || ('Доступ на ' + days + ' дн.')).slice(0, 255),
+    payload: payload,
+    provider_token: '',
+    currency: 'XTR',
+    prices: [{ label: String(options.label || (days + ' дней')).slice(0, 32), amount: stars }]
+  });
+}
+
+async function answerPreCheckoutQuery(queryId, ok, errorMessage) {
+  const body = {
+    pre_checkout_query_id: String(queryId),
+    ok: !!ok
+  };
+  if (!ok && errorMessage) body.error_message = String(errorMessage).slice(0, 200);
+  return telegramApi('answerPreCheckoutQuery', body);
+}
+
+function parseStarsPayload(payload) {
+  // stars:<days>:<uid>:<ts>  или stars_test:<days>:...
+  const parts = String(payload || '').split(':');
+  if (parts[0] !== 'stars' && parts[0] !== 'stars_test') return null;
+  const days = Math.max(1, parseInt(parts[1], 10) || 30);
+  const uid = String(parts[2] || '');
+  return { days: days, uid: uid, test: parts[0] === 'stars_test' };
+}
+
+async function grantPaidDaysFromStars(uid, days, payment) {
+  const ref = subscriptionRef(uid);
+  const snap = await ref.get();
+  const prev = snap.exists() ? (snap.val() || {}) : {};
+  const now = Date.now();
+  if (prev.forever) {
+    return { skipped: true, reason: 'forever' };
+  }
+  const paidDays = Math.max(1, parseInt(days, 10) || 30);
+  const base = Math.max(now, typeof prev.expiresAt === 'number' ? prev.expiresAt : 0);
+  const expiresAt = paidExpiresAtFrom(base, paidDays);
+  const entry = {
+    active: true,
+    trial: false,
+    forever: false,
+    expiresAt: expiresAt,
+    paidDays: paidDays,
+    createdAt: (prev && prev.createdAt) || now,
+    updatedAt: now,
+    note: 'stars-paid',
+    lastStarsPayment: {
+      at: now,
+      days: paidDays,
+      stars: payment && payment.total_amount,
+      chargeId: payment && payment.telegram_payment_charge_id,
+      payload: payment && payment.invoice_payload
+    }
+  };
+  await ref.set(entry);
+  try {
+    await applyReferralBonusOnFirstPaid(uid);
+  } catch (e) {
+    console.error('stars referral bonus failed', uid, e);
+  }
+  return { skipped: false, expiresAt: expiresAt, paidDays: paidDays };
+}
+
+async function handlePreCheckoutQuery(query) {
+  if (!query || !query.id) return;
+  try {
+    const currency = String(query.currency || '');
+    if (currency !== 'XTR') {
+      await answerPreCheckoutQuery(query.id, false, 'Сейчас принимаем оплату только Stars');
+      return;
+    }
+    const parsed = parseStarsPayload(query.invoice_payload);
+    if (!parsed) {
+      await answerPreCheckoutQuery(query.id, false, 'Неверный счёт, напишите /support');
+      return;
+    }
+    await answerPreCheckoutQuery(query.id, true);
+  } catch (e) {
+    console.error('pre_checkout_query failed', e);
+    try {
+      await answerPreCheckoutQuery(query.id, false, 'Временная ошибка, попробуйте ещё раз');
+    } catch (e2) {}
+  }
+}
+
+async function handleSuccessfulStarsPayment(msg) {
+  if (!msg || !msg.from || !msg.successful_payment) return false;
+  const pay = msg.successful_payment;
+  if (String(pay.currency || '') !== 'XTR') return false;
+  const uid = String(msg.from.id);
+  const parsed = parseStarsPayload(pay.invoice_payload);
+  const days = parsed ? parsed.days : 30;
+  try {
+    const granted = await grantPaidDaysFromStars(uid, days, pay);
+    console.log('stars payment ok', uid, days, pay.total_amount, granted);
+    try {
+      await telegramSendMessage(
+        uid,
+        'Оплата Stars прошла 💜 Доступ продлён на ' + days + ' ' + pluralDaysRu(days) + '.',
+        undefined
+      );
+    } catch (e) {
+      console.error('stars thanks text failed', e);
+    }
+    try {
+      const thanks = await sendPaidThanksToUser(uid, days);
+      if (!thanks.sent) console.error('stars paid thanks photo failed', thanks);
+    } catch (e) {
+      console.error('stars paid thanks failed', e);
+    }
+  } catch (e) {
+    console.error('stars grant failed', uid, e);
+    try {
+      await telegramSendMessage(
+        uid,
+        'Оплата прошла, но доступ не открылся автоматически. Напишите /support — выдадим вручную 💜',
+        null
+      );
+    } catch (e2) {}
+  }
+  return true;
+}
+
 // Telegram шлёт сюда все апдейты (команда /start и т.д.)
 app.post('/telegram/webhook', async function (req, res) {
   const secret = String(process.env.WEBHOOK_SECRET || '');
@@ -1583,6 +1737,14 @@ app.post('/telegram/webhook', async function (req, res) {
   res.json({ ok: true });
   try {
     const update = req.body || {};
+    if (update.pre_checkout_query) {
+      await handlePreCheckoutQuery(update.pre_checkout_query);
+      return;
+    }
+    if (update.message && update.message.successful_payment) {
+      await handleSuccessfulStarsPayment(update.message);
+      return;
+    }
     if (update.message) await handleBotMessage(update.message);
   } catch (e) {
     console.error('webhook handle error', e);
@@ -1599,7 +1761,7 @@ async function ensureTelegramWebhook() {
   const secret = String(process.env.WEBHOOK_SECRET || '');
   const body = {
     url: webhookUrl,
-    allowed_updates: ['message'],
+    allowed_updates: ['message', 'pre_checkout_query'],
     drop_pending_updates: false
   };
   if (secret) body.secret_token = secret;
@@ -1613,6 +1775,38 @@ async function ensureTelegramWebhook() {
     console.log('setWebhook', webhookUrl, data && data.ok ? 'ok' : data);
   } catch (e) {
     console.error('setWebhook failed', e);
+  }
+}
+
+async function sendStarsTestInvoiceToTestUser() {
+  const metaRef = db.ref('bot_meta/starsTestInvoiceV1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('stars test invoice already sent', metaSnap.val());
+    return;
+  }
+  const testId = FORCE_TEST_IDS[0] || '2055929706';
+  const days = 1;
+  const stars = 1;
+  const payload = 'stars_test:' + days + ':' + testId + ':' + Date.now();
+  try {
+    await telegramSendMessage(
+      testId,
+      'Тест оплаты Stars 💜\n\nНиже счёт на 1 Star. Если оплатите — тестовому аккаунту начислится 1 день доступа.',
+      null
+    );
+    await telegramSendStarsInvoice(testId, {
+      title: 'Тест: 1 день',
+      description: 'Проверка оплаты Stars для чек-листа',
+      label: '1 день',
+      stars: stars,
+      days: days,
+      payload: payload
+    });
+    await metaRef.set({ at: Date.now(), to: testId, stars: stars, days: days });
+    console.log('stars test invoice sent to', testId);
+  } catch (e) {
+    console.error('stars test invoice failed', e);
   }
 }
 
@@ -1816,6 +2010,12 @@ app.listen(PORT, function () {
     console.error('legacy trial +1 day failed', e);
   });
   // Превью в бот при старте отключены — не мешают деплою. Нужно снова — скажите.
+  // Разовый тест Stars на тестовый аккаунт
+  setTimeout(function () {
+    sendStarsTestInvoiceToTestUser().catch(function (e) {
+      console.error('stars test invoice boot failed', e);
+    });
+  }, 8000);
   // Извинение только бессрочным (им случайно ушло про 5 дней)
   setTimeout(function () {
     broadcastForeverOops().catch(function (e) {
