@@ -278,16 +278,21 @@ async function applyReferralBonusOnFirstPaid(friendId) {
     referrerExtended: !referrerExt.skipped
   });
 
-  const text = 'Бонус за друга: +' + REFERRAL_BONUS_DAYS + ' дней доступа 💜';
+  const friendText = 'Бонус за друга: +' + REFERRAL_BONUS_DAYS + ' дней доступа 💜';
   try {
-    await telegramSendMessage(friendKey, text, undefined);
+    await telegramSendMessage(friendKey, friendText, undefined);
   } catch (e) {
     console.error('referral notify friend failed', friendKey, e);
   }
   try {
-    await telegramSendMessage(referrerId, text, undefined);
+    await telegramSendPhoto(referrerId, REFERRAL_BONUS_REFERRER_TEXT, REFERRAL_BONUS_REFERRER_PHOTO);
   } catch (e) {
-    console.error('referral notify referrer failed', referrerId, e);
+    console.error('referral notify referrer photo failed', referrerId, e);
+    try {
+      await telegramSendMessage(referrerId, REFERRAL_BONUS_REFERRER_TEXT, undefined);
+    } catch (e2) {
+      console.error('referral notify referrer text failed', referrerId, e2);
+    }
   }
   return { applied: true, referrerId: referrerId, friendExt: friendExt, referrerExt: referrerExt };
 }
@@ -979,10 +984,14 @@ const EXPIRED_REMIND_TEXT =
 const PAID_THANKS_PHOTO = path.join(__dirname, 'sub-extended.jpg');
 const REFERRAL_INVITE_PHOTO = path.join(__dirname, 'referral-invite.jpg');
 const REFERRAL_NOT_NEW_PHOTO = path.join(__dirname, 'referral-not-new.jpg');
+const REFERRAL_BONUS_REFERRER_PHOTO = path.join(__dirname, 'referral-bonus-referrer.jpg');
 const REFERRAL_INVITE_TEXT =
   'Ваш друг пригласил вас в чек-лист по архиву BTS 🥰\n\n' +
   'Для начала использования откройте приложение кнопкой снизу «For ARMY 💜» — у вас начнётся пробный период\n\n' +
   'Если вам понравится и вы потом оформите подписку, то вам и тому, кто пригласил, начислятся бонусные 30 дней каждому =)';
+const REFERRAL_BONUS_REFERRER_TEXT =
+  'Ура! Ваш друг оформил подписку 💜\n' +
+  'Вам начислено +' + REFERRAL_BONUS_DAYS + ' бонусных дней доступа)';
 
 function pluralDaysRu(n) {
   const num = Math.abs(parseInt(n, 10) || 0);
@@ -1637,6 +1646,23 @@ async function sendReferralNotNewPreviewToTest() {
   }
 }
 
+async function sendReferralBonusReferrerPreviewToTest() {
+  const metaRef = db.ref('bot_meta/referralBonusReferrerPreviewV1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('referral bonus referrer preview already sent', metaSnap.val());
+    return;
+  }
+  const testId = FORCE_TEST_IDS[0] || '2055929706';
+  try {
+    await telegramSendPhoto(testId, REFERRAL_BONUS_REFERRER_TEXT, REFERRAL_BONUS_REFERRER_PHOTO);
+    await metaRef.set({ at: Date.now(), to: testId });
+    console.log('referral bonus referrer preview sent to', testId);
+  } catch (e) {
+    console.error('referral bonus referrer preview failed', e);
+  }
+}
+
 app.listen(PORT, function () {
   console.log('army-api listening on ' + PORT);
   scheduleSubscriptionReminders();
@@ -1663,6 +1689,11 @@ app.listen(PORT, function () {
       console.error('referral not-new preview boot failed', e);
     });
   }, 7000);
+  setTimeout(function () {
+    sendReferralBonusReferrerPreviewToTest().catch(function (e) {
+      console.error('referral bonus referrer preview boot failed', e);
+    });
+  }, 9000);
   // Извинение только бессрочным (им случайно ушло про 5 дней)
   setTimeout(function () {
     broadcastForeverOops().catch(function (e) {
