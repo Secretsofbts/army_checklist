@@ -954,6 +954,9 @@ const BOT_APP_LINK = 'https://t.me/army_checklist_bot?startapp';
 const START_TEXT =
   'Просто откройте приложение по кнопке снизу "For ARMY 💜"\n\n' +
   'При возникновении каких-то вопросов или проблем напишите /support или слово «поддержка»';
+const REFERRAL_NOT_NEW_TEXT =
+  'Вы уже есть в базе чек-листа, поэтому эта реферальная ссылка не подходит под условия бонуса.\n\n' +
+  'Бонус действует только для тех, кто раньше ни разу не пользовался ботом.';
 const CHANNEL_TRIAL_POST = 'https://t.me/violent_arhive/5708';
 // Рассылка про 5 дней пробного — сначала только тест, массово после вашего «ок»
 const TRIAL5_ANNOUNCE_TEXT =
@@ -1446,6 +1449,12 @@ async function handleStartCommand(msg) {
       const captured = await captureReferralFromStart(fromId, payload);
       if (captured && captured.saved) {
         console.log('referral captured', String(fromId), '←', captured.referrerId);
+      } else if (captured && captured.reason === 'not-new') {
+        try {
+          await telegramSendMessage(msg.chat.id, REFERRAL_NOT_NEW_TEXT, null);
+        } catch (notifyErr) {
+          console.error('referral not-new notify failed', fromId, notifyErr);
+        }
       }
     } catch (refErr) {
       console.error('referral capture failed', fromId, refErr);
