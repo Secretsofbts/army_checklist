@@ -995,8 +995,8 @@ const REFERRAL_INVITE_TEXT =
   'Для начала использования откройте приложение кнопкой снизу «For ARMY 💜» — у вас начнётся пробный период\n\n' +
   'Если вам понравится и вы потом оформите подписку, то вам и тому, кто пригласил, начислятся бонусные 30 дней каждому =)';
 const REFERRAL_BONUS_REFERRER_TEXT =
-  'Ура! Ваш друг оформил подписку 💜\n' +
-  'Вам начислено +' + REFERRAL_BONUS_DAYS + ' бонусных дней доступа)';
+  'Ура! Ваш приглашенный друг первый раз оформил подписку 💜\n\n' +
+  'Вам начислено +' + REFERRAL_BONUS_DAYS + ' бонусных дней)';
 const REFERRAL_BONUS_FRIEND_TEXT =
   'Вам начислено еще +' + REFERRAL_BONUS_DAYS + ' бонусных дней за участие в акции «Приведи друга» 💜';
 
@@ -1654,7 +1654,7 @@ async function sendReferralNotNewPreviewToTest() {
 }
 
 async function sendReferralBonusReferrerPreviewToTest() {
-  const metaRef = db.ref('bot_meta/referralBonusReferrerPreviewV1');
+  const metaRef = db.ref('bot_meta/referralBonusReferrerPreviewV2');
   const metaSnap = await metaRef.get();
   if (metaSnap.exists()) {
     console.log('referral bonus referrer preview already sent', metaSnap.val());
