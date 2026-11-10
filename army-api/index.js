@@ -434,18 +434,38 @@ async function ensureSubscriptionRecord(uid) {
   if (snap.exists() && snap.val()) {
     const existing = snap.val();
     if (existing.forever) return existing;
+    const note = String(existing.note || '');
+    const isForce = note.indexOf('force-') === 0;
+    // Хвост от тестового форса не считаем «бывшей оплатой» — иначе навсегда expired
+    if (isForce) {
+      if (FORCE_TEST_IDS.indexOf(String(uid)) !== -1 && !FORCE_TEST_MODES[FORCE_TEST_MODE]) {
+        const expiresAt = paidExpiresAtFrom(now, 30);
+        const restored = {
+          active: true,
+          trial: false,
+          forever: false,
+          expiresAt: expiresAt,
+          paidDays: 30,
+          createdAt: (existing && existing.createdAt) || now,
+          updatedAt: now,
+          note: 'stars-paid-restored-after-force'
+        };
+        await ref.set(restored);
+        return restored;
+      }
+      const entry = buildTrialEntry(firstSeen, now, existing);
+      await ref.set(entry);
+      return entry;
+    }
     // Кто уже был на платной (даже если срок вышел) — новый пробный не даём
     if (existing.trial === false && typeof existing.expiresAt === 'number') {
       return existing;
     }
-    const note = String(existing.note || '');
-    const isForce = note.indexOf('force-') === 0;
     const legacyMismatch =
       !!existing.trial &&
       isLegacyUser(firstSeen) &&
       existing.expiresAt !== legacyTrialExpiresAt();
     const needsRefresh =
-      isForce ||
       existing.trialPlan !== TRIAL_PLAN_TAG ||
       legacyMismatch;
 
@@ -2315,9 +2335,30 @@ async function ensureBotCommands() {
 
 async function applyForceTestAccountOnBoot() {
   const testId = FORCE_TEST_IDS[0] || '2055929706';
-  if (!FORCE_TEST_MODES[FORCE_TEST_MODE]) return;
   try {
     const now = Date.now();
+    // Форс выключен: если в базе остался force-* (часто expired) — вернуть 30 дней.
+    // Оплата Stars раньше затиралась при каждом рестарте в режиме expired.
+    if (!FORCE_TEST_MODES[FORCE_TEST_MODE]) {
+      const snap = await subscriptionRef(testId).get();
+      const prev = snap.exists() ? (snap.val() || {}) : null;
+      const note = prev ? String(prev.note || '') : '';
+      if (note.indexOf('force-') === 0) {
+        const expiresAt = paidExpiresAtFrom(now, 30);
+        await subscriptionRef(testId).set({
+          active: true,
+          trial: false,
+          forever: false,
+          expiresAt: expiresAt,
+          paidDays: 30,
+          createdAt: (prev && prev.createdAt) || now,
+          updatedAt: now,
+          note: 'stars-paid-restored-after-force'
+        });
+        console.log('Test account restored 30 days after force off', testId, new Date(expiresAt).toISOString());
+      }
+      return;
+    }
     if (FORCE_TEST_MODE === 'legacy') {
       const expiresAt = legacyTrialExpiresAt();
       await subscriptionRef(testId).set({
