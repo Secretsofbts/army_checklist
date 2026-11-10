@@ -240,12 +240,14 @@
         nextBadgeDisplay = '';
         var left = parseInt(info.promoDaysLeft, 10);
         nextNote = (left > 0)
-          ? ('Акция −50%. Ещё ' + left + ' ' + pluralDays(left))
-          : 'Акция −50% за 30 дней';
+          ? ('Акция −50% один раз. Ещё ' + left + ' ' + pluralDays(left))
+          : 'Акция −50% один раз за 30 дней';
       } else {
         nextPriceHtml = '<span>' + priceNow + ' ₽</span>';
         nextBadgeDisplay = 'none';
-        nextNote = 'Обычная цена за 30 дней доступа';
+        nextNote = info.promoUsed
+          ? 'Акция уже использована — дальше 200 ₽'
+          : 'Обычная цена за 30 дней доступа';
       }
 
       if (priceEl.innerHTML !== nextPriceHtml) priceEl.innerHTML = nextPriceHtml;

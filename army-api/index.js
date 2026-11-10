@@ -27,12 +27,13 @@ const FORCE_TEST_IDS = String(process.env.FORCE_TEST_IDS || '2055929706')
 const FORCE_TEST_MODES = { legacy: 1, days3: 1, new10: 1, paid1: 1, expired: 1 };
 const DAY_MS = 24 * 60 * 60 * 1000;
 // Старым (уже были в реестре до запуска): общий срок с завтра после якоря.
-// Было 5 дней, +1 день (итого 6), чтобы не показывать окно оплаты раньше, чем она готова.
+// Было 5 → +1 (6) → ещё +1 (7), пока ЮKassa не подключена.
 // Совершенно новым: 10 дней с первого захода.
 const LEGACY_TRIAL_DAYS_ORIGINAL = 5;
-const LEGACY_TRIAL_DAYS = 6;
+const LEGACY_TRIAL_DAYS_BEFORE = 6;
+const LEGACY_TRIAL_DAYS = 7;
 const NEW_TRIAL_DAYS = 10;
-const TRIAL_PLAN_TAG = 'legacy6-fixed-new10';
+const TRIAL_PLAN_TAG = 'legacy7-fixed-new10';
 // Момент «запуска оплаты» (фиксированная дата, иначе при рестарте Render всё сбросится).
 // Можно переопределить в Render: SUBSCRIPTION_LAUNCH_AT = миллисекунды Unix.
 const SUBSCRIPTION_LAUNCH_AT = Number(process.env.SUBSCRIPTION_LAUNCH_AT) ||
@@ -79,6 +80,7 @@ function pricingInfo(now) {
       promo: true,
       promoEndsAt: promoEndsAt,
       promoDaysLeft: promoDaysLeft,
+      promoUsed: false,
       paymentLive: !!(PAYMENT_LIVE_AT && now >= PAYMENT_LIVE_AT)
     };
   }
@@ -88,8 +90,38 @@ function pricingInfo(now) {
     promo: false,
     promoEndsAt: promoEndsAt,
     promoDaysLeft: 0,
+    promoUsed: false,
     paymentLive: true
   };
+}
+
+// Акция 100 ₽ / −50% Stars — только на первую оплату. Повторно всегда полная цена.
+function hasUsedPromoPrice(data) {
+  data = data || {};
+  if (data.promoUsed === true) return true;
+  // Уже была платная подписка (не пробный)
+  if (data.trial === false && typeof data.expiresAt === 'number') return true;
+  if (data.lastStarsPayment) return true;
+  return false;
+}
+
+function pricingInfoForUser(data, now) {
+  const base = pricingInfo(now);
+  if (!base.promo) {
+    return Object.assign({}, base, { promoUsed: hasUsedPromoPrice(data) });
+  }
+  if (hasUsedPromoPrice(data)) {
+    return {
+      priceRub: FULL_PRICE_RUB,
+      oldPriceRub: null,
+      promo: false,
+      promoEndsAt: base.promoEndsAt,
+      promoDaysLeft: 0,
+      promoUsed: true,
+      paymentLive: base.paymentLive
+    };
+  }
+  return Object.assign({}, base, { promoUsed: false });
 }
 
 if (!process.env.FIREBASE_SERVICE_ACCOUNT) {
@@ -307,7 +339,8 @@ async function applyReferralBonusOnFirstPaid(friendId) {
 
 function buildSubscriptionStatus(uid, data, isAdmin) {
   const now = Date.now();
-  const price = pricingInfo(now);
+  data = data || {};
+  const price = pricingInfoForUser(data, now);
   if (isAdmin) {
     return {
       ok: true,
@@ -319,10 +352,10 @@ function buildSubscriptionStatus(uid, data, isAdmin) {
       oldPriceRub: price.oldPriceRub,
       promo: price.promo,
       promoEndsAt: price.promoEndsAt,
-      promoDaysLeft: price.promoDaysLeft
+      promoDaysLeft: price.promoDaysLeft,
+      promoUsed: !!price.promoUsed
     };
   }
-  data = data || {};
   if (data.forever) {
     return {
       ok: true,
@@ -334,7 +367,8 @@ function buildSubscriptionStatus(uid, data, isAdmin) {
       oldPriceRub: price.oldPriceRub,
       promo: price.promo,
       promoEndsAt: price.promoEndsAt,
-      promoDaysLeft: price.promoDaysLeft
+      promoDaysLeft: price.promoDaysLeft,
+      promoUsed: !!price.promoUsed
     };
   }
   const expiresAt = typeof data.expiresAt === 'number' ? data.expiresAt : 0;
@@ -351,7 +385,8 @@ function buildSubscriptionStatus(uid, data, isAdmin) {
       oldPriceRub: price.oldPriceRub,
       promo: price.promo,
       promoEndsAt: price.promoEndsAt,
-      promoDaysLeft: price.promoDaysLeft
+      promoDaysLeft: price.promoDaysLeft,
+      promoUsed: !!price.promoUsed
     };
   }
   return {
@@ -365,7 +400,8 @@ function buildSubscriptionStatus(uid, data, isAdmin) {
     oldPriceRub: price.oldPriceRub,
     promo: price.promo,
     promoEndsAt: price.promoEndsAt,
-    promoDaysLeft: price.promoDaysLeft
+    promoDaysLeft: price.promoDaysLeft,
+    promoUsed: !!price.promoUsed
   };
 }
 
@@ -448,7 +484,9 @@ async function ensureSubscriptionRecord(uid) {
           paidDays: 30,
           createdAt: (existing && existing.createdAt) || now,
           updatedAt: now,
-          note: 'stars-paid-restored-after-force'
+          note: 'stars-paid-restored-after-force',
+          promoUsed: true,
+          promoUsedAt: (existing && existing.promoUsedAt) || now
         };
         await ref.set(restored);
         return restored;
@@ -606,6 +644,73 @@ async function extendLegacyTrialsPlusOneDay() {
     skipped: skipped,
     oldExpiresAt: oldExpiresAt,
     newExpiresAt: newExpiresAt
+  });
+}
+
+// Ещё +1 день только старым (общий срок 6→7). Новых с 10 днями не трогаем.
+async function extendTrialsPlusOneDayPaymentPending() {
+  const metaRef = db.ref('bot_meta/trialExtendPlus1PaymentPendingV1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('Legacy trial +1 day (payment pending) already done');
+    return;
+  }
+  const oldLegacyExp = moscowMidnightPlusDays(LEGACY_TRIAL_ANCHOR_AT, 1 + LEGACY_TRIAL_DAYS_BEFORE);
+  const newLegacyExp = legacyTrialExpiresAt();
+  const now = Date.now();
+  const snap = await db.ref('subscriptions').get();
+  const all = snap.exists() ? snap.val() || {} : {};
+  const ids = Object.keys(all);
+  let count = 0;
+  let skipped = 0;
+  for (let i = 0; i < ids.length; i++) {
+    const uid = ids[i];
+    if (ADMIN_IDS.indexOf(uid) !== -1 || FOREVER_IDS.indexOf(uid) !== -1) {
+      skipped += 1;
+      continue;
+    }
+    const prev = all[uid] || {};
+    if (prev.forever || !prev.trial) {
+      skipped += 1;
+      continue;
+    }
+    const note = String(prev.note || '');
+    if (note.indexOf('force-') === 0) {
+      skipped += 1;
+      continue;
+    }
+    const exp = typeof prev.expiresAt === 'number' ? prev.expiresAt : 0;
+    // Только общий старый срок. Новых с 10 днями не трогаем.
+    const isLegacyTrial = exp === oldLegacyExp || note.indexOf('legacy-trial') === 0;
+    if (!isLegacyTrial) {
+      skipped += 1;
+      continue;
+    }
+    await subscriptionRef(uid).set({
+      active: newLegacyExp > now,
+      trial: true,
+      trialDays: LEGACY_TRIAL_DAYS,
+      trialPlan: TRIAL_PLAN_TAG,
+      forever: false,
+      expiresAt: newLegacyExp,
+      createdAt: prev.createdAt || now,
+      updatedAt: now,
+      note: 'legacy-trial-plus1-paywait'
+    });
+    count += 1;
+  }
+  await metaRef.set({
+    at: now,
+    count: count,
+    skipped: skipped,
+    oldLegacyExp: oldLegacyExp,
+    newLegacyExp: newLegacyExp
+  });
+  console.log('Legacy trial +1 day (payment pending)', {
+    count: count,
+    skipped: skipped,
+    oldLegacyExp: oldLegacyExp,
+    newLegacyExp: newLegacyExp
   });
 }
 
@@ -1056,7 +1161,9 @@ app.post('/admin/grant', async function (req, res) {
         paidDays: paidDays,
         createdAt: (prev && prev.createdAt) || now,
         updatedAt: now,
-        grantedBy: String(user.id)
+        grantedBy: String(user.id),
+        promoUsed: true,
+        promoUsedAt: (prev && prev.promoUsedAt) || now
       };
     }
     await ref.set(entry);
@@ -1472,9 +1579,11 @@ const STARS_PROMO_BY_DAYS = {
   180: 225
 };
 
-function starsPriceForDays(days, now) {
+function starsPriceForDays(days, now, subData) {
   const d = Math.max(1, parseInt(days, 10) || 30);
-  const price = pricingInfo(now || Date.now());
+  const price = subData !== undefined
+    ? pricingInfoForUser(subData, now || Date.now())
+    : pricingInfo(now || Date.now());
   const table = price.promo ? STARS_PROMO_BY_DAYS : STARS_FULL_BY_DAYS;
   if (table[d]) return { stars: table[d], days: d, promo: !!price.promo };
   return { stars: Math.max(1, d), days: d, promo: !!price.promo };
@@ -1491,24 +1600,25 @@ function parseStarsAdminCommand(text) {
       help: true,
       text:
         'Как выставить счёт Stars (reply на сообщение человека):\n' +
-        '• /stars 30 — 30 дней по текущей цене (' + p30.stars + ' Stars' +
-        (p30.promo ? ', акция −50%' : '') + ')\n' +
+        '• /stars 30 — 30 дней по цене этого человека (акция только если ещё не покупал)\n' +
         '• /stars 100 30 — явно 100 Stars за 30 дней\n' +
         '• /stars 50 30 — явно 50 Stars за 30 дней\n\n' +
+        'Акция −50% один раз на первую оплату.\n' +
         (price.promo
-          ? 'Сейчас АКЦИЯ: 30→50, 60→90, 90→125, 180→225 Stars\nОбычно: 30→100, 60→180, 90→250, 180→450'
-          : 'Сейчас обычные цены: 30→100, 60→180, 90→250, 180→450\nНа акции: 30→50, 60→90, 90→125, 180→225')
+          ? 'Окно акции открыто: 30→50 Stars (если человек ещё не покупал)\nОбычно: 30→100, 60→180, 90→250, 180→450'
+          : 'Сейчас обычные цены: 30→100, 60→180, 90→250, 180→450')
     };
   }
   if (m[2]) {
     return {
       stars: Math.max(1, parseInt(m[1], 10) || 1),
       days: Math.max(1, parseInt(m[2], 10) || 30),
-      promo: false
+      promo: false,
+      explicit: true
     };
   }
   const priced = starsPriceForDays(m[1]);
-  return { stars: priced.stars, days: priced.days, promo: priced.promo };
+  return { stars: priced.stars, days: priced.days, promo: priced.promo, explicit: false };
 }
 
 async function sendStarsInvoiceToUser(userId, stars, days, meta) {
@@ -1566,15 +1676,25 @@ async function handleAdminSupportReply(msg) {
       return true;
     }
     try {
-      await sendStarsInvoiceToUser(userId, starsCmd.stars, starsCmd.days, {
+      let stars = starsCmd.stars;
+      let days = starsCmd.days;
+      let promo = !!starsCmd.promo;
+      if (!starsCmd.explicit) {
+        const subSnap = await subscriptionRef(userId).get();
+        const priced = starsPriceForDays(days, Date.now(), subSnap.exists() ? subSnap.val() : null);
+        stars = priced.stars;
+        days = priced.days;
+        promo = !!priced.promo;
+      }
+      await sendStarsInvoiceToUser(userId, stars, days, {
         byAdmin: msg.from.id,
-        promo: !!starsCmd.promo
+        promo: promo
       });
       await telegramSendMessage(
         msg.chat.id,
         '✓ Счёт Stars отправлен пользователю ' + userId + ':\n' +
-          starsCmd.stars + ' Stars → ' + starsCmd.days + ' ' + pluralDaysRu(starsCmd.days) +
-          (starsCmd.promo ? ' (акция −50%)' : ''),
+          stars + ' Stars → ' + days + ' ' + pluralDaysRu(days) +
+          (promo ? ' (акция −50%, первый раз)' : ''),
         null
       );
     } catch (e) {
@@ -2080,6 +2200,8 @@ async function grantPaidDaysFromStars(uid, days, payment) {
     createdAt: (prev && prev.createdAt) || now,
     updatedAt: now,
     note: 'stars-paid',
+    promoUsed: true,
+    promoUsedAt: (prev && prev.promoUsedAt) || now,
     lastStarsPayment: {
       at: now,
       days: paidDays,
@@ -2353,7 +2475,9 @@ async function applyForceTestAccountOnBoot() {
           paidDays: 30,
           createdAt: (prev && prev.createdAt) || now,
           updatedAt: now,
-          note: 'stars-paid-restored-after-force'
+          note: 'stars-paid-restored-after-force',
+          promoUsed: true,
+          promoUsedAt: (prev && prev.promoUsedAt) || now
         });
         console.log('Test account restored 30 days after force off', testId, new Date(expiresAt).toISOString());
       }
@@ -2533,6 +2657,9 @@ app.listen(PORT, function () {
   });
   extendLegacyTrialsPlusOneDay().catch(function (e) {
     console.error('legacy trial +1 day failed', e);
+  });
+  extendTrialsPlusOneDayPaymentPending().catch(function (e) {
+    console.error('trial +1 day payment pending failed', e);
   });
   // Превью в бот при старте отключены — не мешают деплою. Нужно снова — скажите.
   // Разовый тест Stars: счёт (если получится) + имитация оплаты без покупки звезды
