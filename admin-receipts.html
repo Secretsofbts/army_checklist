@@ -17,6 +17,27 @@
     h1 { font-size: 18px; margin: 0 0 8px; color: #2b2440; line-height: 1.35; }
     .lead { font-size: 13px; color: #666; line-height: 1.45; margin: 0 0 14px; }
     .status { font-size: 13px; color: #8a7aa8; margin: 0 0 12px; }
+    .table-wrap {
+      border: 1px solid #eee8f6; border-radius: 12px; overflow: hidden;
+      background: #faf8fd; margin: 0 0 14px;
+    }
+    table.stats {
+      width: 100%; border-collapse: collapse; font-size: 13px;
+    }
+    table.stats th,
+    table.stats td {
+      padding: 9px 10px; text-align: left; vertical-align: middle;
+      border-bottom: 1px solid #eee8f6;
+    }
+    table.stats tr:last-child th,
+    table.stats tr:last-child td { border-bottom: none; }
+    table.stats tbody th {
+      color: #5b4a7a; font-weight: 600; width: 62%;
+    }
+    table.stats td {
+      color: #2b2440; font-weight: 700; text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
     .filters { display: flex; gap: 8px; margin: 0 0 12px; }
     .filters button {
       flex: 1; border: 1px solid #e4dcf3; background: #f7f4fc; color: #5b4a7a;
@@ -65,6 +86,16 @@
     <p class="lead">Новые оплаты получают чек сами через «Мой налог». Здесь можно догнать старые или отметить вручную.</p>
     <p class="status" id="page-status">Загрузка…</p>
     <p class="status" id="nalog-status" style="margin-top:-6px;"></p>
+    <div class="table-wrap" id="summary-wrap" style="display:none;">
+      <table class="stats">
+        <tbody>
+          <tr><th>Нужен чек</th><td id="sum-open">…</td></tr>
+          <tr><th>Сформировано</th><td id="sum-formed">…</td></tr>
+          <tr><th>Отправлено в Telegram</th><td id="sum-tg">…</td></tr>
+          <tr><th>Всего оплат</th><td id="sum-total">…</td></tr>
+        </tbody>
+      </table>
+    </div>
     <div class="filters" id="filters" style="display:none;">
       <button type="button" class="active" data-filter="open">Нужен чек</button>
       <button type="button" data-filter="done">Готово</button>
@@ -181,16 +212,20 @@
           issueAutoReceipt(btn.getAttribute('data-issue'), btn);
         });
       });
-      if (statusEl) {
-        var openCount = allPayments.filter(function (p) { return !p.receiptDone; }).length;
-        var formedCount = allPayments.filter(function (p) { return !!(p.receiptUuid || p.receiptUrl); }).length;
-        var tgCount = allPayments.filter(function (p) { return !!p.receiptSentTg; }).length;
-        statusEl.textContent =
-          'Нужен чек: ' + openCount +
-          ' · сформировано: ' + formedCount +
-          ' · в ТГ: ' + tgCount +
-          ' · всего: ' + allPayments.length;
-      }
+      var openCount = allPayments.filter(function (p) { return !p.receiptDone; }).length;
+      var formedCount = allPayments.filter(function (p) { return !!(p.receiptUuid || p.receiptUrl); }).length;
+      var tgCount = allPayments.filter(function (p) { return !!p.receiptSentTg; }).length;
+      var setSum = function (id, val) {
+        var el = document.getElementById(id);
+        if (el) el.textContent = String(val);
+      };
+      setSum('sum-open', openCount);
+      setSum('sum-formed', formedCount);
+      setSum('sum-tg', tgCount);
+      setSum('sum-total', allPayments.length);
+      var summaryWrap = document.getElementById('summary-wrap');
+      if (summaryWrap) summaryWrap.style.display = '';
+      if (statusEl) statusEl.textContent = '';
     }
 
     function issueAutoReceipt(paymentId, btn) {
@@ -291,6 +326,8 @@
               '<p class="denied">Эта страница только для администратора.</p>';
             if (statusEl) statusEl.textContent = '';
             if (filters) filters.style.display = 'none';
+            var sumDenied = document.getElementById('summary-wrap');
+            if (sumDenied) sumDenied.style.display = 'none';
             return null;
           }
           if (filters) filters.style.display = 'flex';
