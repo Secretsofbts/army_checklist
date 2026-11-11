@@ -2132,12 +2132,11 @@ async function grantBonusDaysToFirstPayer() {
 }
 
 async function hideOldNonAutoReceiptPayments() {
-  // V2: прошлый разовой прогон (V1) мог уже «закрыться», а старые оплаты
-  // без авточека снова торчали в списке — прячем ещё раз.
-  const metaRef = db.ref('bot_meta/receiptsListClearedV2');
+  // V3: убрать из списка неудачный тест (чек не сформирован) и прочие без авточека
+  const metaRef = db.ref('bot_meta/receiptsListClearedV3');
   const metaSnap = await metaRef.get();
   if (metaSnap.exists()) {
-    console.log('receipts list clear V2 already done', metaSnap.val());
+    console.log('receipts list clear V3 already done', metaSnap.val());
     return;
   }
   const snap = await db.ref('yookassa_payments').get();
@@ -2157,7 +2156,7 @@ async function hideOldNonAutoReceiptPayments() {
     hidden.push(paymentId);
   }
   await metaRef.set({ at: Date.now(), hidden: hidden.length, ids: hidden });
-  console.log('receipts list cleared old non-auto V2', hidden.length, hidden);
+  console.log('receipts list cleared old non-auto V3', hidden.length, hidden);
 }
 
 async function forceReprocessKnownYooKassaPayments() {
