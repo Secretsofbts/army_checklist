@@ -481,6 +481,43 @@ function subscriptionRef(uid) {
   return db.ref('subscriptions/' + uid);
 }
 
+async function isBotStarted(uid) {
+  try {
+    const snap = await db.ref('user_registry/' + String(uid)).get();
+    if (!snap.exists()) return false;
+    const v = snap.val() || {};
+    return !!(v.botStarted === true || v.botStartedAt);
+  } catch (e) {
+    return false;
+  }
+}
+
+/** Запомнить, что человек уже нажал Start / пишет боту (можно слать уведомления). */
+async function markBotStarted(uid) {
+  const id = String(uid || '');
+  if (!/^\d+$/.test(id) || Number(id) <= 0) return;
+  try {
+    const ref = db.ref('user_registry/' + id);
+    const snap = await ref.get();
+    if (snap.exists()) {
+      const v = snap.val() || {};
+      if (v.botStarted === true || v.botStartedAt) return;
+    }
+    await ref.update({
+      botStarted: true,
+      botStartedAt: Date.now()
+    });
+  } catch (e) {
+    console.error('markBotStarted failed', id, e);
+  }
+}
+
+async function respondSubscription(res, uid, data, isAdmin) {
+  const out = buildSubscriptionStatus(uid, data, !!isAdmin);
+  out.botStarted = await isBotStarted(uid);
+  return res.json(out);
+}
+
 function referralRef(friendId) {
   return db.ref('referrals/' + String(friendId));
 }
@@ -1122,7 +1159,7 @@ app.get('/subscription', async function (req, res) {
         const note = 'force-legacy-same-as-all';
         const wantExpires = legacyTrialExpiresAt();
         if (prev && prev.note === note && prev.trial && prev.expiresAt === wantExpires) {
-          return res.json(buildSubscriptionStatus(uid, prev, false));
+          return respondSubscription(res, uid, prev, false);
         }
         const entry = {
           active: wantExpires > now,
@@ -1136,7 +1173,7 @@ app.get('/subscription', async function (req, res) {
           note: note
         };
         await ref.set(entry);
-        return res.json(buildSubscriptionStatus(uid, entry, false));
+        return respondSubscription(res, uid, entry, false);
       }
 
       if (mode === 'expired') {
@@ -1147,12 +1184,12 @@ app.get('/subscription', async function (req, res) {
           typeof prev.expiresAt === 'number' &&
           prev.expiresAt > now
         ) {
-          return res.json(buildSubscriptionStatus(uid, prev, false));
+          return respondSubscription(res, uid, prev, false);
         }
         const note = 'force-expired-test';
         const wantExpires = now - DAY_MS;
         if (prev && prev.note === note && typeof prev.expiresAt === 'number' && prev.expiresAt <= now) {
-          return res.json(buildSubscriptionStatus(uid, prev, false));
+          return respondSubscription(res, uid, prev, false);
         }
         const entry = {
           active: false,
@@ -1164,7 +1201,7 @@ app.get('/subscription', async function (req, res) {
           note: note
         };
         await ref.set(entry);
-        return res.json(buildSubscriptionStatus(uid, entry, false));
+        return respondSubscription(res, uid, entry, false);
       }
 
       if (mode === 'days3') {
@@ -1172,7 +1209,7 @@ app.get('/subscription', async function (req, res) {
         // До полуночи через 3 календарных дня: сегодня + ещё 2 = 3 дня включая сегодня
         const wantExpires = moscowMidnightPlusDays(now, 3);
         if (prev && prev.note === note && prev.expiresAt === wantExpires) {
-          return res.json(buildSubscriptionStatus(uid, prev, false));
+          return respondSubscription(res, uid, prev, false);
         }
         const entry = {
           active: true,
@@ -1184,13 +1221,13 @@ app.get('/subscription', async function (req, res) {
           note: note
         };
         await ref.set(entry);
-        return res.json(buildSubscriptionStatus(uid, entry, false));
+        return respondSubscription(res, uid, entry, false);
       }
 
       if (mode === 'new10') {
         const note = 'force-new10-preview-v4';
         if (prev && prev.note === note && prev.trial && typeof prev.expiresAt === 'number' && prev.expiresAt > now) {
-          return res.json(buildSubscriptionStatus(uid, prev, false));
+          return respondSubscription(res, uid, prev, false);
         }
         const entry = {
           active: true,
@@ -1209,14 +1246,14 @@ app.get('/subscription', async function (req, res) {
           note: note
         };
         await ref.set(entry);
-        return res.json(buildSubscriptionStatus(uid, entry, false));
+        return respondSubscription(res, uid, entry, false);
       }
 
       // paid1 — последний день = до конца сегодняшнего дня по Москве
       const notePaid = 'force-paid-one-day-test';
       const wantExpires = moscowMidnightPlusDays(now, 1);
       if (prev && prev.note === notePaid && prev.expiresAt === wantExpires) {
-        return res.json(buildSubscriptionStatus(uid, prev, false));
+        return respondSubscription(res, uid, prev, false);
       }
       const paidEntry = {
         active: true,
@@ -1228,7 +1265,7 @@ app.get('/subscription', async function (req, res) {
         note: notePaid
       };
       await ref.set(paidEntry);
-      return res.json(buildSubscriptionStatus(uid, paidEntry, false));
+      return respondSubscription(res, uid, paidEntry, false);
     }
     if (user.isAdmin) {
       const existing = await subscriptionRef(uid).get();
@@ -1243,7 +1280,7 @@ app.get('/subscription', async function (req, res) {
           note: 'admin'
         });
       }
-      return res.json(buildSubscriptionStatus(uid, { forever: true }, true));
+      return respondSubscription(res, uid, { forever: true }, true);
     }
     if (FOREVER_IDS.indexOf(uid) !== -1) {
       const existing = await subscriptionRef(uid).get();
@@ -1258,13 +1295,13 @@ app.get('/subscription', async function (req, res) {
           note: 'forever-friend'
         });
       }
-      return res.json(buildSubscriptionStatus(uid, { forever: true }, false));
+      return respondSubscription(res, uid, { forever: true }, false);
     }
     let data = await ensureSubscriptionRecord(uid);
     data = await maybeApplyComebackGrant(uid, data);
     // lastVisit обновляем после comeback-проверки (иначе «только что зашёл» собьёт паузу 60 дней)
     await touchLastVisit(uid, data);
-    return res.json(buildSubscriptionStatus(uid, data, false));
+    return respondSubscription(res, uid, data, false);
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: 'subscription' });
@@ -2786,6 +2823,10 @@ async function telegramSendMessage(chatId, text, button, replyToMsgId, opts) {
     body: JSON.stringify(payload)
   });
   const data = await res.json().catch(function () { return null; });
+  if (data && data.ok) {
+    // Если сообщение дошло — человек уже активировал бота (можно скрыть призыв Start)
+    markBotStarted(chatId).catch(function () {});
+  }
   if (!res.ok || !data || !data.ok) {
     const desc = data && data.description ? data.description : ('HTTP ' + res.status);
     throw new Error('telegram: ' + desc);
@@ -3595,6 +3636,9 @@ async function handleMenuCommands(msg) {
 async function handleBotMessage(msg) {
   if (!msg) return;
   try {
+    if (msg.chat && msg.chat.type === 'private' && msg.from && msg.from.id) {
+      markBotStarted(msg.from.id).catch(function () {});
+    }
     if (await handleSupportFlow(msg)) return;
     if (await handleMenuCommands(msg)) return;
     await handleStartCommand(msg);

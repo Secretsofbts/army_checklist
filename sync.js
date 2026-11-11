@@ -2,6 +2,32 @@
   const FIREBASE_URL = "https://army-checklist-default-rtdb.firebaseio.com";
   const ARMY_API_URL = "https://army-checklist.onrender.com";
   const ARMY_BOT_OPEN_URL = 'https://t.me/army_checklist_bot?startapp';
+  const ARMY_BOT_ACTIVATE_URL = 'https://t.me/army_checklist_bot?start=notify';
+  // Из Mini App: уйти в чат с ботом, чтобы было видно ответ на Start (иначе сообщение «за» приложением)
+  function armyActivateBotAndShowChat(e) {
+    if (e) {
+      try { e.preventDefault(); } catch (err) {}
+      try { e.stopPropagation(); } catch (err2) {}
+    }
+    const url = ARMY_BOT_ACTIVATE_URL;
+    try {
+      const tg = window.Telegram && window.Telegram.WebApp;
+      if (tg && typeof tg.openTelegramLink === 'function') {
+        tg.openTelegramLink(url);
+        setTimeout(function () {
+          try { tg.close(); } catch (closeErr) {}
+        }, 80);
+        return false;
+      }
+    } catch (err3) {}
+    try {
+      window.location.href = url;
+    } catch (err4) {
+      window.open(url, '_blank');
+    }
+    return false;
+  }
+  window.armyActivateBotAndShowChat = armyActivateBotAndShowChat;
   function telegramInitData() {
     const tg = window.Telegram && window.Telegram.WebApp;
     return (tg && tg.initData) || '';
@@ -310,36 +336,13 @@ registerUserIfNeeded();
     title.textContent = 'Пробный период';
     title.style.cssText = 'font-size:18px;font-weight:700;color:#2b2440;margin:0 0 10px';
 
+    const botStarted = !!info.botStarted;
     const text = document.createElement('div');
     text.textContent = 'Добро пожаловать! У вас есть ' + days + ' ' +
       (days === 1 ? 'день' : (days >= 2 && days <= 4 ? 'дня' : 'дней')) +
       ' бесплатного доступа ко всему чек-листу. Потом можно оформить подписку.';
-    text.style.cssText = 'font-size:14px;line-height:1.45;color:#666;margin:0 0 14px';
-
-    const notify = document.createElement('div');
-    notify.style.cssText = 'font-size:14px;line-height:1.45;color:#5b4a7a;margin:0 0 12px;text-align:center';
-    notify.appendChild(document.createTextNode(
-      'Пожалуйста, активируйте бота, чтобы получать важные уведомления (окончание доступа, чеки и новости). Нажмите '
-    ));
-    const startLink = document.createElement('a');
-    startLink.href = 'https://t.me/army_checklist_bot?start=notify';
-    startLink.target = '_blank';
-    startLink.rel = 'noopener';
-    startLink.textContent = 'Start';
-    startLink.style.cssText = 'color:#7b5fb3;font-weight:700;text-decoration:underline';
-    notify.appendChild(startLink);
-
-    const startBtn = document.createElement('a');
-    startBtn.href = 'https://t.me/army_checklist_bot?start=notify';
-    startBtn.target = '_blank';
-    startBtn.rel = 'noopener';
-    startBtn.textContent = 'Активировать бота · Start';
-    startBtn.style.cssText = [
-      'display:block', 'width:100%', 'box-sizing:border-box', 'text-decoration:none',
-      'border-radius:12px', 'padding:12px 16px', 'margin:0 0 10px',
-      'font-size:15px', 'font-weight:700', 'text-align:center',
-      'background:#f0edf9', 'color:#5b3a8e', 'border:1px solid #d9cdf0'
-    ].join(';');
+    text.style.cssText = 'font-size:14px;line-height:1.45;color:#666;margin:0 0 ' +
+      (botStarted ? '18px' : '14px');
 
     const btn = document.createElement('button');
     btn.type = 'button';
@@ -361,8 +364,33 @@ registerUserIfNeeded();
     card.appendChild(emoji);
     card.appendChild(title);
     card.appendChild(text);
-    card.appendChild(notify);
-    card.appendChild(startBtn);
+    if (!botStarted) {
+      const notify = document.createElement('div');
+      notify.style.cssText = 'font-size:14px;line-height:1.45;color:#5b4a7a;margin:0 0 12px;text-align:center';
+      notify.appendChild(document.createTextNode(
+        'Пожалуйста, активируйте бота, чтобы получать важные уведомления (окончание доступа, чеки и новости). Нажмите '
+      ));
+      const startLink = document.createElement('a');
+      startLink.href = ARMY_BOT_ACTIVATE_URL;
+      startLink.textContent = 'Start';
+      startLink.style.cssText = 'color:#7b5fb3;font-weight:700;text-decoration:underline;cursor:pointer';
+      startLink.addEventListener('click', armyActivateBotAndShowChat);
+      notify.appendChild(startLink);
+
+      const startBtn = document.createElement('a');
+      startBtn.href = ARMY_BOT_ACTIVATE_URL;
+      startBtn.textContent = 'Активировать бота · Start';
+      startBtn.style.cssText = [
+        'display:block', 'width:100%', 'box-sizing:border-box', 'text-decoration:none',
+        'border-radius:12px', 'padding:12px 16px', 'margin:0 0 10px',
+        'font-size:15px', 'font-weight:700', 'text-align:center',
+        'background:#f0edf9', 'color:#5b3a8e', 'border:1px solid #d9cdf0',
+        'cursor:pointer'
+      ].join(';');
+      startBtn.addEventListener('click', armyActivateBotAndShowChat);
+      card.appendChild(notify);
+      card.appendChild(startBtn);
+    }
     card.appendChild(btn);
     overlay.appendChild(card);
     armyMountTopOverlay(overlay);
@@ -550,9 +578,32 @@ registerUserIfNeeded();
     // Убрать paywall из старого кэша — иначе showTrialWelcome сразу выходит
     armyRemoveEl('army-paywall');
     showTrialWelcome({
-      trialDays: data.trialDays || 10
+      trialDays: data.trialDays || 10,
+      botStarted: !!data.botStarted
     });
   }
+
+  function applyBotActivateMenu(data) {
+    const el = document.getElementById('menu-bot-activate');
+    if (!el) return;
+    el.style.display = (data && data.botStarted) ? 'none' : '';
+    if (!el.getAttribute('data-army-activate-bound')) {
+      el.setAttribute('data-army-activate-bound', '1');
+      el.addEventListener('click', armyActivateBotAndShowChat);
+    }
+  }
+
+  // На главной: пункт меню «активировать бота» сразу умеет закрывать Mini App
+  (function bindMenuBotActivateEarly() {
+    function bind() {
+      const el = document.getElementById('menu-bot-activate');
+      if (!el || el.getAttribute('data-army-activate-bound')) return;
+      el.setAttribute('data-army-activate-bound', '1');
+      el.addEventListener('click', armyActivateBotAndShowChat);
+    }
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', bind);
+    else bind();
+  })();
 
   function armyDaysLeftWarnKey(days, expiresAt) {
     return 'armyDaysLeftWarn_' + days + '_' + ARMY_USER_ID + '_' + String(expiresAt || '');
@@ -761,6 +812,7 @@ registerUserIfNeeded();
   function applySubscriptionResult(data) {
     if (!data || typeof data !== 'object') return;
     writeSubscriptionCache(data);
+    applyBotActivateMenu(data);
     if (data.ok) {
       armyRemoveEl('army-paywall');
       armyUnlockPageScroll();
@@ -799,6 +851,7 @@ registerUserIfNeeded();
         if (!data || typeof data !== 'object') return;
         if (alwaysOpen) {
           writeSubscriptionCache(data);
+          applyBotActivateMenu(data);
           // Окошко новичка можно показать и на payment/referral
           if (data && data.ok && data.trial) maybeShowTrialWelcome(data);
           return;
