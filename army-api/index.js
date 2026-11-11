@@ -591,6 +591,8 @@ async function ensureSubscriptionRecord(uid) {
     const existing = snap.val();
     if (existing.forever) return existing;
     const note = String(existing.note || '');
+    // Comeback / спец. выдачи не перетирать legacy-пробным
+    if (note.indexOf('comeback') === 0) return existing;
     const isForce = note.indexOf('force-') === 0;
     // Хвост от тестового форса не считаем «бывшей оплатой» — иначе навсегда expired
     if (isForce) {
@@ -665,6 +667,7 @@ async function touchLastVisit(uid, data) {
 
 /**
  * Вернуть 5 дней «comeback», если доступа нет и человек не заходил COMEBACK_IDLE_DAYS.
+ * Только один раз за всё время (comebackUsed) — повторно после ещё 60 дней уже не даём.
  * Пока COMEBACK_TEST_ONLY — только FORCE_TEST_IDS.
  */
 async function maybeApplyComebackGrant(uid, data) {
@@ -674,6 +677,8 @@ async function maybeApplyComebackGrant(uid, data) {
   if (COMEBACK_TEST_ONLY && FORCE_TEST_IDS.indexOf(uid) === -1) return data;
   if (ADMIN_IDS.indexOf(uid) !== -1 || FOREVER_IDS.indexOf(uid) !== -1) return data;
   if (data.forever) return data;
+  // Уже получал comeback когда-то — больше никогда
+  if (data.comebackUsed === true || data.comebackGrantedAt) return data;
 
   const now = Date.now();
   if (hasActiveAccess(data, now)) return data;
@@ -683,17 +688,20 @@ async function maybeApplyComebackGrant(uid, data) {
   // lastVisit=0 → считаем, что «очень давно» (или подготовка теста)
   if (lastVisit && (now - lastVisit) < idleNeed) return data;
 
-  const expiresAt = paidExpiresAtFrom(now, COMEBACK_DAYS);
+  // 5 полных дней → в кабинете 6 (сегодня + 5). Истекает в полночь МСК после 5-го полного дня.
+  const expiresAt = moscowMidnightPlusDays(now, COMEBACK_DAYS + 1);
   const entry = {
     active: true,
     trial: true,
     trialDays: COMEBACK_DAYS,
+    trialPlan: TRIAL_PLAN_TAG,
     forever: false,
     expiresAt: expiresAt,
     createdAt: data.createdAt || now,
     updatedAt: now,
     lastVisitAt: now,
     comebackGrantedAt: now,
+    comebackUsed: true,
     note: 'comeback-5',
     promoUsed: data.promoUsed === true,
     promoUsedAt: data.promoUsedAt || null
@@ -704,7 +712,7 @@ async function maybeApplyComebackGrant(uid, data) {
   } catch (e) {
     console.error('comeback notify failed', uid, e);
   }
-  console.log('comeback grant', uid, expiresAt);
+  console.log('comeback grant once', uid, expiresAt);
   return entry;
 }
 
@@ -737,6 +745,44 @@ async function prepareComebackTestPreview() {
   await ref.set(entry);
   await metaRef.set({ at: now, to: testId, lastVisitAt: entry.lastVisitAt, expiresAt: entry.expiresAt });
   console.log('comeback test prep done', testId);
+}
+
+/** Разово поправить тестовый comeback: в кабинете должно быть 6 дней (5 полных). */
+async function fixComebackTestToSixDays() {
+  if (!COMEBACK_TEST_ONLY) return;
+  const metaRef = db.ref('bot_meta/comebackFix6V1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('comeback fix6 already done', metaSnap.val());
+    return;
+  }
+  const testId = FORCE_TEST_IDS[0] || '2055929706';
+  const now = Date.now();
+  const expiresAt = moscowMidnightPlusDays(now, COMEBACK_DAYS + 1);
+  await subscriptionRef(testId).update({
+    active: true,
+    trial: true,
+    trialDays: COMEBACK_DAYS,
+    trialPlan: TRIAL_PLAN_TAG,
+    forever: false,
+    expiresAt: expiresAt,
+    updatedAt: now,
+    lastVisitAt: now,
+    comebackGrantedAt: now,
+    comebackUsed: true,
+    note: 'comeback-5'
+  });
+  try {
+    await telegramSendMessage(
+      testId,
+      'Поправила срок: снова ' + COMEBACK_DAYS + ' полных дней доступа (в кабинете будет 6) 💜',
+      undefined
+    );
+  } catch (e) {
+    console.error('comeback fix6 notify failed', e);
+  }
+  await metaRef.set({ at: now, to: testId, expiresAt: expiresAt });
+  console.log('comeback fix6 done', testId, expiresAt);
 }
 
 // Один раз: всем из user_registry (старым) выдать общий пробный на 5 дней с завтра
@@ -1547,6 +1593,8 @@ async function grantPaidDaysFromYooKassa(uid, days, meta) {
       note: 'yookassa-forever',
       promoUsed: true,
       promoUsedAt: (prev && prev.promoUsedAt) || now,
+      comebackUsed: prev.comebackUsed === true,
+      comebackGrantedAt: prev.comebackGrantedAt || null,
       lastCardPayment: {
         at: now,
         days: 0,
@@ -1570,6 +1618,8 @@ async function grantPaidDaysFromYooKassa(uid, days, meta) {
       note: 'yookassa-paid',
       promoUsed: true,
       promoUsedAt: (prev && prev.promoUsedAt) || now,
+      comebackUsed: prev.comebackUsed === true,
+      comebackGrantedAt: prev.comebackGrantedAt || null,
       lastCardPayment: {
         at: now,
         days: paidDays,
@@ -3696,6 +3746,12 @@ app.listen(PORT, function () {
       console.error('comeback test prep failed', e);
     });
   }, 12000);
+  // Разово: поправить тестовый срок comeback на 6 дней в счётчике
+  setTimeout(function () {
+    fixComebackTestToSixDays().catch(function (e) {
+      console.error('comeback fix6 failed', e);
+    });
+  }, 13000);
   applyForceTestAccountOnBoot().catch(function (e) {
     console.error('force test account boot failed', e);
   });
