@@ -3181,10 +3181,14 @@ async function sendOneDayReminderToUser(uid, options) {
   }
   try {
     try {
-      await telegramSendPhoto(uid, ONEDAY_REMIND_TEXT, ONEDAY_REMIND_PHOTO);
+      await telegramSendPhoto(uid, ONEDAY_REMIND_TEXT, ONEDAY_REMIND_PHOTO, {
+        parseMode: 'HTML'
+      });
     } catch (photoErr) {
       console.error('oneday remind photo failed', uid, photoErr);
-      await telegramSendMessage(uid, ONEDAY_REMIND_TEXT);
+      await telegramSendMessage(uid, ONEDAY_REMIND_TEXT, undefined, null, {
+        parseMode: 'HTML'
+      });
     }
   } catch (e) {
     return { sent: false, reason: 'telegram', error: String(e.message || e) };
@@ -3982,7 +3986,7 @@ async function sendReferralSelfPreviewToTest() {
 }
 
 async function sendOnedayRemindPreviewToTest() {
-  const metaRef = db.ref('bot_meta/onedayRemindPreviewV1');
+  const metaRef = db.ref('bot_meta/onedayRemindPreviewV2');
   const metaSnap = await metaRef.get();
   if (metaSnap.exists()) {
     console.log('oneday remind preview already sent', metaSnap.val());
@@ -3990,7 +3994,9 @@ async function sendOnedayRemindPreviewToTest() {
   }
   const testId = FORCE_TEST_IDS[0] || '2055929706';
   try {
-    await telegramSendPhoto(testId, ONEDAY_REMIND_TEXT, ONEDAY_REMIND_PHOTO);
+    await telegramSendPhoto(testId, ONEDAY_REMIND_TEXT, ONEDAY_REMIND_PHOTO, {
+      parseMode: 'HTML'
+    });
     await metaRef.set({ at: Date.now(), to: testId });
     console.log('oneday remind preview sent to', testId);
   } catch (e) {
@@ -4084,7 +4090,12 @@ app.listen(PORT, function () {
   extendTrialsPlusOneDayPaymentPending().catch(function (e) {
     console.error('trial +1 day payment pending failed', e);
   });
-  // Разово: превью текста «подписка закончилась» на тестовый
+  // Разово: превью текстов напоминаний на тестовый
+  setTimeout(function () {
+    sendOnedayRemindPreviewToTest().catch(function (e) {
+      console.error('oneday remind preview failed', e);
+    });
+  }, 6500);
   setTimeout(function () {
     sendExpiredRemindPreviewToTest().catch(function (e) {
       console.error('expired remind preview failed', e);
