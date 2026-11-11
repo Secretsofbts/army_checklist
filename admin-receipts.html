@@ -45,14 +45,15 @@
     }
     .btn-auto:disabled { opacity: 0.55; cursor: default; }
     .err { color: #b00020; font-size: 12px; margin: 6px 0 0; line-height: 1.4; }
-    .ok-tag {
-      display: inline-block; margin: 6px 0 0; padding: 3px 8px; border-radius: 999px;
-      background: #e3f7e9; color: #2e9e5b; font-size: 11px; font-weight: 700;
+    .tags { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0 0; }
+    .ok-tag, .warn-tag, .bad-tag, .muted-tag {
+      display: inline-block; padding: 3px 8px; border-radius: 999px;
+      font-size: 11px; font-weight: 700;
     }
-    .warn-tag {
-      display: inline-block; margin: 6px 0 0; padding: 3px 8px; border-radius: 999px;
-      background: #fff3e0; color: #b86a00; font-size: 11px; font-weight: 700;
-    }
+    .ok-tag { background: #e3f7e9; color: #2e9e5b; }
+    .warn-tag { background: #fff3e0; color: #b86a00; }
+    .bad-tag { background: #fde8e8; color: #b00020; }
+    .muted-tag { background: #f0eef5; color: #8a7aa8; }
     .denied { color: #b00020; font-size: 14px; line-height: 1.45; }
   </style>
 </head>
@@ -114,6 +115,7 @@
         return;
       }
       box.innerHTML = rows.map(function (p) {
+        var formed = !!(p.receiptUuid || p.receiptUrl);
         var linkHtml = p.receiptUrl
           ? ('<p class="meta"><a href="' + String(p.receiptUrl).replace(/"/g, '') + '" target="_blank" rel="noopener">открыть чек</a></p>')
           : '';
@@ -123,14 +125,27 @@
         if (p.receiptNotifyError) {
           errHtml += '<p class="err">ТГ не ушёл: ' + String(p.receiptNotifyError).replace(/</g, '&lt;') + '</p>';
         }
-        var statusTag = '';
-        if (p.receiptSentTg) {
-          statusTag = '<span class="ok-tag">отправлен в Telegram</span>';
-        } else if (p.receiptDone && String(p.receiptDoneBy || '') === 'auto-moy-nalog') {
-          statusTag = '<span class="warn-tag">чек есть, в ТГ не ушёл</span>';
+
+        var formTag;
+        if (formed) {
+          formTag = '<span class="ok-tag">чек сформирован</span>';
+        } else if (p.receiptError) {
+          formTag = '<span class="bad-tag">чек не сформирован</span>';
         } else if (p.receiptDone) {
-          statusTag = '<span class="ok-tag">отмечено вручную</span>';
+          formTag = '<span class="warn-tag">отмечено вручную</span>';
+        } else {
+          formTag = '<span class="muted-tag">чек ещё нет</span>';
         }
+
+        var tgTag;
+        if (p.receiptSentTg) {
+          tgTag = '<span class="ok-tag">отправлен в Telegram</span>';
+        } else if (formed || p.receiptDone) {
+          tgTag = '<span class="warn-tag">в Telegram не ушёл</span>';
+        } else {
+          tgTag = '<span class="muted-tag">в Telegram не отправляли</span>';
+        }
+
         var autoBtn = !p.receiptDone
           ? ('<button type="button" class="btn-auto" data-issue="' + String(p.paymentId) + '">Авточек</button>')
           : '';
@@ -143,7 +158,7 @@
                 '<p class="meta">Telegram id: ' + (p.userId || '—') + '</p>' +
                 '<p class="meta" style="color:#9a8fb0;">payment: ' + String(p.paymentId).slice(0, 13) + '…</p>' +
                 linkHtml +
-                statusTag +
+                '<div class="tags">' + formTag + tgTag + '</div>' +
                 errHtml +
                 '<div class="row-actions">' + autoBtn + '</div>' +
               '</div>' +
@@ -168,7 +183,13 @@
       });
       if (statusEl) {
         var openCount = allPayments.filter(function (p) { return !p.receiptDone; }).length;
-        statusEl.textContent = 'Нужен чек: ' + openCount + ' · всего: ' + allPayments.length;
+        var formedCount = allPayments.filter(function (p) { return !!(p.receiptUuid || p.receiptUrl); }).length;
+        var tgCount = allPayments.filter(function (p) { return !!p.receiptSentTg; }).length;
+        statusEl.textContent =
+          'Нужен чек: ' + openCount +
+          ' · сформировано: ' + formedCount +
+          ' · в ТГ: ' + tgCount +
+          ' · всего: ' + allPayments.length;
       }
     }
 
