@@ -287,10 +287,25 @@
         var initData = (window.Telegram && Telegram.WebApp && Telegram.WebApp.initData) || '';
         if (initData) headers['X-Telegram-Init-Data'] = initData;
       } catch (e) {}
+
+      // Отдельно узнаём, готова ли ЮKassa (даже если /subscription ещё не ответил)
+      fetch(api + '/payment/yookassa/status')
+        .then(function (res) { return res.ok ? res.json() : null; })
+        .then(function (st) {
+          if (!st || !st.ready) return;
+          var base = lastPayInfo || localPricingInfo();
+          paintPricing(Object.assign({}, base, { paymentLive: true }));
+        })
+        .catch(function () {});
+
       fetch(api + '/subscription', { method: 'GET', headers: headers })
         .then(function (res) { return res.ok ? res.json() : null; })
         .then(function (data) {
-          if (data && typeof data === 'object') paintPricing(data);
+          if (data && typeof data === 'object') {
+            // Если статус ЮKassa уже сказал ready — кнопку не гасим
+            if (lastPayInfo && lastPayInfo.paymentLive) data.paymentLive = true;
+            paintPricing(data);
+          }
         })
         .catch(function () {});
     }

@@ -1263,6 +1263,12 @@ async function processYooKassaSucceededPayment(payment) {
   return { ok: true, granted: granted };
 }
 
+// Статус ЮKassa (без авторизации) — чтобы кнопка оплаты включалась сразу
+app.get('/payment/yookassa/status', function (req, res) {
+  const ready = yookassaReady();
+  return res.json({ ok: true, ready: ready, paymentLive: ready, shopId: ready ? YOOKASSA_SHOP_ID : null });
+});
+
 // Создать платёж ЮKassa (30 дней по цене пользователя)
 app.post('/payment/yookassa/create', async function (req, res) {
   const user = authUser(req);
