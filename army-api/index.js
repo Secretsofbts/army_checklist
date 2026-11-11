@@ -1138,6 +1138,63 @@ app.get('/admin/payment-stats', async function (req, res) {
   }
 });
 
+// Последние оплаты ЮKassa (id, сумма, email) — только админ
+app.get('/admin/yookassa-recent', async function (req, res) {
+  const user = authUser(req);
+  if (!user || !user.isAdmin) return res.status(403).json({ error: 'forbidden' });
+  try {
+    const limit = Math.max(1, Math.min(100, parseInt(req.query.limit, 10) || 50));
+    const snap = await db.ref('yookassa_payments').get();
+    const all = snap.exists() ? (snap.val() || {}) : {};
+    const list = Object.keys(all).map(function (pid) {
+      const row = all[pid] || {};
+      return {
+        paymentId: pid,
+        userId: row.userId || null,
+        amountRub: row.amountRub || 0,
+        days: row.days || 0,
+        email: row.email || null,
+        processed: !!row.processed,
+        granted: row.granted === true,
+        receiptDone: !!row.receiptDone,
+        receiptDoneAt: row.receiptDoneAt || null,
+        createdAt: row.createdAt || 0,
+        processedAt: row.processedAt || 0
+      };
+    }).sort(function (a, b) {
+      return (b.processedAt || b.createdAt || 0) - (a.processedAt || a.createdAt || 0);
+    }).slice(0, limit);
+    return res.json({ ok: true, payments: list });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: 'yookassa-recent' });
+  }
+});
+
+// Отметить «чек выдан» — только админ
+app.post('/admin/yookassa-receipt-done', async function (req, res) {
+  const user = authUser(req);
+  if (!user || !user.isAdmin) return res.status(403).json({ error: 'forbidden' });
+  const paymentId = String((req.body && req.body.paymentId) || '').trim();
+  if (!paymentId) return res.status(400).json({ error: 'paymentId' });
+  const done = !(req.body && req.body.done === false);
+  try {
+    const ref = db.ref('yookassa_payments/' + paymentId);
+    const snap = await ref.get();
+    if (!snap.exists()) return res.status(404).json({ error: 'not-found' });
+    const patch = {
+      receiptDone: done,
+      receiptDoneAt: done ? Date.now() : null,
+      receiptDoneBy: String(user.id)
+    };
+    await ref.update(patch);
+    return res.json({ ok: true, paymentId: paymentId, receiptDone: done });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: 'receipt-done' });
+  }
+});
+
 async function yookassaApi(method, path, body, idempotenceKey) {
   const auth = Buffer.from(YOOKASSA_SHOP_ID + ':' + YOOKASSA_SECRET_KEY).toString('base64');
   const headers = {
@@ -1251,6 +1308,9 @@ async function processYooKassaSucceededPayment(payment, opts) {
     paymentId: paymentId,
     amountRub: amountRub
   });
+  const emailFromPay = payment.receipt && payment.receipt.customer && payment.receipt.customer.email
+    ? String(payment.receipt.customer.email)
+    : (prev.email || null);
   await lockRef.update({
     status: 'succeeded',
     processed: true,
@@ -1258,7 +1318,8 @@ async function processYooKassaSucceededPayment(payment, opts) {
     userId: uid,
     days: days,
     amountRub: amountRub,
-    granted: !granted.skipped
+    granted: !granted.skipped,
+    email: emailFromPay
   });
   if (!granted.skipped) {
     try {
@@ -1333,6 +1394,7 @@ app.post('/payment/yookassa/create', async function (req, res) {
       days: days,
       amountRub: amountRub,
       promo: !!price.promo,
+      email: email || null,
       status: payment.status || 'pending',
       createdAt: Date.now(),
       confirmationUrl: confirmationUrl
@@ -1343,7 +1405,8 @@ app.post('/payment/yookassa/create', async function (req, res) {
       confirmationUrl: confirmationUrl,
       amountRub: amountRub,
       days: days,
-      promo: !!price.promo
+      promo: !!price.promo,
+      email: email || null
     });
   } catch (e) {
     console.error('yookassa create failed', e && e.data ? e.data : e);

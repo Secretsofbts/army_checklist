@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js?v=141"></script>
+  <title>Чеки по оплатам</title>
+  <style>
+    body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
+    * { box-sizing: border-box; }
+    .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
+    h1 { font-size: 18px; margin: 0 0 8px; color: #2b2440; line-height: 1.35; }
+    .lead { font-size: 13px; color: #666; line-height: 1.45; margin: 0 0 14px; }
+    .status { font-size: 13px; color: #8a7aa8; margin: 0 0 12px; }
+    .filters { display: flex; gap: 8px; margin: 0 0 12px; }
+    .filters button {
+      flex: 1; border: 1px solid #e4dcf3; background: #f7f4fc; color: #5b4a7a;
+      border-radius: 10px; padding: 8px 6px; font-size: 12px; font-weight: 600; cursor: pointer;
+    }
+    .filters button.active { background: #9b7fd4; color: #fff; border-color: #9b7fd4; }
+    .row {
+      border: 1px solid #eee8f6; border-radius: 12px; padding: 12px; margin: 0 0 10px;
+      background: #faf8fd;
+    }
+    .row.is-done { background: #f3f7f4; border-color: #d7e8dc; opacity: 0.92; }
+    .row-top { display: flex; align-items: flex-start; gap: 10px; }
+    .row-main { flex: 1; min-width: 0; }
+    .sum { font-size: 15px; font-weight: 700; color: #2b2440; margin: 0 0 4px; }
+    .meta { font-size: 12px; color: #5b4a7a; line-height: 1.45; margin: 0; word-break: break-all; }
+    .meta a { color: #7b5fb3; }
+    label.mark {
+      display: flex; align-items: center; gap: 6px; font-size: 12px; color: #2b2440;
+      font-weight: 600; white-space: nowrap; cursor: pointer; user-select: none;
+    }
+    label.mark input { width: 18px; height: 18px; accent-color: #2e9e5b; }
+    .denied { color: #b00020; font-size: 14px; line-height: 1.45; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="statistics.html">← В личный кабинет</a>
+    <h1>Чеки по оплатам</h1>
+    <p class="lead">Только для вас. Отмечайте, когда выдали чек в «Мой налог».</p>
+    <p class="status" id="page-status">Загрузка…</p>
+    <div class="filters" id="filters" style="display:none;">
+      <button type="button" class="active" data-filter="open">Нужен чек</button>
+      <button type="button" data-filter="done">Готово</button>
+      <button type="button" data-filter="all">Все</button>
+    </div>
+    <div id="list"></div>
+  </div>
+
+  <script>
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+
+    var allPayments = [];
+    var currentFilter = 'open';
+
+    function apiBase() {
+      return String(window.ARMY_API_URL || '').replace(/\/$/, '');
+    }
+
+    function initHeaders() {
+      var h = { 'Content-Type': 'application/json' };
+      try {
+        var initData = (window.Telegram && Telegram.WebApp && Telegram.WebApp.initData) || '';
+        if (initData) h['X-Telegram-Init-Data'] = initData;
+      } catch (e) {}
+      return h;
+    }
+
+    function formatWhen(ms) {
+      if (!ms) return '—';
+      try { return new Date(ms).toLocaleString('ru-RU'); } catch (e) { return '—'; }
+    }
+
+    function paintList() {
+      var box = document.getElementById('list');
+      var statusEl = document.getElementById('page-status');
+      if (!box) return;
+      var rows = allPayments.filter(function (p) {
+        if (currentFilter === 'open') return !p.receiptDone;
+        if (currentFilter === 'done') return !!p.receiptDone;
+        return true;
+      });
+      if (!rows.length) {
+        box.innerHTML = '<p class="meta">Пока пусто в этом фильтре</p>';
+        if (statusEl) statusEl.textContent = 'Всего оплат: ' + allPayments.length;
+        return;
+      }
+      box.innerHTML = rows.map(function (p) {
+        var emailHtml = p.email
+          ? ('<a href="mailto:' + String(p.email).replace(/"/g, '') + '">' + String(p.email) + '</a>')
+          : 'email не указан';
+        return (
+          '<div class="row' + (p.receiptDone ? ' is-done' : '') + '" data-id="' + String(p.paymentId) + '">' +
+            '<div class="row-top">' +
+              '<div class="row-main">' +
+                '<p class="sum">' + (p.amountRub || 0) + ' ₽ · ' + (p.days || 30) + ' дн.</p>' +
+                '<p class="meta">' + formatWhen(p.processedAt || p.createdAt) + '</p>' +
+                '<p class="meta">Telegram id: ' + (p.userId || '—') + '</p>' +
+                '<p class="meta">' + emailHtml + '</p>' +
+                '<p class="meta" style="color:#9a8fb0;">payment: ' + String(p.paymentId).slice(0, 13) + '…</p>' +
+              '</div>' +
+              '<label class="mark">' +
+                '<input type="checkbox" ' + (p.receiptDone ? 'checked' : '') + ' data-pid="' + String(p.paymentId) + '">' +
+                'Чек<br>выдан' +
+              '</label>' +
+            '</div>' +
+          '</div>'
+        );
+      }).join('');
+
+      box.querySelectorAll('input[type="checkbox"]').forEach(function (cb) {
+        cb.addEventListener('change', function () {
+          toggleReceipt(cb.getAttribute('data-pid'), cb.checked, cb);
+        });
+      });
+      if (statusEl) {
+        var openCount = allPayments.filter(function (p) { return !p.receiptDone; }).length;
+        statusEl.textContent = 'Нужен чек: ' + openCount + ' · всего: ' + allPayments.length;
+      }
+    }
+
+    function toggleReceipt(paymentId, done, cb) {
+      var api = apiBase();
+      if (!api || !paymentId) return;
+      cb.disabled = true;
+      fetch(api + '/admin/yookassa-receipt-done', {
+        method: 'POST',
+        headers: initHeaders(),
+        body: JSON.stringify({ paymentId: paymentId, done: !!done })
+      })
+        .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+        .then(function (result) {
+          cb.disabled = false;
+          if (!result.ok) {
+            cb.checked = !done;
+            alert('Не удалось сохранить отметку');
+            return;
+          }
+          allPayments.forEach(function (p) {
+            if (p.paymentId === paymentId) {
+              p.receiptDone = !!done;
+              p.receiptDoneAt = done ? Date.now() : null;
+            }
+          });
+          paintList();
+        })
+        .catch(function () {
+          cb.disabled = false;
+          cb.checked = !done;
+          alert('Ошибка сети');
+        });
+    }
+
+    function loadPayments() {
+      var api = apiBase();
+      var statusEl = document.getElementById('page-status');
+      var filters = document.getElementById('filters');
+      if (!api) {
+        if (statusEl) statusEl.textContent = 'Нет API';
+        return;
+      }
+      fetch(api + '/subscription', { method: 'GET', headers: initHeaders() })
+        .then(function (res) { return res.ok ? res.json() : null; })
+        .then(function (sub) {
+          if (!sub || sub.status !== 'admin') {
+            document.getElementById('list').innerHTML =
+              '<p class="denied">Эта страница только для администратора.</p>';
+            if (statusEl) statusEl.textContent = '';
+            if (filters) filters.style.display = 'none';
+            return null;
+          }
+          if (filters) filters.style.display = 'flex';
+          return fetch(api + '/admin/yookassa-recent?limit=50', {
+            method: 'GET',
+            headers: initHeaders()
+          });
+        })
+        .then(function (res) {
+          if (!res) return null;
+          return res.ok ? res.json() : null;
+        })
+        .then(function (data) {
+          if (!data) return;
+          allPayments = data.payments || [];
+          paintList();
+        })
+        .catch(function () {
+          if (statusEl) statusEl.textContent = 'Не удалось загрузить';
+        });
+    }
+
+    document.getElementById('filters').addEventListener('click', function (e) {
+      var btn = e.target.closest('button[data-filter]');
+      if (!btn) return;
+      currentFilter = btn.getAttribute('data-filter') || 'open';
+      document.querySelectorAll('#filters button').forEach(function (b) {
+        b.classList.toggle('active', b === btn);
+      });
+      paintList();
+    });
+
+    loadPayments();
+  </script>
+</body>
+</html>
