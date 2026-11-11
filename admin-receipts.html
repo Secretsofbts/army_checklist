@@ -38,6 +38,13 @@
       font-weight: 600; white-space: nowrap; cursor: pointer; user-select: none;
     }
     label.mark input { width: 18px; height: 18px; accent-color: #2e9e5b; }
+    .row-actions { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .btn-auto {
+      border: 1px solid #c9b8e8; background: #efe8fa; color: #5b4a7a;
+      border-radius: 10px; padding: 7px 10px; font-size: 12px; font-weight: 600; cursor: pointer;
+    }
+    .btn-auto:disabled { opacity: 0.55; cursor: default; }
+    .err { color: #b00020; font-size: 12px; margin: 6px 0 0; line-height: 1.4; }
     .denied { color: #b00020; font-size: 14px; line-height: 1.45; }
   </style>
 </head>
@@ -46,8 +53,9 @@
     <a class="back" href="admin-stats.html?v=1">← К админ-статистике</a>
     <a class="back" href="statistics.html" style="margin-left:8px;">Кабинет</a>
     <h1>Чеки по оплатам</h1>
-    <p class="lead">Только для вас. Отмечайте, когда выдали чек в «Мой налог».</p>
+    <p class="lead">Новые оплаты получают чек сами через «Мой налог». Здесь можно догнать старые или отметить вручную.</p>
     <p class="status" id="page-status">Загрузка…</p>
+    <p class="status" id="nalog-status" style="margin-top:-6px;"></p>
     <div class="filters" id="filters" style="display:none;">
       <button type="button" class="active" data-filter="open">Нужен чек</button>
       <button type="button" data-filter="done">Готово</button>
@@ -98,9 +106,15 @@
         return;
       }
       box.innerHTML = rows.map(function (p) {
-        var emailHtml = p.email
-          ? ('<a href="mailto:' + String(p.email).replace(/"/g, '') + '">' + String(p.email) + '</a>')
-          : 'email не указан';
+        var linkHtml = p.receiptUrl
+          ? ('<p class="meta"><a href="' + String(p.receiptUrl).replace(/"/g, '') + '" target="_blank" rel="noopener">открыть чек</a></p>')
+          : '';
+        var errHtml = p.receiptError
+          ? ('<p class="err">Ошибка авточека: ' + String(p.receiptError).replace(/</g, '&lt;') + '</p>')
+          : '';
+        var autoBtn = !p.receiptDone
+          ? ('<button type="button" class="btn-auto" data-issue="' + String(p.paymentId) + '">Авточек</button>')
+          : '';
         return (
           '<div class="row' + (p.receiptDone ? ' is-done' : '') + '" data-id="' + String(p.paymentId) + '">' +
             '<div class="row-top">' +
@@ -108,8 +122,10 @@
                 '<p class="sum">' + (p.amountRub || 0) + ' ₽ · ' + (p.days || 30) + ' дн.</p>' +
                 '<p class="meta">' + formatWhen(p.processedAt || p.createdAt) + '</p>' +
                 '<p class="meta">Telegram id: ' + (p.userId || '—') + '</p>' +
-                '<p class="meta">' + emailHtml + '</p>' +
                 '<p class="meta" style="color:#9a8fb0;">payment: ' + String(p.paymentId).slice(0, 13) + '…</p>' +
+                linkHtml +
+                errHtml +
+                '<div class="row-actions">' + autoBtn + '</div>' +
               '</div>' +
               '<label class="mark">' +
                 '<input type="checkbox" ' + (p.receiptDone ? 'checked' : '') + ' data-pid="' + String(p.paymentId) + '">' +
@@ -125,10 +141,45 @@
           toggleReceipt(cb.getAttribute('data-pid'), cb.checked, cb);
         });
       });
+      box.querySelectorAll('button[data-issue]').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          issueAutoReceipt(btn.getAttribute('data-issue'), btn);
+        });
+      });
       if (statusEl) {
         var openCount = allPayments.filter(function (p) { return !p.receiptDone; }).length;
         statusEl.textContent = 'Нужен чек: ' + openCount + ' · всего: ' + allPayments.length;
       }
+    }
+
+    function issueAutoReceipt(paymentId, btn) {
+      var api = apiBase();
+      if (!api || !paymentId) return;
+      btn.disabled = true;
+      btn.textContent = 'Ждём…';
+      fetch(api + '/admin/yookassa-receipt-issue', {
+        method: 'POST',
+        headers: initHeaders(),
+        body: JSON.stringify({ paymentId: paymentId })
+      })
+        .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+        .then(function (result) {
+          btn.disabled = false;
+          btn.textContent = 'Авточек';
+          if (!result.ok || !result.data || !result.data.ok) {
+            var reason = (result.data && result.data.result && result.data.result.reason) ||
+              (result.data && result.data.error) || 'ошибка';
+            alert('Авточек не вышел: ' + reason);
+            loadPayments();
+            return;
+          }
+          loadPayments();
+        })
+        .catch(function () {
+          btn.disabled = false;
+          btn.textContent = 'Авточек';
+          alert('Ошибка сети');
+        });
     }
 
     function toggleReceipt(paymentId, done, cb) {
@@ -163,6 +214,26 @@
         });
     }
 
+    function loadNalogStatus() {
+      var api = apiBase();
+      var el = document.getElementById('nalog-status');
+      if (!api || !el) return;
+      fetch(api + '/admin/moy-nalog-status', { method: 'GET', headers: initHeaders() })
+        .then(function (res) { return res.ok ? res.json() : null; })
+        .then(function (data) {
+          if (!data) {
+            el.textContent = 'Статус «Мой налог»: не удалось проверить';
+            return;
+          }
+          el.textContent = data.ready
+            ? 'Авточек «Мой налог»: включён'
+            : 'Авточек «Мой налог»: выключен — добавьте MOY_NALOG_LOGIN и MOY_NALOG_PASSWORD на Render';
+        })
+        .catch(function () {
+          el.textContent = 'Статус «Мой налог»: ошибка сети';
+        });
+    }
+
     function loadPayments() {
       var api = apiBase();
       var statusEl = document.getElementById('page-status');
@@ -182,6 +253,7 @@
             return null;
           }
           if (filters) filters.style.display = 'flex';
+          loadNalogStatus();
           return fetch(api + '/admin/yookassa-recent?limit=50', {
             method: 'GET',
             headers: initHeaders()

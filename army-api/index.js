@@ -3,6 +3,7 @@ const fs = require('fs');
 const path = require('path');
 const express = require('express');
 const admin = require('firebase-admin');
+const NalogAPI = require('moy-nalog');
 const { startChannelGuard } = require('./channel-guard');
 
 const PORT = process.env.PORT || 3000;
@@ -61,9 +62,30 @@ const YOOKASSA_SHOP_ID = String(process.env.YOOKASSA_SHOP_ID || '').trim();
 const YOOKASSA_SECRET_KEY = String(process.env.YOOKASSA_SECRET_KEY || '').trim();
 const YOOKASSA_RETURN_URL = String(process.env.YOOKASSA_RETURN_URL || '').trim() ||
   'https://secretsofbts.github.io/army_checklist/payment.html?paid=1';
+// Авточеки самозанятой через неофициальный API «Мой налог» (lknpd.nalog.ru)
+const MOY_NALOG_LOGIN = String(process.env.MOY_NALOG_LOGIN || process.env.MOY_NALOG_INN || '').trim();
+const MOY_NALOG_PASSWORD = String(process.env.MOY_NALOG_PASSWORD || '').trim();
+const MOY_NALOG_SERVICE_NAME = String(process.env.MOY_NALOG_SERVICE_NAME || '').trim() ||
+  'Доступ к чек-листу BTS';
 
 function yookassaReady() {
   return !!(YOOKASSA_SHOP_ID && YOOKASSA_SECRET_KEY);
+}
+
+function moyNalogReady() {
+  return !!(MOY_NALOG_LOGIN && MOY_NALOG_PASSWORD);
+}
+
+let moyNalogClient = null;
+function getMoyNalogClient() {
+  if (!moyNalogReady()) return null;
+  if (!moyNalogClient) {
+    moyNalogClient = new NalogAPI({
+      login: MOY_NALOG_LOGIN,
+      password: MOY_NALOG_PASSWORD
+    });
+  }
+  return moyNalogClient;
 }
 
 function promoEndsAtMs() {
@@ -1158,6 +1180,9 @@ app.get('/admin/yookassa-recent', async function (req, res) {
         granted: row.granted === true,
         receiptDone: !!row.receiptDone,
         receiptDoneAt: row.receiptDoneAt || null,
+        receiptUrl: row.receiptUrl || null,
+        receiptUuid: row.receiptUuid || null,
+        receiptError: row.receiptError || null,
         createdAt: row.createdAt || 0,
         processedAt: row.processedAt || 0
       };
@@ -1193,6 +1218,46 @@ app.post('/admin/yookassa-receipt-done', async function (req, res) {
     console.error(e);
     return res.status(500).json({ error: 'receipt-done' });
   }
+});
+
+// Выпустить авточек «Мой налог» по одной оплате — только админ
+app.post('/admin/yookassa-receipt-issue', async function (req, res) {
+  const user = authUser(req);
+  if (!user || !user.isAdmin) return res.status(403).json({ error: 'forbidden' });
+  if (!moyNalogReady()) {
+    return res.status(503).json({ error: 'moy-nalog-not-configured' });
+  }
+  const paymentId = String((req.body && req.body.paymentId) || '').trim();
+  if (!paymentId) return res.status(400).json({ error: 'paymentId' });
+  try {
+    const snap = await db.ref('yookassa_payments/' + paymentId).get();
+    if (!snap.exists()) return res.status(404).json({ error: 'not-found' });
+    const row = snap.val() || {};
+    const result = await issueMoyNalogReceiptForPayment({
+      paymentId: paymentId,
+      amountRub: row.amountRub,
+      days: row.days || 30,
+      userId: row.userId || '',
+      operationAt: row.processedAt || row.createdAt || Date.now(),
+      force: !!(req.body && req.body.force)
+    });
+    return res.json({ ok: !!result.ok, result: result });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: 'receipt-issue' });
+  }
+});
+
+app.get('/admin/moy-nalog-status', async function (req, res) {
+  const user = authUser(req);
+  if (!user || !user.isAdmin) return res.status(403).json({ error: 'forbidden' });
+  return res.json({
+    ok: true,
+    ready: moyNalogReady(),
+    loginSet: !!MOY_NALOG_LOGIN,
+    passwordSet: !!MOY_NALOG_PASSWORD,
+    serviceName: MOY_NALOG_SERVICE_NAME
+  });
 });
 
 async function yookassaApi(method, path, body, idempotenceKey) {
@@ -1269,6 +1334,122 @@ async function grantPaidDaysFromYooKassa(uid, days, meta) {
   return { skipped: false, expiresAt: expiresAt, paidDays: paidDays };
 }
 
+/**
+ * Авточек в «Мой налог» после успешной оплаты.
+ * Не бросает наружу: оплата и дни уже выданы, чек — отдельно.
+ * Если чек уже есть (receiptUuid / receiptDone) — повторно не создаём.
+ */
+async function issueMoyNalogReceiptForPayment(meta) {
+  meta = meta || {};
+  const paymentId = String(meta.paymentId || '').trim();
+  const amountRub = Number(meta.amountRub) || 0;
+  const days = Math.max(1, parseInt(meta.days, 10) || 30);
+  const userId = String(meta.userId || '').trim();
+  const force = !!meta.force;
+  if (!paymentId || amountRub <= 0) {
+    return { ok: false, reason: 'bad-meta' };
+  }
+  if (!moyNalogReady()) {
+    return { ok: false, reason: 'not-configured' };
+  }
+
+  const lockRef = db.ref('yookassa_payments/' + paymentId);
+  const snap = await lockRef.get();
+  if (!snap.exists()) {
+    return { ok: false, reason: 'not-found' };
+  }
+  const prev = snap.val() || {};
+  if (!force && (prev.receiptUuid || prev.receiptDone)) {
+    return {
+      ok: true,
+      reason: 'already',
+      printUrl: prev.receiptUrl || null,
+      receiptId: prev.receiptUuid || null
+    };
+  }
+  if (!force && prev.receiptPending) {
+    return { ok: false, reason: 'pending' };
+  }
+
+  await lockRef.update({
+    receiptPending: true,
+    receiptPendingAt: Date.now(),
+    receiptError: null
+  });
+
+  const api = getMoyNalogClient();
+  if (!api) {
+    await lockRef.update({ receiptPending: null, receiptError: 'not-configured' });
+    return { ok: false, reason: 'not-configured' };
+  }
+
+  const serviceName = MOY_NALOG_SERVICE_NAME + ' на ' + days + ' дн.';
+  let opDate = new Date();
+  if (meta.operationAt) {
+    const d = new Date(meta.operationAt);
+    if (!Number.isNaN(d.getTime())) opDate = d;
+  } else if (prev.processedAt) {
+    const d = new Date(prev.processedAt);
+    if (!Number.isNaN(d.getTime())) opDate = d;
+  }
+
+  let receipt;
+  try {
+    receipt = await api.addIncome({
+      name: serviceName,
+      amount: amountRub,
+      quantity: 1,
+      date: opDate
+    });
+  } catch (e) {
+    const msg = String((e && e.message) || e).slice(0, 500);
+    console.error('moy-nalog addIncome failed', paymentId, msg);
+    await lockRef.update({
+      receiptPending: null,
+      receiptError: msg,
+      receiptErrorAt: Date.now()
+    });
+    return { ok: false, reason: 'api', error: msg };
+  }
+
+  if (!receipt || receipt.error || !receipt.printUrl) {
+    const msg = 'no-receipt: ' + JSON.stringify(receipt && receipt.error ? receipt.error : receipt).slice(0, 400);
+    console.error('moy-nalog no receipt', paymentId, msg);
+    await lockRef.update({
+      receiptPending: null,
+      receiptError: msg,
+      receiptErrorAt: Date.now()
+    });
+    return { ok: false, reason: 'no-receipt', error: msg };
+  }
+
+  const receiptId = String(receipt.id || receipt.approvedReceiptUuid || '');
+  const printUrl = String(receipt.printUrl || '');
+  await lockRef.update({
+    receiptPending: null,
+    receiptDone: true,
+    receiptDoneAt: Date.now(),
+    receiptDoneBy: 'auto-moy-nalog',
+    receiptUuid: receiptId,
+    receiptUrl: printUrl,
+    receiptError: null
+  });
+
+  if (userId && printUrl) {
+    try {
+      await telegramSendMessage(
+        userId,
+        'Ваш чек по оплате подписки 💜\n' + printUrl,
+        null
+      );
+    } catch (e) {
+      console.error('moy-nalog notify failed', userId, e && e.message ? e.message : e);
+    }
+  }
+  console.log('moy-nalog receipt ok', paymentId, receiptId);
+  return { ok: true, printUrl: printUrl, receiptId: receiptId };
+}
+
 async function processYooKassaSucceededPayment(payment, opts) {
   opts = opts || {};
   if (!payment || payment.status !== 'succeeded') {
@@ -1308,9 +1489,6 @@ async function processYooKassaSucceededPayment(payment, opts) {
     paymentId: paymentId,
     amountRub: amountRub
   });
-  const emailFromPay = payment.receipt && payment.receipt.customer && payment.receipt.customer.email
-    ? String(payment.receipt.customer.email)
-    : (prev.email || null);
   await lockRef.update({
     status: 'succeeded',
     processed: true,
@@ -1318,8 +1496,7 @@ async function processYooKassaSucceededPayment(payment, opts) {
     userId: uid,
     days: days,
     amountRub: amountRub,
-    granted: !granted.skipped,
-    email: emailFromPay
+    granted: !granted.skipped
   });
   if (!granted.skipped) {
     try {
@@ -1329,8 +1506,24 @@ async function processYooKassaSucceededPayment(payment, opts) {
       console.error('yookassa thanks error', uid, e);
     }
   }
+  // Авточек «Мой налог» — не ломаем оплату, если налоговая недоступна
+  let receipt = null;
+  try {
+    receipt = await issueMoyNalogReceiptForPayment({
+      paymentId: paymentId,
+      amountRub: amountRub,
+      days: days,
+      userId: uid,
+      operationAt: (payment && payment.captured_at) || Date.now()
+    });
+    if (!receipt.ok && receipt.reason !== 'already' && receipt.reason !== 'not-configured') {
+      console.error('moy-nalog after pay', paymentId, receipt);
+    }
+  } catch (e) {
+    console.error('moy-nalog after pay error', paymentId, e);
+  }
   console.log('yookassa payment ok', uid, days, amountRub, paymentId);
-  return { ok: true, granted: granted };
+  return { ok: true, granted: granted, receipt: receipt };
 }
 
 // Статус ЮKassa (без авторизации) — чтобы кнопка оплаты включалась сразу
@@ -1352,7 +1545,6 @@ app.post('/payment/yookassa/create', async function (req, res) {
     const price = pricingInfoForUser(subData, Date.now(), uid);
     const amountRub = Number(price.priceRub) || FULL_PRICE_RUB;
     const amountValue = amountRub.toFixed(2);
-    const email = String((req.body && req.body.email) || '').trim();
 
     const body = {
       amount: { value: amountValue, currency: 'RUB' },
@@ -1369,19 +1561,6 @@ app.post('/payment/yookassa/create', async function (req, res) {
         promo: price.promo ? '1' : '0'
       }
     };
-    if (email && email.indexOf('@') > 0) {
-      body.receipt = {
-        customer: { email: email },
-        items: [{
-          description: 'Доступ к чек-листу BTS на ' + days + ' дн.',
-          quantity: '1.00',
-          amount: { value: amountValue, currency: 'RUB' },
-          vat_code: 1,
-          payment_mode: 'full_payment',
-          payment_subject: 'service'
-        }]
-      };
-    }
 
     const idempotenceKey = crypto.randomUUID();
     const payment = await yookassaApi('POST', '/payments', body, idempotenceKey);
@@ -1394,7 +1573,6 @@ app.post('/payment/yookassa/create', async function (req, res) {
       days: days,
       amountRub: amountRub,
       promo: !!price.promo,
-      email: email || null,
       status: payment.status || 'pending',
       createdAt: Date.now(),
       confirmationUrl: confirmationUrl
@@ -1405,8 +1583,7 @@ app.post('/payment/yookassa/create', async function (req, res) {
       confirmationUrl: confirmationUrl,
       amountRub: amountRub,
       days: days,
-      promo: !!price.promo,
-      email: email || null
+      promo: !!price.promo
     });
   } catch (e) {
     console.error('yookassa create failed', e && e.data ? e.data : e);
@@ -3112,6 +3289,7 @@ process.on('unhandledRejection', function (err) {
 app.listen(PORT, function () {
   console.log('army-api listening on ' + PORT);
   console.log('yookassa', yookassaReady() ? 'ready shop=' + YOOKASSA_SHOP_ID : 'not configured');
+  console.log('moy-nalog', moyNalogReady() ? 'ready login=' + MOY_NALOG_LOGIN : 'not configured');
   scheduleSubscriptionReminders();
   ensureTelegramWebhook();
   ensureBotCommands();
