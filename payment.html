@@ -171,9 +171,7 @@
         <div class="plan-title">Акция · 30 дней</div>
         <div class="plan-badge" id="promo-badge">…</div>
       </div>
-      <div class="plan-price" id="promo-price">…</div>
-      <p class="plan-once">100 ₽ один раз</p>
-      <p class="plan-note" id="promo-note"></p>
+      <p class="plan-once" style="margin-bottom:10px;">100 ₽ один раз</p>
       <button type="button" class="plan-btn is-copy" id="pay-promo-btn" disabled>…</button>
     </div>
 
@@ -201,7 +199,7 @@
           <div class="col-price">1000 ₽</div>
         </button>
       </div>
-      <p class="plan-note" style="margin-top:10px;">Чек после оплаты придёт в этот чат с ботом</p>
+      <p class="plan-note" style="margin-top:10px;">Чек после оплаты придёт в бот. Чтобы активировать его, нажмите Start в <a href="https://t.me/army_checklist_bot" target="_blank" rel="noopener" style="color:#7b5fb3;">@army_checklist_bot</a></p>
       <button type="button" class="plan-btn is-copy" id="pay-plan-btn" disabled>…</button>
     </div>
 
@@ -237,7 +235,6 @@
     <p class="plan-note" id="pay-status" style="margin:8px 0 0;"></p>
 
     <p class="footer-note">
-      Акция «Приведи друга» — в <a href="referral.html">меню</a>.
       Условия и реквизиты — в <a href="oferta.html">оферте</a>.
       Вопросы по доступу: /support в <a href="https://t.me/army_checklist_bot" target="_blank" rel="noopener">боте</a>.
     </p>
@@ -321,8 +318,6 @@
       var notice = document.getElementById('pay-notice');
       var promoBox = document.getElementById('plan-promo');
       var promoBadge = document.getElementById('promo-badge');
-      var promoPrice = document.getElementById('promo-price');
-      var promoNote = document.getElementById('promo-note');
       var promoBtn = document.getElementById('pay-promo-btn');
       var planBtn = document.getElementById('pay-plan-btn');
       var foreverBtn = document.getElementById('pay-forever-btn');
@@ -334,8 +329,6 @@
         var left = parseInt(info.promoDaysLeft, 10) || 0;
         var pPrice = Number(info.promoPriceRub) || 100;
         if (promoBadge) promoBadge.textContent = left > 0 ? ('ещё ' + left + ' ' + pluralDays(left)) : 'акция';
-        if (promoPrice && promoPrice.textContent !== (pPrice + ' ₽')) promoPrice.textContent = pPrice + ' ₽';
-        if (promoNote) promoNote.textContent = '30 дней доступа по акции';
         setBtn(promoBtn, liveKnown, live, 'Оплатить ' + pPrice + ' ₽');
       }
 
