@@ -349,14 +349,16 @@ registerUserIfNeeded();
       // Тест «как новый»: новый welcomeResetToken сбрасывает «уже видела окошко»
       if (data.welcomeResetToken) {
         const tokenKey = 'armyTrialWelcomeToken_' + ARMY_USER_ID;
-        const prevToken = localStorage.getItem(tokenKey);
-        if (prevToken !== String(data.welcomeResetToken)) {
-          localStorage.setItem(tokenKey, String(data.welcomeResetToken));
+        const token = String(data.welcomeResetToken);
+        if (localStorage.getItem(tokenKey) !== token) {
+          localStorage.setItem(tokenKey, token);
           localStorage.removeItem(armyTrialWelcomeKey());
         }
       }
       if (localStorage.getItem(armyTrialWelcomeKey()) === '1') return;
     } catch (e) {}
+    // Убрать paywall из старого кэша — иначе showTrialWelcome сразу выходит
+    armyRemoveEl('army-paywall');
     showTrialWelcome({
       trialDays: data.trialDays || 10
     });
@@ -606,6 +608,8 @@ registerUserIfNeeded();
         if (!data || typeof data !== 'object') return;
         if (alwaysOpen) {
           writeSubscriptionCache(data);
+          // Окошко новичка можно показать и на payment/referral
+          if (data && data.ok && data.trial) maybeShowTrialWelcome(data);
           return;
         }
         applySubscriptionResult(data);

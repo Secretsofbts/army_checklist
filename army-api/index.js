@@ -625,6 +625,8 @@ function buildSubscriptionStatus(uid, data, isAdmin) {
   }
   const expiresAt = typeof data.expiresAt === 'number' ? data.expiresAt : 0;
   const trialDays = typeof data.trialDays === 'number' ? data.trialDays : null;
+  const forceShowWelcome = !!(data.trial && data.welcomeResetToken &&
+    String(data.note || '').indexOf('force-new10') === 0);
   if (expiresAt > now) {
     return attachPricingFields({
       ok: true,
@@ -633,7 +635,8 @@ function buildSubscriptionStatus(uid, data, isAdmin) {
       expiresAt: expiresAt,
       trial: !!data.trial,
       trialDays: trialDays,
-      welcomeResetToken: data.welcomeResetToken || null
+      welcomeResetToken: data.welcomeResetToken || null,
+      forceShowWelcome: forceShowWelcome
     }, price);
   }
   return attachPricingFields({
@@ -643,7 +646,8 @@ function buildSubscriptionStatus(uid, data, isAdmin) {
     expiresAt: expiresAt || null,
     trial: !!data.trial,
     trialDays: trialDays,
-    welcomeResetToken: data.welcomeResetToken || null
+    welcomeResetToken: data.welcomeResetToken || null,
+    forceShowWelcome: false
   }, price);
 }
 
@@ -1106,37 +1110,7 @@ app.get('/subscription', async function (req, res) {
   if (!user) return res.status(401).json({ error: 'auth' });
   const uid = String(user.id);
   try {
-    if (user.isAdmin) {
-      const existing = await subscriptionRef(uid).get();
-      if (!existing.exists() || !existing.val() || !existing.val().forever) {
-        await subscriptionRef(uid).set({
-          active: true,
-          trial: false,
-          forever: true,
-          expiresAt: null,
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
-          note: 'admin'
-        });
-      }
-      return res.json(buildSubscriptionStatus(uid, { forever: true }, true));
-    }
-    if (FOREVER_IDS.indexOf(uid) !== -1) {
-      const existing = await subscriptionRef(uid).get();
-      if (!existing.exists() || !existing.val() || !existing.val().forever) {
-        await subscriptionRef(uid).set({
-          active: true,
-          trial: false,
-          forever: true,
-          expiresAt: null,
-          createdAt: Date.now(),
-          updatedAt: Date.now(),
-          note: 'forever-friend'
-        });
-      }
-      return res.json(buildSubscriptionStatus(uid, { forever: true }, false));
-    }
-    // Тестовый аккаунт: превью режимов (legacy / expired / days3 / new10 / paid1)
+    // Тестовый аккаунт: превью режимов важнее admin/forever (иначе окошко новичка не видно)
     if (FORCE_TEST_IDS.indexOf(uid) !== -1 && FORCE_TEST_MODES[FORCE_TEST_MODE]) {
       const ref = subscriptionRef(uid);
       const snap = await ref.get();
@@ -1214,7 +1188,7 @@ app.get('/subscription', async function (req, res) {
       }
 
       if (mode === 'new10') {
-        const note = 'force-new10-preview';
+        const note = 'force-new10-preview-v3';
         if (prev && prev.note === note && prev.trial && typeof prev.expiresAt === 'number' && prev.expiresAt > now) {
           return res.json(buildSubscriptionStatus(uid, prev, false));
         }
@@ -1231,7 +1205,7 @@ app.get('/subscription', async function (req, res) {
           comebackUsed: false,
           comebackGrantedAt: null,
           lastVisitAt: null,
-          welcomeResetToken: String(now),
+          welcomeResetToken: 'v3-' + String(now),
           note: note
         };
         await ref.set(entry);
@@ -1255,6 +1229,36 @@ app.get('/subscription', async function (req, res) {
       };
       await ref.set(paidEntry);
       return res.json(buildSubscriptionStatus(uid, paidEntry, false));
+    }
+    if (user.isAdmin) {
+      const existing = await subscriptionRef(uid).get();
+      if (!existing.exists() || !existing.val() || !existing.val().forever) {
+        await subscriptionRef(uid).set({
+          active: true,
+          trial: false,
+          forever: true,
+          expiresAt: null,
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+          note: 'admin'
+        });
+      }
+      return res.json(buildSubscriptionStatus(uid, { forever: true }, true));
+    }
+    if (FOREVER_IDS.indexOf(uid) !== -1) {
+      const existing = await subscriptionRef(uid).get();
+      if (!existing.exists() || !existing.val() || !existing.val().forever) {
+        await subscriptionRef(uid).set({
+          active: true,
+          trial: false,
+          forever: true,
+          expiresAt: null,
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+          note: 'forever-friend'
+        });
+      }
+      return res.json(buildSubscriptionStatus(uid, { forever: true }, false));
     }
     let data = await ensureSubscriptionRecord(uid);
     data = await maybeApplyComebackGrant(uid, data);
@@ -4035,10 +4039,10 @@ async function applyForceTestAccountOnBoot() {
         comebackUsed: false,
         comebackGrantedAt: null,
         lastVisitAt: null,
-        welcomeResetToken: String(now),
-        note: 'force-new10-preview'
+        welcomeResetToken: 'v3-' + String(now),
+        note: 'force-new10-preview-v3'
       });
-      console.log('Test account forced new-user trial + welcome', testId, new Date(expiresAt).toISOString());
+      console.log('Test account forced new-user trial + welcome v3', testId, new Date(expiresAt).toISOString());
       return;
     }
     if (FORCE_TEST_MODE !== 'expired') return;
