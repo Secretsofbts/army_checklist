@@ -127,7 +127,8 @@
     <h1>Оплата подписки</h1>
     <p class="lead">Выберите срок доступа к чек-листу</p>
 
-    <div class="notice">Оплата пока что настраивается</div>
+    <div class="notice" id="pay-notice">Оплата пока что настраивается</div>
+    <div class="notice" id="pay-success" style="display:none; background:#e3f7e9; color:#2e9e5b;">Если оплата прошла — доступ обновится в личном кабинете. Можно закрыть эту страницу и открыть чек-лист 💜</div>
 
     <div class="plan is-main" id="plan-30">
       <div class="plan-top">
@@ -140,7 +141,10 @@
       </div>
       <p class="plan-once">разовая оплата</p>
       <p class="plan-note" id="promo-note"></p>
-      <button type="button" class="plan-btn" disabled>Оплата настраивается</button>
+      <label for="pay-email" style="display:block; font-size:12px; color:#8a7aa8; margin:0 0 6px;">Email для чека (необязательно)</label>
+      <input type="email" id="pay-email" placeholder="you@email.com" autocomplete="email" style="width:100%; box-sizing:border-box; border:1px solid #e4dcf3; border-radius:10px; padding:10px 12px; font-size:13px; margin:0 0 10px; color:#2b2440;">
+      <button type="button" class="plan-btn is-copy" id="pay-30-btn" disabled>Оплатить</button>
+      <p class="plan-note" id="pay-30-status" style="margin:8px 0 0;"></p>
     </div>
 
     <div class="plan">
@@ -219,16 +223,22 @@
       };
     }
 
+    var lastPayInfo = null;
+
     function paintPricing(info) {
       info = info || {};
+      lastPayInfo = info;
       var priceEl = document.getElementById('price-30');
       var badge = document.getElementById('promo-badge');
       var note = document.getElementById('promo-note');
+      var btn = document.getElementById('pay-30-btn');
+      var notice = document.getElementById('pay-notice');
       if (!priceEl) return;
 
       var priceNow = Number(info.priceRub) || 200;
       var priceOld = Number(info.oldPriceRub) || 0;
       var promo = !!(info.promo && priceOld > priceNow);
+      var live = !!info.paymentLive;
       var nextPriceHtml;
       var nextNote;
       var nextBadgeDisplay;
@@ -253,6 +263,19 @@
       if (priceEl.innerHTML !== nextPriceHtml) priceEl.innerHTML = nextPriceHtml;
       if (badge && badge.style.display !== nextBadgeDisplay) badge.style.display = nextBadgeDisplay;
       if (note && note.textContent !== nextNote) note.textContent = nextNote;
+
+      if (btn) {
+        if (live) {
+          btn.disabled = false;
+          btn.textContent = 'Оплатить ' + priceNow + ' ₽';
+          btn.className = 'plan-btn is-copy';
+        } else {
+          btn.disabled = true;
+          btn.textContent = 'Оплата настраивается';
+          btn.className = 'plan-btn';
+        }
+      }
+      if (notice) notice.style.display = live ? 'none' : '';
     }
 
     function loadPricing() {
@@ -271,6 +294,74 @@
         })
         .catch(function () {});
     }
+
+    function startYooKassaPay() {
+      var btn = document.getElementById('pay-30-btn');
+      var statusEl = document.getElementById('pay-30-status');
+      var api = String(window.ARMY_API_URL || '').replace(/\/$/, '');
+      if (!api) {
+        if (statusEl) statusEl.textContent = 'Сервер оплаты недоступен';
+        return;
+      }
+      var headers = { 'Content-Type': 'application/json' };
+      try {
+        var initData = (window.Telegram && Telegram.WebApp && Telegram.WebApp.initData) || '';
+        if (initData) headers['X-Telegram-Init-Data'] = initData;
+      } catch (e) {}
+      var emailEl = document.getElementById('pay-email');
+      var email = emailEl ? String(emailEl.value || '').trim() : '';
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = 'Создаём счёт…';
+      }
+      if (statusEl) statusEl.textContent = '';
+      fetch(api + '/payment/yookassa/create', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({ days: 30, email: email || undefined })
+      })
+        .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
+        .then(function (result) {
+          if (!result.ok || !result.data || !result.data.confirmationUrl) {
+            var msg = (result.data && (result.data.message || result.data.error)) || 'Не удалось создать оплату';
+            if (statusEl) statusEl.textContent = msg;
+            if (btn && lastPayInfo) paintPricing(lastPayInfo);
+            else if (btn) {
+              btn.disabled = false;
+              btn.textContent = 'Оплатить';
+            }
+            return;
+          }
+          if (statusEl) statusEl.textContent = 'Открываем страницу оплаты…';
+          var url = result.data.confirmationUrl;
+          try {
+            if (window.Telegram && Telegram.WebApp && Telegram.WebApp.openLink) {
+              Telegram.WebApp.openLink(url);
+            } else {
+              window.location.href = url;
+            }
+          } catch (e) {
+            window.location.href = url;
+          }
+          if (btn && lastPayInfo) paintPricing(lastPayInfo);
+        })
+        .catch(function () {
+          if (statusEl) statusEl.textContent = 'Ошибка сети. Попробуйте ещё раз.';
+          if (btn && lastPayInfo) paintPricing(lastPayInfo);
+        });
+    }
+
+    (function setupPayButton() {
+      var btn = document.getElementById('pay-30-btn');
+      if (btn) btn.addEventListener('click', startYooKassaPay);
+      try {
+        var q = new URLSearchParams(window.location.search || '');
+        if (q.get('paid') === '1') {
+          var ok = document.getElementById('pay-success');
+          if (ok) ok.style.display = '';
+        }
+      } catch (e) {}
+    })();
 
     loadPricing();
 

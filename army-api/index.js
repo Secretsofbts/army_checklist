@@ -56,6 +56,15 @@ const PAYMENT_LIVE_AT = (function () {
   const asDate = Date.parse(raw);
   return Number.isFinite(asDate) ? asDate : 0;
 })();
+// ЮKassa (карта). Ключи — в Render Environment.
+const YOOKASSA_SHOP_ID = String(process.env.YOOKASSA_SHOP_ID || '').trim();
+const YOOKASSA_SECRET_KEY = String(process.env.YOOKASSA_SECRET_KEY || '').trim();
+const YOOKASSA_RETURN_URL = String(process.env.YOOKASSA_RETURN_URL || '').trim() ||
+  'https://secretsofbts.github.io/army_checklist/payment.html?paid=1';
+
+function yookassaReady() {
+  return !!(YOOKASSA_SHOP_ID && YOOKASSA_SECRET_KEY);
+}
 
 function promoEndsAtMs() {
   return PROMO_COUNTDOWN_START_AT + PROMO_DAYS * DAY_MS;
@@ -81,7 +90,7 @@ function pricingInfo(now) {
       promoEndsAt: promoEndsAt,
       promoDaysLeft: promoDaysLeft,
       promoUsed: false,
-      paymentLive: !!(PAYMENT_LIVE_AT && now >= PAYMENT_LIVE_AT)
+      paymentLive: yookassaReady() || !!(PAYMENT_LIVE_AT && now >= PAYMENT_LIVE_AT)
     };
   }
   return {
@@ -91,7 +100,7 @@ function pricingInfo(now) {
     promoEndsAt: promoEndsAt,
     promoDaysLeft: 0,
     promoUsed: false,
-    paymentLive: true
+    paymentLive: yookassaReady() || !!(PAYMENT_LIVE_AT && now >= PAYMENT_LIVE_AT)
   };
 }
 
@@ -1125,6 +1134,239 @@ app.get('/admin/payment-stats', async function (req, res) {
   }
 });
 
+async function yookassaApi(method, path, body, idempotenceKey) {
+  const auth = Buffer.from(YOOKASSA_SHOP_ID + ':' + YOOKASSA_SECRET_KEY).toString('base64');
+  const headers = {
+    Authorization: 'Basic ' + auth,
+    'Content-Type': 'application/json'
+  };
+  if (idempotenceKey) headers['Idempotence-Key'] = String(idempotenceKey);
+  const res = await fetch('https://api.yookassa.ru/v3' + path, {
+    method: method,
+    headers: headers,
+    body: body ? JSON.stringify(body) : undefined
+  });
+  const data = await res.json().catch(function () { return null; });
+  if (!res.ok) {
+    const desc = data && (data.description || data.message) ? (data.description || data.message) : ('HTTP ' + res.status);
+    const err = new Error('yookassa: ' + desc);
+    err.status = res.status;
+    err.data = data;
+    throw err;
+  }
+  return data;
+}
+
+async function grantPaidDaysFromYooKassa(uid, days, meta) {
+  meta = meta || {};
+  const ref = subscriptionRef(uid);
+  const snap = await ref.get();
+  const prev = snap.exists() ? (snap.val() || {}) : {};
+  const now = Date.now();
+  if (prev.forever) {
+    return { skipped: true, reason: 'forever' };
+  }
+  const paidDays = Math.max(1, parseInt(days, 10) || 30);
+  const base = Math.max(now, typeof prev.expiresAt === 'number' ? prev.expiresAt : 0);
+  const expiresAt = paidExpiresAtFrom(base, paidDays);
+  const amountRub = Math.max(0, Number(meta.amountRub) || 0);
+  const entry = {
+    active: true,
+    trial: false,
+    forever: false,
+    expiresAt: expiresAt,
+    paidDays: paidDays,
+    createdAt: (prev && prev.createdAt) || now,
+    updatedAt: now,
+    note: 'yookassa-paid',
+    promoUsed: true,
+    promoUsedAt: (prev && prev.promoUsedAt) || now,
+    lastCardPayment: {
+      at: now,
+      days: paidDays,
+      amountRub: amountRub,
+      paymentId: meta.paymentId || null
+    }
+  };
+  await ref.set(entry);
+  await logPaymentEvent({
+    at: now,
+    userId: uid,
+    method: 'yookassa',
+    days: paidDays,
+    stars: 0,
+    amountRub: amountRub,
+    chargeId: meta.paymentId || null,
+    payload: 'yookassa:' + paidDays,
+    test: false
+  });
+  try {
+    await applyReferralBonusOnFirstPaid(uid);
+  } catch (e) {
+    console.error('yookassa referral bonus failed', uid, e);
+  }
+  return { skipped: false, expiresAt: expiresAt, paidDays: paidDays };
+}
+
+async function processYooKassaSucceededPayment(payment) {
+  if (!payment || payment.status !== 'succeeded') {
+    return { ok: false, reason: 'not-succeeded' };
+  }
+  const paymentId = String(payment.id || '');
+  if (!paymentId) return { ok: false, reason: 'no-id' };
+
+  const lockRef = db.ref('yookassa_payments/' + paymentId);
+  const lockSnap = await lockRef.get();
+  const prev = lockSnap.exists() ? (lockSnap.val() || {}) : {};
+  if (prev.processed) {
+    return { ok: true, reason: 'already' };
+  }
+
+  const meta = payment.metadata || {};
+  const uid = String(meta.userId || prev.userId || '');
+  const days = Math.max(1, parseInt(meta.days || prev.days, 10) || 30);
+  const amountRub = Math.round(Number((payment.amount && payment.amount.value) || meta.amountRub || prev.amountRub || 0));
+  if (!uid) {
+    await lockRef.update({ status: 'succeeded', error: 'no-user', at: Date.now() });
+    return { ok: false, reason: 'no-user' };
+  }
+
+  // Сверяем сумму с ожидаемой (если сохраняли при создании)
+  if (prev.amountRub && Number(prev.amountRub) !== amountRub) {
+    console.error('yookassa amount mismatch', paymentId, prev.amountRub, amountRub);
+    await lockRef.update({ status: 'amount-mismatch', at: Date.now() });
+    return { ok: false, reason: 'amount-mismatch' };
+  }
+
+  const granted = await grantPaidDaysFromYooKassa(uid, days, {
+    paymentId: paymentId,
+    amountRub: amountRub
+  });
+  await lockRef.update({
+    status: 'succeeded',
+    processed: true,
+    processedAt: Date.now(),
+    userId: uid,
+    days: days,
+    amountRub: amountRub,
+    granted: !granted.skipped
+  });
+  if (!granted.skipped) {
+    try {
+      const thanks = await sendPaidThanksToUser(uid, days);
+      if (!thanks.sent) console.error('yookassa thanks failed', uid, thanks);
+    } catch (e) {
+      console.error('yookassa thanks error', uid, e);
+    }
+  }
+  console.log('yookassa payment ok', uid, days, amountRub, paymentId);
+  return { ok: true, granted: granted };
+}
+
+// Создать платёж ЮKassa (30 дней по цене пользователя)
+app.post('/payment/yookassa/create', async function (req, res) {
+  const user = authUser(req);
+  if (!user) return res.status(401).json({ error: 'auth' });
+  if (!yookassaReady()) return res.status(503).json({ error: 'yookassa-not-ready' });
+  try {
+    const days = 30;
+    const uid = String(user.id);
+    const subSnap = await subscriptionRef(uid).get();
+    const subData = subSnap.exists() ? subSnap.val() : null;
+    const price = pricingInfoForUser(subData, Date.now());
+    const amountRub = Number(price.priceRub) || FULL_PRICE_RUB;
+    const amountValue = amountRub.toFixed(2);
+    const email = String((req.body && req.body.email) || '').trim();
+
+    const body = {
+      amount: { value: amountValue, currency: 'RUB' },
+      capture: true,
+      confirmation: {
+        type: 'redirect',
+        return_url: YOOKASSA_RETURN_URL
+      },
+      description: 'Подписка на чек-лист BTS, ' + days + ' дн.',
+      metadata: {
+        userId: uid,
+        days: String(days),
+        amountRub: String(amountRub),
+        promo: price.promo ? '1' : '0'
+      }
+    };
+    if (email && email.indexOf('@') > 0) {
+      body.receipt = {
+        customer: { email: email },
+        items: [{
+          description: 'Доступ к чек-листу BTS на ' + days + ' дн.',
+          quantity: '1.00',
+          amount: { value: amountValue, currency: 'RUB' },
+          vat_code: 1,
+          payment_mode: 'full_payment',
+          payment_subject: 'service'
+        }]
+      };
+    }
+
+    const idempotenceKey = crypto.randomUUID();
+    const payment = await yookassaApi('POST', '/payments', body, idempotenceKey);
+    const confirmationUrl = payment && payment.confirmation && payment.confirmation.confirmation_url;
+    if (!confirmationUrl) {
+      return res.status(502).json({ error: 'no-confirmation-url', payment: payment });
+    }
+    await db.ref('yookassa_payments/' + payment.id).set({
+      userId: uid,
+      days: days,
+      amountRub: amountRub,
+      promo: !!price.promo,
+      status: payment.status || 'pending',
+      createdAt: Date.now(),
+      confirmationUrl: confirmationUrl
+    });
+    return res.json({
+      ok: true,
+      paymentId: payment.id,
+      confirmationUrl: confirmationUrl,
+      amountRub: amountRub,
+      days: days,
+      promo: !!price.promo
+    });
+  } catch (e) {
+    console.error('yookassa create failed', e && e.data ? e.data : e);
+    return res.status(500).json({
+      error: 'yookassa-create',
+      message: String(e.message || e)
+    });
+  }
+});
+
+// HTTP-уведомления ЮKassa
+app.post('/yookassa/webhook', async function (req, res) {
+  try {
+    const event = req.body || {};
+    if (event.event !== 'payment.succeeded') {
+      return res.status(200).json({ ok: true, ignored: true });
+    }
+    const object = event.object || {};
+    const paymentId = String(object.id || '');
+    if (!paymentId || !yookassaReady()) {
+      return res.status(200).json({ ok: true });
+    }
+    // Перепроверяем платёж в API ЮKassa (не доверяем телу уведомления вслепую)
+    let payment = object;
+    try {
+      payment = await yookassaApi('GET', '/payments/' + paymentId, null, null);
+    } catch (e) {
+      console.error('yookassa webhook fetch failed', paymentId, e);
+      return res.status(500).json({ error: 'fetch' });
+    }
+    await processYooKassaSucceededPayment(payment);
+    return res.status(200).json({ ok: true });
+  } catch (e) {
+    console.error('yookassa webhook error', e);
+    return res.status(500).json({ error: 'webhook' });
+  }
+});
+
 // Выдать доступ вручную (только админ). body: { userId, days?, forever? }
 app.post('/admin/grant', async function (req, res) {
   const user = authUser(req);
@@ -1914,10 +2156,19 @@ async function runSubscriptionReminders() {
       const expired = await sendExpiredReminderToUser(uid, { force: false });
       if (expired.sent) expiredSent++;
     } catch (e) {
-      errors.push({ uid: uid, error: String(e.message || e) });
+      errors.push({ uid: uid, error: String((e && e.message) || e) });
     }
   }
-  return { checked: ids.length, lastDaySent: lastDaySent, expiredSent: expiredSent, errors: errors };
+  if (errors.length) {
+    console.error('subscription reminders partial errors', errors.slice(0, 20));
+  }
+  return {
+    checked: ids.length,
+    lastDaySent: lastDaySent,
+    expiredSent: expiredSent,
+    errorCount: errors.length,
+    errors: errors.slice(0, 20)
+  };
 }
 
 // Админ: принудительно отправить напоминание (для теста)
@@ -2643,6 +2894,7 @@ process.on('unhandledRejection', function (err) {
 
 app.listen(PORT, function () {
   console.log('army-api listening on ' + PORT);
+  console.log('yookassa', yookassaReady() ? 'ready shop=' + YOOKASSA_SHOP_ID : 'not configured');
   scheduleSubscriptionReminders();
   ensureTelegramWebhook();
   ensureBotCommands();
