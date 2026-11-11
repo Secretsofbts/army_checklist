@@ -1892,6 +1892,13 @@ app.post('/payment/yookassa/create', async function (req, res) {
     const amountRub = Number(plan.amountRub) || 0;
     const amountValue = amountRub.toFixed(2);
     const days = plan.forever ? 0 : plan.days;
+    // Свой выбор способа: sbp / bank_card / yoo_money — тогда ЮKassa
+    // сразу открывает нужный сценарий (СБП не уезжает вниз в общем виджете).
+    const rawMethod = String((req.body && (req.body.method || req.body.paymentMethod)) || '')
+      .trim()
+      .toLowerCase();
+    const allowedMethods = { sbp: 1, bank_card: 1, yoo_money: 1 };
+    const paymentMethod = allowedMethods[rawMethod] ? rawMethod : '';
 
     const body = {
       amount: { value: amountValue, currency: 'RUB' },
@@ -1906,9 +1913,13 @@ app.post('/payment/yookassa/create', async function (req, res) {
         days: String(days),
         forever: plan.forever ? '1' : '0',
         amountRub: String(amountRub),
-        promo: plan.promo ? '1' : '0'
+        promo: plan.promo ? '1' : '0',
+        method: paymentMethod || 'any'
       }
     };
+    if (paymentMethod) {
+      body.payment_method_data = { type: paymentMethod };
+    }
 
     const idempotenceKey = crypto.randomUUID();
     const payment = await yookassaApi('POST', '/payments', body, idempotenceKey);
@@ -1922,6 +1933,7 @@ app.post('/payment/yookassa/create', async function (req, res) {
       forever: !!plan.forever,
       amountRub: amountRub,
       promo: !!plan.promo,
+      method: paymentMethod || null,
       status: payment.status || 'pending',
       createdAt: Date.now(),
       confirmationUrl: confirmationUrl
@@ -1933,7 +1945,8 @@ app.post('/payment/yookassa/create', async function (req, res) {
       amountRub: amountRub,
       days: days,
       forever: !!plan.forever,
-      promo: !!plan.promo
+      promo: !!plan.promo,
+      method: paymentMethod || null
     });
   } catch (e) {
     console.error('yookassa create failed', e && e.data ? e.data : e);
