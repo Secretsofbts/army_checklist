@@ -492,33 +492,12 @@ registerUserIfNeeded();
     title.style.cssText = [
       'font-family:Arial,sans-serif',
       'font-size:18px', 'font-weight:700',
-      'color:#2b2440', 'margin:0 0 12px', 'line-height:1.3',
+      'color:#2b2440', 'margin:0 0 16px', 'line-height:1.3',
       'text-align:center'
     ].join(';');
 
-    const priceNow = Number(info.priceRub) || 200;
-    const priceOld = Number(info.oldPriceRub) || 0;
-    const priceHint = document.createElement('div');
-    if (info.promo && priceOld > priceNow) {
-      priceHint.innerHTML =
-        '<span style="text-decoration:line-through;color:#9a8fb0;font-weight:600;margin-right:8px;">' +
-        priceOld + ' ₽</span><span style="font-weight:700;color:#2b2440;">' +
-        priceNow + ' ₽</span><span style="color:#8a7aa8;"> за 30 дней</span>';
-    } else {
-      priceHint.textContent = priceNow + ' ₽ за 30 дней';
-    }
-    priceHint.style.cssText = 'font-size:15px;line-height:1.35;margin:0 0 16px;color:#5b4a7a';
-
-    const promoLeft = parseInt(info.promoDaysLeft, 10);
-    let promoLine = null;
-    if (info.promo && promoLeft > 0) {
-      promoLine = document.createElement('div');
-      promoLine.textContent = 'Акция ещё ' + promoLeft + ' ' + armyPluralDaysPromo(promoLeft);
-      promoLine.style.cssText = 'font-size:13px;line-height:1.35;color:#8a7aa8;margin:-8px 0 14px;text-align:center';
-    }
-
     const payLink = document.createElement('a');
-    payLink.href = 'payment.html?v=41';
+    payLink.href = 'payment.html?v=42';
     payLink.textContent = 'Перейти к оплате';
     payLink.style.cssText = [
       'display:block', 'width:100%', 'box-sizing:border-box',
@@ -532,8 +511,6 @@ registerUserIfNeeded();
     thanks.style.cssText = 'font-size:13px;line-height:1.4;color:#5b4a7a;font-weight:600';
 
     card.appendChild(title);
-    card.appendChild(priceHint);
-    if (promoLine) card.appendChild(promoLine);
     card.appendChild(payLink);
     card.appendChild(thanks);
     wrap.appendChild(hero);
