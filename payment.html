@@ -209,7 +209,7 @@
           <div class="col-price">1000 ₽</div>
         </button>
       </div>
-      <p class="plan-note" style="margin-top:10px;">Чек после оплаты придёт в бот. Чтобы активировать его, нажмите <a href="https://t.me/army_checklist_bot" target="_blank" rel="noopener" style="color:#7b5fb3;">Start</a></p>
+      <p class="plan-note" style="margin-top:10px;">Чек после оплаты придёт в бот. Чтобы активировать его, нажмите <a href="https://t.me/army_checklist_bot?start=check" id="bot-start-link" style="color:#7b5fb3;">Start</a></p>
       <button type="button" class="plan-btn is-copy" id="pay-plan-btn" disabled>…</button>
     </div>
 
@@ -544,6 +544,22 @@
     document.getElementById('pay-forever-btn').addEventListener('click', function () {
       startYooKassaPay({ forever: true }, this);
     });
+
+    (function setupBotStartLink() {
+      var link = document.getElementById('bot-start-link');
+      if (!link) return;
+      var url = 'https://t.me/army_checklist_bot?start=check';
+      link.addEventListener('click', function (e) {
+        e.preventDefault();
+        try {
+          if (window.Telegram && Telegram.WebApp && Telegram.WebApp.openTelegramLink) {
+            Telegram.WebApp.openTelegramLink(url);
+            return;
+          }
+        } catch (err) {}
+        window.location.href = url;
+      });
+    })();
 
     (function setupReturn() {
       var paidReturn = false;
