@@ -2742,8 +2742,8 @@ async function applyForceTestAccountOnBoot() {
         });
         console.log('Test account restored 30 days after force off', testId, new Date(expiresAt).toISOString());
       } else {
-        // Один раз: вернуть акцию 100 ₽ на тестовом для проверки ЮKassa
-        const metaRef = db.ref('bot_meta/testPromoResetForYooKassaV1');
+        // Вернуть акцию 100 ₽ на тестовом для проверки ЮKassa (V2 — повторный сброс)
+        const metaRef = db.ref('bot_meta/testPromoResetForYooKassaV2');
         const metaSnap = await metaRef.get();
         if (!metaSnap.exists()) {
           await subscriptionRef(testId).update({
@@ -2752,7 +2752,7 @@ async function applyForceTestAccountOnBoot() {
             updatedAt: now
           });
           await metaRef.set({ at: now, testId: testId });
-          console.log('Test account promo reset for YooKassa check', testId);
+          console.log('Test account promo reset for YooKassa check V2', testId);
         }
       }
       return;
