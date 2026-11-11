@@ -1680,16 +1680,45 @@ async function issueMoyNalogReceiptForPayment(meta) {
     return { ok: false, reason: 'not-found' };
   }
   const prev = snap.val() || {};
-  if (!force && (prev.receiptUuid || prev.receiptDone)) {
+  // Чек уже есть — если в ТГ не ушёл, досылаем ссылку
+  if (!force && (prev.receiptUuid || prev.receiptDone) && prev.receiptUrl) {
+    let sentTg = !!prev.receiptSentTg;
+    if (!sentTg && userId) {
+      try {
+        await telegramSendMessage(
+          userId,
+          'Ваш чек по оплате подписки 💜\n' + String(prev.receiptUrl),
+          null
+        );
+        sentTg = true;
+        await lockRef.update({
+          receiptSentTg: true,
+          receiptSentTgAt: Date.now(),
+          receiptNotifyError: null
+        });
+      } catch (e) {
+        const notifyMsg = String((e && e.message) || e).slice(0, 300);
+        console.error('moy-nalog notify retry failed', userId, notifyMsg);
+        await lockRef.update({
+          receiptSentTg: false,
+          receiptNotifyError: notifyMsg
+        });
+      }
+    }
     return {
       ok: true,
       reason: 'already',
       printUrl: prev.receiptUrl || null,
-      receiptId: prev.receiptUuid || null
+      receiptId: prev.receiptUuid || null,
+      sentTg: sentTg
     };
   }
+  // Зависший «pending» старше 2 минут — пробуем снова
   if (!force && prev.receiptPending) {
-    return { ok: false, reason: 'pending' };
+    const pendingAt = Number(prev.receiptPendingAt) || 0;
+    if (pendingAt && (Date.now() - pendingAt) < 2 * 60 * 1000) {
+      return { ok: false, reason: 'pending' };
+    }
   }
 
   await lockRef.update({
@@ -1796,19 +1825,40 @@ async function processYooKassaSucceededPayment(payment, opts) {
   const lockRef = db.ref('yookassa_payments/' + paymentId);
   const lockSnap = await lockRef.get();
   const prev = lockSnap.exists() ? (lockSnap.val() || {}) : {};
-  if (prev.processed && !opts.force) {
-    return {
-      ok: true,
-      reason: 'already',
-      userId: prev.userId || null,
-      grantedBefore: prev.granted === true,
-      amountRub: prev.amountRub || null
-    };
-  }
-
   const meta = payment.metadata || {};
   const uid = String(meta.userId || prev.userId || '');
   const amountRub = Math.round(Number((payment.amount && payment.amount.value) || meta.amountRub || prev.amountRub || 0));
+
+  // Уже выдали дни — не начисляем повторно, но чек/ТГ всё ещё можно дослать
+  if (prev.processed && !opts.force) {
+    let receipt = null;
+    try {
+      const forever = !!(prev.forever || String(meta.forever || '') === '1');
+      const days = forever ? 0 : (parseInt(prev.days, 10) || parseInt(meta.days, 10) || 30);
+      receipt = await issueMoyNalogReceiptForPayment({
+        paymentId: paymentId,
+        amountRub: amountRub || Number(prev.amountRub) || 0,
+        days: days,
+        forever: forever,
+        userId: uid || String(prev.userId || ''),
+        operationAt: (payment && payment.captured_at) || prev.processedAt || Date.now()
+      });
+      if (!receipt.ok && receipt.reason !== 'already' && receipt.reason !== 'not-configured') {
+        console.error('moy-nalog after already-paid', paymentId, receipt);
+      }
+    } catch (e) {
+      console.error('moy-nalog after already-paid error', paymentId, e);
+    }
+    return {
+      ok: true,
+      reason: 'already',
+      userId: uid || prev.userId || null,
+      grantedBefore: prev.granted === true,
+      amountRub: amountRub || prev.amountRub || null,
+      receipt: receipt
+    };
+  }
+
   if (!uid) {
     await lockRef.update({ status: 'succeeded', error: 'no-user', at: Date.now() });
     return { ok: false, reason: 'no-user' };
