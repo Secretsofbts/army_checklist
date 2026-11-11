@@ -2896,7 +2896,7 @@ async function deliverSupportMessage(fromUser, questionText, options) {
   });
 }
 
-// Админ reply на тикет: /stars 30  или  /stars 100 30  или  /stars forever
+// Админ reply на тикет: /stars a | 30 | 60 | 90 | 180 | forever
 // Цены Stars. Акция только на 30 дней: 50 вместо 100 (один раз).
 const STARS_FULL_BY_DAYS = {
   1: 1,
@@ -2930,7 +2930,35 @@ function starsForeverPrice() {
 
 function parseStarsAdminCommand(text) {
   const t = String(text || '').trim();
-  const foreverMatch = t.match(/^\/stars(?:@\w+)?\s+(forever|бессрочн\w*|навсегда)$/i);
+  if (!/^\/stars(?:@\w+)?(?:\s|$)/i.test(t)) return null;
+
+  // /stars  — справка
+  if (/^\/stars(?:@\w+)?\s*$/i.test(t)) {
+    return {
+      help: true,
+      text:
+        'Reply на сообщение человека:\n' +
+        '• /stars a — 30 дней по акции 50 ⭐\n' +
+        '• /stars 30 = 100 ⭐\n' +
+        '• /stars 60 = 175 ⭐\n' +
+        '• /stars 90 = 250 ⭐\n' +
+        '• /stars 180 = 500 ⭐\n' +
+        '• /stars forever — бессрочно за 2500 ⭐'
+    };
+  }
+
+  // /stars a — акция 30 дней за 50
+  if (/^\/stars(?:@\w+)?\s+a\s*$/i.test(t)) {
+    return {
+      stars: STARS_PROMO_BY_DAYS[30] || 50,
+      days: 30,
+      forever: false,
+      promo: true,
+      explicit: true
+    };
+  }
+
+  const foreverMatch = t.match(/^\/stars(?:@\w+)?\s+(forever|бессрочн\w*|навсегда)\s*$/i);
   if (foreverMatch) {
     const priced = starsForeverPrice();
     return {
@@ -2938,43 +2966,44 @@ function parseStarsAdminCommand(text) {
       days: 0,
       forever: true,
       promo: false,
-      explicit: false
+      explicit: true
     };
   }
-  const m = t.match(/^\/stars(?:@\w+)?(?:\s+(\d+))?(?:\s+(\d+))?$/i);
-  if (!m) return null;
-  const price = pricingInfo(Date.now());
-  if (!m[1]) {
+
+  // /stars 100 30 — явно Stars и дни
+  const explicit = t.match(/^\/stars(?:@\w+)?\s+(\d+)\s+(\d+)\s*$/i);
+  if (explicit) {
     return {
-      help: true,
-      text:
-        'Как выставить счёт Stars (reply на сообщение человека):\n' +
-        '• /stars 30 — 30 дней по цене этого человека (акция 50, если ещё не покупал)\n' +
-        '• /stars 60 / 90 / 180 — срок по прайсу\n' +
-        '• /stars forever — бессрочно за 2500 Stars\n' +
-        '• /stars 100 30 — явно Stars и дни\n\n' +
-        'Прайз: акция 30→50; обычно 30→100, 60→175, 90→250, 180→500, forever→2500\n' +
-        (price.promo
-          ? 'Окно акции открыто: 30 дней = 50 Stars (если ещё не покупал)'
-          : 'Сейчас обычные цены (акция по календарю закрыта)')
-    };
-  }
-  if (m[2]) {
-    return {
-      stars: Math.max(1, parseInt(m[1], 10) || 1),
-      days: Math.max(1, parseInt(m[2], 10) || 30),
+      stars: Math.max(1, parseInt(explicit[1], 10) || 1),
+      days: Math.max(1, parseInt(explicit[2], 10) || 30),
       forever: false,
       promo: false,
       explicit: true
     };
   }
-  const priced = starsPriceForDays(m[1]);
+
+  // /stars 30|60|90|180 — фиксированный прайс
+  const daysOnly = t.match(/^\/stars(?:@\w+)?\s+(\d+)\s*$/i);
+  if (daysOnly) {
+    const d = parseInt(daysOnly[1], 10) || 0;
+    if (STARS_FULL_BY_DAYS[d]) {
+      return {
+        stars: STARS_FULL_BY_DAYS[d],
+        days: d,
+        forever: false,
+        promo: false,
+        explicit: true
+      };
+    }
+    return {
+      help: true,
+      text: 'Неизвестный срок. Доступно: /stars a, 30, 60, 90, 180, forever'
+    };
+  }
+
   return {
-    stars: priced.stars,
-    days: priced.days,
-    forever: false,
-    promo: priced.promo,
-    explicit: false
+    help: true,
+    text: 'Не поняла команду. Напишите /stars — список.'
   };
 }
 
@@ -3468,12 +3497,24 @@ async function handleMenuCommands(msg) {
   if (!msg || !msg.chat || !msg.from) return false;
   if (msg.chat.type !== 'private') return false;
   const text = String(msg.text || '').trim();
-  // /stars без reply — только подсказка админу (счёт выставляется reply на тикет)
+  // /stars без reply — подсказка админу (счёт только reply на сообщение человека)
   if (isAdminTelegramId(msg.from.id)) {
     const starsAlone = parseStarsAdminCommand(text);
-    if (starsAlone && starsAlone.help && !msg.reply_to_message) {
+    if (starsAlone && !msg.reply_to_message) {
       try {
-        await telegramSendMessage(msg.chat.id, starsAlone.text, null);
+        await telegramSendMessage(
+          msg.chat.id,
+          starsAlone.help
+            ? starsAlone.text
+            : 'Чтобы выставить счёт — сделай reply на сообщение человека, затем команду.\n\n' +
+              '• /stars a — 30 дней по акции 50 ⭐\n' +
+              '• /stars 30 = 100 ⭐\n' +
+              '• /stars 60 = 175 ⭐\n' +
+              '• /stars 90 = 250 ⭐\n' +
+              '• /stars 180 = 500 ⭐\n' +
+              '• /stars forever — бессрочно за 2500 ⭐',
+          null
+        );
       } catch (e) {
         console.error('stars help failed', e);
       }
@@ -3877,7 +3918,7 @@ async function ensureBotCommands() {
     { command: 'help', description: 'Список всех команд' }
   ];
   const adminCommands = userCommands.concat([
-    { command: 'stars', description: 'Счёт Stars (reply на тикет: /stars 30)' }
+    { command: 'stars', description: 'Счёт Stars (reply: /stars a|30|60|90|180|forever)' }
   ]);
   try {
     const res = await fetch('https://api.telegram.org/bot' + BOT_TOKEN + '/setMyCommands', {
