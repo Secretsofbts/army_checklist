@@ -2896,21 +2896,22 @@ async function deliverSupportMessage(fromUser, questionText, options) {
   });
 }
 
-// Админ reply на тикет: /stars 30  или  /stars 100 30
-// Обычные цены Stars. На акции (−50% как в рублях) 30 дней = 50 вместо 100.
+// Админ reply на тикет: /stars 30  или  /stars 100 30  или  /stars forever
+// Цены Stars. Акция только на 30 дней: 50 вместо 100 (один раз).
 const STARS_FULL_BY_DAYS = {
   1: 1,
   30: 100,
-  60: 180,
+  60: 175,
   90: 250,
-  180: 450
+  180: 500
 };
+const STARS_FOREVER = 2500;
 const STARS_PROMO_BY_DAYS = {
   1: 1,
   30: 50,
-  60: 90,
-  90: 125,
-  180: 225
+  60: 175,
+  90: 250,
+  180: 500
 };
 
 function starsPriceForDays(days, now, subData, uid) {
@@ -2919,64 +2920,95 @@ function starsPriceForDays(days, now, subData, uid) {
     ? pricingInfoForUser(subData, now || Date.now(), uid)
     : pricingInfo(now || Date.now());
   const table = price.promo ? STARS_PROMO_BY_DAYS : STARS_FULL_BY_DAYS;
-  if (table[d]) return { stars: table[d], days: d, promo: !!price.promo };
-  return { stars: Math.max(1, d), days: d, promo: !!price.promo };
+  if (table[d]) return { stars: table[d], days: d, promo: !!price.promo && d === 30 };
+  return { stars: Math.max(1, d), days: d, promo: false };
+}
+
+function starsForeverPrice() {
+  return { stars: STARS_FOREVER, days: 0, forever: true, promo: false };
 }
 
 function parseStarsAdminCommand(text) {
   const t = String(text || '').trim();
+  const foreverMatch = t.match(/^\/stars(?:@\w+)?\s+(forever|бессрочн\w*|навсегда)$/i);
+  if (foreverMatch) {
+    const priced = starsForeverPrice();
+    return {
+      stars: priced.stars,
+      days: 0,
+      forever: true,
+      promo: false,
+      explicit: false
+    };
+  }
   const m = t.match(/^\/stars(?:@\w+)?(?:\s+(\d+))?(?:\s+(\d+))?$/i);
   if (!m) return null;
   const price = pricingInfo(Date.now());
   if (!m[1]) {
-    const p30 = starsPriceForDays(30);
     return {
       help: true,
       text:
         'Как выставить счёт Stars (reply на сообщение человека):\n' +
-        '• /stars 30 — 30 дней по цене этого человека (акция только если ещё не покупал)\n' +
-        '• /stars 100 30 — явно 100 Stars за 30 дней\n' +
-        '• /stars 50 30 — явно 50 Stars за 30 дней\n\n' +
-        'Акция −50% один раз на первую оплату.\n' +
+        '• /stars 30 — 30 дней по цене этого человека (акция 50, если ещё не покупал)\n' +
+        '• /stars 60 / 90 / 180 — срок по прайсу\n' +
+        '• /stars forever — бессрочно за 2500 Stars\n' +
+        '• /stars 100 30 — явно Stars и дни\n\n' +
+        'Прайз: акция 30→50; обычно 30→100, 60→175, 90→250, 180→500, forever→2500\n' +
         (price.promo
-          ? 'Окно акции открыто: 30→50 Stars (если человек ещё не покупал)\nОбычно: 30→100, 60→180, 90→250, 180→450'
-          : 'Сейчас обычные цены: 30→100, 60→180, 90→250, 180→450')
+          ? 'Окно акции открыто: 30 дней = 50 Stars (если ещё не покупал)'
+          : 'Сейчас обычные цены (акция по календарю закрыта)')
     };
   }
   if (m[2]) {
     return {
       stars: Math.max(1, parseInt(m[1], 10) || 1),
       days: Math.max(1, parseInt(m[2], 10) || 30),
+      forever: false,
       promo: false,
       explicit: true
     };
   }
   const priced = starsPriceForDays(m[1]);
-  return { stars: priced.stars, days: priced.days, promo: priced.promo, explicit: false };
+  return {
+    stars: priced.stars,
+    days: priced.days,
+    forever: false,
+    promo: priced.promo,
+    explicit: false
+  };
 }
 
 async function sendStarsInvoiceToUser(userId, stars, days, meta) {
-  const payload = ('stars:' + days + ':' + userId + ':' + Date.now()).slice(0, 128);
-  const promoMark = meta && meta.promo ? ' (акция −50%)' : '';
+  meta = meta || {};
+  const forever = !!meta.forever || days === 0 || days === 'forever';
+  const payload = forever
+    ? ('stars:forever:' + userId + ':' + Date.now()).slice(0, 128)
+    : ('stars:' + days + ':' + userId + ':' + Date.now()).slice(0, 128);
+  const promoMark = meta.promo ? ' (акция)' : '';
+  const accessLabel = forever
+    ? 'бессрочный доступ'
+    : (days + ' ' + pluralDaysRu(days));
   await telegramSendMessage(
     userId,
     'Вам выставили счёт на оплату 💜\n' +
-      stars + ' Stars = ' + days + ' ' + pluralDaysRu(days) + promoMark + '.\n' +
+      stars + ' Stars = ' + accessLabel + promoMark + '.\n' +
       'Нажмите Pay на сообщении ниже.',
     null
   );
   await telegramSendStarsInvoice(userId, {
-    title: days + ' ' + pluralDaysRu(days),
+    title: forever ? 'Бессрочно' : (days + ' ' + pluralDaysRu(days)),
     description: 'Подписка на чек-лист по BTS',
-    label: days + ' ' + pluralDaysRu(days),
+    label: forever ? 'Бессрочный доступ' : (days + ' ' + pluralDaysRu(days)),
     stars: stars,
-    days: days,
+    days: forever ? 0 : days,
+    forever: forever,
     payload: payload
   });
   try {
     await db.ref('stars_invoices/' + userId + '/' + Date.now()).set({
       stars: stars,
-      days: days,
+      days: forever ? 0 : days,
+      forever: forever,
       payload: payload,
       at: Date.now(),
       byAdmin: meta && meta.byAdmin ? String(meta.byAdmin) : null
@@ -2984,7 +3016,7 @@ async function sendStarsInvoiceToUser(userId, stars, days, meta) {
   } catch (e) {
     console.error('stars invoice log failed', e);
   }
-  return { payload: payload, stars: stars, days: days };
+  return { payload: payload, stars: stars, days: forever ? 0 : days, forever: forever };
 }
 
 async function handleAdminSupportReply(msg) {
@@ -3013,22 +3045,31 @@ async function handleAdminSupportReply(msg) {
       let stars = starsCmd.stars;
       let days = starsCmd.days;
       let promo = !!starsCmd.promo;
-      if (!starsCmd.explicit) {
+      let forever = !!starsCmd.forever;
+      if (!starsCmd.explicit && !forever) {
         const subSnap = await subscriptionRef(userId).get();
         const priced = starsPriceForDays(days, Date.now(), subSnap.exists() ? subSnap.val() : null, userId);
         stars = priced.stars;
         days = priced.days;
         promo = !!priced.promo;
       }
+      if (forever) {
+        const priced = starsForeverPrice();
+        stars = priced.stars;
+        days = 0;
+        promo = false;
+      }
       await sendStarsInvoiceToUser(userId, stars, days, {
         byAdmin: msg.from.id,
-        promo: promo
+        promo: promo,
+        forever: forever
       });
       await telegramSendMessage(
         msg.chat.id,
         '✓ Счёт Stars отправлен пользователю ' + userId + ':\n' +
-          stars + ' Stars → ' + days + ' ' + pluralDaysRu(days) +
-          (promo ? ' (акция −50%, первый раз)' : ''),
+          stars + ' Stars → ' +
+          (forever ? 'бессрочно' : (days + ' ' + pluralDaysRu(days))) +
+          (promo ? ' (акция, первый раз)' : ''),
         null
       );
     } catch (e) {
@@ -3513,16 +3554,28 @@ async function telegramApi(method, body) {
 async function telegramSendStarsInvoice(chatId, options) {
   options = options || {};
   const stars = Math.max(1, parseInt(options.stars, 10) || 1);
-  const days = Math.max(1, parseInt(options.days, 10) || 30);
-  const payload = String(options.payload || ('stars:' + days + ':' + chatId + ':' + Date.now())).slice(0, 128);
+  const forever = !!options.forever;
+  const days = forever ? 0 : Math.max(1, parseInt(options.days, 10) || 30);
+  const payload = String(
+    options.payload ||
+      (forever
+        ? ('stars:forever:' + chatId + ':' + Date.now())
+        : ('stars:' + days + ':' + chatId + ':' + Date.now()))
+  ).slice(0, 128);
   return telegramApi('sendInvoice', {
     chat_id: chatId,
-    title: String(options.title || 'Подписка').slice(0, 32),
-    description: String(options.description || ('Доступ на ' + days + ' дн.')).slice(0, 255),
+    title: String(options.title || (forever ? 'Бессрочно' : 'Подписка')).slice(0, 32),
+    description: String(
+      options.description ||
+        (forever ? 'Бессрочный доступ к чек-листу' : ('Доступ на ' + days + ' дн.'))
+    ).slice(0, 255),
     payload: payload,
     provider_token: '',
     currency: 'XTR',
-    prices: [{ label: String(options.label || (days + ' дней')).slice(0, 32), amount: stars }]
+    prices: [{
+      label: String(options.label || (forever ? 'Бессрочно' : (days + ' дней'))).slice(0, 32),
+      amount: stars
+    }]
   });
 }
 
@@ -3536,15 +3589,18 @@ async function answerPreCheckoutQuery(queryId, ok, errorMessage) {
 }
 
 function parseStarsPayload(payload) {
-  // stars:<days>:<uid>:<ts>  или stars_test:<days>:...
+  // stars:<days>:<uid>:<ts>  или stars:forever:<uid>:<ts>  или stars_test:...
   const parts = String(payload || '').split(':');
   if (parts[0] !== 'stars' && parts[0] !== 'stars_test') return null;
-  const days = Math.max(1, parseInt(parts[1], 10) || 30);
+  const forever = String(parts[1] || '').toLowerCase() === 'forever';
+  const days = forever ? 0 : Math.max(1, parseInt(parts[1], 10) || 30);
   const uid = String(parts[2] || '');
-  return { days: days, uid: uid, test: parts[0] === 'stars_test' };
+  return { days: days, forever: forever, uid: uid, test: parts[0] === 'stars_test' };
 }
 
-async function grantPaidDaysFromStars(uid, days, payment) {
+async function grantPaidDaysFromStars(uid, days, payment, opts) {
+  opts = opts || {};
+  const forever = !!opts.forever;
   const ref = subscriptionRef(uid);
   const snap = await ref.get();
   const prev = snap.exists() ? (snap.val() || {}) : {};
@@ -3552,35 +3608,62 @@ async function grantPaidDaysFromStars(uid, days, payment) {
   if (prev.forever) {
     return { skipped: true, reason: 'forever' };
   }
-  const paidDays = Math.max(1, parseInt(days, 10) || 30);
-  const base = Math.max(now, typeof prev.expiresAt === 'number' ? prev.expiresAt : 0);
-  const expiresAt = paidExpiresAtFrom(base, paidDays);
-  const entry = {
-    active: true,
-    trial: false,
-    forever: false,
-    expiresAt: expiresAt,
-    paidDays: paidDays,
-    createdAt: (prev && prev.createdAt) || now,
-    updatedAt: now,
-    note: 'stars-paid',
-    promoUsed: true,
-    promoUsedAt: (prev && prev.promoUsedAt) || now,
-    lastStarsPayment: {
-      at: now,
-      days: paidDays,
-      stars: payment && payment.total_amount,
-      chargeId: payment && payment.telegram_payment_charge_id,
-      payload: payment && payment.invoice_payload
-    }
-  };
+  let entry;
+  let paidDays = 0;
+  let expiresAt = null;
+  if (forever) {
+    entry = {
+      active: true,
+      trial: false,
+      forever: true,
+      expiresAt: null,
+      paidDays: null,
+      createdAt: (prev && prev.createdAt) || now,
+      updatedAt: now,
+      note: 'stars-forever',
+      promoUsed: true,
+      promoUsedAt: (prev && prev.promoUsedAt) || now,
+      lastStarsPayment: {
+        at: now,
+        days: 0,
+        forever: true,
+        stars: payment && payment.total_amount,
+        chargeId: payment && payment.telegram_payment_charge_id,
+        payload: payment && payment.invoice_payload
+      }
+    };
+  } else {
+    paidDays = Math.max(1, parseInt(days, 10) || 30);
+    const base = Math.max(now, typeof prev.expiresAt === 'number' ? prev.expiresAt : 0);
+    expiresAt = paidExpiresAtFrom(base, paidDays);
+    entry = {
+      active: true,
+      trial: false,
+      forever: false,
+      expiresAt: expiresAt,
+      paidDays: paidDays,
+      createdAt: (prev && prev.createdAt) || now,
+      updatedAt: now,
+      note: 'stars-paid',
+      promoUsed: true,
+      promoUsedAt: (prev && prev.promoUsedAt) || now,
+      lastStarsPayment: {
+        at: now,
+        days: paidDays,
+        stars: payment && payment.total_amount,
+        chargeId: payment && payment.telegram_payment_charge_id,
+        payload: payment && payment.invoice_payload
+      }
+    };
+  }
   await ref.set(entry);
   const payloadStr = payment && payment.invoice_payload ? String(payment.invoice_payload) : '';
   await logPaymentEvent({
     at: now,
     userId: uid,
     method: 'stars',
-    days: paidDays,
+    days: forever ? 0 : paidDays,
+    forever: forever,
     stars: payment && payment.total_amount,
     amountRub: 0,
     chargeId: payment && payment.telegram_payment_charge_id,
@@ -3592,7 +3675,12 @@ async function grantPaidDaysFromStars(uid, days, payment) {
   } catch (e) {
     console.error('stars referral bonus failed', uid, e);
   }
-  return { skipped: false, expiresAt: expiresAt, paidDays: paidDays };
+  return {
+    skipped: false,
+    forever: forever,
+    expiresAt: forever ? null : expiresAt,
+    paidDays: forever ? null : paidDays
+  };
 }
 
 async function handlePreCheckoutQuery(query) {
@@ -3623,17 +3711,20 @@ async function handleSuccessfulStarsPayment(msg) {
   if (String(pay.currency || '') !== 'XTR') return false;
   const uid = String(msg.from.id);
   const parsed = parseStarsPayload(pay.invoice_payload);
-  const days = parsed ? parsed.days : 30;
+  const forever = !!(parsed && parsed.forever);
+  const days = forever ? 0 : (parsed ? parsed.days : 30);
   try {
-    const granted = await grantPaidDaysFromStars(uid, days, pay);
-    console.log('stars payment ok', uid, days, pay.total_amount, granted);
+    const granted = await grantPaidDaysFromStars(uid, days, pay, { forever: forever });
+    console.log('stars payment ok', uid, forever ? 'forever' : days, pay.total_amount, granted);
     try {
-      const thanks = await sendPaidThanksToUser(uid, days);
+      const thanks = await sendPaidThanksToUser(uid, forever ? 'forever' : days);
       if (!thanks.sent) {
         console.error('stars paid thanks photo failed', thanks);
         await telegramSendMessage(
           uid,
-          'Оплата прошла 💜 Доступ продлён на ' + days + ' ' + pluralDaysRu(days) + '.',
+          forever
+            ? 'Оплата прошла 💜 Доступ бессрочный.'
+            : ('Оплата прошла 💜 Доступ продлён на ' + days + ' ' + pluralDaysRu(days) + '.'),
           undefined
         );
       }
