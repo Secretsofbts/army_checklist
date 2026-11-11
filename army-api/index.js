@@ -1216,6 +1216,8 @@ app.get('/admin/yookassa-recent', async function (req, res) {
     const all = snap.exists() ? (snap.val() || {}) : {};
     const list = Object.keys(all).map(function (pid) {
       const row = all[pid] || {};
+      // Старые «ручные» оплаты скрыты из списка чеков — дни и статистика остаются
+      if (row.omitFromReceipts) return null;
       return {
         paymentId: pid,
         userId: row.userId || null,
@@ -1236,7 +1238,7 @@ app.get('/admin/yookassa-recent', async function (req, res) {
         createdAt: row.createdAt || 0,
         processedAt: row.processedAt || 0
       };
-    }).sort(function (a, b) {
+    }).filter(Boolean).sort(function (a, b) {
       return (b.processedAt || b.createdAt || 0) - (a.processedAt || a.createdAt || 0);
     }).slice(0, limit);
     return res.json({ ok: true, payments: list });
@@ -1683,6 +1685,36 @@ async function syncRecentYooKassaPayments(limit) {
     }
   }
   return { ok: true, checked: items.length, results: results };
+}
+
+/**
+ * Разово убрать старые оплаты из списка «Чеки» (до авточеков).
+ * Сами записи и дни доступа не трогаем — только omitFromReceipts.
+ */
+async function hideOldNonAutoReceiptPayments() {
+  const metaRef = db.ref('bot_meta/receiptsListClearedV1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('receipts list clear already done', metaSnap.val());
+    return;
+  }
+  const snap = await db.ref('yookassa_payments').get();
+  const all = snap.exists() ? (snap.val() || {}) : {};
+  const hidden = [];
+  const keys = Object.keys(all);
+  for (let i = 0; i < keys.length; i++) {
+    const paymentId = keys[i];
+    const row = all[paymentId] || {};
+    if (String(row.receiptDoneBy || '') === 'auto-moy-nalog') continue;
+    if (row.omitFromReceipts) continue;
+    await db.ref('yookassa_payments/' + paymentId).update({
+      omitFromReceipts: true,
+      omitFromReceiptsAt: Date.now()
+    });
+    hidden.push(paymentId);
+  }
+  await metaRef.set({ at: Date.now(), hidden: hidden.length, ids: hidden });
+  console.log('receipts list cleared old non-auto', hidden.length, hidden);
 }
 
 async function forceReprocessKnownYooKassaPayments() {
@@ -3369,6 +3401,12 @@ app.listen(PORT, function () {
       console.error('yookassa force reprocess failed', e && e.data ? e.data : e);
     });
   }, 7000);
+  // Разово: старые оплаты без авточека убрать из списка «Чеки»
+  setTimeout(function () {
+    hideOldNonAutoReceiptPayments().catch(function (e) {
+      console.error('receipts list clear failed', e);
+    });
+  }, 9000);
   applyForceTestAccountOnBoot().catch(function (e) {
     console.error('force test account boot failed', e);
   });
