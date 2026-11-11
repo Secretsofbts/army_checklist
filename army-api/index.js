@@ -105,8 +105,12 @@ function pricingInfo(now) {
 }
 
 // Акция 100 ₽ / −50% Stars — только на первую оплату. Повторно всегда полная цена.
-function hasUsedPromoPrice(data) {
+function hasUsedPromoPrice(data, uid) {
   data = data || {};
+  // Тестовый аккаунт: смотрим только флаг promoUsed (чтобы можно было снова дать 100 ₽ для проверки)
+  if (uid && FORCE_TEST_IDS.indexOf(String(uid)) !== -1) {
+    return data.promoUsed === true;
+  }
   if (data.promoUsed === true) return true;
   // Уже была платная подписка (не пробный)
   if (data.trial === false && typeof data.expiresAt === 'number') return true;
@@ -114,12 +118,12 @@ function hasUsedPromoPrice(data) {
   return false;
 }
 
-function pricingInfoForUser(data, now) {
+function pricingInfoForUser(data, now, uid) {
   const base = pricingInfo(now);
   if (!base.promo) {
-    return Object.assign({}, base, { promoUsed: hasUsedPromoPrice(data) });
+    return Object.assign({}, base, { promoUsed: hasUsedPromoPrice(data, uid) });
   }
-  if (hasUsedPromoPrice(data)) {
+  if (hasUsedPromoPrice(data, uid)) {
     return {
       priceRub: FULL_PRICE_RUB,
       oldPriceRub: null,
@@ -349,7 +353,7 @@ async function applyReferralBonusOnFirstPaid(friendId) {
 function buildSubscriptionStatus(uid, data, isAdmin) {
   const now = Date.now();
   data = data || {};
-  const price = pricingInfoForUser(data, now);
+  const price = pricingInfoForUser(data, now, uid);
   if (isAdmin) {
     return {
       ok: true,
@@ -1279,7 +1283,7 @@ app.post('/payment/yookassa/create', async function (req, res) {
     const uid = String(user.id);
     const subSnap = await subscriptionRef(uid).get();
     const subData = subSnap.exists() ? subSnap.val() : null;
-    const price = pricingInfoForUser(subData, Date.now());
+    const price = pricingInfoForUser(subData, Date.now(), uid);
     const amountRub = Number(price.priceRub) || FULL_PRICE_RUB;
     const amountValue = amountRub.toFixed(2);
     const email = String((req.body && req.body.email) || '').trim();
@@ -1827,10 +1831,10 @@ const STARS_PROMO_BY_DAYS = {
   180: 225
 };
 
-function starsPriceForDays(days, now, subData) {
+function starsPriceForDays(days, now, subData, uid) {
   const d = Math.max(1, parseInt(days, 10) || 30);
   const price = subData !== undefined
-    ? pricingInfoForUser(subData, now || Date.now())
+    ? pricingInfoForUser(subData, now || Date.now(), uid)
     : pricingInfo(now || Date.now());
   const table = price.promo ? STARS_PROMO_BY_DAYS : STARS_FULL_BY_DAYS;
   if (table[d]) return { stars: table[d], days: d, promo: !!price.promo };
@@ -1929,7 +1933,7 @@ async function handleAdminSupportReply(msg) {
       let promo = !!starsCmd.promo;
       if (!starsCmd.explicit) {
         const subSnap = await subscriptionRef(userId).get();
-        const priced = starsPriceForDays(days, Date.now(), subSnap.exists() ? subSnap.val() : null);
+        const priced = starsPriceForDays(days, Date.now(), subSnap.exists() ? subSnap.val() : null, userId);
         stars = priced.stars;
         days = priced.days;
         promo = !!priced.promo;
@@ -2733,10 +2737,23 @@ async function applyForceTestAccountOnBoot() {
           createdAt: (prev && prev.createdAt) || now,
           updatedAt: now,
           note: 'stars-paid-restored-after-force',
-          promoUsed: true,
-          promoUsedAt: (prev && prev.promoUsedAt) || now
+          promoUsed: false,
+          promoUsedAt: null
         });
         console.log('Test account restored 30 days after force off', testId, new Date(expiresAt).toISOString());
+      } else {
+        // Один раз: вернуть акцию 100 ₽ на тестовом для проверки ЮKassa
+        const metaRef = db.ref('bot_meta/testPromoResetForYooKassaV1');
+        const metaSnap = await metaRef.get();
+        if (!metaSnap.exists()) {
+          await subscriptionRef(testId).update({
+            promoUsed: false,
+            promoUsedAt: null,
+            updatedAt: now
+          });
+          await metaRef.set({ at: now, testId: testId });
+          console.log('Test account promo reset for YooKassa check', testId);
+        }
       }
       return;
     }
