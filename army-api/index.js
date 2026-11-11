@@ -52,6 +52,8 @@ const LEGACY_TRIAL_ANCHOR_AT = Number(process.env.LEGACY_TRIAL_ANCHOR_AT) ||
 // Цены тарифов (карта). Акция 100 ₽ / 30 дн. — один раз, окно акции 15 дней.
 const FULL_PRICE_RUB = 200;
 const PROMO_PRICE_RUB = 100;
+// Временный тест авточека: тестовый id платит акцию за 10 ₽
+const TEST_PROMO_PRICE_RUB = 10;
 const PROMO_ACCESS_DAYS = 30;
 const PROMO_DAYS = 15;
 const FOREVER_PRICE_RUB = 5000;
@@ -163,11 +165,19 @@ function pricingInfo(now) {
   };
 }
 
+function isForceTestUser(uid) {
+  return !!(uid && FORCE_TEST_IDS.indexOf(String(uid)) !== -1);
+}
+
+function promoPriceForUser(uid) {
+  return isForceTestUser(uid) ? TEST_PROMO_PRICE_RUB : PROMO_PRICE_RUB;
+}
+
 // Акция 100 ₽ / −50% Stars — только на первую оплату. Повторно всегда полная цена.
 function hasUsedPromoPrice(data, uid) {
   data = data || {};
-  // Тестовый аккаунт: смотрим только флаг promoUsed (чтобы можно было снова дать 100 ₽ для проверки)
-  if (uid && FORCE_TEST_IDS.indexOf(String(uid)) !== -1) {
+  // Тестовый аккаунт: смотрим только флаг promoUsed (чтобы можно было снова дать акцию для проверки)
+  if (isForceTestUser(uid)) {
     return data.promoUsed === true;
   }
   if (data.promoUsed === true) return true;
@@ -182,12 +192,14 @@ function pricingInfoForUser(data, now, uid) {
   const used = hasUsedPromoPrice(data, uid);
   // Окно акции на экране: только пока акция идёт и человек ещё не платил
   const showPromo = !!(base.promo && !used);
+  const promoPrice = promoPriceForUser(uid);
   return Object.assign({}, base, {
     promo: showPromo,
     promoDaysLeft: showPromo ? base.promoDaysLeft : 0,
     promoUsed: used,
+    promoPriceRub: promoPrice,
     // priceRub — цена акции, если она доступна; иначе обычные 30 дней
-    priceRub: showPromo ? PROMO_PRICE_RUB : FULL_PRICE_RUB,
+    priceRub: showPromo ? promoPrice : FULL_PRICE_RUB,
     oldPriceRub: showPromo ? FULL_PRICE_RUB : null
   });
 }
@@ -210,10 +222,14 @@ function resolveYooKassaPlan(body, priceInfo) {
     if (!priceInfo.promo) {
       return { error: 'promo-unavailable' };
     }
+    const promoAmount = Math.max(
+      1,
+      Math.round(Number(priceInfo.promoPriceRub) || PROMO_PRICE_RUB)
+    );
     return {
       forever: false,
       days: PROMO_ACCESS_DAYS,
-      amountRub: PROMO_PRICE_RUB,
+      amountRub: promoAmount,
       promo: true,
       label: PROMO_ACCESS_DAYS + ' дн. (акция)'
     };
@@ -232,9 +248,13 @@ function resolveYooKassaPlan(body, priceInfo) {
 }
 
 /** Ожидаемая сумма за тариф (для сверки при выдаче дней). */
-function expectedAmountForPlan(days, forever, promo) {
+function expectedAmountForPlan(days, forever, promo, promoAmountRub) {
   if (forever) return FOREVER_PRICE_RUB;
-  if (promo) return PROMO_PRICE_RUB;
+  if (promo) {
+    const p = Math.round(Number(promoAmountRub) || 0);
+    if (p > 0) return p;
+    return PROMO_PRICE_RUB;
+  }
   const d = parseInt(days, 10);
   if (PLAN_PRICES[d] != null) return PLAN_PRICES[d];
   return null;
@@ -251,7 +271,12 @@ function resolveGrantPlanFromPayment(meta, prev, amountRub) {
   let promo = String(meta.promo || '') === '1' || prev.promo === true;
   let days = forever ? 0 : Math.max(1, parseInt(meta.days != null ? meta.days : prev.days, 10) || 30);
 
-  const expected = expectedAmountForPlan(days, forever, promo);
+  const expected = expectedAmountForPlan(
+    days,
+    forever,
+    promo,
+    prev.amountRub || meta.amountRub
+  );
   if (expected != null && amount === expected) {
     return { forever: forever, days: days, promo: promo };
   }
@@ -267,7 +292,7 @@ function resolveGrantPlanFromPayment(meta, prev, amountRub) {
   if (amount === FOREVER_PRICE_RUB) {
     return { forever: true, days: 0, promo: false };
   }
-  if (amount === PROMO_PRICE_RUB) {
+  if (amount === PROMO_PRICE_RUB || amount === TEST_PROMO_PRICE_RUB) {
     return { forever: false, days: PROMO_ACCESS_DAYS, promo: true };
   }
   const keys = Object.keys(PLAN_PRICES);
@@ -3632,8 +3657,8 @@ async function applyForceTestAccountOnBoot() {
         });
         console.log('Test account restored 30 days after force off', testId, new Date(expiresAt).toISOString());
       } else {
-        // Вернуть акцию 100 ₽ на тестовом для проверки ЮKassa (V2 — повторный сброс)
-        const metaRef = db.ref('bot_meta/testPromoResetForYooKassaV2');
+        // Вернуть акцию на тестовом для проверки авточека (V3, цена теста 10 ₽)
+        const metaRef = db.ref('bot_meta/testPromoResetForYooKassaV3');
         const metaSnap = await metaRef.get();
         if (!metaSnap.exists()) {
           await subscriptionRef(testId).update({
@@ -3641,8 +3666,16 @@ async function applyForceTestAccountOnBoot() {
             promoUsedAt: null,
             updatedAt: now
           });
-          await metaRef.set({ at: now, testId: testId });
-          console.log('Test account promo reset for YooKassa check V2', testId);
+          await metaRef.set({
+            at: now,
+            testId: testId,
+            promoPriceRub: TEST_PROMO_PRICE_RUB
+          });
+          console.log(
+            'Test account promo reset for YooKassa check V3',
+            testId,
+            TEST_PROMO_PRICE_RUB + ' RUB'
+          );
         }
       }
       return;
