@@ -1762,6 +1762,42 @@ async function syncRecentYooKassaPayments(limit) {
  * Разово убрать старые оплаты из списка «Чеки» (до авточеков).
  * Сами записи и дни доступа не трогаем — только omitFromReceipts.
  */
+/**
+ * Разово: +30 дней первому оплатившему (6921049406).
+ */
+async function grantBonusDaysToFirstPayer() {
+  const targetId = '6921049406';
+  const bonusDays = 30;
+  const metaRef = db.ref('bot_meta/firstPayerBonus30V1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('first payer bonus already done', metaSnap.val());
+    return;
+  }
+  const result = await extendSubscriptionByDays(targetId, bonusDays);
+  if (result.skipped) {
+    await metaRef.set({ at: Date.now(), to: targetId, skipped: true, reason: result.reason || 'skipped' });
+    console.log('first payer bonus skipped', targetId, result);
+    return;
+  }
+  try {
+    await telegramSendMessage(
+      targetId,
+      'Спасибо, что были среди первых 💜\n\nВам начислено ещё +' + bonusDays + ' дней доступа.',
+      undefined
+    );
+  } catch (e) {
+    console.error('first payer bonus notify failed', targetId, e);
+  }
+  await metaRef.set({
+    at: Date.now(),
+    to: targetId,
+    days: bonusDays,
+    expiresAt: result.expiresAt || null
+  });
+  console.log('first payer bonus done', targetId, result);
+}
+
 async function hideOldNonAutoReceiptPayments() {
   const metaRef = db.ref('bot_meta/receiptsListClearedV1');
   const metaSnap = await metaRef.get();
@@ -3485,6 +3521,12 @@ app.listen(PORT, function () {
       console.error('receipts list clear failed', e);
     });
   }, 9000);
+  // Разово: +30 дней первому оплатившему
+  setTimeout(function () {
+    grantBonusDaysToFirstPayer().catch(function (e) {
+      console.error('first payer bonus failed', e);
+    });
+  }, 11000);
   applyForceTestAccountOnBoot().catch(function (e) {
     console.error('force test account boot failed', e);
   });
