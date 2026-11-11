@@ -1188,7 +1188,7 @@ app.get('/subscription', async function (req, res) {
       }
 
       if (mode === 'new10') {
-        const note = 'force-new10-preview-v3';
+        const note = 'force-new10-preview-v4';
         if (prev && prev.note === note && prev.trial && typeof prev.expiresAt === 'number' && prev.expiresAt > now) {
           return res.json(buildSubscriptionStatus(uid, prev, false));
         }
@@ -1205,7 +1205,7 @@ app.get('/subscription', async function (req, res) {
           comebackUsed: false,
           comebackGrantedAt: null,
           lastVisitAt: null,
-          welcomeResetToken: 'v3-' + String(now),
+          welcomeResetToken: 'v4-' + String(now),
           note: note
         };
         await ref.set(entry);
@@ -3451,6 +3451,21 @@ async function handleStartCommand(msg) {
       }
     }
 
+    // Из окошка пробного периода: активировать бота для уведомлений
+    if (/^(notify|уведомлен\w*|check)$/i.test(String(payload || '').trim())) {
+      try {
+        await telegramSendMessage(
+          msg.chat.id,
+          'Готово 💜 Теперь бот сможет присылать важные уведомления: окончание доступа, чеки и новости по чек-листу.\n\n' +
+            'Открыть чек-лист: ' + BOT_APP_LINK,
+          null
+        );
+        return true;
+      } catch (notifyStartErr) {
+        console.error('start notify payload failed', fromId, notifyStartErr);
+      }
+    }
+
     try {
       const captured = await captureReferralFromStart(fromId, payload);
       if (captured && captured.saved) {
@@ -4039,10 +4054,10 @@ async function applyForceTestAccountOnBoot() {
         comebackUsed: false,
         comebackGrantedAt: null,
         lastVisitAt: null,
-        welcomeResetToken: 'v3-' + String(now),
-        note: 'force-new10-preview-v3'
+        welcomeResetToken: 'v4-' + String(now),
+        note: 'force-new10-preview-v4'
       });
-      console.log('Test account forced new-user trial + welcome v3', testId, new Date(expiresAt).toISOString());
+      console.log('Test account forced new-user trial + welcome v4', testId, new Date(expiresAt).toISOString());
       return;
     }
     if (FORCE_TEST_MODE !== 'expired') return;

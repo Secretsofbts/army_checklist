@@ -314,7 +314,32 @@ registerUserIfNeeded();
     text.textContent = 'Добро пожаловать! У вас есть ' + days + ' ' +
       (days === 1 ? 'день' : (days >= 2 && days <= 4 ? 'дня' : 'дней')) +
       ' бесплатного доступа ко всему чек-листу. Потом можно оформить подписку.';
-    text.style.cssText = 'font-size:14px;line-height:1.45;color:#666;margin:0 0 18px';
+    text.style.cssText = 'font-size:14px;line-height:1.45;color:#666;margin:0 0 14px';
+
+    const notify = document.createElement('div');
+    notify.style.cssText = 'font-size:14px;line-height:1.45;color:#5b4a7a;margin:0 0 12px;text-align:center';
+    notify.appendChild(document.createTextNode(
+      'Пожалуйста, активируйте бота, чтобы получать важные уведомления (окончание доступа, чеки и новости). Нажмите '
+    ));
+    const startLink = document.createElement('a');
+    startLink.href = 'https://t.me/army_checklist_bot?start=notify';
+    startLink.target = '_blank';
+    startLink.rel = 'noopener';
+    startLink.textContent = 'Start';
+    startLink.style.cssText = 'color:#7b5fb3;font-weight:700;text-decoration:underline';
+    notify.appendChild(startLink);
+
+    const startBtn = document.createElement('a');
+    startBtn.href = 'https://t.me/army_checklist_bot?start=notify';
+    startBtn.target = '_blank';
+    startBtn.rel = 'noopener';
+    startBtn.textContent = 'Активировать бота · Start';
+    startBtn.style.cssText = [
+      'display:block', 'width:100%', 'box-sizing:border-box', 'text-decoration:none',
+      'border-radius:12px', 'padding:12px 16px', 'margin:0 0 10px',
+      'font-size:15px', 'font-weight:700', 'text-align:center',
+      'background:#f0edf9', 'color:#5b3a8e', 'border:1px solid #d9cdf0'
+    ].join(';');
 
     const btn = document.createElement('button');
     btn.type = 'button';
@@ -330,14 +355,177 @@ registerUserIfNeeded();
       } catch (e) {}
       armyRemoveEl('army-trial-welcome');
       armyUnlockPageScroll();
+      setTimeout(maybeShowMenuHeartHint, 280);
     });
 
     card.appendChild(emoji);
     card.appendChild(title);
     card.appendChild(text);
+    card.appendChild(notify);
+    card.appendChild(startBtn);
     card.appendChild(btn);
     overlay.appendChild(card);
     armyMountTopOverlay(overlay);
+  }
+
+  function armyMenuHeartHintKey() {
+    return ARMY_USER_ID ? ('armyMenuHeartHintSeen_' + ARMY_USER_ID) : 'armyMenuHeartHintSeen';
+  }
+
+  function ensureMenuHeartHintStyles() {
+    if (document.getElementById('army-menu-heart-hint-style')) return;
+    const style = document.createElement('style');
+    style.id = 'army-menu-heart-hint-style';
+    style.textContent =
+      '@keyframes armyHeartPulse{' +
+      '0%,100%{box-shadow:0 0 0 0 rgba(155,127,212,0.75),0 0 0 9999px rgba(43,36,64,0.55);transform:scale(1)}' +
+      '50%{box-shadow:0 0 0 10px rgba(155,127,212,0.15),0 0 0 9999px rgba(43,36,64,0.55);transform:scale(1.08)}' +
+      '}';
+    document.head.appendChild(style);
+  }
+
+  function showMenuHeartHint() {
+    const btn = document.getElementById('menu-btn');
+    if (!btn || document.getElementById('army-menu-heart-hint')) return;
+    if (document.getElementById('army-trial-welcome') || document.getElementById('army-paywall')) return;
+
+    ensureMenuHeartHintStyles();
+
+    const overlay = document.createElement('div');
+    overlay.id = 'army-menu-heart-hint';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.style.cssText = [
+      'position:fixed', 'inset:0', 'z-index:2147483644',
+      'pointer-events:auto', 'font-family:Arial,sans-serif'
+    ].join(';');
+
+    const dim = document.createElement('div');
+    dim.style.cssText = 'position:absolute;inset:0;background:rgba(43,36,64,0.55)';
+
+    const spot = document.createElement('div');
+    spot.style.cssText = [
+      'position:fixed', 'border-radius:50%', 'pointer-events:none',
+      'border:3px solid #9b7fd4', 'background:transparent',
+      'animation:armyHeartPulse 1.4s ease-in-out infinite',
+      'box-sizing:border-box', 'z-index:2147483645'
+    ].join(';');
+
+    const tip = document.createElement('div');
+    tip.style.cssText = [
+      'position:fixed', 'z-index:2147483646', 'left:50%', 'transform:translateX(-50%)',
+      'width:calc(100% - 40px)', 'max-width:300px',
+      'background:#fff', 'border-radius:16px', 'padding:16px 18px',
+      'box-shadow:0 12px 40px rgba(80,60,120,0.25)', 'text-align:center',
+      'pointer-events:none'
+    ].join(';');
+    tip.innerHTML =
+      '<div style="font-size:22px;margin:0 0 8px">💜</div>' +
+      '<div style="font-size:16px;font-weight:700;color:#2b2440;margin:0 0 8px">Меню под сердечком</div>' +
+      '<div style="font-size:14px;line-height:1.45;color:#666">Нажми на сердечко справа сверху — там личный кабинет и инструкция</div>';
+
+    function place() {
+      const r = btn.getBoundingClientRect();
+      const size = Math.max(44, Math.max(r.width, r.height) + 18);
+      const left = r.left + r.width / 2 - size / 2;
+      const top = r.top + r.height / 2 - size / 2;
+      spot.style.width = size + 'px';
+      spot.style.height = size + 'px';
+      spot.style.left = left + 'px';
+      spot.style.top = top + 'px';
+      // «дырка» в затемнении через большой box-shadow на круге
+      spot.style.boxShadow = '0 0 0 0 rgba(155,127,212,0.7), 0 0 0 9999px rgba(43,36,64,0.55)';
+      dim.style.display = 'none';
+      const tipTop = top + size + 14;
+      tip.style.top = Math.min(tipTop, window.innerHeight - 140) + 'px';
+    }
+
+    // Поднимаем сердечко поверх затемнения (иначе клик не дойдёт)
+    const prev = {
+      zIndex: btn.style.zIndex,
+      position: btn.style.position,
+      left: btn.style.left,
+      top: btn.style.top,
+      right: btn.style.right,
+      filter: btn.style.filter,
+      width: btn.style.width,
+      height: btn.style.height
+    };
+    function elevateBtn() {
+      const r = btn.getBoundingClientRect();
+      btn.style.position = 'fixed';
+      btn.style.left = r.left + 'px';
+      btn.style.top = r.top + 'px';
+      btn.style.right = 'auto';
+      btn.style.width = Math.max(22, r.width) + 'px';
+      btn.style.height = Math.max(22, r.height) + 'px';
+      btn.style.zIndex = '2147483647';
+      btn.style.filter = 'drop-shadow(0 0 6px rgba(155,127,212,0.95))';
+    }
+
+    function finish() {
+      try {
+        localStorage.setItem(armyMenuHeartHintKey(), '1');
+      } catch (e) {}
+      window.removeEventListener('resize', onResize);
+      btn.removeEventListener('click', onHeartClick, true);
+      btn.style.zIndex = prev.zIndex;
+      btn.style.position = prev.position;
+      btn.style.left = prev.left;
+      btn.style.top = prev.top;
+      btn.style.right = prev.right;
+      btn.style.filter = prev.filter;
+      btn.style.width = prev.width;
+      btn.style.height = prev.height;
+      armyRemoveEl('army-menu-heart-hint');
+      armyUnlockPageScroll();
+    }
+
+    function onHeartClick() {
+      finish();
+    }
+
+    function onResize() {
+      // Сначала вернуть в поток, замерить, снова поднять
+      btn.style.position = prev.position || 'absolute';
+      btn.style.left = prev.left;
+      btn.style.top = prev.top;
+      btn.style.right = prev.right;
+      btn.style.zIndex = prev.zIndex;
+      place();
+      elevateBtn();
+      place();
+    }
+
+    // capture: вместе с открытием меню
+    btn.addEventListener('click', onHeartClick, true);
+    overlay.addEventListener('click', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    });
+
+    overlay.appendChild(dim);
+    overlay.appendChild(spot);
+    overlay.appendChild(tip);
+    armyMountTopOverlay(overlay);
+    place();
+    elevateBtn();
+    place();
+    window.addEventListener('resize', onResize);
+  }
+
+  function maybeShowMenuHeartHint() {
+    if (!ARMY_USER_ID) return;
+    if (!document.getElementById('menu-btn')) return;
+    if (document.getElementById('army-menu-heart-hint')) return;
+    if (document.getElementById('army-trial-welcome') || document.getElementById('army-paywall')) {
+      setTimeout(maybeShowMenuHeartHint, 400);
+      return;
+    }
+    try {
+      if (localStorage.getItem(armyMenuHeartHintKey()) === '1') return;
+    } catch (e) {}
+    showMenuHeartHint();
   }
 
   function maybeShowTrialWelcome(data) {
@@ -353,6 +541,7 @@ registerUserIfNeeded();
         if (localStorage.getItem(tokenKey) !== token) {
           localStorage.setItem(tokenKey, token);
           localStorage.removeItem(armyTrialWelcomeKey());
+          localStorage.removeItem(armyMenuHeartHintKey());
         }
       }
       if (localStorage.getItem(armyTrialWelcomeKey()) === '1') return;
@@ -575,6 +764,7 @@ registerUserIfNeeded();
       armyRemoveEl('army-paywall');
       armyUnlockPageScroll();
       maybeShowTrialWelcome(data);
+      maybeShowMenuHeartHint();
       maybeShowDaysLeftWarn(data);
       return;
     }
