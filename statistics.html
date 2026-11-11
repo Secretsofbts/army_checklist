@@ -279,10 +279,10 @@
       <p style="font-size:12px; color:#888; margin:0 0 10px;">Подписка</p>
       <div style="display:flex; align-items:center; gap:10px;">
         <div style="flex:1; min-width:0;">
-          <p id="sub-label" style="font-size:13px; font-weight:600; color:#5b4a7a; margin:0 0 8px; line-height:1.3;">Загрузка…</p>
-          <div id="sub-days-frame" style="display:none; border:1px solid #e4dcf3; background:#fff; border-radius:12px; padding:12px 14px; text-align:center;">
-            <p id="sub-value" style="font-size:22px; font-weight:800; color:#2b2440; margin:0; line-height:1.2;">…</p>
-            <p id="sub-sub" style="font-size:12px; color:#8a7aa8; margin:4px 0 0; line-height:1.35;"></p>
+          <p id="sub-label" style="font-size:13px; font-weight:600; color:#5b4a7a; margin:0 0 6px; line-height:1.3;">Загрузка…</p>
+          <div id="sub-days-frame" style="display:none; border:1px solid #e4dcf3; background:#fff; border-radius:8px; padding:6px 10px; text-align:left; max-width:140px;">
+            <p id="sub-value" style="font-size:14px; font-weight:700; color:#2b2440; margin:0; line-height:1.25;">…</p>
+            <p id="sub-sub" style="font-size:11px; color:#8a7aa8; margin:2px 0 0; line-height:1.3;"></p>
           </div>
           <div id="sub-forever-wrap" style="display:none;"></div>
         </div>
@@ -953,11 +953,11 @@
         renewBtn.style.display = '';
         renewBtn.textContent = 'Продлить';
       }
-      if (!data || typeof data !== 'object') {
+        if (!data || typeof data !== 'object') {
         labelEl.textContent = 'Подписка';
         showDaysFrame(true);
         valueEl.textContent = '—';
-        subEl.textContent = 'Не удалось проверить срок';
+        subEl.textContent = 'не удалось проверить';
         return;
       }
       if (data.forever || data.status === 'admin' || data.status === 'forever') {
@@ -966,8 +966,8 @@
         if (foreverWrap) {
           foreverWrap.style.display = '';
           foreverWrap.innerHTML =
-            '<div style="border:1px solid #e4dcf3; background:#fff; border-radius:12px; padding:12px 14px; text-align:center;">' +
-            '<svg width="40" height="20" viewBox="0 0 100 50" aria-label="Бессрочно" style="display:block; margin:0 auto;">' +
+            '<div style="border:1px solid #e4dcf3; background:#fff; border-radius:8px; padding:6px 10px; max-width:140px;">' +
+            '<svg width="28" height="14" viewBox="0 0 100 50" aria-label="Бессрочно" style="display:block;">' +
             '<path fill="none" stroke="#2b2440" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" ' +
             'd="M25 25C25 12 38 12 50 25C62 38 75 38 75 25C75 12 62 12 50 25C38 38 25 38 25 25"/>' +
             '</svg></div>';
@@ -982,18 +982,18 @@
         labelEl.textContent = 'Осталось';
         showDaysFrame(true);
         if (leftDays === 1) {
-          valueEl.textContent = '1';
-          subEl.textContent = 'последний день' + (until ? ' · до ' + until : '');
+          valueEl.textContent = '1 день';
+          subEl.textContent = until ? ('до ' + until) : '';
         } else {
-          valueEl.textContent = String(leftDays);
-          subEl.textContent = pluralDaysSub(leftDays) + (until ? ' · до ' + until : '');
+          valueEl.textContent = leftDays + ' ' + pluralDaysSub(leftDays);
+          subEl.textContent = until ? ('до ' + until) : '';
         }
         return;
       }
       labelEl.textContent = 'Подписка';
       showDaysFrame(true);
-      valueEl.textContent = '0';
-      subEl.textContent = 'не активна';
+      valueEl.textContent = 'не активна';
+      subEl.textContent = '';
     }
 
     function showAdminHub() {
