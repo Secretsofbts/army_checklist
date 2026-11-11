@@ -95,12 +95,40 @@ let moyNalogClient = null;
 function getMoyNalogClient() {
   if (!moyNalogReady()) return null;
   if (!moyNalogClient) {
+    // autologin:false — логинимся явно, чтобы ловить ошибку «Не найдено»
     moyNalogClient = new NalogAPI({
       login: MOY_NALOG_LOGIN,
-      password: MOY_NALOG_PASSWORD
+      password: MOY_NALOG_PASSWORD,
+      autologin: false
     });
   }
   return moyNalogClient;
+}
+
+function resetMoyNalogClient() {
+  moyNalogClient = null;
+}
+
+function friendlyMoyNalogError(raw) {
+  const msg = String(raw || '').trim();
+  const low = msg.toLowerCase();
+  if (low === 'не найдено' || low.indexOf('не найдено') !== -1) {
+    return 'Не найдено: проверьте MOY_NALOG_LOGIN (ИНН 12 цифр) и MOY_NALOG_PASSWORD (пароль от lknpd.nalog.ru), не телефон';
+  }
+  if (low.indexOf('парол') !== -1 || low.indexOf('auth') !== -1 || low.indexOf('авториз') !== -1) {
+    return 'Ошибка входа в «Мой налог»: ' + msg;
+  }
+  return msg || 'moy-nalog-error';
+}
+
+async function ensureMoyNalogAuth(api) {
+  if (!api) throw new Error('not-configured');
+  try {
+    await api.auth(MOY_NALOG_LOGIN, MOY_NALOG_PASSWORD);
+  } catch (e) {
+    resetMoyNalogClient();
+    throw new Error(friendlyMoyNalogError((e && e.message) || e));
+  }
 }
 
 function promoEndsAtMs() {
@@ -1747,6 +1775,7 @@ async function issueMoyNalogReceiptForPayment(meta) {
 
   let receipt;
   try {
+    await ensureMoyNalogAuth(api);
     receipt = await api.addIncome({
       name: serviceName,
       amount: amountRub,
@@ -1754,8 +1783,9 @@ async function issueMoyNalogReceiptForPayment(meta) {
       date: opDate
     });
   } catch (e) {
-    const msg = String((e && e.message) || e).slice(0, 500);
+    const msg = friendlyMoyNalogError((e && e.message) || e).slice(0, 500);
     console.error('moy-nalog addIncome failed', paymentId, msg);
+    resetMoyNalogClient();
     await lockRef.update({
       receiptPending: null,
       receiptError: msg,
