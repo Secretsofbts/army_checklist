@@ -1180,9 +1180,13 @@ app.get('/admin/yookassa-recent', async function (req, res) {
         granted: row.granted === true,
         receiptDone: !!row.receiptDone,
         receiptDoneAt: row.receiptDoneAt || null,
+        receiptDoneBy: row.receiptDoneBy || null,
         receiptUrl: row.receiptUrl || null,
         receiptUuid: row.receiptUuid || null,
         receiptError: row.receiptError || null,
+        receiptSentTg: !!row.receiptSentTg,
+        receiptSentTgAt: row.receiptSentTgAt || null,
+        receiptNotifyError: row.receiptNotifyError || null,
         createdAt: row.createdAt || 0,
         processedAt: row.processedAt || 0
       };
@@ -1435,6 +1439,7 @@ async function issueMoyNalogReceiptForPayment(meta) {
     receiptError: null
   });
 
+  let sentTg = false;
   if (userId && printUrl) {
     try {
       await telegramSendMessage(
@@ -1442,12 +1447,23 @@ async function issueMoyNalogReceiptForPayment(meta) {
         'Ваш чек по оплате подписки 💜\n' + printUrl,
         null
       );
+      sentTg = true;
+      await lockRef.update({
+        receiptSentTg: true,
+        receiptSentTgAt: Date.now(),
+        receiptNotifyError: null
+      });
     } catch (e) {
-      console.error('moy-nalog notify failed', userId, e && e.message ? e.message : e);
+      const notifyMsg = String((e && e.message) || e).slice(0, 300);
+      console.error('moy-nalog notify failed', userId, notifyMsg);
+      await lockRef.update({
+        receiptSentTg: false,
+        receiptNotifyError: notifyMsg
+      });
     }
   }
-  console.log('moy-nalog receipt ok', paymentId, receiptId);
-  return { ok: true, printUrl: printUrl, receiptId: receiptId };
+  console.log('moy-nalog receipt ok', paymentId, receiptId, 'tg=' + sentTg);
+  return { ok: true, printUrl: printUrl, receiptId: receiptId, sentTg: sentTg };
 }
 
 async function processYooKassaSucceededPayment(payment, opts) {
