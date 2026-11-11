@@ -1212,9 +1212,10 @@ async function grantPaidDaysFromYooKassa(uid, days, meta) {
   return { skipped: false, expiresAt: expiresAt, paidDays: paidDays };
 }
 
-async function processYooKassaSucceededPayment(payment) {
+async function processYooKassaSucceededPayment(payment, opts) {
+  opts = opts || {};
   if (!payment || payment.status !== 'succeeded') {
-    return { ok: false, reason: 'not-succeeded' };
+    return { ok: false, reason: 'not-succeeded', status: payment && payment.status };
   }
   const paymentId = String(payment.id || '');
   if (!paymentId) return { ok: false, reason: 'no-id' };
@@ -1222,8 +1223,14 @@ async function processYooKassaSucceededPayment(payment) {
   const lockRef = db.ref('yookassa_payments/' + paymentId);
   const lockSnap = await lockRef.get();
   const prev = lockSnap.exists() ? (lockSnap.val() || {}) : {};
-  if (prev.processed) {
-    return { ok: true, reason: 'already' };
+  if (prev.processed && !opts.force) {
+    return {
+      ok: true,
+      reason: 'already',
+      userId: prev.userId || null,
+      grantedBefore: prev.granted === true,
+      amountRub: prev.amountRub || null
+    };
   }
 
   const meta = payment.metadata || {};
@@ -1361,7 +1368,9 @@ async function syncRecentYooKassaPayments(limit) {
         paymentId: payment && payment.id,
         reason: r && r.reason,
         ok: !!(r && r.ok),
-        granted: !!(r && r.granted && !r.granted.skipped)
+        granted: !!(r && r.granted && !r.granted.skipped),
+        userId: (r && r.userId) || (payment.metadata && payment.metadata.userId) || null,
+        grantedBefore: r && r.grantedBefore
       });
     } catch (e) {
       results.push({
@@ -1372,6 +1381,56 @@ async function syncRecentYooKassaPayments(limit) {
     }
   }
   return { ok: true, checked: items.length, results: results };
+}
+
+async function forceReprocessKnownYooKassaPayments() {
+  if (!yookassaReady()) return;
+  const metaRef = db.ref('bot_meta/yookassaForceReprocessV1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('yookassa force reprocess already done', metaSnap.val());
+    return;
+  }
+  const ids = [
+    '3286c358-000f-5000-b000-18305de47b2d',
+    '3286c345-000f-5001-9000-1a9e484fb186'
+  ];
+  const results = [];
+  for (let i = 0; i < ids.length; i++) {
+    const paymentId = ids[i];
+    try {
+      const lockSnap = await db.ref('yookassa_payments/' + paymentId).get();
+      const prev = lockSnap.exists() ? (lockSnap.val() || {}) : {};
+      // Уже реально выдали дни — не начисляем второй раз
+      if (prev.processed && prev.granted === true) {
+        results.push({
+          paymentId: paymentId,
+          ok: true,
+          reason: 'already-granted',
+          userId: prev.userId || null
+        });
+        continue;
+      }
+      const payment = await yookassaApi('GET', '/payments/' + paymentId, null, null);
+      const r = await processYooKassaSucceededPayment(payment, { force: true });
+      results.push({
+        paymentId: paymentId,
+        ok: !!(r && r.ok),
+        reason: r && r.reason,
+        userId: (payment.metadata && payment.metadata.userId) || prev.userId || null,
+        skipped: !!(r && r.granted && r.granted.skipped),
+        paidDays: r && r.granted && r.granted.paidDays
+      });
+    } catch (e) {
+      results.push({
+        paymentId: paymentId,
+        ok: false,
+        error: String((e && e.message) || e)
+      });
+    }
+  }
+  await metaRef.set({ at: Date.now(), results: results });
+  console.log('yookassa force reprocess done', results);
 }
 
 // Догонка платежей (если webhook не дошёл). С авторизацией Telegram.
@@ -3001,6 +3060,12 @@ app.listen(PORT, function () {
       console.error('yookassa boot sync failed', e && e.data ? e.data : e);
     });
   }, 4000);
+  // Разово: два первых платежа были marked processed без видимой выдачи — перепровести force
+  setTimeout(function () {
+    forceReprocessKnownYooKassaPayments().catch(function (e) {
+      console.error('yookassa force reprocess failed', e && e.data ? e.data : e);
+    });
+  }, 7000);
   applyForceTestAccountOnBoot().catch(function (e) {
     console.error('force test account boot failed', e);
   });
