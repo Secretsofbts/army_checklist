@@ -2649,11 +2649,12 @@ const SUPPORT_CLOSED_TEXT =
   'Чтобы написать снова, отправьте /support или слово «поддержка».';
 const ONEDAY_REMIND_TEXT =
   'Сегодня последний день вашей подписки на чек-лист 👀\n\n' +
-  'Продлить количество дней всегда можно <a href="' + PAYMENT_LINK + '">в приложении</a> 💜';
+  'Для продолжения использования добавьте нужное количество дней в своем ' +
+  '<a href="' + CABINET_LINK + '">личном кабинете</a> 💜';
 const EXPIRED_REMIND_TEXT =
   'Ваша подписка на чек-лист по архиву BTS закончилась 😢\n\n' +
   'Мы будем ждать вашего возвращения и оберегать все поставленные галочки\n\n' +
-  'Продлить подписку всегда можно <a href="' + PAYMENT_LINK + '">в приложении</a> 💜';
+  'Продлить количество дней всегда можно <a href="' + PAYMENT_LINK + '">в приложении</a> 💜';
 const PAID_THANKS_PHOTO = path.join(__dirname, 'sub-extended.jpg');
 const ONEDAY_REMIND_PHOTO = path.join(__dirname, 'oneday-remind.jpg');
 const EXPIRED_REMIND_PHOTO = path.join(__dirname, 'expired-remind.jpg');
@@ -3985,7 +3986,7 @@ async function sendReferralSelfPreviewToTest() {
 }
 
 async function sendOnedayRemindPreviewToTest() {
-  const metaRef = db.ref('bot_meta/onedayRemindPreviewV3');
+  const metaRef = db.ref('bot_meta/onedayRemindPreviewV4');
   const metaSnap = await metaRef.get();
   if (metaSnap.exists()) {
     console.log('oneday remind preview already sent', metaSnap.val());
@@ -4004,7 +4005,7 @@ async function sendOnedayRemindPreviewToTest() {
 }
 
 async function sendExpiredRemindPreviewToTest() {
-  const metaRef = db.ref('bot_meta/expiredRemindPreviewV2');
+  const metaRef = db.ref('bot_meta/expiredRemindPreviewV3');
   const metaSnap = await metaRef.get();
   if (metaSnap.exists()) {
     console.log('expired remind preview already sent', metaSnap.val());
