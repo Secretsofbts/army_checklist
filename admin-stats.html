@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js?v=141"></script>
+  <title>Админ-статистика</title>
+  <style>
+    body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
+    * { box-sizing: border-box; }
+    .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
+    h1 { font-size: 18px; margin: 0 0 8px; color: #2b2440; line-height: 1.35; }
+    .lead { font-size: 13px; color: #666; line-height: 1.45; margin: 0 0 14px; }
+    .card {
+      background: #fff8e6; border: 1px solid #f0dca0; border-radius: 12px;
+      padding: 14px; margin: 0 0 12px;
+    }
+    .card h2 { font-size: 13px; color: #888; margin: 0 0 8px; font-weight: 600; }
+    .card .main { font-size: 15px; font-weight: 700; color: #2b2440; margin: 0; line-height: 1.5; white-space: pre-line; }
+    .card .sub { font-size: 12px; color: #666; margin: 8px 0 0; line-height: 1.45; white-space: pre-line; }
+    .btn {
+      display: block; text-align: center; text-decoration: none; border-radius: 10px;
+      padding: 11px 12px; font-size: 13px; font-weight: 600; background: #9b7fd4; color: #fff;
+      margin: 0 0 10px;
+    }
+    .btn.secondary { background: #f7f4fc; color: #5b4a7a; border: 1px solid #e4dcf3; }
+    .denied { color: #b00020; font-size: 14px; line-height: 1.45; }
+    .status { font-size: 13px; color: #8a7aa8; margin: 0 0 12px; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="statistics.html">← В личный кабинет</a>
+    <h1>Админ-статистика</h1>
+    <p class="lead">Только для вас: подписки, оплаты, переход к чекам.</p>
+    <p class="status" id="page-status">Загрузка…</p>
+    <div id="admin-content" style="display:none;">
+      <div class="card">
+        <h2>Активные подписки</h2>
+        <p class="main" id="sub-main">—</p>
+        <p class="sub" id="sub-sub">—</p>
+      </div>
+      <div class="card">
+        <h2>Статистика оплат</h2>
+        <p class="main" id="pay-main">—</p>
+        <p class="sub" id="pay-sub">—</p>
+      </div>
+      <a class="btn" href="admin-receipts.html?v=1">Чеки по оплатам →</a>
+      <a class="btn secondary" href="payment.html?v=41">Страница оплаты</a>
+    </div>
+    <div id="denied" class="denied" style="display:none;">Эта страница только для администратора.</div>
+  </div>
+
+  <script>
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+
+    function apiBase() {
+      return String(window.ARMY_API_URL || '').replace(/\/$/, '');
+    }
+
+    function initHeaders() {
+      var h = {};
+      try {
+        var initData = (window.Telegram && Telegram.WebApp && Telegram.WebApp.initData) || '';
+        if (initData) h['X-Telegram-Init-Data'] = initData;
+      } catch (e) {}
+      return h;
+    }
+
+    function formatPayByDays(byDays) {
+      byDays = byDays || {};
+      var keys = Object.keys(byDays).sort(function (a, b) {
+        return (parseInt(a, 10) || 0) - (parseInt(b, 10) || 0);
+      });
+      if (!keys.length) return 'пока нет';
+      return keys.map(function (k) { return k + ' дн × ' + byDays[k]; }).join(' · ');
+    }
+
+    function linePayPeriod(label, bucket) {
+      bucket = bucket || {};
+      return label + ': ' + (bucket.people || 0) + ' чел. / ' + (bucket.payments || 0) + ' оплат';
+    }
+
+    function loadAll() {
+      var api = apiBase();
+      var statusEl = document.getElementById('page-status');
+      var content = document.getElementById('admin-content');
+      var denied = document.getElementById('denied');
+      if (!api) {
+        if (statusEl) statusEl.textContent = 'Нет API';
+        return;
+      }
+      fetch(api + '/subscription', { method: 'GET', headers: initHeaders() })
+        .then(function (res) { return res.ok ? res.json() : null; })
+        .then(function (sub) {
+          if (!sub || sub.status !== 'admin') {
+            if (content) content.style.display = 'none';
+            if (denied) denied.style.display = '';
+            if (statusEl) statusEl.textContent = '';
+            return null;
+          }
+          if (denied) denied.style.display = 'none';
+          if (content) content.style.display = '';
+          if (statusEl) statusEl.textContent = 'Обновлено только что';
+          return Promise.all([
+            fetch(api + '/admin/subscription-stats', { method: 'GET', headers: initHeaders() })
+              .then(function (r) { return r.ok ? r.json() : null; }),
+            fetch(api + '/admin/payment-stats', { method: 'GET', headers: initHeaders() })
+              .then(function (r) { return r.ok ? r.json() : null; })
+          ]);
+        })
+        .then(function (pair) {
+          if (!pair) return;
+          var subData = pair[0] && pair[0].stats;
+          var payData = pair[1] && pair[1].stats;
+          if (subData) {
+            document.getElementById('sub-main').textContent =
+              'С доступом сейчас: ' + (Number(subData.total) || 0);
+            document.getElementById('sub-sub').textContent =
+              'Пробный: ' + (Number(subData.trial) || 0) +
+              ' · Оплатили: ' + (Number(subData.paid) || 0) +
+              ' · Бессрочно: ' + (Number(subData.forever) || 0) +
+              ' · Истекли: ' + (Number(subData.expired) || 0) +
+              (subData.registered != null ? ('\nВ реестре: ' + subData.registered) : '');
+          }
+          if (payData) {
+            var day = payData.day || {};
+            var week = payData.week || {};
+            var month = payData.month || {};
+            var all = payData.all || {};
+            document.getElementById('pay-main').textContent = [
+              linePayPeriod('Сегодня', day),
+              linePayPeriod('7 дней', week),
+              linePayPeriod('30 дней', month),
+              linePayPeriod('Всего', all)
+            ].join('\n');
+            document.getElementById('pay-sub').textContent = [
+              'Stars: сегодня ' + (day.stars || 0) +
+                ' · 7д ' + (week.stars || 0) +
+                ' · 30д ' + (month.stars || 0) +
+                ' · всего ' + (all.stars || 0),
+              'Рубли (ЮKassa): сегодня ' + (day.amountRub || 0) +
+                ' ₽ · 7д ' + (week.amountRub || 0) +
+                ' ₽ · 30д ' + (month.amountRub || 0) +
+                ' ₽ · всего ' + (all.amountRub || 0) + ' ₽',
+              'Тарифы (всё время): ' + formatPayByDays(all.byDays),
+              'Приведи друга: сегодня ' + (day.referralBonuses || 0) +
+                ' · 7д ' + (week.referralBonuses || 0) +
+                ' · 30д ' + (month.referralBonuses || 0) +
+                ' · всего ' + (all.referralBonuses || 0),
+              'Ручные выдачи: сегодня ' + (day.manual || 0) +
+                ' · 7д ' + (week.manual || 0) +
+                ' · 30д ' + (month.manual || 0) +
+                ' · всего ' + (all.manual || 0)
+            ].join('\n');
+          }
+        })
+        .catch(function () {
+          if (statusEl) statusEl.textContent = 'Не удалось загрузить';
+        });
+    }
+
+    loadAll();
+  </script>
+</body>
+</html>

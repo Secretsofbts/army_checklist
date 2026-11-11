@@ -441,7 +441,8 @@ registerUserIfNeeded();
   // Страница оплаты и оферта всегда доступны даже без подписки
   function armyIsAlwaysOpenPage() {
     const file = armyCurrentHtmlFile();
-    return file === 'payment.html' || file === 'oferta.html' || file === 'admin-receipts.html';
+    return file === 'payment.html' || file === 'oferta.html' ||
+      file === 'admin-receipts.html' || file === 'admin-stats.html';
   }
 
   function showSubscriptionPaywall(info) {
@@ -1966,7 +1967,9 @@ function getCombinedYearStats(yearKey) {
       'oplata': 'payment.html',
       'receipts': 'admin-receipts.html',
       'admin-receipts': 'admin-receipts.html',
-      'cheki': 'admin-receipts.html'
+      'cheki': 'admin-receipts.html',
+      'admin-stats': 'admin-stats.html',
+      'adminstats': 'admin-stats.html'
     };
     const key = String(param || '').toLowerCase();
     let target = aliases[key];
