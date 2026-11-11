@@ -2628,7 +2628,7 @@ const FRIEND_CMD_TEXT =
   'Ваша ссылка:\n';
 const START_TEXT =
   'Просто откройте приложение по кнопке снизу "For ARMY 💜"\n\n' +
-  '/help\n\n' +
+  '/help — список всех команд\n\n' +
   'При возникновении вопросов — /support или слово «поддержка»';
 const REFERRAL_NOT_NEW_TEXT =
   'Вы уже пользовались когда-то чек-листом и есть в базе, поэтому ссылка не подходит под условия бонуса «Приведи друга»...\n\n' +
@@ -3783,7 +3783,7 @@ async function ensureBotCommands() {
     { command: 'pay', description: 'Оплата подписки' },
     { command: 'friend', description: 'Акция «Приведи друга»' },
     { command: 'support', description: 'Написать в поддержку' },
-    { command: 'help', description: 'Список команд' }
+    { command: 'help', description: 'Список всех команд' }
   ];
   const adminCommands = userCommands.concat([
     { command: 'stars', description: 'Счёт Stars (reply на тикет: /stars 30)' }
