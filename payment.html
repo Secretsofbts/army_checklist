@@ -372,16 +372,61 @@
         });
     }
 
+    function syncYooKassaPayments(doneMsg) {
+      var api = String(window.ARMY_API_URL || '').replace(/\/$/, '');
+      var statusEl = document.getElementById('pay-30-status');
+      if (!api) return;
+      var headers = { 'Content-Type': 'application/json' };
+      try {
+        var initData = (window.Telegram && Telegram.WebApp && Telegram.WebApp.initData) || '';
+        if (!initData) return;
+        headers['X-Telegram-Init-Data'] = initData;
+      } catch (e) { return; }
+      if (statusEl && doneMsg) statusEl.textContent = 'Проверяем оплату…';
+      fetch(api + '/payment/yookassa/sync', {
+        method: 'POST',
+        headers: headers,
+        body: '{}'
+      })
+        .then(function (res) { return res.ok ? res.json() : null; })
+        .then(function (data) {
+          if (!data) return;
+          var granted = false;
+          if (data.result && data.result.granted && data.result.granted.skipped === false) granted = true;
+          if (data.recent && data.recent.results) {
+            data.recent.results.forEach(function (r) { if (r && r.granted) granted = true; });
+          }
+          if (Array.isArray(data.mine)) {
+            data.mine.forEach(function (r) {
+              if (r && r.result && r.result.granted && r.result.granted.skipped === false) granted = true;
+            });
+          }
+          if (granted) {
+            if (statusEl) statusEl.textContent = doneMsg || 'Оплата найдена, доступ обновлён 💜';
+            var ok = document.getElementById('pay-success');
+            if (ok) ok.style.display = '';
+            loadPricing();
+          } else if (statusEl && doneMsg) {
+            statusEl.textContent = 'Если деньги списались, подожди минуту или зайди в кабинет ещё раз';
+          }
+        })
+        .catch(function () {});
+    }
+
     (function setupPayButton() {
       var btn = document.getElementById('pay-30-btn');
       if (btn) btn.addEventListener('click', startYooKassaPay);
+      var paidReturn = false;
       try {
         var q = new URLSearchParams(window.location.search || '');
         if (q.get('paid') === '1') {
+          paidReturn = true;
           var ok = document.getElementById('pay-success');
           if (ok) ok.style.display = '';
         }
       } catch (e) {}
+      // Всегда догоняем платежи (на случай если webhook не дошёл)
+      syncYooKassaPayments(paidReturn ? 'Ищем вашу оплату…' : '');
     })();
 
     loadPricing();

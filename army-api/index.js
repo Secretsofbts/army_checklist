@@ -1235,11 +1235,9 @@ async function processYooKassaSucceededPayment(payment) {
     return { ok: false, reason: 'no-user' };
   }
 
-  // Сверяем сумму с ожидаемой (если сохраняли при создании)
+  // Сумма: только предупреждение, не блокируем выдачу (из‑за этого уже терялись дни)
   if (prev.amountRub && Number(prev.amountRub) !== amountRub) {
-    console.error('yookassa amount mismatch', paymentId, prev.amountRub, amountRub);
-    await lockRef.update({ status: 'amount-mismatch', at: Date.now() });
-    return { ok: false, reason: 'amount-mismatch' };
+    console.error('yookassa amount mismatch (continue)', paymentId, prev.amountRub, amountRub);
   }
 
   const granted = await grantPaidDaysFromYooKassa(uid, days, {
@@ -1349,16 +1347,89 @@ app.post('/payment/yookassa/create', async function (req, res) {
   }
 });
 
+async function syncRecentYooKassaPayments(limit) {
+  if (!yookassaReady()) return { ok: false, reason: 'not-ready', processed: 0 };
+  const lim = Math.max(1, Math.min(50, parseInt(limit, 10) || 20));
+  const data = await yookassaApi('GET', '/payments?limit=' + lim + '&status=succeeded', null, null);
+  const items = (data && data.items) || [];
+  const results = [];
+  for (let i = 0; i < items.length; i++) {
+    const payment = items[i];
+    try {
+      const r = await processYooKassaSucceededPayment(payment);
+      results.push({
+        paymentId: payment && payment.id,
+        reason: r && r.reason,
+        ok: !!(r && r.ok),
+        granted: !!(r && r.granted && !r.granted.skipped)
+      });
+    } catch (e) {
+      results.push({
+        paymentId: payment && payment.id,
+        ok: false,
+        error: String((e && e.message) || e)
+      });
+    }
+  }
+  return { ok: true, checked: items.length, results: results };
+}
+
+// Догонка платежей (если webhook не дошёл). С авторизацией Telegram.
+app.post('/payment/yookassa/sync', async function (req, res) {
+  const user = authUser(req);
+  if (!user) return res.status(401).json({ error: 'auth' });
+  if (!yookassaReady()) return res.status(503).json({ error: 'yookassa-not-ready' });
+  try {
+    const uid = String(user.id);
+    const wantId = String((req.body && req.body.paymentId) || '').trim();
+    if (wantId) {
+      const payment = await yookassaApi('GET', '/payments/' + wantId, null, null);
+      const metaUid = payment && payment.metadata && String(payment.metadata.userId || '');
+      const lockSnap = await db.ref('yookassa_payments/' + wantId).get();
+      const prevUid = lockSnap.exists() ? String((lockSnap.val() || {}).userId || '') : '';
+      if (metaUid && metaUid !== uid && prevUid && prevUid !== uid && !user.isAdmin) {
+        return res.status(403).json({ error: 'forbidden' });
+      }
+      const r = await processYooKassaSucceededPayment(payment);
+      return res.json({ ok: true, mode: 'one', result: r });
+    }
+    // Все свежие succeeded + свои записи в Firebase
+    const recent = await syncRecentYooKassaPayments(30);
+    const snap = await db.ref('yookassa_payments').get();
+    const all = snap.exists() ? (snap.val() || {}) : {};
+    const mine = [];
+    Object.keys(all).forEach(function (pid) {
+      const row = all[pid] || {};
+      if (String(row.userId) === uid && !row.processed) mine.push(pid);
+    });
+    for (let i = 0; i < mine.length; i++) {
+      try {
+        const payment = await yookassaApi('GET', '/payments/' + mine[i], null, null);
+        const r = await processYooKassaSucceededPayment(payment);
+        mine[i] = { paymentId: mine[i], result: r };
+      } catch (e) {
+        mine[i] = { paymentId: mine[i], error: String((e && e.message) || e) };
+      }
+    }
+    return res.json({ ok: true, mode: 'sync', recent: recent, mine: mine });
+  } catch (e) {
+    console.error('yookassa sync failed', e && e.data ? e.data : e);
+    return res.status(500).json({ error: 'yookassa-sync', message: String(e.message || e) });
+  }
+});
+
 // HTTP-уведомления ЮKassa
 app.post('/yookassa/webhook', async function (req, res) {
   try {
     const event = req.body || {};
+    console.log('yookassa webhook event', event.event, event.object && event.object.id, event.object && event.object.status);
     if (event.event !== 'payment.succeeded') {
       return res.status(200).json({ ok: true, ignored: true });
     }
     const object = event.object || {};
     const paymentId = String(object.id || '');
     if (!paymentId || !yookassaReady()) {
+      console.error('yookassa webhook skip', { paymentId: paymentId, ready: yookassaReady() });
       return res.status(200).json({ ok: true });
     }
     // Перепроверяем платёж в API ЮKassa (не доверяем телу уведомления вслепую)
@@ -1369,8 +1440,9 @@ app.post('/yookassa/webhook', async function (req, res) {
       console.error('yookassa webhook fetch failed', paymentId, e);
       return res.status(500).json({ error: 'fetch' });
     }
-    await processYooKassaSucceededPayment(payment);
-    return res.status(200).json({ ok: true });
+    const result = await processYooKassaSucceededPayment(payment);
+    console.log('yookassa webhook processed', paymentId, result);
+    return res.status(200).json({ ok: true, result: result });
   } catch (e) {
     console.error('yookassa webhook error', e);
     return res.status(500).json({ error: 'webhook' });
@@ -2921,6 +2993,14 @@ app.listen(PORT, function () {
   scheduleSubscriptionReminders();
   ensureTelegramWebhook();
   ensureBotCommands();
+  // Догонка успешных платежей ЮKassa (если HTTP-уведомление не дошло)
+  setTimeout(function () {
+    syncRecentYooKassaPayments(30).then(function (r) {
+      console.log('yookassa boot sync', r);
+    }).catch(function (e) {
+      console.error('yookassa boot sync failed', e && e.data ? e.data : e);
+    });
+  }, 4000);
   applyForceTestAccountOnBoot().catch(function (e) {
     console.error('force test account boot failed', e);
   });
