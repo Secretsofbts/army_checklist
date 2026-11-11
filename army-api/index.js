@@ -4114,6 +4114,39 @@ async function sendExpiredRemindPreviewToTest() {
   }
 }
 
+/** Разово: на тесте показать paywall «дни закончились». */
+async function expireTestAccountForPaywallPreview() {
+  const metaRef = db.ref('bot_meta/testExpiredPaywallPreviewV1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('test expired paywall preview already done', metaSnap.val());
+    return;
+  }
+  const testId = FORCE_TEST_IDS[0] || '2055929706';
+  const now = Date.now();
+  const ref = subscriptionRef(testId);
+  const snap = await ref.get();
+  const prev = snap.exists() ? (snap.val() || {}) : {};
+  await ref.set({
+    active: false,
+    trial: false,
+    forever: false,
+    expiresAt: now - DAY_MS,
+    paidDays: prev.paidDays || 0,
+    createdAt: prev.createdAt || now,
+    updatedAt: now,
+    // свежий визит — чтобы comeback не выдал +5 дней и не снял paywall
+    lastVisitAt: now,
+    comebackUsed: true,
+    comebackGrantedAt: prev.comebackGrantedAt || now,
+    promoUsed: prev.promoUsed === true,
+    promoUsedAt: prev.promoUsedAt || null,
+    note: 'expired-paywall-preview'
+  });
+  await metaRef.set({ at: now, to: testId, expiresAt: now - DAY_MS });
+  console.log('test expired paywall preview ready', testId);
+}
+
 process.on('uncaughtException', function (err) {
   console.error('uncaughtException', err && err.stack ? err.stack : err);
 });
@@ -4169,6 +4202,12 @@ app.listen(PORT, function () {
   applyForceTestAccountOnBoot().catch(function (e) {
     console.error('force test account boot failed', e);
   });
+  // После force-boot: тестовый аккаунт «без дней» — окно оплаты
+  setTimeout(function () {
+    expireTestAccountForPaywallPreview().catch(function (e) {
+      console.error('test expired paywall preview failed', e);
+    });
+  }, 14000);
   reconcileUserCount().catch(function (e) {
     console.error('user_count reconcile failed', e);
   });
