@@ -27,6 +27,13 @@ const FORCE_TEST_IDS = String(process.env.FORCE_TEST_IDS || '2055929706')
   .filter(Boolean);
 const FORCE_TEST_MODES = { legacy: 1, days3: 1, new10: 1, paid1: 1, expired: 1 };
 const DAY_MS = 24 * 60 * 60 * 1000;
+// Comeback: +5 дней, если давно не заходил и доступа нет. Пока только тест.
+const COMEBACK_DAYS = 5;
+const COMEBACK_IDLE_DAYS = 60;
+const COMEBACK_TEST_ONLY = true;
+const COMEBACK_TEXT =
+  'Вас давно не было в чек-листе, поэтому снова есть ' + COMEBACK_DAYS +
+  ' дней доступа — чтобы вспомнить или ознакомиться с функционалом 💜';
 // Старым (уже были в реестре до запуска): общий срок с завтра после якоря.
 // Было 5 → +1 (6) → ещё +1 (7), пока ЮKassa не подключена.
 // Совершенно новым: 10 дней с первого захода.
@@ -633,6 +640,105 @@ async function ensureSubscriptionRecord(uid) {
   return entry;
 }
 
+function hasActiveAccess(data, now) {
+  now = now || Date.now();
+  if (!data) return false;
+  if (data.forever) return true;
+  return typeof data.expiresAt === 'number' && data.expiresAt > now;
+}
+
+async function touchLastVisit(uid, data) {
+  const now = Date.now();
+  try {
+    await subscriptionRef(uid).update({ lastVisitAt: now, updatedAt: now });
+  } catch (e) {
+    console.error('touchLastVisit failed', uid, e);
+  }
+  try {
+    await db.ref('user_registry/' + uid).update({ lastVisitAt: now });
+  } catch (e) {
+    // реестра может не быть — не критично
+  }
+  if (data && typeof data === 'object') data.lastVisitAt = now;
+  return data;
+}
+
+/**
+ * Вернуть 5 дней «comeback», если доступа нет и человек не заходил COMEBACK_IDLE_DAYS.
+ * Пока COMEBACK_TEST_ONLY — только FORCE_TEST_IDS.
+ */
+async function maybeApplyComebackGrant(uid, data) {
+  uid = String(uid || '');
+  data = data || {};
+  if (!uid) return data;
+  if (COMEBACK_TEST_ONLY && FORCE_TEST_IDS.indexOf(uid) === -1) return data;
+  if (ADMIN_IDS.indexOf(uid) !== -1 || FOREVER_IDS.indexOf(uid) !== -1) return data;
+  if (data.forever) return data;
+
+  const now = Date.now();
+  if (hasActiveAccess(data, now)) return data;
+
+  const lastVisit = typeof data.lastVisitAt === 'number' ? data.lastVisitAt : 0;
+  const idleNeed = COMEBACK_IDLE_DAYS * DAY_MS;
+  // lastVisit=0 → считаем, что «очень давно» (или подготовка теста)
+  if (lastVisit && (now - lastVisit) < idleNeed) return data;
+
+  const expiresAt = paidExpiresAtFrom(now, COMEBACK_DAYS);
+  const entry = {
+    active: true,
+    trial: true,
+    trialDays: COMEBACK_DAYS,
+    forever: false,
+    expiresAt: expiresAt,
+    createdAt: data.createdAt || now,
+    updatedAt: now,
+    lastVisitAt: now,
+    comebackGrantedAt: now,
+    note: 'comeback-5',
+    promoUsed: data.promoUsed === true,
+    promoUsedAt: data.promoUsedAt || null
+  };
+  await subscriptionRef(uid).set(entry);
+  try {
+    await telegramSendMessage(uid, COMEBACK_TEXT, undefined);
+  } catch (e) {
+    console.error('comeback notify failed', uid, e);
+  }
+  console.log('comeback grant', uid, expiresAt);
+  return entry;
+}
+
+/** Разово подготовить тестовый аккаунт: истёк доступ + «не заходил» 61 день. */
+async function prepareComebackTestPreview() {
+  if (!COMEBACK_TEST_ONLY) return;
+  const metaRef = db.ref('bot_meta/comebackTestPrepV1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('comeback test prep already done', metaSnap.val());
+    return;
+  }
+  const testId = FORCE_TEST_IDS[0] || '2055929706';
+  const now = Date.now();
+  const ref = subscriptionRef(testId);
+  const snap = await ref.get();
+  const prev = snap.exists() ? (snap.val() || {}) : {};
+  const entry = {
+    active: false,
+    trial: false,
+    forever: false,
+    expiresAt: now - DAY_MS,
+    createdAt: prev.createdAt || now,
+    updatedAt: now,
+    lastVisitAt: now - (COMEBACK_IDLE_DAYS + 1) * DAY_MS,
+    note: 'comeback-prep',
+    promoUsed: prev.promoUsed === true,
+    promoUsedAt: prev.promoUsedAt || null
+  };
+  await ref.set(entry);
+  await metaRef.set({ at: now, to: testId, lastVisitAt: entry.lastVisitAt, expiresAt: entry.expiresAt });
+  console.log('comeback test prep done', testId);
+}
+
 // Один раз: всем из user_registry (старым) выдать общий пробный на 5 дней с завтра
 async function grantLegacyTrialsToAllRegistry() {
   const metaRef = db.ref('bot_meta/legacyTrialGrantV2');
@@ -976,7 +1082,10 @@ app.get('/subscription', async function (req, res) {
       await ref.set(paidEntry);
       return res.json(buildSubscriptionStatus(uid, paidEntry, false));
     }
-    const data = await ensureSubscriptionRecord(uid);
+    let data = await ensureSubscriptionRecord(uid);
+    data = await maybeApplyComebackGrant(uid, data);
+    // lastVisit обновляем после comeback-проверки (иначе «только что зашёл» собьёт паузу 60 дней)
+    await touchLastVisit(uid, data);
     return res.json(buildSubscriptionStatus(uid, data, false));
   } catch (e) {
     console.error(e);
@@ -3581,6 +3690,12 @@ app.listen(PORT, function () {
       console.error('first payer bonus failed', e);
     });
   }, 11000);
+  // Разово: подготовить тест comeback (+5 дней после 60 дней отсутствия)
+  setTimeout(function () {
+    prepareComebackTestPreview().catch(function (e) {
+      console.error('comeback test prep failed', e);
+    });
+  }, 12000);
   applyForceTestAccountOnBoot().catch(function (e) {
     console.error('force test account boot failed', e);
   });
