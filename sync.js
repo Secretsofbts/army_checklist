@@ -1,11 +1,48 @@
   // sync.js — общая логика облачной синхронизации через Firebase
   const FIREBASE_URL = "https://army-checklist-default-rtdb.firebaseio.com";
   const ARMY_API_URL = "https://army-checklist.onrender.com";
+  const ARMY_BOT_OPEN_URL = 'https://t.me/army_checklist_bot?startapp';
   function telegramInitData() {
     const tg = window.Telegram && window.Telegram.WebApp;
     return (tg && tg.initData) || '';
   }
+  // Только Telegram Mini App: в обычном браузере чек-лист не открываем
+  const ARMY_OUTSIDE_TELEGRAM = !telegramInitData();
+  function armyShowTelegramOnlyGate() {
+    var html =
+      '<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8">' +
+      '<meta name="viewport" content="width=device-width, initial-scale=1.0">' +
+      '<title>Откройте в Telegram</title></head>' +
+      '<body style="margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;' +
+      'background:#f2f0f7;font-family:Arial,sans-serif;padding:24px;box-sizing:border-box;">' +
+      '<div style="max-width:340px;width:100%;background:#fff;border-radius:16px;padding:22px 18px;' +
+      'box-shadow:0 2px 10px rgba(0,0,0,0.08);text-align:center;">' +
+      '<p style="margin:0 0 10px;font-size:18px;font-weight:700;color:#2b2440;line-height:1.35;">' +
+      'Чек-лист открывается только в Telegram</p>' +
+      '<p style="margin:0 0 16px;font-size:14px;color:#666;line-height:1.45;">' +
+      'Откройте бота и нажмите кнопку приложения внизу — так сохраняются ваш прогресс и подписка 💜</p>' +
+      '<a href="' + ARMY_BOT_OPEN_URL + '" style="display:block;text-decoration:none;border-radius:12px;' +
+      'padding:12px 14px;font-size:15px;font-weight:700;background:#9b7fd4;color:#fff;">' +
+      'Открыть в Telegram</a></div></body></html>';
+    try {
+      document.open();
+      document.write(html);
+      document.close();
+    } catch (e) {
+      try { document.documentElement.innerHTML = html; } catch (e2) {}
+    }
+  }
+  if (ARMY_OUTSIDE_TELEGRAM) {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', armyShowTelegramOnlyGate);
+    } else {
+      armyShowTelegramOnlyGate();
+    }
+  }
   function armyCloudFetch(path, options) {
+    if (ARMY_OUTSIDE_TELEGRAM) {
+      return Promise.reject(new Error('telegram-only'));
+    }
     options = options || {};
     const clean = String(path || '').replace(/^\/+/, '').replace(/\.json$/, '');
     const api = String(ARMY_API_URL || '').replace(/\/$/, '');
@@ -23,9 +60,10 @@
   window.FIREBASE_URL = FIREBASE_URL;
   window.ARMY_API_URL = ARMY_API_URL;
   window.telegramInitData = telegramInitData;
+  window.ARMY_OUTSIDE_TELEGRAM = ARMY_OUTSIDE_TELEGRAM;
   var STAT_CHECKBOX_IDS = {};
   let ARMY_USER_ID = null;
-  if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
+  if (!ARMY_OUTSIDE_TELEGRAM && window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
     ARMY_USER_ID = window.Telegram.WebApp.initDataUnsafe.user.id;
   }
 
@@ -533,6 +571,7 @@ registerUserIfNeeded();
   }
 
   function checkSubscriptionAccess() {
+    if (ARMY_OUTSIDE_TELEGRAM) return;
     const api = String(ARMY_API_URL || '').replace(/\/$/, '');
     if (!api || !ARMY_USER_ID) return;
     const alwaysOpen = armyIsAlwaysOpenPage();
@@ -1896,7 +1935,9 @@ function getCombinedYearStats(yearKey) {
   return { checked, total };
 }
 
-  checkForUpdate();
+  if (!ARMY_OUTSIDE_TELEGRAM) {
+    checkForUpdate();
+  }
 
   function armyQueryParam(raw, key) {
     if (!raw) return '';
@@ -2134,13 +2175,16 @@ function getCombinedYearStats(yearKey) {
   }
 
   function setupArmyBackNav() {
+    if (ARMY_OUTSIDE_TELEGRAM) return;
     setupTelegramHistoryBack();
     setupIosEdgeBackSwipe();
     armyEnsureSwipeHistory();
   }
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', setupArmyBackNav);
-  } else {
-    setupArmyBackNav();
+  if (!ARMY_OUTSIDE_TELEGRAM) {
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setupArmyBackNav);
+    } else {
+      setupArmyBackNav();
+    }
   }
