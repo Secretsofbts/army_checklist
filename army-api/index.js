@@ -2648,12 +2648,13 @@ const SUPPORT_CLOSED_TEXT =
   'Диалог с поддержкой закрыт — долго не было сообщений, поэтому новые сообщения сюда больше не доходят.\n\n' +
   'Чтобы написать снова, отправьте /support или слово «поддержка».';
 const ONEDAY_REMIND_TEXT =
-  'Сегодня последний день вашей подписки на чек-лист по архиву BTS\n\n' +
-  'Для продолжения использования можно добавить нужное количество дней в своем личном кабинете 💜';
+  'Сегодня последний день вашей подписки на чек-лист 👀\n\n' +
+  'Для продолжения использования добавьте нужное количество дней в своем ' +
+  '<a href="' + CABINET_LINK + '">личном кабинете</a> 💜';
 const EXPIRED_REMIND_TEXT =
   'Ваша подписка на чек-лист по архиву BTS закончилась 😢\n\n' +
   'Мы будем ждать вашего возвращения и оберегать все поставленные галочки\n\n' +
-  'Продлить подписку можно в боте 💜';
+  'Продлить подписку всегда можно <a href="' + PAYMENT_LINK + '">в приложении</a> 💜';
 const PAID_THANKS_PHOTO = path.join(__dirname, 'sub-extended.jpg');
 const ONEDAY_REMIND_PHOTO = path.join(__dirname, 'oneday-remind.jpg');
 const EXPIRED_REMIND_PHOTO = path.join(__dirname, 'expired-remind.jpg');
@@ -3215,13 +3216,21 @@ async function sendExpiredReminderToUser(uid, options) {
   }
   try {
     try {
-      await telegramSendPhoto(uid, EXPIRED_REMIND_TEXT, EXPIRED_REMIND_PHOTO);
+      await telegramSendPhoto(uid, EXPIRED_REMIND_TEXT, EXPIRED_REMIND_PHOTO, {
+        parseMode: 'HTML'
+      });
     } catch (photoErr) {
       console.error('expired remind photo failed', uid, photoErr);
-      await telegramSendMessage(uid, EXPIRED_REMIND_TEXT, {
-        text: 'Открыть бот',
-        url: BOT_APP_LINK
-      });
+      await telegramSendMessage(
+        uid,
+        EXPIRED_REMIND_TEXT,
+        {
+          text: 'Продлить подписку',
+          url: PAYMENT_LINK
+        },
+        null,
+        { parseMode: 'HTML' }
+      );
     }
   } catch (e) {
     return { sent: false, reason: 'telegram', error: String(e.message || e) };
@@ -3990,7 +3999,7 @@ async function sendOnedayRemindPreviewToTest() {
 }
 
 async function sendExpiredRemindPreviewToTest() {
-  const metaRef = db.ref('bot_meta/expiredRemindPreviewV1');
+  const metaRef = db.ref('bot_meta/expiredRemindPreviewV2');
   const metaSnap = await metaRef.get();
   if (metaSnap.exists()) {
     console.log('expired remind preview already sent', metaSnap.val());
@@ -3998,7 +4007,9 @@ async function sendExpiredRemindPreviewToTest() {
   }
   const testId = FORCE_TEST_IDS[0] || '2055929706';
   try {
-    await telegramSendPhoto(testId, EXPIRED_REMIND_TEXT, EXPIRED_REMIND_PHOTO);
+    await telegramSendPhoto(testId, EXPIRED_REMIND_TEXT, EXPIRED_REMIND_PHOTO, {
+      parseMode: 'HTML'
+    });
     await metaRef.set({ at: Date.now(), to: testId });
     console.log('expired remind preview sent to', testId);
   } catch (e) {
@@ -4073,7 +4084,12 @@ app.listen(PORT, function () {
   extendTrialsPlusOneDayPaymentPending().catch(function (e) {
     console.error('trial +1 day payment pending failed', e);
   });
-  // Превью в бот при старте отключены — не мешают деплою. Нужно снова — скажите.
+  // Разово: превью текста «подписка закончилась» на тестовый
+  setTimeout(function () {
+    sendExpiredRemindPreviewToTest().catch(function (e) {
+      console.error('expired remind preview failed', e);
+    });
+  }, 7000);
   // Разовый тест Stars: счёт (если получится) + имитация оплаты без покупки звезды
   setTimeout(function () {
     sendStarsTestInvoiceToTestUser().catch(function (e) {
