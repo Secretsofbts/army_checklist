@@ -368,8 +368,9 @@ registerUserIfNeeded();
     armyMountTopOverlay(overlay);
   }
 
+  // v2: один раз показать подсказку всем текущим; дальше только тем, у кого ещё нет отметки (новые)
   function armyMenuHeartHintKey() {
-    return ARMY_USER_ID ? ('armyMenuHeartHintSeen_' + ARMY_USER_ID) : 'armyMenuHeartHintSeen';
+    return ARMY_USER_ID ? ('armyMenuHeartHintSeen_v2_' + ARMY_USER_ID) : 'armyMenuHeartHintSeen_v2';
   }
 
   function ensureMenuHeartHintStyles() {

@@ -3456,9 +3456,11 @@ async function handleStartCommand(msg) {
       try {
         await telegramSendMessage(
           msg.chat.id,
-          'Готово 💜 Теперь бот сможет присылать важные уведомления: окончание доступа, чеки и новости по чек-листу.\n\n' +
-            'Открыть чек-лист: ' + BOT_APP_LINK,
-          null
+          'Готово! Теперь бот сможет присылать важные уведомления: окончание доступа, чеки, подарки и новости по чек-листу 💅\n\n' +
+            '<a href="' + BOT_APP_LINK + '">Вернуться назад в чек-лист ⬅️</a>',
+          null,
+          undefined,
+          { parseMode: 'HTML' }
         );
         return true;
       } catch (notifyStartErr) {
