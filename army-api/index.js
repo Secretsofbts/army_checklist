@@ -1449,6 +1449,8 @@ app.get('/admin/yookassa-recent', async function (req, res) {
     const all = snap.exists() ? (snap.val() || {}) : {};
     const list = Object.keys(all).map(function (pid) {
       const row = all[pid] || {};
+      // Только реально оплаченные (созданные, но не оплаченные — не показываем)
+      if (!(row.processed && row.granted === true)) return null;
       // Старые «ручные» оплаты скрыты из списка чеков — дни и статистика остаются
       if (row.omitFromReceipts) return null;
       return {
