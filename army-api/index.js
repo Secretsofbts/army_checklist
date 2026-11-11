@@ -2936,6 +2936,14 @@ function starsForeverPrice() {
   return { stars: STARS_FOREVER, days: 0, forever: true, promo: false };
 }
 
+const STARS_ADMIN_HELP_LIST =
+  '• /stars a — 30 дней по акции 50 ⭐️\n' +
+  '• /stars 30 = 100 ⭐️\n' +
+  '• /stars 60 = 175 ⭐️\n' +
+  '• /stars 90 = 250 ⭐️\n' +
+  '• /stars 180 = 500 ⭐️\n' +
+  '• /stars forever — бессрочно 2500 ⭐️';
+
 function parseStarsAdminCommand(text) {
   const t = String(text || '').trim();
   if (!/^\/stars(?:@\w+)?(?:\s|$)/i.test(t)) return null;
@@ -2944,14 +2952,7 @@ function parseStarsAdminCommand(text) {
   if (/^\/stars(?:@\w+)?\s*$/i.test(t)) {
     return {
       help: true,
-      text:
-        'Reply на сообщение человека:\n' +
-        '• /stars a — 30 дней по акции 50 ⭐\n' +
-        '• /stars 30 = 100 ⭐\n' +
-        '• /stars 60 = 175 ⭐\n' +
-        '• /stars 90 = 250 ⭐\n' +
-        '• /stars 180 = 500 ⭐\n' +
-        '• /stars forever — бессрочно за 2500 ⭐'
+      text: 'Reply на сообщение человека:\n' + STARS_ADMIN_HELP_LIST
     };
   }
 
@@ -3515,12 +3516,7 @@ async function handleMenuCommands(msg) {
           starsAlone.help
             ? starsAlone.text
             : 'Чтобы выставить счёт — сделай reply на сообщение человека, затем команду.\n\n' +
-              '• /stars a — 30 дней по акции 50 ⭐\n' +
-              '• /stars 30 = 100 ⭐\n' +
-              '• /stars 60 = 175 ⭐\n' +
-              '• /stars 90 = 250 ⭐\n' +
-              '• /stars 180 = 500 ⭐\n' +
-              '• /stars forever — бессрочно за 2500 ⭐',
+              STARS_ADMIN_HELP_LIST,
           null
         );
       } catch (e) {
