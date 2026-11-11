@@ -1734,14 +1734,19 @@ async function issueMoyNalogReceiptForPayment(meta) {
   }
   let prev = snap.val() || {};
 
+  const skipTgNotify = !!meta.skipTgNotify;
+
   async function resendReceiptTgIfNeeded(row) {
     let sentTg = !!row.receiptSentTg;
+    if (skipTgNotify) return sentTg;
     if (!sentTg && userId && row.receiptUrl) {
       try {
         await telegramSendMessage(
           userId,
-          'Ваш чек по оплате подписки 💜\n' + String(row.receiptUrl),
-          null
+          receiptLinkHtml(row.receiptUrl),
+          null,
+          null,
+          { parseMode: 'HTML' }
         );
         sentTg = true;
         await lockRef.update({
@@ -1910,12 +1915,14 @@ async function issueMoyNalogReceiptForPayment(meta) {
   });
 
   let sentTg = false;
-  if (userId && printUrl) {
+  if (!skipTgNotify && userId && printUrl) {
     try {
       await telegramSendMessage(
         userId,
-        'Ваш чек по оплате подписки 💜\n' + printUrl,
-        null
+        receiptLinkHtml(printUrl),
+        null,
+        null,
+        { parseMode: 'HTML' }
       );
       sentTg = true;
       await lockRef.update({
@@ -1932,7 +1939,7 @@ async function issueMoyNalogReceiptForPayment(meta) {
       });
     }
   }
-  console.log('moy-nalog receipt ok', paymentId, receiptId, 'tg=' + sentTg);
+  console.log('moy-nalog receipt ok', paymentId, receiptId, 'tg=' + sentTg, 'skipTg=' + skipTgNotify);
   return { ok: true, printUrl: printUrl, receiptId: receiptId, sentTg: sentTg };
 }
 
@@ -2012,15 +2019,7 @@ async function processYooKassaSucceededPayment(payment, opts) {
     amountRub: amountRub,
     granted: !granted.skipped
   });
-  if (!granted.skipped) {
-    try {
-      const thanks = await sendPaidThanksToUser(uid, forever ? 'forever' : days);
-      if (!thanks.sent) console.error('yookassa thanks failed', uid, thanks);
-    } catch (e) {
-      console.error('yookassa thanks error', uid, e);
-    }
-  }
-  // Авточек «Мой налог» — не ломаем оплату, если налоговая недоступна
+  // Сначала чек — чтобы ссылку вставить в то же сообщение об успешной оплате
   let receipt = null;
   try {
     receipt = await issueMoyNalogReceiptForPayment({
@@ -2029,13 +2028,30 @@ async function processYooKassaSucceededPayment(payment, opts) {
       days: forever ? 0 : days,
       forever: forever,
       userId: uid,
-      operationAt: (payment && payment.captured_at) || Date.now()
+      operationAt: (payment && payment.captured_at) || Date.now(),
+      skipTgNotify: true
     });
     if (!receipt.ok && receipt.reason !== 'already' && receipt.reason !== 'not-configured') {
       console.error('moy-nalog after pay', paymentId, receipt);
     }
   } catch (e) {
     console.error('moy-nalog after pay error', paymentId, e);
+  }
+  if (!granted.skipped) {
+    try {
+      const receiptUrl = (receipt && receipt.ok && receipt.printUrl) ? receipt.printUrl : null;
+      const thanks = await sendPaidThanksToUser(uid, forever ? 'forever' : days, receiptUrl);
+      if (!thanks.sent) console.error('yookassa thanks failed', uid, thanks);
+      else if (thanks.withReceipt) {
+        await lockRef.update({
+          receiptSentTg: true,
+          receiptSentTgAt: Date.now(),
+          receiptNotifyError: null
+        });
+      }
+    } catch (e) {
+      console.error('yookassa thanks error', uid, e);
+    }
   }
   console.log('yookassa payment ok', uid, forever ? 'forever' : days, amountRub, paymentId);
   return { ok: true, granted: granted, receipt: receipt };
@@ -2599,18 +2615,33 @@ function pluralDaysRu(n) {
   return 'дней';
 }
 
-function paidThanksCaption(days) {
+function escapeHtmlTg(s) {
+  return String(s || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+function paidThanksCaption(days, receiptUrl) {
+  let text;
   if (days === 'forever' || days === 0 || days === '0') {
-    return (
+    text =
       'Подписка успешно оплачена — доступ бессрочный ☺️\n\n' +
-      'Спасибо, что поддерживаете данный проект и архив 🫶'
-    );
+      'Спасибо, что поддерживаете данный проект и архив 🫶';
+  } else {
+    const n = Math.max(1, parseInt(days, 10) || 30);
+    text =
+      'Подписка успешно была оплачена и продлена на ' + n + ' ' + pluralDaysRu(n) + ' ☺️\n\n' +
+      'Спасибо, что поддерживаете данный проект и архив 🫶';
   }
-  const n = Math.max(1, parseInt(days, 10) || 30);
-  return (
-    'Подписка успешно была оплачена и продлена на ' + n + ' ' + pluralDaysRu(n) + ' ☺️\n\n' +
-    'Спасибо, что поддерживаете данный проект и архив 🫶'
-  );
+  const url = String(receiptUrl || '').trim();
+  if (url) {
+    text +=
+      '\n\n<a href="' +
+      escapeHtmlTg(url).replace(/"/g, '') +
+      '">Ваш чек об оплате</a> 💜';
+  }
+  return text;
 }
 
 function moscowParts(ms) {
@@ -2651,15 +2682,17 @@ function isFirstExpiredDayMoscow(expiresAt, now) {
   return moscowParts(expiresAt).dateKey === moscowParts(now).dateKey;
 }
 
-async function telegramSendMessage(chatId, text, button, replyToMsgId) {
+async function telegramSendMessage(chatId, text, button, replyToMsgId, opts) {
   // button === undefined → кнопка «Личный кабинет»
   // button === null → без кнопок
+  opts = opts || {};
   if (button === undefined) button = { text: 'Личный кабинет', url: CABINET_LINK };
   const payload = {
     chat_id: chatId,
     text: text,
     disable_web_page_preview: true
   };
+  if (opts.parseMode) payload.parse_mode = opts.parseMode;
   if (button) {
     payload.reply_markup = {
       inline_keyboard: [[{ text: button.text, url: button.url }]]
@@ -3027,7 +3060,8 @@ async function handleSupportFlow(msg) {
   return true;
 }
 
-async function telegramSendPhoto(chatId, caption, photoPath) {
+async function telegramSendPhoto(chatId, caption, photoPath, opts) {
+  opts = opts || {};
   const filePath = photoPath || PAID_THANKS_PHOTO;
   if (!fs.existsSync(filePath)) {
     throw new Error('telegram-photo: file missing ' + filePath);
@@ -3037,6 +3071,7 @@ async function telegramSendPhoto(chatId, caption, photoPath) {
   form.append('chat_id', String(chatId));
   form.append('caption', String(caption || ''));
   form.append('disable_notification', 'false');
+  if (opts.parseMode) form.append('parse_mode', String(opts.parseMode));
   form.append('photo', new Blob([buf], { type: 'image/jpeg' }), path.basename(filePath) || 'photo.jpg');
   const url = 'https://api.telegram.org/bot' + BOT_TOKEN + '/sendPhoto';
   const res = await fetch(url, { method: 'POST', body: form });
@@ -3048,14 +3083,21 @@ async function telegramSendPhoto(chatId, caption, photoPath) {
   return data;
 }
 
-async function sendPaidThanksToUser(uid, days) {
-  const caption = paidThanksCaption(days);
+async function sendPaidThanksToUser(uid, days, receiptUrl) {
+  const hasLink = !!String(receiptUrl || '').trim();
+  const caption = paidThanksCaption(days, receiptUrl);
   try {
-    await telegramSendPhoto(uid, caption, PAID_THANKS_PHOTO);
-    return { sent: true, days: Math.max(1, parseInt(days, 10) || 30) };
+    await telegramSendPhoto(uid, caption, PAID_THANKS_PHOTO, hasLink ? { parseMode: 'HTML' } : null);
+    return { sent: true, days: Math.max(1, parseInt(days, 10) || 30), withReceipt: hasLink };
   } catch (e) {
     return { sent: false, reason: 'telegram', error: String(e.message || e) };
   }
+}
+
+function receiptLinkHtml(printUrl) {
+  const url = String(printUrl || '').trim();
+  if (!url) return '';
+  return '<a href="' + escapeHtmlTg(url).replace(/"/g, '') + '">Ваш чек об оплате</a> 💜';
 }
 
 async function sendOneDayReminderToUser(uid, options) {
