@@ -512,9 +512,30 @@ async function markBotStarted(uid) {
   }
 }
 
+async function clearBotStarted(uid) {
+  const id = String(uid || '');
+  if (!/^\d+$/.test(id) || Number(id) <= 0) return;
+  try {
+    await db.ref('user_registry/' + id).update({
+      botStarted: false,
+      botStartedAt: null
+    });
+  } catch (e) {
+    console.error('clearBotStarted failed', id, e);
+  }
+}
+
 async function respondSubscription(res, uid, data, isAdmin) {
   const out = buildSubscriptionStatus(uid, data, !!isAdmin);
-  out.botStarted = await isBotStarted(uid);
+  // В режиме «новый человек» на тесте всегда как без Start
+  if (
+    FORCE_TEST_IDS.indexOf(String(uid)) !== -1 &&
+    FORCE_TEST_MODE === 'new10'
+  ) {
+    out.botStarted = false;
+  } else {
+    out.botStarted = await isBotStarted(uid);
+  }
   return res.json(out);
 }
 
@@ -1225,10 +1246,11 @@ app.get('/subscription', async function (req, res) {
       }
 
       if (mode === 'new10') {
-        const note = 'force-new10-preview-v4';
+        const note = 'force-new10-preview-v5';
         if (prev && prev.note === note && prev.trial && typeof prev.expiresAt === 'number' && prev.expiresAt > now) {
           return respondSubscription(res, uid, prev, false);
         }
+        await clearBotStarted(uid);
         const entry = {
           active: true,
           trial: true,
@@ -1242,7 +1264,7 @@ app.get('/subscription', async function (req, res) {
           comebackUsed: false,
           comebackGrantedAt: null,
           lastVisitAt: null,
-          welcomeResetToken: 'v4-' + String(now),
+          welcomeResetToken: 'v5-' + String(now),
           note: note
         };
         await ref.set(entry);
@@ -4087,6 +4109,7 @@ async function applyForceTestAccountOnBoot() {
     }
     if (FORCE_TEST_MODE === 'new10') {
       const expiresAt = now + NEW_TRIAL_DAYS * DAY_MS;
+      await clearBotStarted(testId);
       await subscriptionRef(testId).set({
         active: true,
         trial: true,
@@ -4100,10 +4123,10 @@ async function applyForceTestAccountOnBoot() {
         comebackUsed: false,
         comebackGrantedAt: null,
         lastVisitAt: null,
-        welcomeResetToken: 'v4-' + String(now),
-        note: 'force-new10-preview-v4'
+        welcomeResetToken: 'v5-' + String(now),
+        note: 'force-new10-preview-v5'
       });
-      console.log('Test account forced new-user trial + welcome v4', testId, new Date(expiresAt).toISOString());
+      console.log('Test account forced new-user trial + no bot start v5', testId, new Date(expiresAt).toISOString());
       return;
     }
     if (FORCE_TEST_MODE !== 'expired') return;

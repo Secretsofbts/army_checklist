@@ -364,22 +364,16 @@ registerUserIfNeeded();
     card.appendChild(emoji);
     card.appendChild(title);
     card.appendChild(text);
+    // Только тем, кто ещё не нажимал Start у бота
     if (!botStarted) {
       const notify = document.createElement('div');
-      notify.style.cssText = 'font-size:14px;line-height:1.45;color:#5b4a7a;margin:0 0 12px;text-align:center';
-      notify.appendChild(document.createTextNode(
-        'Пожалуйста, активируйте бота, чтобы получать важные уведомления (окончание доступа, чеки и новости). Нажмите '
-      ));
-      const startLink = document.createElement('a');
-      startLink.href = ARMY_BOT_ACTIVATE_URL;
-      startLink.textContent = 'Start';
-      startLink.style.cssText = 'color:#7b5fb3;font-weight:700;text-decoration:underline;cursor:pointer';
-      startLink.addEventListener('click', armyActivateBotAndShowChat);
-      notify.appendChild(startLink);
+      notify.textContent =
+        'Пожалуйста, активируйте бота, чтобы получать важные уведомления (окончание доступа, чеки и новости)';
+      notify.style.cssText = 'font-size:14px;line-height:1.45;color:#666;margin:0 0 12px';
 
       const startBtn = document.createElement('a');
       startBtn.href = ARMY_BOT_ACTIVATE_URL;
-      startBtn.textContent = 'Активировать бота · Start';
+      startBtn.textContent = 'Активировать бота';
       startBtn.style.cssText = [
         'display:block', 'width:100%', 'box-sizing:border-box', 'text-decoration:none',
         'border-radius:12px', 'padding:12px 16px', 'margin:0 0 10px',
