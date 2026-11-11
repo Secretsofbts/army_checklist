@@ -14,15 +14,47 @@
     * { box-sizing: border-box; }
     .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
     .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
-    h1 { font-size: 18px; margin: 0 0 8px; color: #2b2440; line-height: 1.35; }
-    .lead { font-size: 13px; color: #666; line-height: 1.45; margin: 0 0 14px; }
-    .card {
-      background: #fff8e6; border: 1px solid #f0dca0; border-radius: 12px;
-      padding: 14px; margin: 0 0 12px;
+    h1 { font-size: 18px; margin: 0 0 14px; color: #2b2440; line-height: 1.35; }
+    .status { font-size: 13px; color: #8a7aa8; margin: 0 0 14px; }
+    .block { margin: 0 0 16px; }
+    .block h2 {
+      font-size: 13px; color: #8a7aa8; margin: 0 0 8px; font-weight: 600;
+      letter-spacing: 0.02em; text-transform: uppercase;
     }
-    .card h2 { font-size: 13px; color: #888; margin: 0 0 8px; font-weight: 600; }
-    .card .main { font-size: 15px; font-weight: 700; color: #2b2440; margin: 0; line-height: 1.5; white-space: pre-line; }
-    .card .sub { font-size: 12px; color: #666; margin: 8px 0 0; line-height: 1.45; white-space: pre-line; }
+    .table-wrap {
+      border: 1px solid #eee8f6; border-radius: 12px; overflow: hidden;
+      background: #faf8fd;
+    }
+    table.stats {
+      width: 100%; border-collapse: collapse; font-size: 13px;
+    }
+    table.stats th,
+    table.stats td {
+      padding: 9px 10px; text-align: left; vertical-align: middle;
+      border-bottom: 1px solid #eee8f6;
+    }
+    table.stats tr:last-child th,
+    table.stats tr:last-child td { border-bottom: none; }
+    table.stats thead th {
+      background: #f0ebf8; color: #5b4a7a; font-size: 11px; font-weight: 700;
+      text-transform: uppercase; letter-spacing: 0.03em;
+    }
+    table.stats tbody th {
+      color: #5b4a7a; font-weight: 600; width: 42%;
+    }
+    table.stats td {
+      color: #2b2440; font-weight: 700; text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+    table.stats td.left { text-align: left; font-weight: 600; color: #5b4a7a; }
+    table.stats td.num { text-align: right; }
+    table.stats tr.total td,
+    table.stats tr.total th {
+      background: #f3f0fa; color: #2b2440;
+    }
+    .hint {
+      font-size: 12px; color: #8a7aa8; margin: 8px 0 0; line-height: 1.4;
+    }
     .btn {
       display: block; text-align: center; text-decoration: none; border-radius: 10px;
       padding: 11px 12px; font-size: 13px; font-weight: 600; background: #9b7fd4; color: #fff;
@@ -30,26 +62,159 @@
     }
     .btn.secondary { background: #f7f4fc; color: #5b4a7a; border: 1px solid #e4dcf3; }
     .denied { color: #b00020; font-size: 14px; line-height: 1.45; }
-    .status { font-size: 13px; color: #8a7aa8; margin: 0 0 12px; }
   </style>
 </head>
 <body>
   <div class="app">
     <a class="back" href="statistics.html">← В личный кабинет</a>
     <h1>Админ-статистика</h1>
-    <p class="lead">Только для вас: подписки, оплаты, переход к чекам.</p>
     <p class="status" id="page-status">Загрузка…</p>
     <div id="admin-content" style="display:none;">
-      <div class="card">
-        <h2>Активные подписки</h2>
-        <p class="main" id="sub-main">—</p>
-        <p class="sub" id="sub-sub">—</p>
+      <div class="block">
+        <h2>Подписки</h2>
+        <div class="table-wrap">
+          <table class="stats" id="sub-table">
+            <tbody>
+              <tr><th>С доступом сейчас</th><td id="sub-total">…</td></tr>
+              <tr><th>Пробный</th><td id="sub-trial">…</td></tr>
+              <tr><th>Оплатили</th><td id="sub-paid">…</td></tr>
+              <tr><th>Бессрочно</th><td id="sub-forever">…</td></tr>
+              <tr><th>Истекли</th><td id="sub-expired">…</td></tr>
+              <tr><th>В реестре</th><td id="sub-registered">…</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div class="card">
-        <h2>Статистика оплат</h2>
-        <p class="main" id="pay-main">—</p>
-        <p class="sub" id="pay-sub">—</p>
+
+      <div class="block">
+        <h2>Оплаты</h2>
+        <div class="table-wrap">
+          <table class="stats" id="pay-table">
+            <thead>
+              <tr>
+                <th>Период</th>
+                <th>Люди</th>
+                <th>Оплат</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="left">Сегодня</td>
+                <td class="num" id="pay-day-people">…</td>
+                <td class="num" id="pay-day-payments">…</td>
+              </tr>
+              <tr>
+                <td class="left">7 дней</td>
+                <td class="num" id="pay-week-people">…</td>
+                <td class="num" id="pay-week-payments">…</td>
+              </tr>
+              <tr>
+                <td class="left">30 дней</td>
+                <td class="num" id="pay-month-people">…</td>
+                <td class="num" id="pay-month-payments">…</td>
+              </tr>
+              <tr class="total">
+                <td class="left">Всего</td>
+                <td class="num" id="pay-all-people">…</td>
+                <td class="num" id="pay-all-payments">…</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
       </div>
+
+      <div class="block">
+        <h2>Деньги и Stars</h2>
+        <div class="table-wrap">
+          <table class="stats">
+            <thead>
+              <tr>
+                <th>Период</th>
+                <th>₽</th>
+                <th>Stars</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="left">Сегодня</td>
+                <td class="num" id="money-day-rub">…</td>
+                <td class="num" id="money-day-stars">…</td>
+              </tr>
+              <tr>
+                <td class="left">7 дней</td>
+                <td class="num" id="money-week-rub">…</td>
+                <td class="num" id="money-week-stars">…</td>
+              </tr>
+              <tr>
+                <td class="left">30 дней</td>
+                <td class="num" id="money-month-rub">…</td>
+                <td class="num" id="money-month-stars">…</td>
+              </tr>
+              <tr class="total">
+                <td class="left">Всего</td>
+                <td class="num" id="money-all-rub">…</td>
+                <td class="num" id="money-all-stars">…</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="block">
+        <h2>Бонусы и ручные выдачи</h2>
+        <div class="table-wrap">
+          <table class="stats">
+            <thead>
+              <tr>
+                <th>Период</th>
+                <th>Друг</th>
+                <th>Вручную</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="left">Сегодня</td>
+                <td class="num" id="bonus-day-ref">…</td>
+                <td class="num" id="bonus-day-manual">…</td>
+              </tr>
+              <tr>
+                <td class="left">7 дней</td>
+                <td class="num" id="bonus-week-ref">…</td>
+                <td class="num" id="bonus-week-manual">…</td>
+              </tr>
+              <tr>
+                <td class="left">30 дней</td>
+                <td class="num" id="bonus-month-ref">…</td>
+                <td class="num" id="bonus-month-manual">…</td>
+              </tr>
+              <tr class="total">
+                <td class="left">Всего</td>
+                <td class="num" id="bonus-all-ref">…</td>
+                <td class="num" id="bonus-all-manual">…</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="block">
+        <h2>Тарифы (всё время)</h2>
+        <div class="table-wrap">
+          <table class="stats">
+            <thead>
+              <tr>
+                <th>Срок</th>
+                <th>Оплат</th>
+              </tr>
+            </thead>
+            <tbody id="tariff-body">
+              <tr><td class="left" colspan="2">…</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="hint" id="tariff-hint"></p>
+      </div>
+
       <a class="btn" href="admin-receipts.html?v=1">Чеки по оплатам →</a>
       <a class="btn secondary" href="payment.html?v=41">Страница оплаты</a>
     </div>
@@ -75,18 +240,59 @@
       return h;
     }
 
-    function formatPayByDays(byDays) {
+    function setText(id, value) {
+      var el = document.getElementById(id);
+      if (el) el.textContent = value == null || value === '' ? '—' : String(value);
+    }
+
+    function n(v) {
+      return Number(v) || 0;
+    }
+
+    function rub(v) {
+      return n(v).toLocaleString('ru-RU') + ' ₽';
+    }
+
+    function fillPeriodRow(prefix, bucket) {
+      bucket = bucket || {};
+      setText(prefix + '-people', n(bucket.people));
+      setText(prefix + '-payments', n(bucket.payments));
+    }
+
+    function fillMoneyRow(prefix, bucket) {
+      bucket = bucket || {};
+      setText(prefix + '-rub', rub(bucket.amountRub));
+      setText(prefix + '-stars', n(bucket.stars));
+    }
+
+    function fillBonusRow(prefix, bucket) {
+      bucket = bucket || {};
+      setText(prefix + '-ref', n(bucket.referralBonuses));
+      setText(prefix + '-manual', n(bucket.manual));
+    }
+
+    function paintTariffs(byDays) {
       byDays = byDays || {};
+      var body = document.getElementById('tariff-body');
+      var hint = document.getElementById('tariff-hint');
+      if (!body) return;
       var keys = Object.keys(byDays).sort(function (a, b) {
         return (parseInt(a, 10) || 0) - (parseInt(b, 10) || 0);
       });
-      if (!keys.length) return 'пока нет';
-      return keys.map(function (k) { return k + ' дн × ' + byDays[k]; }).join(' · ');
-    }
-
-    function linePayPeriod(label, bucket) {
-      bucket = bucket || {};
-      return label + ': ' + (bucket.people || 0) + ' чел. / ' + (bucket.payments || 0) + ' оплат';
+      if (!keys.length) {
+        body.innerHTML = '<tr><td class="left" colspan="2">пока нет</td></tr>';
+        if (hint) hint.textContent = '';
+        return;
+      }
+      body.innerHTML = keys.map(function (k) {
+        return (
+          '<tr>' +
+            '<td class="left">' + k + ' дн.</td>' +
+            '<td class="num">' + n(byDays[k]) + '</td>' +
+          '</tr>'
+        );
+      }).join('');
+      if (hint) hint.textContent = '';
     }
 
     function loadAll() {
@@ -122,45 +328,31 @@
           var subData = pair[0] && pair[0].stats;
           var payData = pair[1] && pair[1].stats;
           if (subData) {
-            document.getElementById('sub-main').textContent =
-              'С доступом сейчас: ' + (Number(subData.total) || 0);
-            document.getElementById('sub-sub').textContent =
-              'Пробный: ' + (Number(subData.trial) || 0) +
-              ' · Оплатили: ' + (Number(subData.paid) || 0) +
-              ' · Бессрочно: ' + (Number(subData.forever) || 0) +
-              ' · Истекли: ' + (Number(subData.expired) || 0) +
-              (subData.registered != null ? ('\nВ реестре: ' + subData.registered) : '');
+            setText('sub-total', n(subData.total));
+            setText('sub-trial', n(subData.trial));
+            setText('sub-paid', n(subData.paid));
+            setText('sub-forever', n(subData.forever));
+            setText('sub-expired', n(subData.expired));
+            setText('sub-registered', subData.registered != null ? n(subData.registered) : '—');
           }
           if (payData) {
             var day = payData.day || {};
             var week = payData.week || {};
             var month = payData.month || {};
             var all = payData.all || {};
-            document.getElementById('pay-main').textContent = [
-              linePayPeriod('Сегодня', day),
-              linePayPeriod('7 дней', week),
-              linePayPeriod('30 дней', month),
-              linePayPeriod('Всего', all)
-            ].join('\n');
-            document.getElementById('pay-sub').textContent = [
-              'Stars: сегодня ' + (day.stars || 0) +
-                ' · 7д ' + (week.stars || 0) +
-                ' · 30д ' + (month.stars || 0) +
-                ' · всего ' + (all.stars || 0),
-              'Рубли (ЮKassa): сегодня ' + (day.amountRub || 0) +
-                ' ₽ · 7д ' + (week.amountRub || 0) +
-                ' ₽ · 30д ' + (month.amountRub || 0) +
-                ' ₽ · всего ' + (all.amountRub || 0) + ' ₽',
-              'Тарифы (всё время): ' + formatPayByDays(all.byDays),
-              'Приведи друга: сегодня ' + (day.referralBonuses || 0) +
-                ' · 7д ' + (week.referralBonuses || 0) +
-                ' · 30д ' + (month.referralBonuses || 0) +
-                ' · всего ' + (all.referralBonuses || 0),
-              'Ручные выдачи: сегодня ' + (day.manual || 0) +
-                ' · 7д ' + (week.manual || 0) +
-                ' · 30д ' + (month.manual || 0) +
-                ' · всего ' + (all.manual || 0)
-            ].join('\n');
+            fillPeriodRow('pay-day', day);
+            fillPeriodRow('pay-week', week);
+            fillPeriodRow('pay-month', month);
+            fillPeriodRow('pay-all', all);
+            fillMoneyRow('money-day', day);
+            fillMoneyRow('money-week', week);
+            fillMoneyRow('money-month', month);
+            fillMoneyRow('money-all', all);
+            fillBonusRow('bonus-day', day);
+            fillBonusRow('bonus-week', week);
+            fillBonusRow('bonus-month', month);
+            fillBonusRow('bonus-all', all);
+            paintTariffs(all.byDays);
           }
         })
         .catch(function () {
