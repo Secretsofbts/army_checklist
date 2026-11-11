@@ -1732,15 +1732,15 @@ async function issueMoyNalogReceiptForPayment(meta) {
   if (!snap.exists()) {
     return { ok: false, reason: 'not-found' };
   }
-  const prev = snap.val() || {};
-  // Чек уже есть — если в ТГ не ушёл, досылаем ссылку
-  if (!force && (prev.receiptUuid || prev.receiptDone) && prev.receiptUrl) {
-    let sentTg = !!prev.receiptSentTg;
-    if (!sentTg && userId) {
+  let prev = snap.val() || {};
+
+  async function resendReceiptTgIfNeeded(row) {
+    let sentTg = !!row.receiptSentTg;
+    if (!sentTg && userId && row.receiptUrl) {
       try {
         await telegramSendMessage(
           userId,
-          'Ваш чек по оплате подписки 💜\n' + String(prev.receiptUrl),
+          'Ваш чек по оплате подписки 💜\n' + String(row.receiptUrl),
           null
         );
         sentTg = true;
@@ -1758,6 +1758,12 @@ async function issueMoyNalogReceiptForPayment(meta) {
         });
       }
     }
+    return sentTg;
+  }
+
+  // Чек уже есть — если в ТГ не ушёл, досылаем ссылку
+  if (!force && (prev.receiptUuid || prev.receiptDone) && prev.receiptUrl) {
+    const sentTg = await resendReceiptTgIfNeeded(prev);
     return {
       ok: true,
       reason: 'already',
@@ -1766,7 +1772,27 @@ async function issueMoyNalogReceiptForPayment(meta) {
       sentTg: sentTg
     };
   }
-  // Зависший «pending» старше 2 минут — пробуем снова
+
+  // Уже дергали addIncome по этой оплате — второй раз в налоговую НЕ идём
+  // (иначе появляются дубли в «Мой налог»). Повтор только с force.
+  if (!force && prev.receiptIncomeRequested) {
+    if (prev.receiptUrl) {
+      const sentTg = await resendReceiptTgIfNeeded(prev);
+      return {
+        ok: true,
+        reason: 'already',
+        printUrl: prev.receiptUrl,
+        receiptId: prev.receiptUuid || null,
+        sentTg: sentTg
+      };
+    }
+    return {
+      ok: false,
+      reason: 'already-requested',
+      error: prev.receiptError || 'Чек в налоговую уже запрашивали по этой оплате'
+    };
+  }
+
   if (!force && prev.receiptPending) {
     const pendingAt = Number(prev.receiptPendingAt) || 0;
     if (pendingAt && (Date.now() - pendingAt) < 2 * 60 * 1000) {
@@ -1774,11 +1800,48 @@ async function issueMoyNalogReceiptForPayment(meta) {
     }
   }
 
-  await lockRef.update({
-    receiptPending: true,
-    receiptPendingAt: Date.now(),
-    receiptError: null
-  });
+  // Атомарный захват: только один процесс может вызвать addIncome
+  let claimed = false;
+  try {
+    const tx = await lockRef.transaction(function (cur) {
+      const row = cur || {};
+      if (!force) {
+        if (row.receiptUuid || row.receiptDone || row.receiptIncomeRequested) {
+          return; // abort
+        }
+        if (row.receiptPending) {
+          const pendingAt = Number(row.receiptPendingAt) || 0;
+          if (pendingAt && (Date.now() - pendingAt) < 2 * 60 * 1000) {
+            return; // abort
+          }
+        }
+      }
+      row.receiptPending = true;
+      row.receiptPendingAt = Date.now();
+      row.receiptIncomeRequested = true;
+      row.receiptIncomeRequestedAt = Date.now();
+      row.receiptError = null;
+      return row;
+    });
+    claimed = !!(tx && tx.committed);
+    if (tx && tx.snapshot) prev = tx.snapshot.val() || prev;
+  } catch (e) {
+    console.error('moy-nalog claim failed', paymentId, e);
+    return { ok: false, reason: 'claim-failed' };
+  }
+  if (!claimed) {
+    if (prev.receiptUrl) {
+      const sentTg = await resendReceiptTgIfNeeded(prev);
+      return {
+        ok: true,
+        reason: 'already',
+        printUrl: prev.receiptUrl,
+        receiptId: prev.receiptUuid || null,
+        sentTg: sentTg
+      };
+    }
+    return { ok: false, reason: 'pending' };
+  }
 
   const api = getMoyNalogClient();
   if (!api) {
@@ -1811,10 +1874,14 @@ async function issueMoyNalogReceiptForPayment(meta) {
     const msg = friendlyMoyNalogError((e && e.message) || e).slice(0, 500);
     console.error('moy-nalog addIncome failed', paymentId, msg);
     resetMoyNalogClient();
+    const authFail = /не найдено|вход|парол|авториз|auth|login|token/i.test(msg);
+    // Ошибка входа — чек в налоговую скорее не ушёл, можно повторить после правки пароля.
+    // Любая другая ошибка после запроса — флаг оставляем, чтобы не плодить дубли.
     await lockRef.update({
       receiptPending: null,
       receiptError: msg,
-      receiptErrorAt: Date.now()
+      receiptErrorAt: Date.now(),
+      receiptIncomeRequested: authFail ? null : true
     });
     return { ok: false, reason: 'api', error: msg };
   }
