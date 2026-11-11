@@ -2649,8 +2649,7 @@ const SUPPORT_CLOSED_TEXT =
   'Чтобы написать снова, отправьте /support или слово «поддержка».';
 const ONEDAY_REMIND_TEXT =
   'Сегодня последний день вашей подписки на чек-лист 👀\n\n' +
-  'Для продолжения использования добавьте нужное количество дней в своем ' +
-  '<a href="' + CABINET_LINK + '">личном кабинете</a> 💜';
+  'Продлить количество дней всегда можно <a href="' + PAYMENT_LINK + '">в приложении</a> 💜';
 const EXPIRED_REMIND_TEXT =
   'Ваша подписка на чек-лист по архиву BTS закончилась 😢\n\n' +
   'Мы будем ждать вашего возвращения и оберегать все поставленные галочки\n\n' +
@@ -3986,7 +3985,7 @@ async function sendReferralSelfPreviewToTest() {
 }
 
 async function sendOnedayRemindPreviewToTest() {
-  const metaRef = db.ref('bot_meta/onedayRemindPreviewV2');
+  const metaRef = db.ref('bot_meta/onedayRemindPreviewV3');
   const metaSnap = await metaRef.get();
   if (metaSnap.exists()) {
     console.log('oneday remind preview already sent', metaSnap.val());
