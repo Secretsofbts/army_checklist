@@ -279,10 +279,10 @@
     <div id="pay-plans" hidden>
     <div class="plan is-promo" id="plan-promo" style="display:none;">
       <div class="plan-top">
-        <div class="plan-title">Акция · 30 дней</div>
+        <div class="plan-title">Акция</div>
         <div class="plan-badge" id="promo-badge">…</div>
       </div>
-      <p class="plan-once" style="margin-bottom:10px;">100 ₽ один раз</p>
+      <p class="plan-once" id="promo-desc" style="margin-bottom:10px;"></p>
       <button type="button" class="plan-btn is-copy" id="pay-promo-btn" disabled>…</button>
     </div>
 
@@ -472,6 +472,9 @@
       if (showPromo) {
         var left = parseInt(info.promoDaysLeft, 10) || 0;
         var pPrice = Number(info.promoPriceRub) || 100;
+        var promoDesc = document.getElementById('promo-desc');
+        var descText = '30 дней подписки — ' + pPrice + ' ₽';
+        if (promoDesc && promoDesc.textContent !== descText) promoDesc.textContent = descText;
         if (promoBadge) promoBadge.textContent = left > 0 ? ('продлится ' + left + ' ' + pluralDays(left)) : 'акция';
         setBtn(promoBtn, liveKnown, live, 'Оплатить ' + pPrice + ' ₽');
       }
