@@ -42,13 +42,21 @@ const SUBSCRIPTION_LAUNCH_AT = Number(process.env.SUBSCRIPTION_LAUNCH_AT) ||
 // Якорь для старых: «завтра» считается от этого дня (7.11 вечер → старт 8.11).
 const LEGACY_TRIAL_ANCHOR_AT = Number(process.env.LEGACY_TRIAL_ANCHOR_AT) ||
   Date.parse('2026-11-07T21:00:00+03:00');
-// Цены: обычно 200 ₽. Акция −50% (100 ₽) с отсчётом дней.
+// Цены тарифов (карта). Акция 100 ₽ / 30 дн. — один раз, окно акции 15 дней.
 const FULL_PRICE_RUB = 200;
 const PROMO_PRICE_RUB = 100;
-const PROMO_DAYS = 14;
-// Когда сказали «заново на 14» — обновить эту дату (или PROMO_COUNTDOWN_START_AT в Render).
+const PROMO_ACCESS_DAYS = 30;
+const PROMO_DAYS = 15;
+const FOREVER_PRICE_RUB = 5000;
+const PLAN_PRICES = {
+  30: 200,
+  60: 350,
+  90: 500,
+  180: 1000
+};
+// Старт акции: сегодня вечером → завтра в счётчике ~14 дней из 15.
 const PROMO_COUNTDOWN_START_AT = Number(process.env.PROMO_COUNTDOWN_START_AT) ||
-  Date.parse('2026-11-07T22:00:00+03:00');
+  Date.parse('2026-11-11T22:00:00+03:00');
 const PAYMENT_LIVE_AT = (function () {
   const raw = String(process.env.PAYMENT_LIVE_AT || '').trim();
   if (!raw) return 0;
@@ -104,25 +112,19 @@ function pricingInfo(now) {
   const promoEndsAt = promoEndsAtMs();
   const promoDaysLeft = promoDaysLeftNow(now);
   const promoActive = promoDaysLeft > 0;
-  if (promoActive) {
-    return {
-      priceRub: PROMO_PRICE_RUB,
-      oldPriceRub: FULL_PRICE_RUB,
-      promo: true,
-      promoEndsAt: promoEndsAt,
-      promoDaysLeft: promoDaysLeft,
-      promoUsed: false,
-      paymentLive: yookassaReady() || !!(PAYMENT_LIVE_AT && now >= PAYMENT_LIVE_AT)
-    };
-  }
+  const live = yookassaReady() || !!(PAYMENT_LIVE_AT && now >= PAYMENT_LIVE_AT);
   return {
     priceRub: FULL_PRICE_RUB,
     oldPriceRub: null,
-    promo: false,
+    promo: promoActive,
+    promoPriceRub: PROMO_PRICE_RUB,
+    promoAccessDays: PROMO_ACCESS_DAYS,
     promoEndsAt: promoEndsAt,
-    promoDaysLeft: 0,
+    promoDaysLeft: promoActive ? promoDaysLeft : 0,
     promoUsed: false,
-    paymentLive: yookassaReady() || !!(PAYMENT_LIVE_AT && now >= PAYMENT_LIVE_AT)
+    plans: PLAN_PRICES,
+    foreverPriceRub: FOREVER_PRICE_RUB,
+    paymentLive: live
   };
 }
 
@@ -142,21 +144,56 @@ function hasUsedPromoPrice(data, uid) {
 
 function pricingInfoForUser(data, now, uid) {
   const base = pricingInfo(now);
-  if (!base.promo) {
-    return Object.assign({}, base, { promoUsed: hasUsedPromoPrice(data, uid) });
-  }
-  if (hasUsedPromoPrice(data, uid)) {
+  const used = hasUsedPromoPrice(data, uid);
+  // Окно акции на экране: только пока акция идёт и человек ещё не платил
+  const showPromo = !!(base.promo && !used);
+  return Object.assign({}, base, {
+    promo: showPromo,
+    promoDaysLeft: showPromo ? base.promoDaysLeft : 0,
+    promoUsed: used,
+    // priceRub — цена акции, если она доступна; иначе обычные 30 дней
+    priceRub: showPromo ? PROMO_PRICE_RUB : FULL_PRICE_RUB,
+    oldPriceRub: showPromo ? FULL_PRICE_RUB : null
+  });
+}
+
+function resolveYooKassaPlan(body, priceInfo) {
+  body = body || {};
+  priceInfo = priceInfo || {};
+  const wantPromo = !!(body.promo || body.plan === 'promo');
+  const wantForever = !!(body.forever || body.plan === 'forever');
+  if (wantForever) {
     return {
-      priceRub: FULL_PRICE_RUB,
-      oldPriceRub: null,
+      forever: true,
+      days: 0,
+      amountRub: FOREVER_PRICE_RUB,
       promo: false,
-      promoEndsAt: base.promoEndsAt,
-      promoDaysLeft: 0,
-      promoUsed: true,
-      paymentLive: base.paymentLive
+      label: 'бессрочный доступ'
     };
   }
-  return Object.assign({}, base, { promoUsed: false });
+  if (wantPromo) {
+    if (!priceInfo.promo) {
+      return { error: 'promo-unavailable' };
+    }
+    return {
+      forever: false,
+      days: PROMO_ACCESS_DAYS,
+      amountRub: PROMO_PRICE_RUB,
+      promo: true,
+      label: PROMO_ACCESS_DAYS + ' дн. (акция)'
+    };
+  }
+  const days = parseInt(body.days, 10);
+  if (!PLAN_PRICES[days]) {
+    return { error: 'bad-plan' };
+  }
+  return {
+    forever: false,
+    days: days,
+    amountRub: PLAN_PRICES[days],
+    promo: false,
+    label: days + ' дн.'
+  };
 }
 
 if (!process.env.FIREBASE_SERVICE_ACCOUNT) {
@@ -372,72 +409,63 @@ async function applyReferralBonusOnFirstPaid(friendId) {
   return { applied: true, referrerId: referrerId, friendExt: friendExt, referrerExt: referrerExt };
 }
 
+function attachPricingFields(out, price) {
+  out.priceRub = price.priceRub;
+  out.oldPriceRub = price.oldPriceRub;
+  out.promo = price.promo;
+  out.promoEndsAt = price.promoEndsAt;
+  out.promoDaysLeft = price.promoDaysLeft;
+  out.promoUsed = !!price.promoUsed;
+  out.promoPriceRub = price.promoPriceRub;
+  out.promoAccessDays = price.promoAccessDays;
+  out.plans = price.plans;
+  out.foreverPriceRub = price.foreverPriceRub;
+  out.paymentLive = !!price.paymentLive;
+  return out;
+}
+
 function buildSubscriptionStatus(uid, data, isAdmin) {
   const now = Date.now();
   data = data || {};
   const price = pricingInfoForUser(data, now, uid);
   if (isAdmin) {
-    return {
+    return attachPricingFields({
       ok: true,
       status: 'admin',
       forever: true,
       expiresAt: null,
-      trial: false,
-      priceRub: price.priceRub,
-      oldPriceRub: price.oldPriceRub,
-      promo: price.promo,
-      promoEndsAt: price.promoEndsAt,
-      promoDaysLeft: price.promoDaysLeft,
-      promoUsed: !!price.promoUsed
-    };
+      trial: false
+    }, price);
   }
   if (data.forever) {
-    return {
+    return attachPricingFields({
       ok: true,
       status: 'forever',
       forever: true,
       expiresAt: null,
-      trial: false,
-      priceRub: price.priceRub,
-      oldPriceRub: price.oldPriceRub,
-      promo: price.promo,
-      promoEndsAt: price.promoEndsAt,
-      promoDaysLeft: price.promoDaysLeft,
-      promoUsed: !!price.promoUsed
-    };
+      trial: false
+    }, price);
   }
   const expiresAt = typeof data.expiresAt === 'number' ? data.expiresAt : 0;
   const trialDays = typeof data.trialDays === 'number' ? data.trialDays : null;
   if (expiresAt > now) {
-    return {
+    return attachPricingFields({
       ok: true,
       status: data.trial ? 'trial' : 'active',
       forever: false,
       expiresAt: expiresAt,
       trial: !!data.trial,
-      trialDays: trialDays,
-      priceRub: price.priceRub,
-      oldPriceRub: price.oldPriceRub,
-      promo: price.promo,
-      promoEndsAt: price.promoEndsAt,
-      promoDaysLeft: price.promoDaysLeft,
-      promoUsed: !!price.promoUsed
-    };
+      trialDays: trialDays
+    }, price);
   }
-  return {
+  return attachPricingFields({
     ok: false,
     status: 'expired',
     forever: false,
     expiresAt: expiresAt || null,
     trial: !!data.trial,
-    trialDays: trialDays,
-    priceRub: price.priceRub,
-    oldPriceRub: price.oldPriceRub,
-    promo: price.promo,
-    promoEndsAt: price.promoEndsAt,
-    promoDaysLeft: price.promoDaysLeft,
-    promoUsed: !!price.promoUsed
-  };
+    trialDays: trialDays
+  }, price);
 }
 
 // Полуночь по Москве (UTC+3) для календарного дня ms, плюс N суток.
@@ -1344,38 +1372,63 @@ async function grantPaidDaysFromYooKassa(uid, days, meta) {
   if (prev.forever) {
     return { skipped: true, reason: 'forever' };
   }
-  const paidDays = Math.max(1, parseInt(days, 10) || 30);
-  const base = Math.max(now, typeof prev.expiresAt === 'number' ? prev.expiresAt : 0);
-  const expiresAt = paidExpiresAtFrom(base, paidDays);
   const amountRub = Math.max(0, Number(meta.amountRub) || 0);
-  const entry = {
-    active: true,
-    trial: false,
-    forever: false,
-    expiresAt: expiresAt,
-    paidDays: paidDays,
-    createdAt: (prev && prev.createdAt) || now,
-    updatedAt: now,
-    note: 'yookassa-paid',
-    promoUsed: true,
-    promoUsedAt: (prev && prev.promoUsedAt) || now,
-    lastCardPayment: {
-      at: now,
-      days: paidDays,
-      amountRub: amountRub,
-      paymentId: meta.paymentId || null
-    }
-  };
+  const forever = !!meta.forever;
+  let entry;
+  let paidDays = 0;
+  if (forever) {
+    entry = {
+      active: true,
+      trial: false,
+      forever: true,
+      expiresAt: null,
+      paidDays: null,
+      createdAt: (prev && prev.createdAt) || now,
+      updatedAt: now,
+      note: 'yookassa-forever',
+      promoUsed: true,
+      promoUsedAt: (prev && prev.promoUsedAt) || now,
+      lastCardPayment: {
+        at: now,
+        days: 0,
+        forever: true,
+        amountRub: amountRub,
+        paymentId: meta.paymentId || null
+      }
+    };
+  } else {
+    paidDays = Math.max(1, parseInt(days, 10) || 30);
+    const base = Math.max(now, typeof prev.expiresAt === 'number' ? prev.expiresAt : 0);
+    const expiresAt = paidExpiresAtFrom(base, paidDays);
+    entry = {
+      active: true,
+      trial: false,
+      forever: false,
+      expiresAt: expiresAt,
+      paidDays: paidDays,
+      createdAt: (prev && prev.createdAt) || now,
+      updatedAt: now,
+      note: 'yookassa-paid',
+      promoUsed: true,
+      promoUsedAt: (prev && prev.promoUsedAt) || now,
+      lastCardPayment: {
+        at: now,
+        days: paidDays,
+        amountRub: amountRub,
+        paymentId: meta.paymentId || null
+      }
+    };
+  }
   await ref.set(entry);
   await logPaymentEvent({
     at: now,
     userId: uid,
     method: 'yookassa',
-    days: paidDays,
+    days: forever ? 0 : paidDays,
     stars: 0,
     amountRub: amountRub,
     chargeId: meta.paymentId || null,
-    payload: 'yookassa:' + paidDays,
+    payload: forever ? 'yookassa:forever' : ('yookassa:' + paidDays),
     test: false
   });
   try {
@@ -1383,7 +1436,12 @@ async function grantPaidDaysFromYooKassa(uid, days, meta) {
   } catch (e) {
     console.error('yookassa referral bonus failed', uid, e);
   }
-  return { skipped: false, expiresAt: expiresAt, paidDays: paidDays };
+  return {
+    skipped: false,
+    forever: forever,
+    expiresAt: forever ? null : entry.expiresAt,
+    paidDays: forever ? null : paidDays
+  };
 }
 
 /**
@@ -1435,7 +1493,9 @@ async function issueMoyNalogReceiptForPayment(meta) {
     return { ok: false, reason: 'not-configured' };
   }
 
-  const serviceName = MOY_NALOG_SERVICE_NAME + ' на ' + days + ' дн.';
+  const serviceName = meta.forever
+    ? (MOY_NALOG_SERVICE_NAME + ' (бессрочно)')
+    : (MOY_NALOG_SERVICE_NAME + ' на ' + days + ' дн.');
   let opDate = new Date();
   if (meta.operationAt) {
     const d = new Date(meta.operationAt);
@@ -1537,7 +1597,8 @@ async function processYooKassaSucceededPayment(payment, opts) {
 
   const meta = payment.metadata || {};
   const uid = String(meta.userId || prev.userId || '');
-  const days = Math.max(1, parseInt(meta.days || prev.days, 10) || 30);
+  const forever = String(meta.forever || '') === '1' || prev.forever === true;
+  const days = forever ? 0 : Math.max(1, parseInt(meta.days || prev.days, 10) || 30);
   const amountRub = Math.round(Number((payment.amount && payment.amount.value) || meta.amountRub || prev.amountRub || 0));
   if (!uid) {
     await lockRef.update({ status: 'succeeded', error: 'no-user', at: Date.now() });
@@ -1551,7 +1612,8 @@ async function processYooKassaSucceededPayment(payment, opts) {
 
   const granted = await grantPaidDaysFromYooKassa(uid, days, {
     paymentId: paymentId,
-    amountRub: amountRub
+    amountRub: amountRub,
+    forever: forever
   });
   await lockRef.update({
     status: 'succeeded',
@@ -1559,12 +1621,13 @@ async function processYooKassaSucceededPayment(payment, opts) {
     processedAt: Date.now(),
     userId: uid,
     days: days,
+    forever: forever,
     amountRub: amountRub,
     granted: !granted.skipped
   });
   if (!granted.skipped) {
     try {
-      const thanks = await sendPaidThanksToUser(uid, days);
+      const thanks = await sendPaidThanksToUser(uid, forever ? 'forever' : days);
       if (!thanks.sent) console.error('yookassa thanks failed', uid, thanks);
     } catch (e) {
       console.error('yookassa thanks error', uid, e);
@@ -1576,7 +1639,8 @@ async function processYooKassaSucceededPayment(payment, opts) {
     receipt = await issueMoyNalogReceiptForPayment({
       paymentId: paymentId,
       amountRub: amountRub,
-      days: days,
+      days: forever ? 0 : days,
+      forever: forever,
       userId: uid,
       operationAt: (payment && payment.captured_at) || Date.now()
     });
@@ -1586,7 +1650,7 @@ async function processYooKassaSucceededPayment(payment, opts) {
   } catch (e) {
     console.error('moy-nalog after pay error', paymentId, e);
   }
-  console.log('yookassa payment ok', uid, days, amountRub, paymentId);
+  console.log('yookassa payment ok', uid, forever ? 'forever' : days, amountRub, paymentId);
   return { ok: true, granted: granted, receipt: receipt };
 }
 
@@ -1596,19 +1660,23 @@ app.get('/payment/yookassa/status', function (req, res) {
   return res.json({ ok: true, ready: ready, paymentLive: ready, shopId: ready ? YOOKASSA_SHOP_ID : null });
 });
 
-// Создать платёж ЮKassa (30 дней по цене пользователя)
+// Создать платёж ЮKassa: promo / 30|60|90|180 / forever
 app.post('/payment/yookassa/create', async function (req, res) {
   const user = authUser(req);
   if (!user) return res.status(401).json({ error: 'auth' });
   if (!yookassaReady()) return res.status(503).json({ error: 'yookassa-not-ready' });
   try {
-    const days = 30;
     const uid = String(user.id);
     const subSnap = await subscriptionRef(uid).get();
     const subData = subSnap.exists() ? subSnap.val() : null;
     const price = pricingInfoForUser(subData, Date.now(), uid);
-    const amountRub = Number(price.priceRub) || FULL_PRICE_RUB;
+    const plan = resolveYooKassaPlan(req.body || {}, price);
+    if (plan.error) {
+      return res.status(400).json({ error: plan.error });
+    }
+    const amountRub = Number(plan.amountRub) || 0;
     const amountValue = amountRub.toFixed(2);
+    const days = plan.forever ? 0 : plan.days;
 
     const body = {
       amount: { value: amountValue, currency: 'RUB' },
@@ -1617,12 +1685,13 @@ app.post('/payment/yookassa/create', async function (req, res) {
         type: 'redirect',
         return_url: YOOKASSA_RETURN_URL
       },
-      description: 'Подписка на чек-лист BTS, ' + days + ' дн.',
+      description: 'Подписка на чек-лист BTS, ' + plan.label,
       metadata: {
         userId: uid,
         days: String(days),
+        forever: plan.forever ? '1' : '0',
         amountRub: String(amountRub),
-        promo: price.promo ? '1' : '0'
+        promo: plan.promo ? '1' : '0'
       }
     };
 
@@ -1635,8 +1704,9 @@ app.post('/payment/yookassa/create', async function (req, res) {
     await db.ref('yookassa_payments/' + payment.id).set({
       userId: uid,
       days: days,
+      forever: !!plan.forever,
       amountRub: amountRub,
-      promo: !!price.promo,
+      promo: !!plan.promo,
       status: payment.status || 'pending',
       createdAt: Date.now(),
       confirmationUrl: confirmationUrl
@@ -1647,7 +1717,8 @@ app.post('/payment/yookassa/create', async function (req, res) {
       confirmationUrl: confirmationUrl,
       amountRub: amountRub,
       days: days,
-      promo: !!price.promo
+      forever: !!plan.forever,
+      promo: !!plan.promo
     });
   } catch (e) {
     console.error('yookassa create failed', e && e.data ? e.data : e);
@@ -2020,6 +2091,7 @@ app.use('/cloud', async function (req, res) {
 const CABINET_LINK = 'https://t.me/army_checklist_bot?startapp=cabinet';
 const BOT_APP_LINK = 'https://t.me/army_checklist_bot?startapp';
 const PAYMENT_LINK = 'https://t.me/army_checklist_bot?startapp=payment';
+const REFERRAL_LINK = 'https://t.me/army_checklist_bot?startapp=friend';
 const HELP_TEXT =
   'Команды бота:\n' +
   '/app — открыть чек-лист\n' +
@@ -2090,6 +2162,12 @@ function pluralDaysRu(n) {
 }
 
 function paidThanksCaption(days) {
+  if (days === 'forever' || days === 0 || days === '0') {
+    return (
+      'Подписка успешно оплачена — доступ бессрочный ☺️\n\n' +
+      'Спасибо, что поддерживаете данный проект и архив 🫶'
+    );
+  }
   const n = Math.max(1, parseInt(days, 10) || 30);
   return (
     'Подписка успешно была оплачена и продлена на ' + n + ' ' + pluralDaysRu(n) + ' ☺️\n\n' +
@@ -2834,10 +2912,10 @@ async function handleMenuCommands(msg) {
       const uid = msg.from && msg.from.id;
       const link = uid
         ? ('https://t.me/army_checklist_bot?start=ref_' + uid)
-        : PAYMENT_LINK;
+        : REFERRAL_LINK;
       await telegramSendMessage(msg.chat.id, FRIEND_CMD_TEXT + link, {
-        text: 'Подробнее на странице оплаты',
-        url: PAYMENT_LINK
+        text: 'Приведи друга',
+        url: REFERRAL_LINK
       });
       return true;
     }

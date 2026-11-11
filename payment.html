@@ -7,10 +7,10 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=141"></script>
+  <script src="sync.js?v=142"></script>
   <title>Оплата подписки</title>
   <style>
-    body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
+    body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
     * { box-sizing: border-box; }
     .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
     .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
@@ -35,9 +35,9 @@
       background: #f7f4fc;
       text-align: left;
     }
-    .plan.is-main {
-      background: #f7f4fc;
-      border-color: #e4dcf3;
+    .plan.is-promo {
+      background: #f3eefb;
+      border-color: #d9c8f0;
     }
     .plan-top {
       display: flex;
@@ -58,20 +58,10 @@
       line-height: 1;
     }
     .plan-price {
-      display: flex;
-      align-items: baseline;
-      gap: 8px;
-      flex-wrap: wrap;
       margin: 0 0 4px;
-      font-size: 16px;
+      font-size: 18px;
       font-weight: 700;
       color: #2b2440;
-    }
-    .plan-price .old {
-      text-decoration: line-through;
-      color: #9a8fb0;
-      font-weight: 600;
-      font-size: 14px;
     }
     .plan-once {
       font-size: 12px;
@@ -81,7 +71,6 @@
       line-height: 1.3;
     }
     .plan-note { font-size: 12px; color: #8a7aa8; line-height: 1.4; margin: 0 0 10px; }
-    #promo-note:empty { visibility: hidden; min-height: 1.4em; }
     .plan-btn {
       width: 100%;
       border: none;
@@ -93,6 +82,70 @@
       color: #8a7aa8;
       cursor: default;
     }
+    .plan-btn.is-copy {
+      background: #9b7fd4;
+      color: #fff;
+      cursor: pointer;
+    }
+    .plan-btn.is-copy:active { opacity: 0.9; }
+    .plan-btn:disabled { opacity: 0.75; cursor: default; }
+    .cols-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #8a7aa8;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin: 0 0 8px;
+    }
+    .cols {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      margin: 0 0 4px;
+    }
+    .col {
+      background: #fff;
+      border: 1px solid #e4dcf3;
+      border-radius: 12px;
+      padding: 10px 4px 8px;
+      text-align: center;
+      cursor: pointer;
+      min-width: 0;
+    }
+    .col.is-on {
+      border-color: #9b7fd4;
+      box-shadow: 0 0 0 2px rgba(155, 127, 212, 0.25);
+      background: #faf7ff;
+    }
+    .col-days {
+      font-size: 13px;
+      font-weight: 800;
+      color: #2b2440;
+      line-height: 1.2;
+      margin: 0 0 6px;
+    }
+    .col-bar {
+      height: 48px;
+      margin: 0 auto 8px;
+      width: 18px;
+      border-radius: 8px 8px 4px 4px;
+      background: linear-gradient(180deg, #c4a8ef 0%, #9b7fd4 100%);
+    }
+    .col[data-days="30"] .col-bar { height: 28px; }
+    .col[data-days="60"] .col-bar { height: 36px; }
+    .col[data-days="90"] .col-bar { height: 44px; }
+    .col[data-days="180"] .col-bar { height: 56px; }
+    .col-price {
+      font-size: 12px;
+      font-weight: 700;
+      color: #5b4a7a;
+      line-height: 1.2;
+    }
+    .crazy {
+      border-color: #f0c9a0;
+      background: #fff8ef;
+    }
+    .crazy .plan-badge { color: #b86a00; }
     .footer-note {
       font-size: 12px;
       color: #999;
@@ -101,24 +154,7 @@
       text-align: center;
     }
     .footer-note a { color: #7b5fb3; text-decoration: none; }
-    .ref-link-box {
-      width: 100%;
-      border: 1px solid #e4dcf3;
-      border-radius: 10px;
-      background: #fff;
-      padding: 10px 12px;
-      font-size: 12px;
-      color: #5b4a7a;
-      word-break: break-all;
-      line-height: 1.4;
-      margin: 0 0 10px;
-    }
-    .plan-btn.is-copy {
-      background: #9b7fd4;
-      color: #fff;
-      cursor: pointer;
-    }
-    .plan-btn.is-copy:active { opacity: 0.9; }
+    #pay-status:empty { display: none; }
   </style>
 </head>
 <body>
@@ -130,28 +166,54 @@
     <div class="notice" id="pay-notice" style="display:none;">Оплата пока что настраивается</div>
     <div class="notice" id="pay-success" style="display:none; background:#e3f7e9; color:#2e9e5b;">Если оплата прошла — доступ обновится в личном кабинете. Можно закрыть эту страницу и открыть чек-лист 💜</div>
 
-    <div class="plan is-main" id="plan-30">
+    <div class="plan is-promo" id="plan-promo" style="display:none;">
       <div class="plan-top">
-        <div class="plan-title">30 дней</div>
-        <div class="plan-badge" id="promo-badge" style="display:none;">акция</div>
+        <div class="plan-title">Акция · 30 дней</div>
+        <div class="plan-badge" id="promo-badge">…</div>
       </div>
-      <div class="plan-price" id="price-30">
-        <span>…</span>
-      </div>
-      <p class="plan-once">разовая оплата</p>
+      <div class="plan-price" id="promo-price">…</div>
+      <p class="plan-once">100 ₽ один раз</p>
       <p class="plan-note" id="promo-note"></p>
-      <p class="plan-note" style="margin-bottom:10px;">Чек после оплаты придёт в этот чат с ботом</p>
-      <button type="button" class="plan-btn is-copy" id="pay-30-btn" disabled>…</button>
-      <p class="plan-note" id="pay-30-status" style="margin:8px 0 0;"></p>
+      <button type="button" class="plan-btn is-copy" id="pay-promo-btn" disabled>…</button>
     </div>
 
-    <div class="plan">
-      <div class="plan-top">
-        <div class="plan-title">60, 90, 180 дней</div>
-        <div class="plan-badge">скоро</div>
+    <div class="plan" id="plan-regular">
+      <p class="cols-label">Дней</p>
+      <div class="cols" id="plan-cols">
+        <button type="button" class="col is-on" data-days="30" data-price="200">
+          <div class="col-days">30</div>
+          <div class="col-bar"></div>
+          <div class="col-price">200 ₽</div>
+        </button>
+        <button type="button" class="col" data-days="60" data-price="350">
+          <div class="col-days">60</div>
+          <div class="col-bar"></div>
+          <div class="col-price">350 ₽</div>
+        </button>
+        <button type="button" class="col" data-days="90" data-price="500">
+          <div class="col-days">90</div>
+          <div class="col-bar"></div>
+          <div class="col-price">500 ₽</div>
+        </button>
+        <button type="button" class="col" data-days="180" data-price="1000">
+          <div class="col-days">180</div>
+          <div class="col-bar"></div>
+          <div class="col-price">1000 ₽</div>
+        </button>
       </div>
-      <p class="plan-once">разовая оплата</p>
-      <button type="button" class="plan-btn" disabled>Пока недоступно</button>
+      <p class="plan-note" style="margin-top:10px;">Чек после оплаты придёт в этот чат с ботом</p>
+      <button type="button" class="plan-btn is-copy" id="pay-plan-btn" disabled>…</button>
+    </div>
+
+    <div class="plan crazy" id="plan-forever">
+      <div class="plan-top">
+        <div class="plan-title">Крейзи вариант</div>
+        <div class="plan-badge">навсегда</div>
+      </div>
+      <div class="plan-price">5000 ₽</div>
+      <p class="plan-once">вечная подписка</p>
+      <p class="plan-note">Один раз — и доступ без срока</p>
+      <button type="button" class="plan-btn is-copy" id="pay-forever-btn" disabled>…</button>
     </div>
 
     <div class="plan">
@@ -163,26 +225,19 @@
       <a class="plan-btn is-copy" href="https://t.me/army_checklist_bot?start=support" target="_blank" rel="noopener" style="display:block; text-align:center; text-decoration:none; box-sizing:border-box;">Написать в поддержку</a>
     </div>
 
-    <div class="plan" style="margin-top:6px;">
+    <div class="plan">
       <div class="plan-top">
-        <div class="plan-title">Приведи друга</div>
-        <div class="plan-badge">бонус</div>
+        <div class="plan-title">Поддержка бота</div>
+        <div class="plan-badge">донат</div>
       </div>
-      <p class="plan-note" style="margin-bottom:8px;">Расскажите подруге про чек-лист — и получите дополнительные дни доступа</p>
-      <ul style="margin:0 0 10px; padding-left:18px; font-size:12px; color:#5b4a7a; line-height:1.5;">
-        <li>Друг должен зайти в бот по вашей реферальной ссылке</li>
-        <li>Бонус только если друг раньше ни разу не пользовался чек-листом</li>
-        <li>У друга начинается свой пробный период как у нового пользователя</li>
-        <li>Когда друг оплатит подписку, вам и вашему другу начислится по 30 бонусных дней каждому</li>
-        <li>Друзей можно приглашать без ограничения: за каждого оплатившего — ещё +30 дней вам</li>
-        <li>Без оплаты бонус не действует</li>
-      </ul>
-      <div class="ref-link-box" id="ref-link">Откройте страницу из бота, чтобы увидеть свою ссылку</div>
-      <button type="button" class="plan-btn is-copy" id="ref-copy-btn" disabled>Скопировать ссылку</button>
-      <p class="plan-note" style="margin:10px 0 0;">Бонус начисляется автоматически. Если будут проблемы с получением, пожалуйста, обратитесь в поддержку.</p>
+      <p class="plan-note" style="margin-bottom:10px;">Если хотите не только оформить подписку, а ещё просто поблагодарить и пожертвовать сумму на улучшение бота и хорошее настроение разработчика</p>
+      <a class="plan-btn is-copy" href="https://messenger.sbrf.ru/sl/SH6zrmsB21r6GC2TH" target="_blank" rel="noopener" style="display:block; text-align:center; text-decoration:none; box-sizing:border-box;">Сбор Сбербанка</a>
     </div>
 
+    <p class="plan-note" id="pay-status" style="margin:8px 0 0;"></p>
+
     <p class="footer-note">
+      Акция «Приведи друга» — в <a href="referral.html">меню</a>.
       Условия и реквизиты — в <a href="oferta.html">оферте</a>.
       Вопросы по доступу: /support в <a href="https://t.me/army_checklist_bot" target="_blank" rel="noopener">боте</a>.
     </p>
@@ -203,94 +258,108 @@
       return 'дней';
     }
 
-    // Те же даты, что в army-api — сразу рисуем «Ещё N дней», без моргания после fetch
-    var PROMO_COUNTDOWN_START_AT = Date.parse('2026-11-07T22:00:00+03:00');
-    var PROMO_DAYS_TOTAL = 14;
+    var PROMO_COUNTDOWN_START_AT = Date.parse('2026-11-11T22:00:00+03:00');
+    var PROMO_DAYS_TOTAL = 15;
     var DAY_MS_LOCAL = 24 * 60 * 60 * 1000;
+    var PLAN_PRICES = { 30: 200, 60: 350, 90: 500, 180: 1000 };
+    var FOREVER_PRICE = 5000;
+    var selectedDays = 30;
+    var lastPayInfo = null;
 
     function localPricingInfo() {
       var leftMs = PROMO_COUNTDOWN_START_AT + PROMO_DAYS_TOTAL * DAY_MS_LOCAL - Date.now();
       if (leftMs <= 0) {
-        return { priceRub: 200, oldPriceRub: null, promo: false, promoDaysLeft: 0 };
+        return {
+          promo: false,
+          promoDaysLeft: 0,
+          promoPriceRub: 100,
+          plans: PLAN_PRICES,
+          foreverPriceRub: FOREVER_PRICE
+        };
       }
       return {
-        priceRub: 100,
-        oldPriceRub: 200,
         promo: true,
-        promoDaysLeft: Math.max(1, Math.ceil(leftMs / DAY_MS_LOCAL))
+        promoDaysLeft: Math.max(1, Math.ceil(leftMs / DAY_MS_LOCAL)),
+        promoPriceRub: 100,
+        plans: PLAN_PRICES,
+        foreverPriceRub: FOREVER_PRICE
       };
     }
 
-    var lastPayInfo = null;
+    function setBtn(btn, liveKnown, live, label) {
+      if (!btn) return;
+      if (!liveKnown) {
+        btn.disabled = true;
+        if (btn.textContent !== '…') btn.textContent = '…';
+        btn.className = 'plan-btn is-copy';
+        return;
+      }
+      if (live) {
+        btn.disabled = false;
+        if (btn.textContent !== label) btn.textContent = label;
+        btn.className = 'plan-btn is-copy';
+      } else {
+        btn.disabled = true;
+        if (btn.textContent !== 'Оплата настраивается') btn.textContent = 'Оплата настраивается';
+        btn.className = 'plan-btn';
+      }
+    }
+
+    function paintSelectedCol() {
+      document.querySelectorAll('#plan-cols .col').forEach(function (el) {
+        var on = String(el.getAttribute('data-days')) === String(selectedDays);
+        el.classList.toggle('is-on', on);
+      });
+    }
 
     function paintPricing(info) {
       info = info || {};
       lastPayInfo = info;
-      var priceEl = document.getElementById('price-30');
-      var badge = document.getElementById('promo-badge');
-      var note = document.getElementById('promo-note');
-      var btn = document.getElementById('pay-30-btn');
-      var notice = document.getElementById('pay-notice');
-      if (!priceEl) return;
-
-      var priceNow = Number(info.priceRub) || 200;
-      var priceOld = Number(info.oldPriceRub) || 0;
-      var promo = !!(info.promo && priceOld > priceNow);
       var live = !!info.paymentLive;
       var liveKnown = !!info.liveKnown;
       var pricingKnown = !!info.pricingKnown;
-      var nextPriceHtml;
-      var nextNote;
-      var nextBadgeDisplay;
+      var notice = document.getElementById('pay-notice');
+      var promoBox = document.getElementById('plan-promo');
+      var promoBadge = document.getElementById('promo-badge');
+      var promoPrice = document.getElementById('promo-price');
+      var promoNote = document.getElementById('promo-note');
+      var promoBtn = document.getElementById('pay-promo-btn');
+      var planBtn = document.getElementById('pay-plan-btn');
+      var foreverBtn = document.getElementById('pay-forever-btn');
 
-      if (!pricingKnown) {
-        nextPriceHtml = '<span>…</span>';
-        nextBadgeDisplay = 'none';
-        nextNote = '';
-      } else if (promo) {
-        nextPriceHtml =
-          '<span class="old">' + priceOld + ' ₽</span>' +
-          '<span>' + priceNow + ' ₽</span>';
-        nextBadgeDisplay = '';
-        var left = parseInt(info.promoDaysLeft, 10);
-        nextNote = (left > 0)
-          ? ('Акция −50% один раз. Ещё ' + left + ' ' + pluralDays(left))
-          : 'Акция −50% один раз за 30 дней';
-      } else {
-        nextPriceHtml = '<span>' + priceNow + ' ₽</span>';
-        nextBadgeDisplay = 'none';
-        nextNote = info.promoUsed
-          ? 'Акция уже использована — дальше 200 ₽'
-          : 'Обычная цена за 30 дней доступа';
+      var showPromo = !!(pricingKnown && info.promo && !info.promoUsed);
+      if (promoBox) promoBox.style.display = showPromo ? '' : 'none';
+
+      if (showPromo) {
+        var left = parseInt(info.promoDaysLeft, 10) || 0;
+        var pPrice = Number(info.promoPriceRub) || 100;
+        if (promoBadge) promoBadge.textContent = left > 0 ? ('ещё ' + left + ' ' + pluralDays(left)) : 'акция';
+        if (promoPrice && promoPrice.textContent !== (pPrice + ' ₽')) promoPrice.textContent = pPrice + ' ₽';
+        if (promoNote) promoNote.textContent = '30 дней доступа по акции';
+        setBtn(promoBtn, liveKnown, live, 'Оплатить ' + pPrice + ' ₽');
       }
 
-      if (priceEl.innerHTML !== nextPriceHtml) priceEl.innerHTML = nextPriceHtml;
-      if (badge && badge.style.display !== nextBadgeDisplay) badge.style.display = nextBadgeDisplay;
-      if (note && note.textContent !== nextNote) note.textContent = nextNote;
+      var plans = info.plans || PLAN_PRICES;
+      document.querySelectorAll('#plan-cols .col').forEach(function (el) {
+        var d = el.getAttribute('data-days');
+        var price = plans[d] != null ? plans[d] : PLAN_PRICES[d];
+        el.setAttribute('data-price', String(price));
+        var priceEl = el.querySelector('.col-price');
+        var next = price + ' ₽';
+        if (priceEl && priceEl.textContent !== next) priceEl.textContent = next;
+      });
+      paintSelectedCol();
 
-      if (btn) {
-        if (!liveKnown) {
-          // Пока статус ЮKassa неизвестен — нейтрально, без «настраивается»
-          btn.disabled = true;
-          if (btn.textContent !== '…') btn.textContent = '…';
-          btn.className = 'plan-btn is-copy';
-        } else if (live) {
-          var payLabel = 'Оплатить ' + priceNow + ' ₽';
-          btn.disabled = false;
-          if (btn.textContent !== payLabel) btn.textContent = payLabel;
-          btn.className = 'plan-btn is-copy';
-        } else {
-          btn.disabled = true;
-          if (btn.textContent !== 'Оплата настраивается') btn.textContent = 'Оплата настраивается';
-          btn.className = 'plan-btn';
-        }
-      }
-      // Плашку «настраивается» только если сервер уже ответил, что оплаты нет
+      var selPrice = (plans[selectedDays] != null ? plans[selectedDays] : PLAN_PRICES[selectedDays]) || 200;
+      setBtn(planBtn, liveKnown, live, 'Оплатить ' + selPrice + ' ₽');
+
+      var foreverPrice = Number(info.foreverPriceRub) || FOREVER_PRICE;
+      setBtn(foreverBtn, liveKnown, live, 'Оплатить ' + foreverPrice + ' ₽');
+
       if (notice) notice.style.display = (liveKnown && !live) ? '' : 'none';
     }
 
     function loadPricing() {
-      // Цену и live рисуем одним финальным кадром после обоих ответов — без мигания
       var api = String(window.ARMY_API_URL || '').replace(/\/$/, '');
       if (!api) {
         paintPricing(Object.assign({}, localPricingInfo(), {
@@ -319,6 +388,8 @@
         info.paymentLive = liveReady || !!info.paymentLive;
         info.liveKnown = true;
         info.pricingKnown = true;
+        if (!info.plans) info.plans = PLAN_PRICES;
+        if (info.foreverPriceRub == null) info.foreverPriceRub = FOREVER_PRICE;
         paintPricing(info);
       }
 
@@ -349,9 +420,8 @@
         });
     }
 
-    function startYooKassaPay() {
-      var btn = document.getElementById('pay-30-btn');
-      var statusEl = document.getElementById('pay-30-status');
+    function startYooKassaPay(body, btn) {
+      var statusEl = document.getElementById('pay-status');
       var api = String(window.ARMY_API_URL || '').replace(/\/$/, '');
       if (!api) {
         if (statusEl) statusEl.textContent = 'Сервер оплаты недоступен';
@@ -362,6 +432,7 @@
         var initData = (window.Telegram && Telegram.WebApp && Telegram.WebApp.initData) || '';
         if (initData) headers['X-Telegram-Init-Data'] = initData;
       } catch (e) {}
+      var prevLabel = btn ? btn.textContent : '';
       if (btn) {
         btn.disabled = true;
         btn.textContent = 'Создаём счёт…';
@@ -370,17 +441,17 @@
       fetch(api + '/payment/yookassa/create', {
         method: 'POST',
         headers: headers,
-        body: JSON.stringify({ days: 30 })
+        body: JSON.stringify(body || {})
       })
         .then(function (res) { return res.json().then(function (data) { return { ok: res.ok, data: data }; }); })
         .then(function (result) {
           if (!result.ok || !result.data || !result.data.confirmationUrl) {
             var msg = (result.data && (result.data.message || result.data.error)) || 'Не удалось создать оплату';
             if (statusEl) statusEl.textContent = msg;
-            if (btn && lastPayInfo) paintPricing(lastPayInfo);
+            if (lastPayInfo) paintPricing(lastPayInfo);
             else if (btn) {
               btn.disabled = false;
-              btn.textContent = 'Оплатить';
+              btn.textContent = prevLabel || 'Оплатить';
             }
             return;
           }
@@ -395,17 +466,17 @@
           } catch (e) {
             window.location.href = url;
           }
-          if (btn && lastPayInfo) paintPricing(lastPayInfo);
+          if (lastPayInfo) paintPricing(lastPayInfo);
         })
         .catch(function () {
           if (statusEl) statusEl.textContent = 'Ошибка сети. Попробуйте ещё раз.';
-          if (btn && lastPayInfo) paintPricing(lastPayInfo);
+          if (lastPayInfo) paintPricing(lastPayInfo);
         });
     }
 
     function syncYooKassaPayments(doneMsg) {
       var api = String(window.ARMY_API_URL || '').replace(/\/$/, '');
-      var statusEl = document.getElementById('pay-30-status');
+      var statusEl = document.getElementById('pay-status');
       if (!api) return;
       var headers = { 'Content-Type': 'application/json' };
       try {
@@ -444,9 +515,25 @@
         .catch(function () {});
     }
 
-    (function setupPayButton() {
-      var btn = document.getElementById('pay-30-btn');
-      if (btn) btn.addEventListener('click', startYooKassaPay);
+    document.getElementById('plan-cols').addEventListener('click', function (e) {
+      var col = e.target.closest('.col');
+      if (!col) return;
+      selectedDays = parseInt(col.getAttribute('data-days'), 10) || 30;
+      paintSelectedCol();
+      if (lastPayInfo) paintPricing(lastPayInfo);
+    });
+
+    document.getElementById('pay-promo-btn').addEventListener('click', function () {
+      startYooKassaPay({ promo: true }, this);
+    });
+    document.getElementById('pay-plan-btn').addEventListener('click', function () {
+      startYooKassaPay({ days: selectedDays }, this);
+    });
+    document.getElementById('pay-forever-btn').addEventListener('click', function () {
+      startYooKassaPay({ forever: true }, this);
+    });
+
+    (function setupReturn() {
       var paidReturn = false;
       try {
         var q = new URLSearchParams(window.location.search || '');
@@ -456,44 +543,10 @@
           if (ok) ok.style.display = '';
         }
       } catch (e) {}
-      // Всегда догоняем платежи (на случай если webhook не дошёл)
       syncYooKassaPayments(paidReturn ? 'Ищем вашу оплату…' : '');
     })();
 
     loadPricing();
-
-    function setupReferralLink() {
-      var box = document.getElementById('ref-link');
-      var btn = document.getElementById('ref-copy-btn');
-      if (!box || !btn) return;
-      var uid = window.ARMY_USER_ID;
-      if (!uid) {
-        try {
-          uid = window.Telegram && Telegram.WebApp && Telegram.WebApp.initDataUnsafe &&
-            Telegram.WebApp.initDataUnsafe.user && Telegram.WebApp.initDataUnsafe.user.id;
-        } catch (e) {}
-      }
-      if (!uid) return;
-      var link = 'https://t.me/army_checklist_bot?start=ref_' + uid;
-      box.textContent = link;
-      btn.disabled = false;
-      btn.addEventListener('click', function () {
-        var done = function () {
-          btn.textContent = 'Ссылка скопирована';
-          setTimeout(function () { btn.textContent = 'Скопировать ссылку'; }, 1800);
-        };
-        if (navigator.clipboard && navigator.clipboard.writeText) {
-          navigator.clipboard.writeText(link).then(done).catch(function () {
-            window.prompt('Скопируйте ссылку:', link);
-          });
-        } else {
-          window.prompt('Скопируйте ссылку:', link);
-          done();
-        }
-      });
-    }
-
-    setupReferralLink();
   </script>
 </body>
 </html>

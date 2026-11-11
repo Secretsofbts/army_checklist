@@ -442,6 +442,7 @@ registerUserIfNeeded();
   function armyIsAlwaysOpenPage() {
     const file = armyCurrentHtmlFile();
     return file === 'payment.html' || file === 'oferta.html' ||
+      file === 'referral.html' ||
       file === 'admin-receipts.html' || file === 'admin-stats.html';
   }
 
@@ -692,7 +693,7 @@ registerUserIfNeeded();
       let file = path.split('/').pop() || '';
       if (!file || file === '') file = 'index.html';
       if (file.indexOf('.html') === -1 && file.indexOf('.') === -1) file = file ? (file + '.html') : 'index.html';
-      if (file === 'statistics.html' || file === 'payment.html' || file === 'oferta.html' || file === 'index.html') {
+      if (file === 'statistics.html' || file === 'payment.html' || file === 'oferta.html' || file === 'referral.html' || file === 'index.html') {
         return null;
       }
       let name = '';
@@ -1965,6 +1966,9 @@ function getCombinedYearStats(yearKey) {
       'payment': 'payment.html',
       'pay': 'payment.html',
       'oplata': 'payment.html',
+      'friend': 'referral.html',
+      'referral': 'referral.html',
+      'invite': 'referral.html',
       'receipts': 'admin-receipts.html',
       'admin-receipts': 'admin-receipts.html',
       'cheki': 'admin-receipts.html',
