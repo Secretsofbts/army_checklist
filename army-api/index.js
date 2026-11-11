@@ -133,6 +133,73 @@ async function ensureMoyNalogAuth(api) {
   }
 }
 
+/** ISO с фиксированным +03:00 — на Render сервер в UTC, иначе в чеке не МСК. */
+function dateToMoscowISO(date) {
+  const value = new Date(date || Date.now());
+  if (Number.isNaN(value.getTime())) {
+    throw new TypeError('Некорректная дата');
+  }
+  const parts = new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/Moscow',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false
+  }).formatToParts(value);
+  const map = {};
+  parts.forEach(function (p) {
+    if (p.type !== 'literal') map[p.type] = p.value;
+  });
+  return (
+    map.year + '-' + map.month + '-' + map.day +
+    'T' + map.hour + ':' + map.minute + ':' + map.second +
+    '+03:00'
+  );
+}
+
+/** Как addIncome из moy-nalog, но время операции всегда по Москве. */
+async function moyNalogAddIncomeMoscow(api, params) {
+  params = params || {};
+  const name = String(params.name || '').trim();
+  const unit = Number(Number(params.amount).toFixed(2));
+  const count = Number(params.quantity) || 1;
+  if (!name || !Number.isFinite(unit) || !Number.isFinite(count)) {
+    throw new TypeError('bad-income-params');
+  }
+  const total = Number((unit * count).toFixed(2));
+  const opIso = dateToMoscowISO(params.date || new Date());
+  const reqIso = dateToMoscowISO(new Date());
+  const response = await api.call('income', {
+    paymentType: 'CASH',
+    ignoreMaxTotalIncomeRestriction: false,
+    client: {
+      contactPhone: null,
+      displayName: null,
+      incomeType: 'FROM_INDIVIDUAL',
+      inn: null
+    },
+    requestTime: reqIso,
+    operationTime: opIso,
+    services: [{ name: name, amount: unit, quantity: count }],
+    totalAmount: total.toFixed(2)
+  });
+  if (!response || !response.approvedReceiptUuid) {
+    return { error: response };
+  }
+  const id = String(response.approvedReceiptUuid);
+  const inn = String(api.INN || '');
+  const base = String(api.apiUrl || 'https://lknpd.nalog.ru/api/v1');
+  return {
+    id: id,
+    approvedReceiptUuid: id,
+    printUrl: base + '/receipt/' + inn + '/' + id + '/print',
+    jsonUrl: base + '/receipt/' + inn + '/' + id + '/json'
+  };
+}
+
 function promoEndsAtMs() {
   return PROMO_COUNTDOWN_START_AT + PROMO_DAYS * DAY_MS;
 }
@@ -1869,7 +1936,7 @@ async function issueMoyNalogReceiptForPayment(meta) {
   let receipt;
   try {
     await ensureMoyNalogAuth(api);
-    receipt = await api.addIncome({
+    receipt = await moyNalogAddIncomeMoscow(api, {
       name: serviceName,
       amount: amountRub,
       quantity: 1,
