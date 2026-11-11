@@ -196,6 +196,56 @@ function resolveYooKassaPlan(body, priceInfo) {
   };
 }
 
+/** Ожидаемая сумма за тариф (для сверки при выдаче дней). */
+function expectedAmountForPlan(days, forever, promo) {
+  if (forever) return FOREVER_PRICE_RUB;
+  if (promo) return PROMO_PRICE_RUB;
+  const d = parseInt(days, 10);
+  if (PLAN_PRICES[d] != null) return PLAN_PRICES[d];
+  return null;
+}
+
+/**
+ * Дни/forever по факту оплаты: сначала metadata, если сумма не сходится — по amountRub.
+ */
+function resolveGrantPlanFromPayment(meta, prev, amountRub) {
+  meta = meta || {};
+  prev = prev || {};
+  const amount = Math.round(Number(amountRub) || 0);
+  let forever = String(meta.forever || '') === '1' || prev.forever === true;
+  let promo = String(meta.promo || '') === '1' || prev.promo === true;
+  let days = forever ? 0 : Math.max(1, parseInt(meta.days != null ? meta.days : prev.days, 10) || 30);
+
+  const expected = expectedAmountForPlan(days, forever, promo);
+  if (expected != null && amount === expected) {
+    return { forever: forever, days: days, promo: promo };
+  }
+
+  // Сумма не совпала с заявленным тарифом — восстановить по сумме
+  console.error('yookassa plan/amount mismatch, resolve by amount', {
+    days: days,
+    forever: forever,
+    promo: promo,
+    amount: amount,
+    expected: expected
+  });
+  if (amount === FOREVER_PRICE_RUB) {
+    return { forever: true, days: 0, promo: false };
+  }
+  if (amount === PROMO_PRICE_RUB) {
+    return { forever: false, days: PROMO_ACCESS_DAYS, promo: true };
+  }
+  const keys = Object.keys(PLAN_PRICES);
+  for (let i = 0; i < keys.length; i++) {
+    const d = parseInt(keys[i], 10);
+    if (PLAN_PRICES[d] === amount) {
+      return { forever: false, days: d, promo: false };
+    }
+  }
+  // Не узнали сумму — оставляем metadata (лучше выдать дни, чем потерять оплату)
+  return { forever: forever, days: days, promo: promo };
+}
+
 if (!process.env.FIREBASE_SERVICE_ACCOUNT) {
   console.error('Нужна переменная FIREBASE_SERVICE_ACCOUNT (JSON ключа сервисного аккаунта)');
   process.exit(1);
@@ -1597,8 +1647,6 @@ async function processYooKassaSucceededPayment(payment, opts) {
 
   const meta = payment.metadata || {};
   const uid = String(meta.userId || prev.userId || '');
-  const forever = String(meta.forever || '') === '1' || prev.forever === true;
-  const days = forever ? 0 : Math.max(1, parseInt(meta.days || prev.days, 10) || 30);
   const amountRub = Math.round(Number((payment.amount && payment.amount.value) || meta.amountRub || prev.amountRub || 0));
   if (!uid) {
     await lockRef.update({ status: 'succeeded', error: 'no-user', at: Date.now() });
@@ -1609,6 +1657,11 @@ async function processYooKassaSucceededPayment(payment, opts) {
   if (prev.amountRub && Number(prev.amountRub) !== amountRub) {
     console.error('yookassa amount mismatch (continue)', paymentId, prev.amountRub, amountRub);
   }
+
+  // Дни строго по тарифу: metadata + сверка с оплаченной суммой
+  const planGrant = resolveGrantPlanFromPayment(meta, prev, amountRub);
+  const forever = !!planGrant.forever;
+  const days = forever ? 0 : planGrant.days;
 
   const granted = await grantPaidDaysFromYooKassa(uid, days, {
     paymentId: paymentId,
@@ -1622,6 +1675,7 @@ async function processYooKassaSucceededPayment(payment, opts) {
     userId: uid,
     days: days,
     forever: forever,
+    promo: !!planGrant.promo,
     amountRub: amountRub,
     granted: !granted.skipped
   });
