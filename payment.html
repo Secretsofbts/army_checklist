@@ -339,7 +339,7 @@
       if (showPromo) {
         var left = parseInt(info.promoDaysLeft, 10) || 0;
         var pPrice = Number(info.promoPriceRub) || 100;
-        if (promoBadge) promoBadge.textContent = left > 0 ? ('ещё ' + left + ' ' + pluralDays(left)) : 'акция';
+        if (promoBadge) promoBadge.textContent = left > 0 ? ('продлится ' + left + ' ' + pluralDays(left)) : 'акция';
         setBtn(promoBtn, liveKnown, live, 'Оплатить ' + pPrice + ' ₽');
       }
 
