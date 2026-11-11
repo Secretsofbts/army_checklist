@@ -346,6 +346,15 @@ registerUserIfNeeded();
     if (!(data && data.ok && data.trial)) return;
     if (data.forever || data.status === 'admin' || data.status === 'forever') return;
     try {
+      // Тест «как новый»: новый welcomeResetToken сбрасывает «уже видела окошко»
+      if (data.welcomeResetToken) {
+        const tokenKey = 'armyTrialWelcomeToken_' + ARMY_USER_ID;
+        const prevToken = localStorage.getItem(tokenKey);
+        if (prevToken !== String(data.welcomeResetToken)) {
+          localStorage.setItem(tokenKey, String(data.welcomeResetToken));
+          localStorage.removeItem(armyTrialWelcomeKey());
+        }
+      }
       if (localStorage.getItem(armyTrialWelcomeKey()) === '1') return;
     } catch (e) {}
     showTrialWelcome({

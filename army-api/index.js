@@ -20,7 +20,7 @@ const FOREVER_IDS = String(process.env.FOREVER_TELEGRAM_IDS || '163381553,591051
 // Тестовый аккаунт (2-я страница): режим превью.
 // legacy = как у всех старых; expired / days3 / new10 / paid1; off = как обычный.
 // Форс выключен — тест идёт по реальной подписке (после оплаты Stars и т.п.).
-const FORCE_TEST_MODE = 'off';
+const FORCE_TEST_MODE = 'new10';
 const FORCE_TEST_IDS = String(process.env.FORCE_TEST_IDS || '2055929706')
   .split(',')
   .map(function (s) { return s.trim(); })
@@ -632,7 +632,8 @@ function buildSubscriptionStatus(uid, data, isAdmin) {
       forever: false,
       expiresAt: expiresAt,
       trial: !!data.trial,
-      trialDays: trialDays
+      trialDays: trialDays,
+      welcomeResetToken: data.welcomeResetToken || null
     }, price);
   }
   return attachPricingFields({
@@ -641,7 +642,8 @@ function buildSubscriptionStatus(uid, data, isAdmin) {
     forever: false,
     expiresAt: expiresAt || null,
     trial: !!data.trial,
-    trialDays: trialDays
+    trialDays: trialDays,
+    welcomeResetToken: data.welcomeResetToken || null
   }, price);
 }
 
@@ -1222,8 +1224,14 @@ app.get('/subscription', async function (req, res) {
           trialDays: NEW_TRIAL_DAYS,
           forever: false,
           expiresAt: now + NEW_TRIAL_DAYS * DAY_MS,
-          createdAt: (prev && prev.createdAt) || now,
+          createdAt: now,
           updatedAt: now,
+          promoUsed: false,
+          promoUsedAt: null,
+          comebackUsed: false,
+          comebackGrantedAt: null,
+          lastVisitAt: null,
+          welcomeResetToken: String(now),
           note: note
         };
         await ref.set(entry);
@@ -4016,6 +4024,27 @@ async function applyForceTestAccountOnBoot() {
       console.log('Test account forced legacy trial (same as old users)', testId, new Date(expiresAt).toISOString());
       return;
     }
+    if (FORCE_TEST_MODE === 'new10') {
+      const expiresAt = now + NEW_TRIAL_DAYS * DAY_MS;
+      await subscriptionRef(testId).set({
+        active: true,
+        trial: true,
+        trialDays: NEW_TRIAL_DAYS,
+        forever: false,
+        expiresAt: expiresAt,
+        createdAt: now,
+        updatedAt: now,
+        promoUsed: false,
+        promoUsedAt: null,
+        comebackUsed: false,
+        comebackGrantedAt: null,
+        lastVisitAt: null,
+        welcomeResetToken: String(now),
+        note: 'force-new10-preview'
+      });
+      console.log('Test account forced new-user trial + welcome', testId, new Date(expiresAt).toISOString());
+      return;
+    }
     if (FORCE_TEST_MODE !== 'expired') return;
     await subscriptionRef(testId).set({
       active: false,
@@ -4243,12 +4272,14 @@ app.listen(PORT, function () {
   applyForceTestAccountOnBoot().catch(function (e) {
     console.error('force test account boot failed', e);
   });
-  // После force-boot: тестовый аккаунт «без дней» — окно оплаты
-  setTimeout(function () {
-    expireTestAccountForPaywallPreview().catch(function (e) {
-      console.error('test expired paywall preview failed', e);
-    });
-  }, 14000);
+  // Разово: paywall «без дней» — только если форс не new10/days3/paid1
+  if (FORCE_TEST_MODE === 'expired' || FORCE_TEST_MODE === 'off') {
+    setTimeout(function () {
+      expireTestAccountForPaywallPreview().catch(function (e) {
+        console.error('test expired paywall preview failed', e);
+      });
+    }, 14000);
+  }
   reconcileUserCount().catch(function (e) {
     console.error('user_count reconcile failed', e);
   });
