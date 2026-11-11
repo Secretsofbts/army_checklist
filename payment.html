@@ -127,13 +127,13 @@
     <h1>Оплата подписки</h1>
     <p class="lead">Выберите срок доступа к чек-листу</p>
 
-    <div class="notice" id="pay-notice">Оплата пока что настраивается</div>
+    <div class="notice" id="pay-notice" style="display:none;">Оплата пока что настраивается</div>
     <div class="notice" id="pay-success" style="display:none; background:#e3f7e9; color:#2e9e5b;">Если оплата прошла — доступ обновится в личном кабинете. Можно закрыть эту страницу и открыть чек-лист 💜</div>
 
     <div class="plan is-main" id="plan-30">
       <div class="plan-top">
         <div class="plan-title">30 дней</div>
-        <div class="plan-badge" id="promo-badge">акция</div>
+        <div class="plan-badge" id="promo-badge" style="display:none;">акция</div>
       </div>
       <div class="plan-price" id="price-30">
         <span>…</span>
@@ -141,7 +141,7 @@
       <p class="plan-once">разовая оплата</p>
       <p class="plan-note" id="promo-note"></p>
       <p class="plan-note" style="margin-bottom:10px;">Чек после оплаты придёт в этот чат с ботом</p>
-      <button type="button" class="plan-btn is-copy" id="pay-30-btn" disabled>Оплатить</button>
+      <button type="button" class="plan-btn is-copy" id="pay-30-btn" disabled>…</button>
       <p class="plan-note" id="pay-30-status" style="margin:8px 0 0;"></p>
     </div>
 
@@ -237,11 +237,17 @@
       var priceOld = Number(info.oldPriceRub) || 0;
       var promo = !!(info.promo && priceOld > priceNow);
       var live = !!info.paymentLive;
+      var liveKnown = !!info.liveKnown;
+      var pricingKnown = !!info.pricingKnown;
       var nextPriceHtml;
       var nextNote;
       var nextBadgeDisplay;
 
-      if (promo) {
+      if (!pricingKnown) {
+        nextPriceHtml = '<span>…</span>';
+        nextBadgeDisplay = 'none';
+        nextNote = '';
+      } else if (promo) {
         nextPriceHtml =
           '<span class="old">' + priceOld + ' ₽</span>' +
           '<span>' + priceNow + ' ₽</span>';
@@ -263,24 +269,35 @@
       if (note && note.textContent !== nextNote) note.textContent = nextNote;
 
       if (btn) {
-        if (live) {
+        if (!liveKnown) {
+          // Пока статус ЮKassa неизвестен — нейтрально, без «настраивается»
+          btn.disabled = true;
+          if (btn.textContent !== '…') btn.textContent = '…';
+          btn.className = 'plan-btn is-copy';
+        } else if (live) {
+          var payLabel = 'Оплатить ' + priceNow + ' ₽';
           btn.disabled = false;
-          btn.textContent = 'Оплатить ' + priceNow + ' ₽';
+          if (btn.textContent !== payLabel) btn.textContent = payLabel;
           btn.className = 'plan-btn is-copy';
         } else {
           btn.disabled = true;
-          btn.textContent = 'Оплата настраивается';
+          if (btn.textContent !== 'Оплата настраивается') btn.textContent = 'Оплата настраивается';
           btn.className = 'plan-btn';
         }
       }
-      if (notice) notice.style.display = live ? 'none' : '';
+      // Плашку «настраивается» только если сервер уже ответил, что оплаты нет
+      if (notice) notice.style.display = (liveKnown && !live) ? '' : 'none';
     }
 
     function loadPricing() {
-      // Цену рисуем только с сервера — иначе мигает 100→200 (локально не знаем promoUsed)
+      // Цену и live рисуем одним финальным кадром после обоих ответов — без мигания
       var api = String(window.ARMY_API_URL || '').replace(/\/$/, '');
       if (!api) {
-        paintPricing(localPricingInfo());
+        paintPricing(Object.assign({}, localPricingInfo(), {
+          paymentLive: false,
+          liveKnown: true,
+          pricingKnown: true
+        }));
         return;
       }
       var headers = {};
@@ -290,28 +307,45 @@
       } catch (e) {}
 
       var liveReady = false;
+      var liveFetched = false;
+      var subData = null;
+      var subFetched = false;
+
+      function tryPaintFinal() {
+        if (!liveFetched || !subFetched) return;
+        var info = (subData && typeof subData === 'object')
+          ? Object.assign({}, subData)
+          : localPricingInfo();
+        info.paymentLive = liveReady || !!info.paymentLive;
+        info.liveKnown = true;
+        info.pricingKnown = true;
+        paintPricing(info);
+      }
+
       fetch(api + '/payment/yookassa/status')
         .then(function (res) { return res.ok ? res.json() : null; })
         .then(function (st) {
           liveReady = !!(st && st.ready);
-          if (lastPayInfo) {
-            paintPricing(Object.assign({}, lastPayInfo, { paymentLive: liveReady || !!lastPayInfo.paymentLive }));
-          }
+          liveFetched = true;
+          tryPaintFinal();
         })
-        .catch(function () {});
+        .catch(function () {
+          liveReady = false;
+          liveFetched = true;
+          tryPaintFinal();
+        });
 
       fetch(api + '/subscription', { method: 'GET', headers: headers })
         .then(function (res) { return res.ok ? res.json() : null; })
         .then(function (data) {
-          if (data && typeof data === 'object') {
-            if (liveReady) data.paymentLive = true;
-            paintPricing(data);
-          } else {
-            paintPricing(Object.assign({}, localPricingInfo(), { paymentLive: liveReady }));
-          }
+          subData = data;
+          subFetched = true;
+          tryPaintFinal();
         })
         .catch(function () {
-          paintPricing(Object.assign({}, localPricingInfo(), { paymentLive: liveReady }));
+          subData = null;
+          subFetched = true;
+          tryPaintFinal();
         });
     }
 
