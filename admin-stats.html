@@ -93,34 +93,40 @@
             <thead>
               <tr>
                 <th>Период</th>
-                <th>Люди</th>
-                <th>Оплат</th>
+                <th>Карта</th>
+                <th>Stars</th>
+                <th>Всего</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td class="left">Сегодня</td>
-                <td class="num" id="pay-day-people">…</td>
+                <td class="num" id="pay-day-yookassa">…</td>
+                <td class="num" id="pay-day-starsPayments">…</td>
                 <td class="num" id="pay-day-payments">…</td>
               </tr>
               <tr>
                 <td class="left">7 дней</td>
-                <td class="num" id="pay-week-people">…</td>
+                <td class="num" id="pay-week-yookassa">…</td>
+                <td class="num" id="pay-week-starsPayments">…</td>
                 <td class="num" id="pay-week-payments">…</td>
               </tr>
               <tr>
                 <td class="left">30 дней</td>
-                <td class="num" id="pay-month-people">…</td>
+                <td class="num" id="pay-month-yookassa">…</td>
+                <td class="num" id="pay-month-starsPayments">…</td>
                 <td class="num" id="pay-month-payments">…</td>
               </tr>
               <tr class="total">
                 <td class="left">Всего</td>
-                <td class="num" id="pay-all-people">…</td>
+                <td class="num" id="pay-all-yookassa">…</td>
+                <td class="num" id="pay-all-starsPayments">…</td>
                 <td class="num" id="pay-all-payments">…</td>
               </tr>
             </tbody>
           </table>
         </div>
+        <p class="hint">«Карта» — только ЮKassa. Тестовые Stars в счёт не идут.</p>
       </div>
 
       <div class="block">
@@ -255,7 +261,8 @@
 
     function fillPeriodRow(prefix, bucket) {
       bucket = bucket || {};
-      setText(prefix + '-people', n(bucket.people));
+      setText(prefix + '-yookassa', n(bucket.yookassa));
+      setText(prefix + '-starsPayments', n(bucket.starsPayments));
       setText(prefix + '-payments', n(bucket.payments));
     }
 

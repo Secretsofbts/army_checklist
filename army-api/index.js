@@ -946,6 +946,8 @@ async function logPaymentEvent(ev) {
 function emptyPayBucket() {
   return {
     payments: 0,
+    yookassa: 0,
+    starsPayments: 0,
     people: 0,
     stars: 0,
     amountRub: 0,
@@ -955,13 +957,25 @@ function emptyPayBucket() {
   };
 }
 
+function isTestPayment(p) {
+  if (!p) return true;
+  if (p.test) return true;
+  const payload = String(p.payload || '');
+  const chargeId = String(p.chargeId || '');
+  if (payload.indexOf('stars_test:') === 0) return true;
+  if (chargeId.indexOf('simulate_') === 0) return true;
+  return false;
+}
+
 function addPayToBucket(bucket, p) {
-  if (!p || p.test) return;
+  if (!p || isTestPayment(p)) return;
   if (String(p.method) === 'manual') {
     bucket.manual += 1;
     return;
   }
   bucket.payments += 1;
+  if (String(p.method) === 'yookassa') bucket.yookassa += 1;
+  else if (String(p.method) === 'stars') bucket.starsPayments += 1;
   bucket.stars += Math.max(0, parseInt(p.stars, 10) || 0);
   bucket.amountRub += Math.max(0, Number(p.amountRub) || 0);
   const d = String(Math.max(0, parseInt(p.days, 10) || 0));
@@ -979,8 +993,11 @@ async function collectPaymentStats() {
 
   function pushPay(p) {
     if (!p || !p.userId) return;
-    const charge = p.chargeId ? ('c:' + p.chargeId) : null;
-    const fallback = 'u:' + p.userId + ':' + p.at + ':' + p.method + ':' + p.days;
+    if (isTestPayment(p)) return;
+    const method = String(p.method || 'unknown');
+    // Карты: один платёж ЮKassa = один chargeId, без дублей от webhook/sync
+    const charge = p.chargeId ? ('c:' + method + ':' + p.chargeId) : null;
+    const fallback = 'u:' + p.userId + ':' + p.at + ':' + method + ':' + p.days;
     const key = charge || fallback;
     if (seen[key]) return;
     seen[key] = true;
@@ -990,7 +1007,36 @@ async function collectPaymentStats() {
   const paySnap = await db.ref('payments').get();
   if (paySnap.exists()) {
     const all = paySnap.val() || {};
-    Object.keys(all).forEach(function (k) { pushPay(all[k]); });
+    Object.keys(all).forEach(function (k) {
+      const row = all[k];
+      // Карты считаем только из yookassa_payments — иначе дубли от webhook/sync
+      if (row && String(row.method) === 'yookassa') return;
+      pushPay(row);
+    });
+  }
+
+  // ЮKassa: источник правды по картам
+  const ykSnap = await db.ref('yookassa_payments').get();
+  if (ykSnap.exists()) {
+    const all = ykSnap.val() || {};
+    Object.keys(all).forEach(function (paymentId) {
+      const row = all[paymentId] || {};
+      if (!(row.processed && row.granted === true)) return;
+      const at = typeof row.processedAt === 'number'
+        ? row.processedAt
+        : (typeof row.createdAt === 'number' ? row.createdAt : 0);
+      pushPay({
+        at: at,
+        userId: row.userId,
+        method: 'yookassa',
+        days: row.days || 30,
+        stars: 0,
+        amountRub: row.amountRub || 0,
+        chargeId: paymentId,
+        payload: 'yookassa:' + paymentId,
+        test: false
+      });
+    });
   }
 
   // Старые оплаты Stars, пока писался только lastStarsPayment
@@ -1025,7 +1071,7 @@ async function collectPaymentStats() {
   const peopleAll = {};
 
   list.forEach(function (p) {
-    if (!p || p.test) return;
+    if (!p || isTestPayment(p)) return;
     const at = typeof p.at === 'number' ? p.at : 0;
     addPayToBucket(allTime, p);
     if (String(p.method) !== 'manual') peopleAll[p.userId] = true;
