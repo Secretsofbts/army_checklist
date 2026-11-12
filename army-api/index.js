@@ -2959,6 +2959,7 @@ const EXPIRED_REMIND_TEXT =
   'Мы будем ждать вашего возвращения и оберегать все поставленные галочки\n\n' +
   'Продлить количество дней всегда можно <a href="' + PAYMENT_LINK + '">в приложении</a> 💜';
 const PAID_THANKS_PHOTO = path.join(__dirname, 'sub-extended.jpg');
+const FOREVER_THANKS_PHOTO = path.join(__dirname, 'forever-thanks.jpg');
 const ONEDAY_REMIND_PHOTO = path.join(__dirname, 'oneday-remind.jpg');
 const EXPIRED_REMIND_PHOTO = path.join(__dirname, 'expired-remind.jpg');
 const REFERRAL_INVITE_PHOTO = path.join(__dirname, 'referral-invite.jpg');
@@ -2966,6 +2967,10 @@ const REFERRAL_NOT_NEW_PHOTO = path.join(__dirname, 'referral-not-new.jpg');
 const REFERRAL_BONUS_REFERRER_PHOTO = path.join(__dirname, 'referral-bonus-referrer.jpg');
 const REFERRAL_BONUS_FRIEND_PHOTO = path.join(__dirname, 'referral-bonus-friend.jpg');
 const REFERRAL_SELF_PHOTO = path.join(__dirname, 'referral-self.jpg');
+const FOREVER_THANKS_TEXT =
+  'Ничего себе!!! Не думала, что кто-то правда оформит крейзи подписку 👀\n\n' +
+  'Теперь у вас бесконечный доступ 💜\n\n' +
+  'Спасибо, что поддерживаете данный проект и архив 🫶';
 const REFERRAL_SELF_TEXT = 'Хитрюжка, на себя нельзя 😁';
 const REFERRAL_INVITE_TEXT =
   'Ваш друг пригласил вас в чек-лист по архиву BTS 🥰\n\n' +
@@ -2993,12 +2998,14 @@ function escapeHtmlTg(s) {
     .replace(/>/g, '&gt;');
 }
 
+function isForeverThanksDays(days) {
+  return days === 'forever' || days === 0 || days === '0';
+}
+
 function paidThanksCaption(days, receiptUrl) {
   let text;
-  if (days === 'forever' || days === 0 || days === '0') {
-    text =
-      'Подписка успешно оплачена — доступ бессрочный ☺️\n\n' +
-      'Спасибо, что поддерживаете данный проект и архив 🫶';
+  if (isForeverThanksDays(days)) {
+    text = FOREVER_THANKS_TEXT;
   } else {
     const n = Math.max(1, parseInt(days, 10) || 30);
     text =
@@ -3531,10 +3538,17 @@ async function telegramSendPhoto(chatId, caption, photoPath, opts) {
 
 async function sendPaidThanksToUser(uid, days, receiptUrl) {
   const hasLink = !!String(receiptUrl || '').trim();
+  const forever = isForeverThanksDays(days);
   const caption = paidThanksCaption(days, receiptUrl);
+  const photo = forever ? FOREVER_THANKS_PHOTO : PAID_THANKS_PHOTO;
   try {
-    await telegramSendPhoto(uid, caption, PAID_THANKS_PHOTO, hasLink ? { parseMode: 'HTML' } : null);
-    return { sent: true, days: Math.max(1, parseInt(days, 10) || 30), withReceipt: hasLink };
+    await telegramSendPhoto(uid, caption, photo, hasLink ? { parseMode: 'HTML' } : null);
+    return {
+      sent: true,
+      days: forever ? 'forever' : Math.max(1, parseInt(days, 10) || 30),
+      forever: forever,
+      withReceipt: hasLink
+    };
   } catch (e) {
     return { sent: false, reason: 'telegram', error: String(e.message || e) };
   }
@@ -4500,6 +4514,25 @@ async function sendExpiredRemindPreviewToTest() {
   }
 }
 
+/** Разово: превью уведомления об оплате бессрока — только тестовый. */
+async function sendForeverThanksPreviewToTest() {
+  const metaRef = db.ref('bot_meta/foreverThanksPreviewV1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('forever thanks preview already sent', metaSnap.val());
+    return;
+  }
+  const testId = FORCE_TEST_IDS[0] || '2055929706';
+  try {
+    const thanks = await sendPaidThanksToUser(testId, 'forever', null);
+    if (!thanks.sent) throw new Error(thanks.error || thanks.reason || 'not-sent');
+    await metaRef.set({ at: Date.now(), to: testId });
+    console.log('forever thanks preview sent to', testId);
+  } catch (e) {
+    console.error('forever thanks preview failed', e);
+  }
+}
+
 /** Разово: на тесте показать paywall «дни закончились». */
 async function expireTestAccountForPaywallPreview() {
   const metaRef = db.ref('bot_meta/testExpiredPaywallPreviewV1');
@@ -4614,6 +4647,12 @@ app.listen(PORT, function () {
   extendTrialsPlusOneDayPaymentPending().catch(function (e) {
     console.error('trial +1 day payment pending failed', e);
   });
+  // Разово: превью бессрочного «спасибо за оплату» — только тестовый
+  setTimeout(function () {
+    sendForeverThanksPreviewToTest().catch(function (e) {
+      console.error('forever thanks preview failed', e);
+    });
+  }, 5500);
   // Разово: превью текстов напоминаний на тестовый
   setTimeout(function () {
     sendOnedayRemindPreviewToTest().catch(function (e) {
