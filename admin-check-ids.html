@@ -42,12 +42,12 @@
     <a class="back" href="admin-receipts.html?v=5">← К чекам</a>
     <a class="back" href="admin-stats.html?v=1" style="margin-left:8px;">Статистика</a>
     <h1>Проверка id</h1>
-    <p class="lead">Смотрит подписку и оплаты ЮKassa в той же базе, что API. Поиск Firebase эти номера часто не находит.</p>
+    <p class="lead">Смотрит подписку и оплаты ЮKassa и Stars. Поиск Firebase эти номера часто не находит.</p>
     <div class="form">
-      <input id="ids-input" type="text" value="1733095623, 5046274275" placeholder="id через запятую">
+      <input id="ids-input" type="text" value="" placeholder="id через запятую">
       <button type="button" id="check-btn">Проверить</button>
     </div>
-    <p class="status" id="page-status">Загрузка…</p>
+    <p class="status" id="page-status"></p>
     <div id="list"></div>
   </div>
 
@@ -97,16 +97,31 @@
         }
         var payHtml;
         if (!u.paymentsCount) {
-          payHtml = '<p class="meta bad">в yookassa_payments этого userId нет</p>';
+          payHtml = '<p class="meta">в ЮKassa этого userId нет</p>';
         } else {
           payHtml = '<p class="meta">оплат ЮKassa: ' + u.paymentsCount + '</p>' +
             (u.payments || []).slice(0, 5).map(function (p) {
               return (
                 '<p class="meta">' +
                 (p.amountRub || 0) + ' ₽ · ' +
-                (p.forever ? 'forever' : ('days=' + p.days)) +
+                (p.forever ? 'бессрочно' : ('days=' + p.days)) +
                 (p.granted ? ' · granted' : '') +
                 '<br><span style="color:#9a8fb0;">' + String(p.paymentId || '').slice(0, 18) + '…</span>' +
+                '</p>'
+              );
+            }).join('');
+        }
+        var starsHtml;
+        if (!u.starsPaymentsCount) {
+          starsHtml = '<p class="meta">оплат Stars нет</p>';
+        } else {
+          starsHtml = '<p class="meta">оплат Stars: ' + u.starsPaymentsCount + '</p>' +
+            (u.starsPayments || []).slice(0, 5).map(function (p) {
+              return (
+                '<p class="meta">' +
+                (p.stars || 0) + ' ⭐ · ' +
+                (p.forever ? 'бессрочно' : ('days=' + p.days)) +
+                (p.test ? ' · тест' : '') +
                 '</p>'
               );
             }).join('');
@@ -116,6 +131,7 @@
             '<p class="id">' + u.userId + '</p>' +
             subHtml +
             payHtml +
+            starsHtml +
           '</div>'
         );
       }).join('');
@@ -167,7 +183,6 @@
     }
 
     document.getElementById('check-btn').addEventListener('click', runCheck);
-    runCheck();
   </script>
 </body>
 </html>

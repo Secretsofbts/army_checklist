@@ -1760,6 +1760,8 @@ app.get('/admin/check-access', async function (req, res) {
   try {
     const paySnap = await db.ref('yookassa_payments').get();
     const allPay = paySnap.exists() ? (paySnap.val() || {}) : {};
+    const eventsSnap = await db.ref('payments').get();
+    const allEvents = eventsSnap.exists() ? (eventsSnap.val() || {}) : {};
     const users = [];
     for (let i = 0; i < ids.length; i++) {
       const uid = ids[i];
@@ -1776,7 +1778,7 @@ app.get('/admin/check-access', async function (req, res) {
           paymentId: pid,
           amountRub: row.amountRub || 0,
           days: row.days != null ? row.days : null,
-          forever: row.forever === true,
+          forever: row.forever === true || Number(row.amountRub) === FOREVER_PRICE_RUB,
           processed: !!row.processed,
           granted: row.granted === true,
           status: row.status || null,
@@ -1786,6 +1788,49 @@ app.get('/admin/check-access', async function (req, res) {
       });
       payments.sort(function (a, b) {
         return (b.processedAt || b.createdAt || 0) - (a.processedAt || a.createdAt || 0);
+      });
+      const starsPayments = [];
+      const seenStars = {};
+      Object.keys(allEvents).forEach(function (k) {
+        const row = allEvents[k] || {};
+        if (String(row.userId || '') !== uid) return;
+        if (String(row.method) !== 'stars') return;
+        const chargeId = row.chargeId ? String(row.chargeId) : k;
+        if (seenStars[chargeId]) return;
+        seenStars[chargeId] = true;
+        const payload = String(row.payload || '');
+        const foreverStars = row.forever === true ||
+          payload.toLowerCase().indexOf('forever') !== -1 ||
+          Number(row.stars) === STARS_FOREVER;
+        starsPayments.push({
+          chargeId: chargeId,
+          stars: row.stars || 0,
+          days: foreverStars ? 0 : (row.days != null ? row.days : null),
+          forever: foreverStars,
+          test: !!row.test || payload.indexOf('stars_test:') === 0,
+          at: row.at || 0
+        });
+      });
+      const lastStars = sub && sub.lastStarsPayment;
+      if (lastStars && typeof lastStars.at === 'number') {
+        const lastCharge = lastStars.chargeId ? String(lastStars.chargeId) : ('last:' + lastStars.at);
+        if (!seenStars[lastCharge] && !seenStars['last:' + lastStars.at]) {
+          const payload = String(lastStars.payload || '');
+          const foreverStars = lastStars.forever === true ||
+            payload.toLowerCase().indexOf('forever') !== -1 ||
+            Number(lastStars.stars) === STARS_FOREVER;
+          starsPayments.push({
+            chargeId: lastCharge,
+            stars: lastStars.stars || 0,
+            days: foreverStars ? 0 : (lastStars.days != null ? lastStars.days : null),
+            forever: foreverStars,
+            test: payload.indexOf('stars_test:') === 0,
+            at: lastStars.at
+          });
+        }
+      }
+      starsPayments.sort(function (a, b) {
+        return (b.at || 0) - (a.at || 0);
       });
       users.push({
         userId: uid,
@@ -1799,7 +1844,9 @@ app.get('/admin/check-access', async function (req, res) {
         lastCardPayment: sub && sub.lastCardPayment ? sub.lastCardPayment : null,
         lastStarsPayment: sub && sub.lastStarsPayment ? sub.lastStarsPayment : null,
         payments: payments,
-        paymentsCount: payments.length
+        paymentsCount: payments.length,
+        starsPayments: starsPayments,
+        starsPaymentsCount: starsPayments.length
       });
     }
     return res.json({ ok: true, users: users });
