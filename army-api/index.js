@@ -1348,11 +1348,13 @@ async function logPaymentEvent(ev) {
   const at = typeof ev.at === 'number' ? ev.at : Date.now();
   const userId = String(ev.userId || '').trim();
   if (!userId) return;
+  const forever = !!ev.forever || String(ev.payload || '').toLowerCase().indexOf('forever') !== -1;
   const row = {
     at: at,
     userId: userId,
     method: String(ev.method || 'unknown'),
-    days: Math.max(0, parseInt(ev.days, 10) || 0),
+    days: forever ? 0 : Math.max(0, parseInt(ev.days, 10) || 0),
+    forever: forever,
     stars: Math.max(0, parseInt(ev.stars, 10) || 0),
     amountRub: Math.max(0, Number(ev.amountRub) || 0),
     chargeId: ev.chargeId ? String(ev.chargeId) : null,
@@ -1452,15 +1454,18 @@ async function collectPaymentStats() {
       const at = typeof row.processedAt === 'number'
         ? row.processedAt
         : (typeof row.createdAt === 'number' ? row.createdAt : 0);
+      // Важно: days:0 нельзя делать через `row.days || 30` — бессрок превращался в «30 дн.»
+      const foreverYk = row.forever === true || Number(row.amountRub) === FOREVER_PRICE_RUB;
       pushPay({
         at: at,
         userId: row.userId,
         method: 'yookassa',
-        days: row.days || 30,
+        days: foreverYk ? 0 : (Number(row.days) > 0 ? Number(row.days) : 30),
+        forever: foreverYk,
         stars: 0,
         amountRub: row.amountRub || 0,
         chargeId: paymentId,
-        payload: 'yookassa:' + paymentId,
+        payload: foreverYk ? ('yookassa:forever:' + paymentId) : ('yookassa:' + paymentId),
         test: false
       });
     });
@@ -1474,11 +1479,15 @@ async function collectPaymentStats() {
       const last = all[uid] && all[uid].lastStarsPayment;
       if (!last || typeof last.at !== 'number') return;
       const payload = String(last.payload || '');
+      const foreverStars = last.forever === true ||
+        payload.toLowerCase().indexOf('forever') !== -1 ||
+        Number(last.stars) === STARS_FOREVER;
       pushPay({
         at: last.at,
         userId: uid,
         method: 'stars',
-        days: last.days || 0,
+        days: foreverStars ? 0 : (last.days || 0),
+        forever: foreverStars,
         stars: last.stars || 0,
         amountRub: 0,
         chargeId: last.chargeId || null,
