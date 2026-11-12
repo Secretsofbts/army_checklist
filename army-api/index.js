@@ -1402,8 +1402,11 @@ function addPayToBucket(bucket, p) {
   else if (String(p.method) === 'stars') bucket.starsPayments += 1;
   bucket.stars += Math.max(0, parseInt(p.stars, 10) || 0);
   bucket.amountRub += Math.max(0, Number(p.amountRub) || 0);
-  const d = String(Math.max(0, parseInt(p.days, 10) || 0));
-  if (d !== '0') bucket.byDays[d] = (bucket.byDays[d] || 0) + 1;
+  const foreverPay = String(p.payload || '').indexOf('forever') !== -1 ||
+    p.forever === true ||
+    (parseInt(p.days, 10) || 0) <= 0;
+  const d = foreverPay ? 'forever' : String(Math.max(1, parseInt(p.days, 10) || 30));
+  bucket.byDays[d] = (bucket.byDays[d] || 0) + 1;
 }
 
 async function collectPaymentStats() {
@@ -1563,6 +1566,15 @@ async function collectSubscriptionStats() {
   let paid = 0;
   let forever = 0;
   let expired = 0;
+  // Активные оплаченные по сроку тарифа (сейчас)
+  const byTariff = {
+    '30': 0,
+    '60': 0,
+    '90': 0,
+    '180': 0,
+    forever: 0,
+    other: 0
+  };
 
   const foreverSet = {};
   ADMIN_IDS.concat(FOREVER_IDS).forEach(function (id) {
@@ -1578,11 +1590,18 @@ async function collectSubscriptionStats() {
     // В списке бессрочных / админ — всегда «бессрочно», даже если в базе ещё старый trial
     if (d.forever || foreverSet[uid]) {
       forever += 1;
+      byTariff.forever += 1;
       return;
     }
     if (typeof d.expiresAt === 'number' && d.expiresAt > now) {
-      if (d.trial) trial += 1;
-      else paid += 1;
+      if (d.trial) {
+        trial += 1;
+        return;
+      }
+      paid += 1;
+      const days = Math.max(0, parseInt(d.paidDays, 10) || 0);
+      if (byTariff[String(days)] != null) byTariff[String(days)] += 1;
+      else byTariff.other += 1;
       return;
     }
     expired += 1;
@@ -1592,6 +1611,7 @@ async function collectSubscriptionStats() {
     if (counted[id]) return;
     counted[id] = true;
     forever += 1;
+    byTariff.forever += 1;
   });
 
   return {
@@ -1600,7 +1620,8 @@ async function collectSubscriptionStats() {
     trial: trial,
     paid: paid,
     forever: forever,
-    expired: expired
+    expired: expired,
+    byTariff: byTariff
   };
 }
 

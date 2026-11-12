@@ -203,7 +203,25 @@
       </div>
 
       <div class="block">
-        <h2>Тарифы (всё время)</h2>
+        <h2>Тарифы сейчас (активные)</h2>
+        <div class="table-wrap">
+          <table class="stats">
+            <thead>
+              <tr>
+                <th>Срок</th>
+                <th>Людей</th>
+              </tr>
+            </thead>
+            <tbody id="tariff-active-body">
+              <tr><td class="left" colspan="2">…</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="hint">Только оплатившие с доступом сейчас (без пробного).</p>
+      </div>
+
+      <div class="block">
+        <h2>Тарифы по оплатам (всё время)</h2>
         <div class="table-wrap">
           <table class="stats">
             <thead>
@@ -217,11 +235,11 @@
             </tbody>
           </table>
         </div>
-        <p class="hint" id="tariff-hint"></p>
+        <p class="hint" id="tariff-hint">Сколько раз покупали каждый срок.</p>
       </div>
 
       <a class="btn" href="admin-receipts.html?v=1">Чеки по оплатам →</a>
-      <a class="btn secondary" href="payment.html?v=41">Страница оплаты</a>
+      <a class="btn secondary" href="payment.html?v=42">Страница оплаты</a>
     </div>
     <div id="denied" class="denied" style="display:none;">Эта страница только для администратора.</div>
   </div>
@@ -277,28 +295,41 @@
       setText(prefix + '-manual', n(bucket.manual));
     }
 
-    function paintTariffs(byDays) {
-      byDays = byDays || {};
-      var body = document.getElementById('tariff-body');
-      var hint = document.getElementById('tariff-hint');
+    function tariffLabel(key) {
+      if (key === 'forever') return 'Бессрочно';
+      if (key === 'other') return 'Другое';
+      return key + ' дн.';
+    }
+
+    function paintTariffTable(bodyId, source, emptyText) {
+      var body = document.getElementById(bodyId);
       if (!body) return;
-      var keys = Object.keys(byDays).sort(function (a, b) {
-        return (parseInt(a, 10) || 0) - (parseInt(b, 10) || 0);
+      source = source || {};
+      var order = ['30', '60', '90', '180', 'forever'];
+      var keys = order.slice();
+      Object.keys(source).forEach(function (k) {
+        if (keys.indexOf(k) === -1 && n(source[k]) > 0) keys.push(k);
       });
-      if (!keys.length) {
-        body.innerHTML = '<tr><td class="left" colspan="2">пока нет</td></tr>';
-        if (hint) hint.textContent = '';
-        return;
-      }
-      body.innerHTML = keys.map(function (k) {
+      var rows = keys.map(function (k) {
         return (
           '<tr>' +
-            '<td class="left">' + k + ' дн.</td>' +
-            '<td class="num">' + n(byDays[k]) + '</td>' +
+            '<td class="left">' + tariffLabel(k) + '</td>' +
+            '<td class="num">' + n(source[k]) + '</td>' +
           '</tr>'
         );
-      }).join('');
-      if (hint) hint.textContent = '';
+      });
+      var hasAny = keys.some(function (k) { return n(source[k]) > 0; });
+      body.innerHTML = hasAny
+        ? rows.join('')
+        : ('<tr><td class="left" colspan="2">' + (emptyText || 'пока нет') + '</td></tr>');
+    }
+
+    function paintTariffs(byDays) {
+      paintTariffTable('tariff-body', byDays, 'пока нет оплат');
+    }
+
+    function paintActiveTariffs(byTariff) {
+      paintTariffTable('tariff-active-body', byTariff, 'пока нет');
     }
 
     function loadAll() {
@@ -340,6 +371,7 @@
             setText('sub-forever', n(subData.forever));
             setText('sub-expired', n(subData.expired));
             setText('sub-registered', subData.registered != null ? n(subData.registered) : '—');
+            paintActiveTariffs(subData.byTariff);
           }
           if (payData) {
             var day = payData.day || {};
