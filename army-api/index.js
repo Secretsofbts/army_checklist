@@ -1897,6 +1897,19 @@ async function lookupTelegramChat(uid) {
 
 async function collectPaidPayers() {
   const byUser = {};
+  const seen = {};
+
+  function pushOnce(uid, extra) {
+    extra = extra || {};
+    const method = String(extra.method || 'unknown');
+    const charge = extra.chargeId ? ('c:' + method + ':' + extra.chargeId) : null;
+    const fallback = 'u:' + String(uid || '') + ':' + (extra.at || 0) + ':' + method + ':' +
+      (extra.stars || 0) + ':' + (extra.amountRub || 0);
+    const key = charge || fallback;
+    if (seen[key]) return;
+    seen[key] = true;
+    addPayerRow(byUser, uid, extra);
+  }
 
   const ykSnap = await db.ref('yookassa_payments').get();
   if (ykSnap.exists()) {
@@ -1905,11 +1918,12 @@ async function collectPaidPayers() {
       const row = all[pid] || {};
       if (!(row.processed && row.granted === true)) return;
       const forever = row.forever === true || Number(row.amountRub) === FOREVER_PRICE_RUB;
-      addPayerRow(byUser, row.userId, {
+      pushOnce(row.userId, {
         at: row.processedAt || row.createdAt || 0,
         method: 'yookassa',
         amountRub: row.amountRub || 0,
-        forever: forever
+        forever: forever,
+        chargeId: pid
       });
     });
   }
@@ -1922,12 +1936,13 @@ async function collectPaidPayers() {
       if (isTestPayment(row)) return;
       if (String(row.method) === 'manual') return;
       if (String(row.method) === 'yookassa') return;
-      addPayerRow(byUser, row.userId, {
+      pushOnce(row.userId, {
         at: row.at || 0,
         method: row.method,
         amountRub: row.amountRub || 0,
         stars: row.stars || 0,
-        forever: !!row.forever
+        forever: !!row.forever,
+        chargeId: row.chargeId || null
       });
     });
   }
@@ -1942,11 +1957,13 @@ async function collectPaidPayers() {
     const foreverStars = last.forever === true ||
       payload.toLowerCase().indexOf('forever') !== -1 ||
       Number(last.stars) === STARS_FOREVER;
-    addPayerRow(byUser, uid, {
+    // Только если этой оплаты ещё нет в payments (иначе 250 ⭐ превращались в 500)
+    pushOnce(uid, {
       at: last.at,
       method: 'stars',
       stars: last.stars || 0,
-      forever: foreverStars
+      forever: foreverStars,
+      chargeId: last.chargeId || null
     });
   });
 
