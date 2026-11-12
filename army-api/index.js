@@ -4641,6 +4641,96 @@ async function backfillForeverUsersRegistryOnce() {
   console.log('forever users registry backfill done', results);
 }
 
+/**
+ * Разово: принудительно создать subscriptions/... с forever у двух оплативших.
+ * Если папки нет — доступа в приложении тоже нет, даже если в чеках «бессрочно».
+ */
+async function forceForeverSubscriptionsForPaidUsersOnce() {
+  const metaRef = db.ref('bot_meta/foreverForceSubscriptionsV1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('forever force subscriptions already done', metaSnap.val());
+    return;
+  }
+  const ids = ['1733095623', '5046274275'];
+  const results = [];
+  const now = Date.now();
+  for (let i = 0; i < ids.length; i++) {
+    const uid = ids[i];
+    try {
+      try {
+        await ensureUserRegistered(uid);
+      } catch (regErr) {
+        console.error('force forever register failed', uid, regErr);
+      }
+      const ref = subscriptionRef(uid);
+      const snap = await ref.get();
+      const prev = snap.exists() ? (snap.val() || {}) : {};
+      if (prev.forever === true) {
+        results.push({ userId: uid, ok: true, skipped: true, reason: 'already-forever' });
+        continue;
+      }
+      // Берём сумму/paymentId из yookassa, если есть
+      let amountRub = FOREVER_PRICE_RUB;
+      let paymentId = null;
+      try {
+        const paySnap = await db.ref('yookassa_payments').get();
+        const all = paySnap.exists() ? (paySnap.val() || {}) : {};
+        Object.keys(all).forEach(function (pid) {
+          const row = all[pid] || {};
+          if (String(row.userId || '') !== uid) return;
+          if (!(row.processed && row.granted === true)) return;
+          paymentId = pid;
+          if (Number(row.amountRub) > 0) amountRub = Number(row.amountRub);
+        });
+      } catch (payErr) {
+        console.error('force forever payment lookup failed', uid, payErr);
+      }
+      const granted = await grantPaidDaysFromYooKassa(uid, 0, {
+        paymentId: paymentId,
+        amountRub: amountRub || FOREVER_PRICE_RUB,
+        forever: true
+      });
+      // На всякий случай ещё раз явно forever (если grant skipped по другой причине)
+      const after = await ref.get();
+      const afterVal = after.exists() ? (after.val() || {}) : {};
+      if (afterVal.forever !== true) {
+        await ref.set({
+          active: true,
+          trial: false,
+          forever: true,
+          expiresAt: null,
+          paidDays: null,
+          createdAt: afterVal.createdAt || prev.createdAt || now,
+          updatedAt: now,
+          note: 'yookassa-forever-force',
+          promoUsed: true,
+          promoUsedAt: afterVal.promoUsedAt || prev.promoUsedAt || now,
+          lastCardPayment: afterVal.lastCardPayment || prev.lastCardPayment || {
+            at: now,
+            days: 0,
+            forever: true,
+            amountRub: amountRub || FOREVER_PRICE_RUB,
+            paymentId: paymentId
+          }
+        });
+      }
+      results.push({
+        userId: uid,
+        ok: true,
+        paymentId: paymentId,
+        grant: granted,
+        path: 'subscriptions/' + uid
+      });
+    } catch (e) {
+      results.push({ userId: uid, ok: false, error: String((e && e.message) || e) });
+      console.error('force forever subscription failed', uid, e);
+    }
+  }
+  await metaRef.set({ at: Date.now(), results: results });
+  console.log('forever force subscriptions done', results);
+}
+
 /** Разово: на тесте показать paywall «дни закончились». */
 async function expireTestAccountForPaywallPreview() {
   const metaRef = db.ref('bot_meta/testExpiredPaywallPreviewV1');
@@ -4773,6 +4863,12 @@ app.listen(PORT, function () {
       console.error('forever registry backfill failed', e);
     });
   }, 6500);
+  // Разово: если subscriptions нет — принудительно forever этим двоим
+  setTimeout(function () {
+    forceForeverSubscriptionsForPaidUsersOnce().catch(function (e) {
+      console.error('forever force subscriptions failed', e);
+    });
+  }, 7000);
   // Разово: превью текстов напоминаний на тестовый
   setTimeout(function () {
     sendOnedayRemindPreviewToTest().catch(function (e) {
