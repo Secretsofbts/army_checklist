@@ -85,10 +85,7 @@
     <h1>Чеки по оплатам</h1>
     <p class="status" id="page-status">Загрузка…</p>
     <p class="status" id="nalog-status" style="margin-top:-6px;"></p>
-    <div id="lookup-box" class="table-wrap" style="display:none; margin-bottom:14px;">
-      <p class="meta" style="padding:10px 10px 0; margin:0; font-weight:700; color:#2b2440;">Проверка id из чеков</p>
-      <div id="lookup-body" style="padding:8px 10px 12px; font-size:12px; color:#555; line-height:1.45;"></div>
-    </div>
+    <p class="meta" style="margin:0 0 12px;"><a href="admin-check-ids.html?v=1" style="color:#7b5fb3;">Проверка id →</a></p>
     <div class="table-wrap" id="summary-wrap" style="display:none;">
       <table class="stats">
         <tbody>
@@ -335,43 +332,6 @@
         });
     }
 
-    // Эти id не «папка» в корне — userId внутри yookassa_payments / subscriptions
-    function loadIdLookup() {
-      var api = apiBase();
-      var box = document.getElementById('lookup-box');
-      var body = document.getElementById('lookup-body');
-      if (!api || !box || !body) return;
-      var ids = '1733095623,5046274275';
-      fetch(api + '/admin/check-access?ids=' + encodeURIComponent(ids), {
-        method: 'GET',
-        headers: initHeaders()
-      })
-        .then(function (res) { return res.ok ? res.json() : null; })
-        .then(function (data) {
-          if (!data || !data.users) {
-            box.style.display = 'none';
-            return;
-          }
-          body.innerHTML = data.users.map(function (u) {
-            var subLine = u.subscriptionExists
-              ? ('подписка есть' + (u.forever ? ', бессрочно' : (u.paidDays ? ', ' + u.paidDays + ' дн.' : '')))
-              : 'подписки нет (subscriptions/' + u.userId + ' пусто)';
-            var payLine = u.paymentsCount
-              ? ('оплат ЮKassa: ' + u.paymentsCount +
-                (u.payments && u.payments[0]
-                  ? (' · последняя ' + (u.payments[0].amountRub || 0) + ' ₽' +
-                    (u.payments[0].forever ? ' forever' : (' days=' + u.payments[0].days)))
-                  : ''))
-              : 'в yookassa_payments этого userId нет';
-            return '<p style="margin:0 0 8px;"><b>' + u.userId + '</b><br>' + subLine + '<br>' + payLine + '</p>';
-          }).join('');
-          box.style.display = '';
-        })
-        .catch(function () {
-          box.style.display = 'none';
-        });
-    }
-
     function loadPayments() {
       var api = apiBase();
       var statusEl = document.getElementById('page-status');
@@ -394,7 +354,6 @@
           }
           if (filters) filters.style.display = 'flex';
           loadNalogStatus();
-          loadIdLookup();
           return fetch(api + '/admin/yookassa-recent?limit=50', {
             method: 'GET',
             headers: initHeaders()
