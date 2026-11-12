@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=152"></script>
+  <script src="sync.js?v=153"></script>
   <title>Личный кабинет</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -306,15 +306,6 @@
     </div>
 
        <div id="stats-content"><p class="empty-note">Загрузка...</p></div>
-
-    <p class="section-title">Активность отметок</p>
-    <div id="check-heatmap"></div>
-
-    <p class="section-title sections-toggle" id="sections-toggle">
-      <span class="sections-toggle-arrow" id="sections-toggle-arrow">▶</span>
-      <span>Прогресс по разделам (в разработке, пока не смотрите)</span>
-    </p>
-    <div id="sections-progress" class="is-collapsed"></div>
   </div>
 
   <script>
@@ -361,8 +352,6 @@
             function loadStats() {
       const afterCloud = () => {
         renderStats();
-        renderCheckHeatmap();
-        renderSectionsProgress();
       };
       fetch('checkbox-ids.json?v=32')
         .then((res) => res.json())
@@ -439,12 +428,6 @@
             dateCard.innerHTML = '<div class="stat-number" style="font-size:16px;">' + dateStr + '</div><div class="stat-label">Вы с нами уже ' + daysSince + ' ' + pluralDays(daysSince) + '</div>';
             contentEl.appendChild(dateCard);
           }
-
-                    const totalChecked = countTotalChecked();
-          const checkedCard = document.createElement('div');
-          checkedCard.className = 'stat-card';
-          checkedCard.innerHTML = '<div class="stat-number">' + totalChecked + '</div><div class="stat-label">Видео отмечено вами как просмотренные</div>';
-          contentEl.appendChild(checkedCard);
 
                    const showDonateBadge = () => {
             const donateBadge = document.createElement('div');

@@ -1,0 +1,960 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js?v=153"></script>
+  <title>Статистика</title>
+  <style>
+    body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
+   * { box-sizing: border-box; }
+.app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); overflow-x: hidden; }
+    .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
+    h1 { font-size: 18px; margin: 0 0 16px; }
+    .badge-card { background: linear-gradient(135deg, #f0e9ff, #f7f7fa); border-radius: 14px; padding: 18px; margin-bottom: 14px; text-align: center; }
+    .badge-icon { font-size: 36px; margin-bottom: 4px; }
+    .badge-name { font-size: 16px; font-weight: 700; color: #7b5fb3; }
+    .stat-card { background: #f7f7fa; border-radius: 12px; padding: 14px; margin-bottom: 10px; text-align: center; }
+    .stat-number { font-size: 26px; font-weight: 700; color: #9b7fd4; }
+    .stat-label { font-size: 12px; color: #888; margin-top: 4px; }
+    .empty-note { font-size: 13px; color: #999; text-align: center; padding: 20px 0; }
+    .section-title { font-size: 15px; font-weight: 700; margin: 20px 0 10px; }
+    .sections-toggle {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .sections-toggle-arrow {
+      color: #9b7fd4;
+      font-size: 11px;
+      line-height: 1.4;
+      width: 14px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    #sections-progress.is-collapsed { display: none; }
+    .section-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: #f7f7fa;
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+    }
+    .section-info { flex: 1; min-width: 0; }
+    .section-name { font-size: 14px; font-weight: 600; color: #333; line-height: 1.25; }
+    .section-count { font-size: 12px; color: #888; margin-top: 3px; }
+    .section-ring {
+      width: 48px;
+      height: 48px;
+      flex-shrink: 0;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: conic-gradient(var(--ring, #9b7fd4) calc(var(--p) * 1%), #e8e4f0 0);
+    }
+    .section-ring-inner {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: #fff;
+      display: grid;
+      place-items: center;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--ring, #9b7fd4);
+      line-height: 1;
+    }
+    .section-row.is-done { background: #e3f7e9; }
+    .section-row.is-done .section-ring { background: conic-gradient(#2e9e5b 100%, #e3f7e9 0); }
+    .section-row.is-done .section-ring-inner { color: #2e9e5b; }
+    .section-row.is-empty .section-ring { background: #eceaf2; }
+    .section-row.is-empty .section-ring-inner { color: #bbb; }
+    .section-arrow {
+      width: 22px;
+      height: 22px;
+      flex-shrink: 0;
+      border: none;
+      background: transparent;
+      color: #9b7fd4;
+      font-size: 11px;
+      line-height: 22px;
+      padding: 0;
+      cursor: pointer;
+      text-align: center;
+    }
+    .section-arrow.is-empty {
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .section-children {
+      display: none;
+      padding: 0 0 4px 10px;
+    }
+    .section-children.is-open { display: block; }
+    .section-row.depth-1 { background: #f3f0f8; }
+    .section-row.depth-2 { background: #fff; border: 1px solid #eee; }
+    .section-row.depth-1.is-done,
+    .section-row.depth-2.is-done { background: #e3f7e9; border-color: transparent; }
+    .heatmap-card { background: #f7f7fa; border-radius: 12px; padding: 14px 10px 12px; margin: 0 0 10px; }
+    .heatmap-scroll {
+      display: flex;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scroll-snap-type: x mandatory;
+      overscroll-behavior-x: contain;
+      padding-bottom: 6px;
+    }
+    .heat-month {
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 12px;
+      padding: 10px 8px 8px;
+      box-sizing: border-box;
+      flex: 0 0 100%;
+      width: 100%;
+      min-width: 100%;
+      scroll-snap-align: start;
+      scroll-snap-stop: always;
+    }
+    .heat-month-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #7b5fb3;
+      margin: 0 0 8px;
+      text-align: center;
+    }
+    .heat-weekdays, .heat-days {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 3px;
+    }
+    .heat-weekdays {
+      margin-bottom: 4px;
+      font-size: 9px;
+      color: #aaa;
+      text-align: center;
+    }
+    .heat-day {
+      position: relative;
+      min-height: 34px;
+      border-radius: 6px;
+      background: #f3f1f7;
+      color: #888;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      padding: 3px 0 0 4px;
+    }
+    .heat-day.empty { background: transparent; }
+    .heat-day.future { background: #f7f7fa; color: #ddd; }
+    .heat-day .num { font-size: 10px; font-weight: 400; }
+    .heat-day .cnt {
+      position: absolute;
+      right: 1px;
+      bottom: 2px;
+      min-width: 20px;
+      height: 13px;
+      padding: 0 3px;
+      border-radius: 8px;
+      background: #fff;
+      color: #5e3d9e;
+      font-size: 8px;
+      font-weight: 700;
+      line-height: 13px;
+      white-space: nowrap;
+      text-align: center;
+      box-shadow: 0 1px 2px rgba(94, 61, 158, 0.25);
+    }
+    .heat-day.lv1 { background: #efe6fb; color: #7b5fb3; }
+    .heat-day.lv2 { background: #d7c4f2; color: #6b4caf; }
+    .heat-day.lv3 { background: #b598e0; color: #fff; }
+    .heat-day.lv4 { background: #6b4caf; color: #fff; }
+    .heat-cell {
+      width: 11px;
+      height: 11px;
+      border-radius: 2px;
+      background: #eceaf2;
+    }
+    .heat-cell.lv1 { background: #efe6fb; }
+    .heat-cell.lv2 { background: #d7c4f2; }
+    .heat-cell.lv3 { background: #b598e0; }
+    .heat-cell.lv4 { background: #6b4caf; }
+    .heatmap-legend {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 4px;
+      margin-top: 10px;
+      font-size: 10px;
+      color: #999;
+    }
+    .heatmap-stats {
+      display: flex;
+      gap: 6px;
+      margin-top: 14px;
+    }
+    .heatmap-stat { flex: 1; text-align: center; min-width: 0; }
+    .heatmap-stat-circle {
+      width: 42px;
+      height: 42px;
+      margin: 0 auto 5px;
+      border-radius: 50%;
+      background: #efe8fa;
+      color: #5e3d9e;
+      font-size: 14px;
+      font-weight: 700;
+      display: grid;
+      place-items: center;
+      line-height: 1;
+    }
+    .heatmap-stat-label {
+      font-size: 9px;
+      color: #888;
+      line-height: 1.25;
+    }
+    .heat-day.is-clickable { cursor: pointer; }
+    .heat-day.is-selected { box-shadow: inset 0 0 0 2px #9b7fd4; }
+    .day-marks {
+      margin-top: 12px;
+      background: #fff;
+      border: 1px solid #eee;
+      border-radius: 12px;
+      padding: 12px;
+    }
+    .day-marks-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #7b5fb3;
+      margin: 0 0 8px;
+    }
+    .day-marks-empty {
+      font-size: 12px;
+      color: #999;
+      margin: 0;
+    }
+    .day-marks-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .day-marks-list li {
+      font-size: 13px;
+      color: #333;
+      line-height: 1.35;
+      padding: 7px 0;
+      border-top: 1px solid #f0eef5;
+    }
+    .day-marks-list li:first-child { border-top: none; }
+    .day-marks-meta {
+      display: block;
+      font-size: 11px;
+      color: #9a8fb0;
+      margin-top: 2px;
+    }
+    .day-marks-page {
+      display: inline-block;
+      font-size: 11px;
+      color: #7b5fb3;
+      text-decoration: none;
+      margin-top: 4px;
+      font-weight: 600;
+    }
+    .day-marks-page:active { opacity: 0.75; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="index.html">← Назад</a>
+    <h1>📊 Статистика</h1>
+
+    <div id="stats-content"><p class="empty-note">Загрузка...</p></div>
+
+    <p class="section-title">Активность отметок</p>
+    <div id="check-heatmap"></div>
+
+    <p class="section-title sections-toggle" id="sections-toggle">
+      <span class="sections-toggle-arrow" id="sections-toggle-arrow">▶</span>
+      <span>Прогресс по разделам (в разработке, пока не смотрите)</span>
+    </p>
+    <div id="sections-progress" class="is-collapsed"></div>
+  </div>
+
+  <script>
+        function getBadge(number) {
+      if (number <= 1) return { icon: '👑', name: 'Основательница' };
+      if (number <= 2) return { icon: '👀', name: 'Двойник создателя (Киен)' };
+      if (number <= 3) return { icon: '💜', name: 'Любимая бести' };
+      if (number <= 6) return { icon: '💙', name: 'Друг создателя' };
+      if (number <= 20) return { icon: '🏫', name: '2 COOL 4 SKOOL' };
+      if (number <= 50) return { icon: '📚', name: 'O!RUL8,2?' };
+      if (number <= 90) return { icon: '💌', name: 'Skool Luv Affair' };
+      if (number <= 130) return { icon: '🐺', name: 'Dark & Wild' };
+      if (number <= 200) return { icon: '🌸', name: 'The Most Beautiful Moment in Life' };
+      if (number <= 300) return { icon: '🌲', name: 'Young Forever' };
+      if (number <= 420) return { icon: '🕊️', name: 'Wings' };
+      if (number <= 550) return { icon: '🧭', name: 'You Never Walk Alone' };
+           if (number <= 800) return { icon: '🌷', name: 'Love Yourself' };
+      if (number <= 1200) return { icon: '🎭', name: 'Map of the Soul' };
+      if (number <= 2000) return { icon: '🕰️', name: 'BE' };
+      if (number <= 3000) return { icon: '📜', name: 'Proof' };
+      return { icon: '❤️', name: 'Arirang' };
+    }
+
+    function countTotalChecked() {
+      let count = 0;
+      const myPrefix = (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) ? String(ARMY_USER_ID) + ':' : '';
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (!key) continue;
+        let id = key;
+        if (myPrefix) {
+          if (key.indexOf(myPrefix) !== 0) continue;
+          id = key.slice(myPrefix.length);
+        } else if (/^\d+:/.test(key)) {
+          continue;
+        }
+        if ((id.startsWith('video-') || id.startsWith('noline-')) && localStorage.getItem(id) === 'true') {
+          count++;
+        }
+      }
+      return count;
+    }
+
+            function loadStats() {
+      const afterCloud = () => {
+        renderStats();
+        renderCheckHeatmap();
+        renderSectionsProgress();
+      };
+      fetch('checkbox-ids.json?v=32')
+        .then((res) => res.json())
+        .then((ids) => {
+          STAT_CHECKBOX_IDS = ids || {};
+        })
+        .catch(() => {})
+        .then(() => {
+          if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
+            refreshEverythingFromCloud(afterCloud);
+          } else {
+            afterCloud();
+          }
+        });
+    }
+
+    function renderStats() {
+      const contentEl = document.getElementById('stats-content');
+      if (!contentEl) return;
+      contentEl.innerHTML = '';
+      const totalChecked = countTotalChecked();
+      const checkedCard = document.createElement('div');
+      checkedCard.className = 'stat-card';
+      checkedCard.innerHTML = '<div class="stat-number">' + totalChecked + '</div><div class="stat-label">Видео отмечено вами как просмотренные</div>';
+      contentEl.appendChild(checkedCard);
+    }
+
+    function pluralDays(n) {
+      const mod10 = n % 10, mod100 = n % 100;
+      if (mod10 === 1 && mod100 !== 11) return 'день';
+      if ([2,3,4].includes(mod10) && ![12,13,14].includes(mod100)) return 'дня';
+      return 'дней';
+    }
+
+    function nicknameCacheKey() {
+      return (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) ? ('nickname_' + ARMY_USER_ID) : 'nickname';
+    }
+
+    function escapeNickHtml(s) {
+      return String(s || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function showNicknameConfirmed(nickname) {
+      const box = document.getElementById('nickname-box');
+      if (!box) return;
+      box.innerHTML = '<p style="font-size:12px; color:#888; margin:0 0 4px;">Ваш ник</p><p style="font-size:15px; font-weight:600; color:#333; margin:0;">💜 ' + escapeNickHtml(nickname) + '</p>';
+    }
+
+    function bindNicknameSave() {
+      const btn = document.getElementById('nickname-save-btn');
+      if (!btn || btn.dataset.bound === '1') return;
+      btn.dataset.bound = '1';
+      btn.addEventListener('click', () => {
+        const input = document.getElementById('nickname-input');
+        const status = document.getElementById('nickname-status');
+        if (!input || !status) return;
+        const val = input.value.trim();
+        status.style.color = '#2e9e5b';
+        if (!val) return;
+        if (typeof ARMY_USER_ID === 'undefined' || !ARMY_USER_ID) return;
+
+        status.textContent = 'Проверяем...';
+        armyCloudFetch('user_registry')
+          .then(res => res.json())
+          .then(registry => {
+            const taken = Object.keys(registry || {}).some((uid) => {
+              return uid != ARMY_USER_ID && registry[uid].nickname && registry[uid].nickname.toLowerCase() === val.toLowerCase();
+            });
+            if (taken) {
+              status.textContent = 'Этот ник уже занят, выберите другой.';
+              status.style.color = '#c25a5a';
+              return;
+            }
+            armyCloudFetch('user_registry/' + ARMY_USER_ID, {
+              method: 'PATCH',
+              body: JSON.stringify({ nickname: val })
+            })
+              .then(() => {
+                try { localStorage.setItem(nicknameCacheKey(), val); } catch (e) {}
+                status.textContent = 'Ник сохранён: ' + val;
+                status.style.color = '#2e9e5b';
+                showNicknameConfirmed(val);
+              })
+              .catch(() => { status.textContent = 'Не получилось сохранить, попробуйте ещё раз.'; status.style.color = '#c25a5a'; });
+          })
+          .catch(() => {
+            status.textContent = 'Не получилось проверить, попробуйте ещё раз.';
+            status.style.color = '#c25a5a';
+          });
+      });
+    }
+
+    try {
+      const cachedNick = localStorage.getItem(nicknameCacheKey());
+      if (cachedNick) showNicknameConfirmed(cachedNick);
+      else bindNicknameSave();
+    } catch (e) {
+      bindNicknameSave();
+    }
+
+    if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
+      armyCloudFetch('user_registry/' + ARMY_USER_ID)
+        .then(res => res.json())
+        .then(entry => {
+          if (entry && entry.nickname) {
+            try { localStorage.setItem(nicknameCacheKey(), entry.nickname); } catch (e) {}
+            showNicknameConfirmed(entry.nickname);
+          } else {
+            bindNicknameSave();
+          }
+        })
+        .catch(() => { bindNicknameSave(); });
+    }
+
+        function renderSectionsProgress() {
+      const container = document.getElementById('sections-progress');
+      container.innerHTML = '';
+
+      (typeof SECTION_TREE !== 'undefined' ? SECTION_TREE : []).forEach((node) => {
+        appendSectionBranch(container, node, 0);
+      });
+
+      Object.keys(SECTION_GROUPS).forEach((name) => {
+        const stats = computeSectionProgress(SECTION_GROUPS[name]);
+        appendSectionRow(container, name, stats, 0, false);
+      });
+
+      const otherShowsStats = computeOtherShowsProgress();
+      appendSectionRow(container, 'Другие шоу', otherShowsStats, 0, false);
+    }
+
+    function fillSectionStats(row, name, stats) {
+      const info = document.createElement('div');
+      info.className = 'section-info';
+
+      const label = document.createElement('div');
+      label.className = 'section-name';
+      label.textContent = name;
+
+      const count = document.createElement('div');
+      count.className = 'section-count';
+
+      const ring = document.createElement('div');
+      ring.className = 'section-ring';
+      const inner = document.createElement('div');
+      inner.className = 'section-ring-inner';
+
+      if (stats.total === 0) {
+        row.classList.add('is-empty');
+        count.textContent = 'пока нет данных';
+        ring.style.setProperty('--p', '0');
+        inner.textContent = '—';
+      } else {
+        const percent = Math.round((stats.checked / stats.total) * 100);
+        count.textContent = stats.checked + ' из ' + stats.total;
+        ring.style.setProperty('--p', String(percent));
+        inner.textContent = percent + '%';
+        if (percent === 100) row.classList.add('is-done');
+      }
+
+      info.appendChild(label);
+      info.appendChild(count);
+      ring.appendChild(inner);
+      return { info, ring };
+    }
+
+    function appendSectionRow(container, name, stats, depth, hasChildren) {
+      const row = document.createElement('div');
+      row.className = 'section-row' + (depth ? ' depth-' + depth : '');
+      const arrow = document.createElement('button');
+      arrow.type = 'button';
+      arrow.className = 'section-arrow' + (hasChildren ? '' : ' is-empty');
+      arrow.textContent = '▶';
+      const parts = fillSectionStats(row, name, stats);
+      row.appendChild(arrow);
+      row.appendChild(parts.info);
+      row.appendChild(parts.ring);
+      container.appendChild(row);
+      return { row, arrow };
+    }
+
+    function appendSectionBranch(container, node, depth) {
+      const wrap = document.createElement('div');
+      const stats = computeSectionProgress(node.keys || []);
+      const hasChildren = !!(node.children && node.children.length);
+      const built = appendSectionRow(wrap, node.name, stats, depth, hasChildren);
+      if (hasChildren) {
+        const kids = document.createElement('div');
+        kids.className = 'section-children';
+        node.children.forEach(function (child) {
+          appendSectionBranch(kids, child, depth + 1);
+        });
+        wrap.appendChild(kids);
+        built.arrow.addEventListener('click', function () {
+          const open = kids.classList.toggle('is-open');
+          built.arrow.textContent = open ? '▼' : '▶';
+        });
+      }
+      container.appendChild(wrap);
+    }
+
+    (function setupSectionsFold() {
+      const toggle = document.getElementById('sections-toggle');
+      const panel = document.getElementById('sections-progress');
+      const arrow = document.getElementById('sections-toggle-arrow');
+      if (!toggle || !panel || !arrow) return;
+      toggle.addEventListener('click', function () {
+        const collapsed = panel.classList.toggle('is-collapsed');
+        arrow.textContent = collapsed ? '▶' : '▼';
+      });
+    })();
+
+    function pluralMarks(n) {
+      const mod10 = n % 10, mod100 = n % 100;
+      if (mod10 === 1 && mod100 !== 11) return 'отметка';
+      if ([2, 3, 4].includes(mod10) && ![12, 13, 14].includes(mod100)) return 'отметки';
+      return 'отметок';
+    }
+
+    function heatLevel(n) {
+      if (!n) return '';
+      if (n <= 1) return 'lv1';
+      if (n <= 3) return 'lv2';
+      if (n <= 6) return 'lv3';
+      return 'lv4';
+    }
+
+    function renderCheckHeatmap() {
+      const box = document.getElementById('check-heatmap');
+      if (!box) return;
+      box.innerHTML = '';
+
+      const activity = (typeof getCheckActivity === 'function') ? getCheckActivity() : {};
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      const monthNames = ['январь', 'февраль', 'март', 'апрель', 'май', 'июнь', 'июль', 'август', 'сентябрь', 'октябрь', 'ноябрь', 'декабрь'];
+      const card = document.createElement('div');
+      card.className = 'heatmap-card';
+
+      const scroll = document.createElement('div');
+      scroll.className = 'heatmap-scroll';
+
+      for (let m = 11; m >= 0; m--) {
+        const monthStart = new Date(today.getFullYear(), today.getMonth() - m, 1);
+        const monthEnd = new Date(monthStart.getFullYear(), monthStart.getMonth() + 1, 0);
+        const block = document.createElement('div');
+        block.className = 'heat-month';
+
+        const title = document.createElement('div');
+        title.className = 'heat-month-title';
+        title.textContent = monthNames[monthStart.getMonth()] + ' ' + monthStart.getFullYear();
+        block.appendChild(title);
+
+        const wdays = document.createElement('div');
+        wdays.className = 'heat-weekdays';
+        ['пн', 'вт', 'ср', 'чт', 'пт', 'сб', 'вс'].forEach(function (label) {
+          const s = document.createElement('span');
+          s.textContent = label;
+          wdays.appendChild(s);
+        });
+        block.appendChild(wdays);
+
+        const days = document.createElement('div');
+        days.className = 'heat-days';
+
+        const firstWeekday = monthStart.getDay();
+        const pad = firstWeekday === 0 ? 6 : firstWeekday - 1;
+        for (let i = 0; i < pad; i++) {
+          const empty = document.createElement('div');
+          empty.className = 'heat-day empty';
+          days.appendChild(empty);
+        }
+
+        for (let d = 1; d <= monthEnd.getDate(); d++) {
+          const date = new Date(monthStart.getFullYear(), monthStart.getMonth(), d);
+          const cell = document.createElement('div');
+          cell.className = 'heat-day';
+          const num = document.createElement('span');
+          num.className = 'num';
+          num.textContent = String(d);
+          cell.appendChild(num);
+
+          if (date > today) {
+            cell.classList.add('future');
+          } else {
+            const key = (typeof localDateKey === 'function') ? localDateKey(date) : '';
+            const n = parseInt(activity[key], 10) || 0;
+            if (n) {
+              cell.classList.add(heatLevel(n));
+              const cnt = document.createElement('span');
+              cnt.className = 'cnt';
+              cnt.textContent = '×' + n;
+              cell.appendChild(cnt);
+            }
+            const dateText = date.toLocaleDateString('ru-RU', { day: 'numeric', month: 'long' });
+            cell.title = n ? (dateText + ' · ' + n + ' ' + pluralMarks(n)) : (dateText + ' · нет отметок');
+            cell.classList.add('is-clickable');
+            cell.setAttribute('role', 'button');
+            cell.tabIndex = 0;
+            cell.dataset.dayKey = key;
+            cell.addEventListener('click', function () {
+              showDayMarks(key, dateText, cell);
+            });
+            cell.addEventListener('keydown', function (e) {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                showDayMarks(key, dateText, cell);
+              }
+            });
+          }
+          days.appendChild(cell);
+        }
+
+        block.appendChild(days);
+        scroll.appendChild(block);
+      }
+
+      card.appendChild(scroll);
+
+      const dayMarks = document.createElement('div');
+      dayMarks.id = 'day-marks-panel';
+      dayMarks.className = 'day-marks';
+      dayMarks.style.display = 'none';
+      card.appendChild(dayMarks);
+
+      const legend = document.createElement('div');
+      legend.className = 'heatmap-legend';
+      const less = document.createElement('span');
+      less.textContent = 'меньше';
+      legend.appendChild(less);
+      ['', 'lv1', 'lv2', 'lv3', 'lv4'].forEach(function (lv) {
+        const c = document.createElement('div');
+        c.className = 'heat-cell' + (lv ? ' ' + lv : '');
+        legend.appendChild(c);
+      });
+      const more = document.createElement('span');
+      more.textContent = 'больше';
+      legend.appendChild(more);
+      card.appendChild(legend);
+
+      const summary = (typeof getCheckActivitySummary === 'function')
+        ? getCheckActivitySummary()
+        : { totalDays: 0, streak: 0, record: 0, bestDay: 0 };
+      const statsRow = document.createElement('div');
+      statsRow.className = 'heatmap-stats';
+      [
+        { n: summary.totalDays, label: 'всего дней активности' },
+        { n: summary.streak, label: 'дней подряд' },
+        { n: summary.record, label: 'рекорд по кол-ву дней подряд' },
+        { n: summary.bestDay, label: 'рекорд галочек за день' }
+      ].forEach(function (item) {
+        const cell = document.createElement('div');
+        cell.className = 'heatmap-stat';
+        const circle = document.createElement('div');
+        circle.className = 'heatmap-stat-circle';
+        circle.textContent = String(item.n == null ? 0 : item.n);
+        const lab = document.createElement('div');
+        lab.className = 'heatmap-stat-label';
+        lab.textContent = item.label;
+        cell.appendChild(circle);
+        cell.appendChild(lab);
+        statsRow.appendChild(cell);
+      });
+      card.appendChild(statsRow);
+
+      box.appendChild(card);
+      requestAnimationFrame(function () {
+        requestAnimationFrame(function () {
+          const months = scroll.querySelectorAll('.heat-month');
+          const last = months[months.length - 1];
+          if (last) scroll.scrollLeft = last.offsetLeft;
+        });
+      });
+    }
+
+    function pluralDaysSub(n) {
+      n = Math.abs(n) % 100;
+      const n1 = n % 10;
+      if (n > 10 && n < 20) return 'дней';
+      if (n1 > 1 && n1 < 5) return 'дня';
+      if (n1 === 1) return 'день';
+      return 'дней';
+    }
+
+    function showDayMarks(dayKey, dateText, cell) {
+      const panel = document.getElementById('day-marks-panel');
+      if (!panel) return;
+      document.querySelectorAll('.heat-day.is-selected').forEach(function (el) {
+        el.classList.remove('is-selected');
+      });
+      if (cell) cell.classList.add('is-selected');
+
+      const items = (typeof getCheckMarksForDay === 'function') ? getCheckMarksForDay(dayKey) : [];
+      panel.style.display = '';
+      panel.innerHTML = '';
+
+      const title = document.createElement('p');
+      title.className = 'day-marks-title';
+      title.textContent = dateText + (items.length ? (' · ' + items.length + ' ' + pluralMarks(items.length)) : '');
+      panel.appendChild(title);
+
+      if (!items.length) {
+        const empty = document.createElement('p');
+        empty.className = 'day-marks-empty';
+        empty.textContent = 'В этот день отметок нет';
+        panel.appendChild(empty);
+        panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        return;
+      }
+
+      const list = document.createElement('ul');
+      list.className = 'day-marks-list';
+      items.forEach(function (item) {
+        const li = document.createElement('li');
+        const titleLine = document.createElement('div');
+        titleLine.textContent = item.title || item.id;
+        li.appendChild(titleLine);
+        if (item.count > 1 || item.rewatch) {
+          const meta = document.createElement('span');
+          meta.className = 'day-marks-meta';
+          if (item.count > 1) meta.textContent = 'отмечено ×' + item.count;
+          else meta.textContent = 'повторный просмотр';
+          li.appendChild(meta);
+        } else if (!item.hasName) {
+          const meta = document.createElement('span');
+          meta.className = 'day-marks-meta';
+          meta.textContent = 'название появится у новых отметок';
+          li.appendChild(meta);
+        }
+        if (item.pageHref) {
+          const pageLink = document.createElement('a');
+          pageLink.className = 'day-marks-page';
+          pageLink.href = item.pageHref;
+          pageLink.textContent = '→ ' + (item.pageName || 'открыть раздел');
+          li.appendChild(pageLink);
+        } else if (item.hasName) {
+          const meta = document.createElement('span');
+          meta.className = 'day-marks-meta';
+          meta.textContent = 'ссылка на раздел появится у новых отметок';
+          li.appendChild(meta);
+        }
+        list.appendChild(li);
+      });
+      panel.appendChild(list);
+      panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    // expiresAt — момент, когда доступ уже кончился (обычно полночь МСК).
+    // Последний день доступа включительно — календарный день до этой точки (МСК).
+    function inclusiveUntilMs(expiresAt) {
+      return Number(expiresAt) - 1;
+    }
+
+    function moscowDateKey(ms) {
+      return new Date(ms).toLocaleDateString('en-CA', { timeZone: 'Europe/Moscow' });
+    }
+
+    // Сколько календарных дней доступа осталось, включая сегодня (МСК).
+    function inclusiveDaysLeft(expiresAt) {
+      const now = Date.now();
+      if (!expiresAt || Number(expiresAt) <= now) return 0;
+      const untilKey = moscowDateKey(Number(expiresAt) - 1);
+      const todayKey = moscowDateKey(now);
+      const until = new Date(untilKey + 'T12:00:00Z').getTime();
+      const today = new Date(todayKey + 'T12:00:00Z').getTime();
+      return Math.max(0, Math.round((until - today) / (24 * 60 * 60 * 1000)) + 1);
+    }
+
+    function formatSubDate(ms) {
+      try {
+        return new Date(ms).toLocaleDateString('ru-RU', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          timeZone: 'Europe/Moscow'
+        });
+      } catch (e) {
+        return '';
+      }
+    }
+
+    function paintSubscription(data) {
+      const labelEl = document.getElementById('sub-label');
+      const valueEl = document.getElementById('sub-value');
+      const subEl = document.getElementById('sub-sub');
+      const frameEl = document.getElementById('sub-days-frame');
+      const foreverWrap = document.getElementById('sub-forever-wrap');
+      const renewBtn = document.getElementById('sub-renew-btn');
+      if (!labelEl || !valueEl || !subEl || !frameEl) return;
+
+      function showDaysFrame(on) {
+        frameEl.style.display = on ? '' : 'none';
+        if (foreverWrap) {
+          foreverWrap.style.display = 'none';
+          foreverWrap.innerHTML = '';
+        }
+      }
+
+      if (renewBtn) {
+        renewBtn.style.display = '';
+        renewBtn.textContent = 'Продлить';
+      }
+        if (!data || typeof data !== 'object') {
+        labelEl.style.display = '';
+        labelEl.textContent = 'Подписка';
+        showDaysFrame(true);
+        valueEl.textContent = '—';
+        subEl.textContent = 'не удалось проверить';
+        return;
+      }
+      if (data.forever || data.status === 'admin' || data.status === 'forever') {
+        labelEl.style.display = '';
+        labelEl.textContent = 'Доступ';
+        showDaysFrame(false);
+        if (foreverWrap) {
+          foreverWrap.style.display = '';
+          foreverWrap.innerHTML =
+            '<svg width="40" height="20" viewBox="0 0 100 50" aria-label="Бессрочно" style="display:block;">' +
+            '<path fill="none" stroke="#2b2440" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" ' +
+            'd="M25 25C25 12 38 12 50 25C62 38 75 38 75 25C75 12 62 12 50 25C38 38 25 38 25 25"/>' +
+            '</svg>';
+        }
+        if (renewBtn) renewBtn.style.display = 'none';
+        return;
+      }
+      if (renewBtn) renewBtn.style.display = '';
+      if (data.ok && data.expiresAt) {
+        const leftDays = inclusiveDaysLeft(data.expiresAt);
+        const until = formatSubDate(inclusiveUntilMs(data.expiresAt));
+        labelEl.textContent = '';
+        labelEl.style.display = 'none';
+        showDaysFrame(true);
+        if (leftDays === 1) {
+          valueEl.textContent = '1 день';
+          subEl.textContent = until ? ('до ' + until) : '';
+        } else {
+          valueEl.textContent = leftDays + ' ' + pluralDaysSub(leftDays);
+          subEl.textContent = until ? ('до ' + until) : '';
+        }
+        return;
+      }
+      labelEl.style.display = '';
+      labelEl.textContent = 'Подписка';
+      showDaysFrame(true);
+      valueEl.textContent = 'не активна';
+      subEl.textContent = '';
+    }
+
+    function showAdminHub() {
+      const box = document.getElementById('admin-hub');
+      if (box) box.style.display = '';
+    }
+
+    function loadSubscription() {
+      const api = String(window.ARMY_API_URL || '').replace(/\/$/, '');
+      if (!api || !ARMY_USER_ID || typeof telegramInitData !== 'function') {
+        paintSubscription(null);
+        return;
+      }
+      try {
+        if (typeof readSubscriptionCache === 'function') {
+          const cached = readSubscriptionCache();
+          if (cached) paintSubscription(cached);
+        }
+      } catch (e) {}
+      fetch(api + '/subscription', {
+        method: 'GET',
+        headers: { 'X-Telegram-Init-Data': telegramInitData() }
+      })
+        .then(function (res) { return res.ok ? res.json() : null; })
+        .then(function (data) {
+          if (data && typeof writeSubscriptionCache === 'function') {
+            try { writeSubscriptionCache(data); } catch (e) {}
+          }
+          paintSubscription(data);
+          if (data && data.status === 'admin') showAdminHub();
+          // Догонка ЮKassa, если webhook не успел начислить дни
+          try {
+            fetch(api + '/payment/yookassa/sync', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'X-Telegram-Init-Data': telegramInitData()
+              },
+              body: '{}'
+            })
+              .then(function (res) { return res.ok ? res.json() : null; })
+              .then(function (syncData) {
+                if (!syncData) return;
+                var got = false;
+                if (syncData.recent && syncData.recent.results) {
+                  syncData.recent.results.forEach(function (r) { if (r && r.granted) got = true; });
+                }
+                if (got) {
+                  fetch(api + '/subscription', {
+                    method: 'GET',
+                    headers: { 'X-Telegram-Init-Data': telegramInitData() }
+                  })
+                    .then(function (res2) { return res2.ok ? res2.json() : null; })
+                    .then(function (data2) {
+                      if (data2) paintSubscription(data2);
+                    })
+                    .catch(function () {});
+                }
+              })
+              .catch(function () {});
+          } catch (e) {}
+        })
+        .catch(function () {
+          if (typeof readSubscriptionCache === 'function' && readSubscriptionCache()) return;
+          paintSubscription(null);
+        });
+    }
+
+    loadStats();
+
+    if (window.Telegram && window.Telegram.WebApp) { Telegram.WebApp.ready(); Telegram.WebApp.expand(); }
+  </script>
+</body>
+</html>
