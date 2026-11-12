@@ -139,6 +139,18 @@
       return d + ' дн.';
     }
 
+    function accessLabel(p) {
+      p = p || {};
+      if (p.accessForever) return 'доступ сейчас: бессрочно';
+      if (p.accessExpiresAt) {
+        try {
+          return 'доступ сейчас: до ' + new Date(p.accessExpiresAt).toLocaleDateString('ru-RU');
+        } catch (e) {}
+      }
+      if (p.accessPaidDays) return 'доступ сейчас: ' + p.accessPaidDays + ' дн.';
+      return 'доступ сейчас: не найден';
+    }
+
     function paintList() {
       var box = document.getElementById('list');
       var statusEl = document.getElementById('page-status');
@@ -193,6 +205,7 @@
             '<div class="row-top">' +
               '<div class="row-main">' +
                 '<p class="sum">' + (p.amountRub || 0) + ' ₽ · ' + planLabel(p) + '</p>' +
+                '<p class="meta" style="color:' + (p.accessForever ? '#2e9e5b' : '#8a7aa8') + ';">' + accessLabel(p) + '</p>' +
                 '<p class="meta">' + formatWhen(p.processedAt || p.createdAt) + '</p>' +
                 '<p class="meta">Telegram id: ' + (p.userId || '—') + '</p>' +
                 '<p class="meta" style="color:#9a8fb0;">payment: ' + String(p.paymentId).slice(0, 13) + '…</p>' +

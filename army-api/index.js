@@ -1701,10 +1701,77 @@ app.get('/admin/yookassa-recent', async function (req, res) {
     }).filter(Boolean).sort(function (a, b) {
       return (b.processedAt || b.createdAt || 0) - (a.processedAt || a.createdAt || 0);
     }).slice(0, limit);
+
+    // Реальный доступ из subscriptions (не путать с подписью тарифа в оплате)
+    const uidSet = {};
+    list.forEach(function (p) {
+      if (p.userId) uidSet[String(p.userId)] = true;
+    });
+    const uids = Object.keys(uidSet);
+    const accessByUser = {};
+    await Promise.all(uids.map(async function (uid) {
+      try {
+        const subSnap = await subscriptionRef(uid).get();
+        const sub = subSnap.exists() ? (subSnap.val() || {}) : {};
+        const foreverAccess = sub.forever === true ||
+          FOREVER_IDS.indexOf(uid) !== -1 ||
+          ADMIN_IDS.indexOf(uid) !== -1;
+        accessByUser[uid] = {
+          forever: foreverAccess,
+          expiresAt: typeof sub.expiresAt === 'number' ? sub.expiresAt : null,
+          paidDays: sub.paidDays != null ? sub.paidDays : null,
+          note: sub.note || null
+        };
+      } catch (e) {
+        accessByUser[uid] = { forever: false, error: String((e && e.message) || e) };
+      }
+    }));
+    list.forEach(function (p) {
+      const acc = p.userId ? accessByUser[String(p.userId)] : null;
+      p.accessForever = !!(acc && acc.forever);
+      p.accessExpiresAt = acc ? acc.expiresAt : null;
+      p.accessPaidDays = acc ? acc.paidDays : null;
+    });
+
     return res.json({ ok: true, payments: list });
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: 'yookassa-recent' });
+  }
+});
+
+// Быстрая проверка доступа по id — только админ
+app.get('/admin/check-access', async function (req, res) {
+  const user = authUser(req);
+  if (!user || !user.isAdmin) return res.status(403).json({ error: 'forbidden' });
+  const raw = String(req.query.ids || req.query.userId || '').trim();
+  const ids = raw.split(/[,;\s]+/).map(function (s) { return String(s || '').trim(); }).filter(Boolean);
+  if (!ids.length) return res.status(400).json({ error: 'ids' });
+  try {
+    const users = [];
+    for (let i = 0; i < ids.length; i++) {
+      const uid = ids[i];
+      const subSnap = await subscriptionRef(uid).get();
+      const sub = subSnap.exists() ? (subSnap.val() || {}) : null;
+      const forever = !!(sub && (sub.forever === true ||
+        FOREVER_IDS.indexOf(uid) !== -1 ||
+        ADMIN_IDS.indexOf(uid) !== -1));
+      users.push({
+        userId: uid,
+        exists: !!sub,
+        forever: forever,
+        active: !!(sub && sub.active),
+        expiresAt: sub && typeof sub.expiresAt === 'number' ? sub.expiresAt : null,
+        paidDays: sub && sub.paidDays != null ? sub.paidDays : null,
+        note: sub && sub.note ? sub.note : null,
+        lastCardPayment: sub && sub.lastCardPayment ? sub.lastCardPayment : null,
+        lastStarsPayment: sub && sub.lastStarsPayment ? sub.lastStarsPayment : null
+      });
+    }
+    return res.json({ ok: true, users: users });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: 'check-access' });
   }
 });
 
