@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=154"></script>
+  <script src="sync.js?v=155"></script>
   <title>Оплата подписки</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
@@ -16,6 +16,16 @@
     .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
     h1 { font-size: 18px; margin: 0 0 8px; color: #2b2440; line-height: 1.35; }
     .lead { font-size: 13px; color: #666; line-height: 1.45; margin: 0 0 14px; }
+    .access-card {
+      background: #f7f4fc;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin: 0 0 14px;
+    }
+    .access-kicker { font-size: 12px; color: #888; margin: 0 0 4px; }
+    .access-value { font-size: 22px; font-weight: 800; color: #2b2440; margin: 0; line-height: 1.2; min-height: 26px; }
+    .access-value:empty::before { content: '…'; color: #bbb; font-weight: 600; }
+    .access-sub { font-size: 11px; color: #8a7aa8; margin: 3px 0 0; line-height: 1.3; min-height: 14px; }
     .notice {
       background: #f3eefb;
       border-radius: 12px;
@@ -271,6 +281,11 @@
     <a class="back" href="statistics.html">← В личный кабинет</a>
     <h1>Оплата подписки</h1>
     <p class="lead">Выберите срок доступа к чек-листу</p>
+    <div class="access-card" id="pay-access">
+      <p class="access-kicker">Сейчас</p>
+      <p class="access-value" id="pay-access-value"></p>
+      <p class="access-sub" id="pay-access-sub"></p>
+    </div>
 
     <div class="notice" id="pay-notice" style="display:none;">Оплата пока что настраивается</div>
     <div class="notice" id="pay-success" style="display:none; background:#e3f7e9; color:#2e9e5b;">Можно закрыть эту страницу, обновить приложение и зайти в чек-лист 💜</div>
@@ -399,6 +414,75 @@
       return 'дней';
     }
 
+    function inclusiveUntilMs(expiresAt) {
+      return Number(expiresAt) - 1;
+    }
+
+    function moscowDateKey(ms) {
+      return new Date(ms).toLocaleDateString('en-CA', { timeZone: 'Europe/Moscow' });
+    }
+
+    function inclusiveDaysLeft(expiresAt) {
+      var now = Date.now();
+      if (!expiresAt || Number(expiresAt) <= now) return 0;
+      var untilKey = moscowDateKey(Number(expiresAt) - 1);
+      var todayKey = moscowDateKey(now);
+      var until = new Date(untilKey + 'T12:00:00Z').getTime();
+      var today = new Date(todayKey + 'T12:00:00Z').getTime();
+      return Math.max(0, Math.round((until - today) / (24 * 60 * 60 * 1000)) + 1);
+    }
+
+    function formatSubDate(ms) {
+      try {
+        return new Date(ms).toLocaleDateString('ru-RU', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          timeZone: 'Europe/Moscow'
+        });
+      } catch (e) {
+        return '';
+      }
+    }
+
+    function setTextIf(el, next) {
+      if (!el) return;
+      if (el.textContent !== next) el.textContent = next;
+    }
+
+    // Пока нет ответа /subscription — пусто, не угадываем дни.
+    function paintAccessCounter(data) {
+      var valueEl = document.getElementById('pay-access-value');
+      var subEl = document.getElementById('pay-access-sub');
+      if (!valueEl || !subEl) return;
+      if (!data || typeof data !== 'object') {
+        setTextIf(valueEl, '—');
+        setTextIf(subEl, 'не удалось проверить');
+        return;
+      }
+      if (data.forever || data.status === 'admin' || data.status === 'forever') {
+        if (valueEl.innerHTML.indexOf('viewBox="0 0 100 50"') === -1) {
+          valueEl.innerHTML =
+            '<svg width="40" height="20" viewBox="0 0 100 50" aria-label="Бессрочно" style="display:block;">' +
+            '<path fill="none" stroke="#2b2440" stroke-width="7" stroke-linecap="round" stroke-linejoin="round" ' +
+            'd="M25 25C25 12 38 12 50 25C62 38 75 38 75 25C75 12 62 12 50 25C38 38 25 38 25 25"/>' +
+            '</svg>';
+        }
+        setTextIf(subEl, 'бессрочно');
+        return;
+      }
+      if (data.ok && data.expiresAt) {
+        var leftDays = inclusiveDaysLeft(data.expiresAt);
+        var until = formatSubDate(inclusiveUntilMs(data.expiresAt));
+        var daysText = leftDays === 1 ? '1 день' : (leftDays + ' ' + pluralDays(leftDays));
+        setTextIf(valueEl, daysText);
+        setTextIf(subEl, until ? ('до ' + until) : '');
+        return;
+      }
+      setTextIf(valueEl, 'не активна');
+      setTextIf(subEl, '');
+    }
+
     var PROMO_COUNTDOWN_START_AT = Date.parse('2026-11-11T22:00:00+03:00');
     var PROMO_DAYS_TOTAL = 14;
     var DAY_MS_LOCAL = 24 * 60 * 60 * 1000;
@@ -510,6 +594,7 @@
     function loadPricing() {
       var api = String(window.ARMY_API_URL || '').replace(/\/$/, '');
       if (!api) {
+        paintAccessCounter(null);
         paintPricing(Object.assign({}, localPricingInfo(), {
           paymentLive: false,
           liveKnown: true,
@@ -538,6 +623,7 @@
         info.pricingKnown = true;
         if (!info.plans) info.plans = PLAN_PRICES;
         if (info.foreverPriceRub == null) info.foreverPriceRub = FOREVER_PRICE;
+        paintAccessCounter(subData);
         paintPricing(info);
       }
 

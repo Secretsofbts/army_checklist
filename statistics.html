@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=154"></script>
+  <script src="sync.js?v=155"></script>
   <title>Личный кабинет</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -286,7 +286,7 @@
           </div>
           <div id="sub-forever-wrap" style="display:none;"></div>
         </div>
-        <a id="sub-renew-btn" href="payment.html?v=43" style="flex-shrink:0; display:none; text-decoration:none; border-radius:10px; padding:10px 12px; font-size:13px; font-weight:600; background:#9b7fd4; color:#fff;">Продлить</a>
+        <a id="sub-renew-btn" href="payment.html?v=44" style="flex-shrink:0; display:none; text-decoration:none; border-radius:10px; padding:10px 12px; font-size:13px; font-weight:600; background:#9b7fd4; color:#fff;">Продлить</a>
       </div>
     </div>
 
@@ -957,10 +957,7 @@
             'd="M25 25C25 12 38 12 50 25C62 38 75 38 75 25C75 12 62 12 50 25C38 38 25 38 25 25"/>' +
             '</svg>';
         }
-        if (renewBtn) {
-          renewBtn.style.display = '';
-          renewBtn.textContent = 'Оплата';
-        }
+        if (renewBtn) renewBtn.style.display = 'none';
         return;
       }
       if (renewBtn) renewBtn.style.display = '';
