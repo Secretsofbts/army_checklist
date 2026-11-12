@@ -764,10 +764,19 @@ function buildTrialEntry(firstSeen, now, prev) {
 }
 
 async function ensureSubscriptionRecord(uid) {
+  // Пробный доступ всегда с записью в реестр (оплата только из приложения — человек уже «вошёл»)
+  let registry = null;
+  try {
+    registry = await ensureUserRegistered(uid);
+  } catch (e) {
+    console.error('ensureUserRegistered in trial failed', uid, e);
+  }
   const ref = subscriptionRef(uid);
   const snap = await ref.get();
-  const registrySnap = await db.ref('user_registry/' + uid).get();
-  const registry = registrySnap.exists() ? registrySnap.val() : null;
+  if (!registry) {
+    const registrySnap = await db.ref('user_registry/' + uid).get();
+    registry = registrySnap.exists() ? registrySnap.val() : null;
+  }
   const firstSeen = registry && registry.firstSeen ? Number(registry.firstSeen) : Date.now();
   const now = Date.now();
 
