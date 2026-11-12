@@ -2968,8 +2968,8 @@ const REFERRAL_BONUS_REFERRER_PHOTO = path.join(__dirname, 'referral-bonus-refer
 const REFERRAL_BONUS_FRIEND_PHOTO = path.join(__dirname, 'referral-bonus-friend.jpg');
 const REFERRAL_SELF_PHOTO = path.join(__dirname, 'referral-self.jpg');
 const FOREVER_THANKS_TEXT =
-  'Ничего себе!!! Не думала, что кто-то правда оформит крейзи подписку 👀\n\n' +
-  'Теперь у вас бесконечный доступ 💜\n\n' +
+  'Ничего себе!!! Не думала, что кто-то правда оформит крейзи подписку!\n\n' +
+  'Теперь у вас бесконечный доступ использования чек-листа 😌\n\n' +
   'Спасибо, что поддерживаете данный проект и архив 🫶';
 const REFERRAL_SELF_TEXT = 'Хитрюжка, на себя нельзя 😁';
 const REFERRAL_INVITE_TEXT =
@@ -4516,18 +4516,20 @@ async function sendExpiredRemindPreviewToTest() {
 
 /** Разово: превью уведомления об оплате бессрока — только тестовый. */
 async function sendForeverThanksPreviewToTest() {
-  const metaRef = db.ref('bot_meta/foreverThanksPreviewV1');
+  const metaRef = db.ref('bot_meta/foreverThanksPreviewV2');
   const metaSnap = await metaRef.get();
   if (metaSnap.exists()) {
-    console.log('forever thanks preview already sent', metaSnap.val());
+    console.log('forever thanks preview V2 already sent', metaSnap.val());
     return;
   }
   const testId = FORCE_TEST_IDS[0] || '2055929706';
   try {
-    const thanks = await sendPaidThanksToUser(testId, 'forever', null);
+    // Пример ссылки на чек, чтобы в превью была строка «Ваш чек об оплате»
+    const sampleReceipt = 'https://secretsofbts.github.io/army_checklist/payment.html';
+    const thanks = await sendPaidThanksToUser(testId, 'forever', sampleReceipt);
     if (!thanks.sent) throw new Error(thanks.error || thanks.reason || 'not-sent');
-    await metaRef.set({ at: Date.now(), to: testId });
-    console.log('forever thanks preview sent to', testId);
+    await metaRef.set({ at: Date.now(), to: testId, version: 2 });
+    console.log('forever thanks preview V2 sent to', testId);
   } catch (e) {
     console.error('forever thanks preview failed', e);
   }
