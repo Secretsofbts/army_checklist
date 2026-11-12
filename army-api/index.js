@@ -588,14 +588,17 @@ async function extendSubscriptionByDays(uid, days) {
   const prev = snap.exists() ? (snap.val() || {}) : {};
   if (prev.forever) return { skipped: true, reason: 'forever' };
   const now = Date.now();
+  const addDays = Math.max(1, parseInt(days, 10) || 0);
+  const leftover = leftoverInclusiveDays(prev.expiresAt, now);
   const base = Math.max(now, typeof prev.expiresAt === 'number' ? prev.expiresAt : 0);
-  const expiresAt = paidExpiresAtFrom(base, days);
+  const expiresAt = paidExpiresAtFrom(base, addDays);
   await ref.update({
     active: true,
     expiresAt: expiresAt,
+    paidDays: leftover + addDays,
     updatedAt: now
   });
-  return { skipped: false, expiresAt: expiresAt };
+  return { skipped: false, expiresAt: expiresAt, paidDays: leftover + addDays };
 }
 
 // После первой платной выдачи другу: +30 дней другу и пригласившему (один раз).
@@ -3040,9 +3043,11 @@ app.post('/admin/grant', async function (req, res) {
         grantedBy: String(user.id)
       };
     } else {
-      const paidDays = days || 30;
+      const purchasedDays = days || 30;
+      const leftover = leftoverInclusiveDays(prev && prev.expiresAt, now);
+      const paidDays = leftover + purchasedDays;
       const base = Math.max(now, (prev && prev.expiresAt) || 0);
-      const expiresAt = paidExpiresAtFrom(base, paidDays);
+      const expiresAt = paidExpiresAtFrom(base, purchasedDays);
       entry = {
         active: true,
         trial: false,
@@ -3053,23 +3058,26 @@ app.post('/admin/grant', async function (req, res) {
         updatedAt: now,
         grantedBy: String(user.id),
         promoUsed: true,
-        promoUsedAt: (prev && prev.promoUsedAt) || now
+        promoUsedAt: (prev && prev.promoUsedAt) || now,
+        lastCardPayment: prev && prev.lastCardPayment ? prev.lastCardPayment : null,
+        lastStarsPayment: prev && prev.lastStarsPayment ? prev.lastStarsPayment : null
       };
     }
     await ref.set(entry);
     if (!forever) {
+      const thanksDays = days || 30;
       await logPaymentEvent({
         at: now,
         userId: targetId,
         method: 'manual',
-        days: entry.paidDays || days || 30,
+        days: thanksDays,
         stars: 0,
         amountRub: 0,
         chargeId: null,
         payload: 'manual:' + String(user.id),
         test: false
       });
-      const thanks = await sendPaidThanksToUser(targetId, entry.paidDays || days || 30);
+      const thanks = await sendPaidThanksToUser(targetId, thanksDays);
       if (!thanks.sent) console.error('paid thanks failed', targetId, thanks);
       // Пауза, чтобы другу сначала дошла «оплата», и только потом «+30 бонус»
       await new Promise(function (resolve) { setTimeout(resolve, 800); });
