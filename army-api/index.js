@@ -1748,6 +1748,8 @@ app.get('/admin/check-access', async function (req, res) {
   const ids = raw.split(/[,;\s]+/).map(function (s) { return String(s || '').trim(); }).filter(Boolean);
   if (!ids.length) return res.status(400).json({ error: 'ids' });
   try {
+    const paySnap = await db.ref('yookassa_payments').get();
+    const allPay = paySnap.exists() ? (paySnap.val() || {}) : {};
     const users = [];
     for (let i = 0; i < ids.length; i++) {
       const uid = ids[i];
@@ -1756,16 +1758,38 @@ app.get('/admin/check-access', async function (req, res) {
       const forever = !!(sub && (sub.forever === true ||
         FOREVER_IDS.indexOf(uid) !== -1 ||
         ADMIN_IDS.indexOf(uid) !== -1));
+      const payments = [];
+      Object.keys(allPay).forEach(function (pid) {
+        const row = allPay[pid] || {};
+        if (String(row.userId || '') !== uid) return;
+        payments.push({
+          paymentId: pid,
+          amountRub: row.amountRub || 0,
+          days: row.days != null ? row.days : null,
+          forever: row.forever === true,
+          processed: !!row.processed,
+          granted: row.granted === true,
+          status: row.status || null,
+          processedAt: row.processedAt || null,
+          createdAt: row.createdAt || null
+        });
+      });
+      payments.sort(function (a, b) {
+        return (b.processedAt || b.createdAt || 0) - (a.processedAt || a.createdAt || 0);
+      });
       users.push({
         userId: uid,
-        exists: !!sub,
+        subscriptionPath: 'subscriptions/' + uid,
+        subscriptionExists: !!sub,
         forever: forever,
         active: !!(sub && sub.active),
         expiresAt: sub && typeof sub.expiresAt === 'number' ? sub.expiresAt : null,
         paidDays: sub && sub.paidDays != null ? sub.paidDays : null,
         note: sub && sub.note ? sub.note : null,
         lastCardPayment: sub && sub.lastCardPayment ? sub.lastCardPayment : null,
-        lastStarsPayment: sub && sub.lastStarsPayment ? sub.lastStarsPayment : null
+        lastStarsPayment: sub && sub.lastStarsPayment ? sub.lastStarsPayment : null,
+        payments: payments,
+        paymentsCount: payments.length
       });
     }
     return res.json({ ok: true, users: users });
