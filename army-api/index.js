@@ -20,7 +20,7 @@ const FOREVER_IDS = String(process.env.FOREVER_TELEGRAM_IDS || '163381553,591051
 // Тестовый аккаунт (2-я страница): режим превью.
 // legacy = как у всех старых; expired / days3 / new10 / paid1; off = как обычный.
 // Форс выключен — тест идёт по реальной подписке (после оплаты Stars и т.п.).
-const FORCE_TEST_MODE = 'new10';
+const FORCE_TEST_MODE = 'off';
 const FORCE_TEST_IDS = String(process.env.FORCE_TEST_IDS || '2055929706')
   .split(',')
   .map(function (s) { return s.trim(); })
