@@ -1674,11 +1674,15 @@ app.get('/admin/yookassa-recent', async function (req, res) {
       if (!(row.processed && row.granted === true)) return null;
       // Старые «ручные» оплаты скрыты из списка чеков — дни и статистика остаются
       if (row.omitFromReceipts) return null;
+      // days:0 у forever нельзя через `|| 30` — иначе в чеках «30 дн.»
+      const foreverRow = row.forever === true || Number(row.amountRub) === FOREVER_PRICE_RUB;
+      const daysRow = foreverRow ? 0 : (Number(row.days) > 0 ? Number(row.days) : 30);
       return {
         paymentId: pid,
         userId: row.userId || null,
         amountRub: row.amountRub || 0,
-        days: row.days || 0,
+        days: daysRow,
+        forever: foreverRow,
         email: row.email || null,
         processed: !!row.processed,
         granted: row.granted === true,
@@ -1741,10 +1745,13 @@ app.post('/admin/yookassa-receipt-issue', async function (req, res) {
     const snap = await db.ref('yookassa_payments/' + paymentId).get();
     if (!snap.exists()) return res.status(404).json({ error: 'not-found' });
     const row = snap.val() || {};
+    const foreverIssue = row.forever === true || Number(row.amountRub) === FOREVER_PRICE_RUB;
+    const daysIssue = foreverIssue ? 0 : (Number(row.days) > 0 ? Number(row.days) : 30);
     const result = await issueMoyNalogReceiptForPayment({
       paymentId: paymentId,
       amountRub: row.amountRub,
-      days: row.days || 30,
+      days: daysIssue,
+      forever: foreverIssue,
       userId: row.userId || '',
       operationAt: row.processedAt || row.createdAt || Date.now(),
       force: !!(req.body && req.body.force)
@@ -2130,8 +2137,9 @@ async function processYooKassaSucceededPayment(payment, opts) {
   if (prev.processed && !opts.force) {
     let receipt = null;
     try {
-      const forever = !!(prev.forever || String(meta.forever || '') === '1');
-      const days = forever ? 0 : (parseInt(prev.days, 10) || parseInt(meta.days, 10) || 30);
+      const planAlready = resolveGrantPlanFromPayment(meta, prev, amountRub || Number(prev.amountRub) || 0);
+      const forever = !!planAlready.forever;
+      const days = forever ? 0 : planAlready.days;
       receipt = await issueMoyNalogReceiptForPayment({
         paymentId: paymentId,
         amountRub: amountRub || Number(prev.amountRub) || 0,
@@ -2380,6 +2388,66 @@ async function grantBonusDaysToFirstPayer() {
     expiresAt: result.expiresAt || null
   });
   console.log('first payer bonus done', targetId, result);
+}
+
+/** Разово: бессрочные оплаты ЮKassa (5000 ₽ / forever) — поправить запись и доступ, если ушли как «30 дн.». */
+async function repairForeverYooKassaGrants() {
+  const metaRef = db.ref('bot_meta/foreverYookassaRepairV1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('forever yookassa repair already done', metaSnap.val());
+    return;
+  }
+  await metaRef.set({ at: Date.now(), status: 'running' });
+  const snap = await db.ref('yookassa_payments').get();
+  const all = snap.exists() ? (snap.val() || {}) : {};
+  const fixedPayments = [];
+  const fixedUsers = [];
+  const keys = Object.keys(all);
+  for (let i = 0; i < keys.length; i++) {
+    const paymentId = keys[i];
+    const row = all[paymentId] || {};
+    if (!(row.processed && row.granted === true)) continue;
+    const foreverPay = row.forever === true || Number(row.amountRub) === FOREVER_PRICE_RUB;
+    if (!foreverPay) continue;
+    const uid = String(row.userId || '');
+    const needPayFix = row.forever !== true || Number(row.days) !== 0;
+    if (needPayFix) {
+      await db.ref('yookassa_payments/' + paymentId).update({
+        forever: true,
+        days: 0,
+        foreverRepairedAt: Date.now()
+      });
+      fixedPayments.push(paymentId);
+    }
+    if (!uid) continue;
+    try {
+      const granted = await grantPaidDaysFromYooKassa(uid, 0, {
+        paymentId: paymentId,
+        amountRub: Number(row.amountRub) || FOREVER_PRICE_RUB,
+        forever: true
+      });
+      if (!granted.skipped || granted.reason !== 'forever') {
+        fixedUsers.push({ userId: uid, paymentId: paymentId, result: granted });
+      } else if (fixedUsers.every(function (x) { return x.userId !== uid; })) {
+        // Уже был forever — всё равно отметим, что проверили
+        fixedUsers.push({ userId: uid, paymentId: paymentId, result: { skipped: true, reason: 'already-forever' } });
+      }
+    } catch (e) {
+      console.error('forever yookassa repair user failed', uid, paymentId, e);
+      fixedUsers.push({ userId: uid, paymentId: paymentId, error: String((e && e.message) || e) });
+    }
+  }
+  // Явно: оплата 1733095623 — если вдруг запись не попала по сумме, не трогаем чужие timed
+  const report = {
+    at: Date.now(),
+    status: 'done',
+    fixedPayments: fixedPayments.length,
+    paymentIds: fixedPayments,
+    users: fixedUsers
+  };
+  await metaRef.set(report);
+  console.log('forever yookassa repair done', report);
 }
 
 async function hideOldNonAutoReceiptPayments() {
@@ -4383,6 +4451,12 @@ app.listen(PORT, function () {
       console.error('comeback fix6 failed', e);
     });
   }, 13000);
+  // Разово: бессрок ЮKassa (в т.ч. 1733095623) — не оставлять «30 дн.» в доступе/записи
+  setTimeout(function () {
+    repairForeverYooKassaGrants().catch(function (e) {
+      console.error('forever yookassa repair failed', e);
+    });
+  }, 14000);
   applyForceTestAccountOnBoot().catch(function (e) {
     console.error('force test account boot failed', e);
   });

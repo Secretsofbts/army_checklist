@@ -130,6 +130,15 @@
       try { return new Date(ms).toLocaleString('ru-RU'); } catch (e) { return '—'; }
     }
 
+    // days:0 у бессрока нельзя через `|| 30` — иначе везде «30 дн.»
+    function planLabel(p) {
+      p = p || {};
+      if (p.forever || Number(p.amountRub) === 5000) return 'бессрочно';
+      var d = Number(p.days);
+      if (!(d > 0)) d = 30;
+      return d + ' дн.';
+    }
+
     function paintList() {
       var box = document.getElementById('list');
       var statusEl = document.getElementById('page-status');
@@ -183,7 +192,7 @@
           '<div class="row' + (p.receiptDone ? ' is-done' : '') + '" data-id="' + String(p.paymentId) + '">' +
             '<div class="row-top">' +
               '<div class="row-main">' +
-                '<p class="sum">' + (p.amountRub || 0) + ' ₽ · ' + (p.days || 30) + ' дн.</p>' +
+                '<p class="sum">' + (p.amountRub || 0) + ' ₽ · ' + planLabel(p) + '</p>' +
                 '<p class="meta">' + formatWhen(p.processedAt || p.createdAt) + '</p>' +
                 '<p class="meta">Telegram id: ' + (p.userId || '—') + '</p>' +
                 '<p class="meta" style="color:#9a8fb0;">payment: ' + String(p.paymentId).slice(0, 13) + '…</p>' +
