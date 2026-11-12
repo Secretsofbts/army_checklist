@@ -2705,6 +2705,30 @@ async function syncRecentYooKassaPayments(limit) {
 /**
  * Разово: +30 дней первому оплатившему (6921049406).
  */
+/** Разово: +3 дня 557254790 без сообщения в Telegram. */
+async function grantSilentPlus3DaysOnce() {
+  const targetId = '557254790';
+  const addDays = 3;
+  const metaRef = db.ref('bot_meta/silentPlus3_557254790_V1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('silent +3 already done', metaSnap.val());
+    return;
+  }
+  const result = await extendSubscriptionByDays(targetId, addDays);
+  await metaRef.set({
+    at: Date.now(),
+    to: targetId,
+    days: addDays,
+    skipped: !!result.skipped,
+    reason: result.reason || null,
+    expiresAt: result.expiresAt || null,
+    paidDays: result.paidDays || null,
+    notify: false
+  });
+  console.log('silent +3 done', targetId, result);
+}
+
 async function grantBonusDaysToFirstPayer() {
   const targetId = '6921049406';
   const bonusDays = 30;
@@ -5135,6 +5159,12 @@ app.listen(PORT, function () {
       console.error('forever force subscriptions failed', e);
     });
   }, 7000);
+  // Разово: +3 дня 557254790 без уведомления
+  setTimeout(function () {
+    grantSilentPlus3DaysOnce().catch(function (e) {
+      console.error('silent +3 failed', e);
+    });
+  }, 7500);
   // Разово: превью текстов напоминаний на тестовый
   setTimeout(function () {
     sendOnedayRemindPreviewToTest().catch(function (e) {
