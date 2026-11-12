@@ -1246,7 +1246,7 @@ app.get('/subscription', async function (req, res) {
       }
 
       if (mode === 'new10') {
-        const note = 'force-new10-preview-v5';
+        const note = 'force-new10-preview-v6';
         if (prev && prev.note === note && prev.trial && typeof prev.expiresAt === 'number' && prev.expiresAt > now) {
           return respondSubscription(res, uid, prev, false);
         }
@@ -1264,7 +1264,7 @@ app.get('/subscription', async function (req, res) {
           comebackUsed: false,
           comebackGrantedAt: null,
           lastVisitAt: null,
-          welcomeResetToken: 'v5-' + String(now),
+          welcomeResetToken: 'v6-' + String(now),
           note: note
         };
         await ref.set(entry);
@@ -4123,10 +4123,10 @@ async function applyForceTestAccountOnBoot() {
         comebackUsed: false,
         comebackGrantedAt: null,
         lastVisitAt: null,
-        welcomeResetToken: 'v5-' + String(now),
-        note: 'force-new10-preview-v5'
+        welcomeResetToken: 'v6-' + String(now),
+        note: 'force-new10-preview-v6'
       });
-      console.log('Test account forced new-user trial + no bot start v5', testId, new Date(expiresAt).toISOString());
+      console.log('Test account forced new-user trial + no bot start v6', testId, new Date(expiresAt).toISOString());
       return;
     }
     if (FORCE_TEST_MODE !== 'expired') return;
