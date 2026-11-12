@@ -2392,17 +2392,23 @@ async function grantBonusDaysToFirstPayer() {
 
 /** Разово: бессрочные оплаты ЮKassa (5000 ₽ / forever) — поправить запись и доступ, если ушли как «30 дн.». */
 async function repairForeverYooKassaGrants() {
-  const metaRef = db.ref('bot_meta/foreverYookassaRepairV1');
+  // V2: + явные id из чеков статистики (1733095623, 5046274275)
+  const metaRef = db.ref('bot_meta/foreverYookassaRepairV2');
   const metaSnap = await metaRef.get();
   if (metaSnap.exists()) {
-    console.log('forever yookassa repair already done', metaSnap.val());
+    console.log('forever yookassa repair V2 already done', metaSnap.val());
     return;
   }
   await metaRef.set({ at: Date.now(), status: 'running' });
+  const explicitUids = {
+    '1733095623': true,
+    '5046274275': true
+  };
   const snap = await db.ref('yookassa_payments').get();
   const all = snap.exists() ? (snap.val() || {}) : {};
   const fixedPayments = [];
   const fixedUsers = [];
+  const seenUser = {};
   const keys = Object.keys(all);
   for (let i = 0; i < keys.length; i++) {
     const paymentId = keys[i];
@@ -2420,25 +2426,86 @@ async function repairForeverYooKassaGrants() {
       });
       fixedPayments.push(paymentId);
     }
-    if (!uid) continue;
+    if (!uid || seenUser[uid]) continue;
+    seenUser[uid] = true;
     try {
       const granted = await grantPaidDaysFromYooKassa(uid, 0, {
         paymentId: paymentId,
         amountRub: Number(row.amountRub) || FOREVER_PRICE_RUB,
         forever: true
       });
-      if (!granted.skipped || granted.reason !== 'forever') {
-        fixedUsers.push({ userId: uid, paymentId: paymentId, result: granted });
-      } else if (fixedUsers.every(function (x) { return x.userId !== uid; })) {
-        // Уже был forever — всё равно отметим, что проверили
-        fixedUsers.push({ userId: uid, paymentId: paymentId, result: { skipped: true, reason: 'already-forever' } });
-      }
+      fixedUsers.push({
+        userId: uid,
+        paymentId: paymentId,
+        result: granted,
+        explicit: !!explicitUids[uid]
+      });
     } catch (e) {
       console.error('forever yookassa repair user failed', uid, paymentId, e);
       fixedUsers.push({ userId: uid, paymentId: paymentId, error: String((e && e.message) || e) });
     }
   }
-  // Явно: оплата 1733095623 — если вдруг запись не попала по сумме, не трогаем чужие timed
+  // Явные id из «Чеки по оплатам»: если у них forever-оплата не размечена — всё равно выдать бессрок по сумме/записи
+  const explicitMissing = Object.keys(explicitUids).filter(function (uid) { return !seenUser[uid]; });
+  for (let j = 0; j < explicitMissing.length; j++) {
+    const uid = explicitMissing[j];
+    let foreverHit = null;
+    for (let k = 0; k < keys.length; k++) {
+      const paymentId = keys[k];
+      const row = all[paymentId] || {};
+      if (String(row.userId || '') !== uid) continue;
+      if (!(row.processed && row.granted === true)) continue;
+      if (row.forever === true || Number(row.amountRub) === FOREVER_PRICE_RUB) {
+        foreverHit = { paymentId: paymentId, row: row };
+        break;
+      }
+    }
+    if (!foreverHit) {
+      // Запасной путь: lastCardPayment на 5000 / forever
+      try {
+        const subSnap = await subscriptionRef(uid).get();
+        const sub = subSnap.exists() ? (subSnap.val() || {}) : {};
+        const last = sub.lastCardPayment || {};
+        if (sub.forever === true || last.forever === true || Number(last.amountRub) === FOREVER_PRICE_RUB) {
+          const granted = await grantPaidDaysFromYooKassa(uid, 0, {
+            paymentId: last.paymentId || null,
+            amountRub: Number(last.amountRub) || FOREVER_PRICE_RUB,
+            forever: true
+          });
+          fixedUsers.push({ userId: uid, paymentId: last.paymentId || null, result: granted, explicit: true, via: 'subscription' });
+          seenUser[uid] = true;
+          continue;
+        }
+      } catch (e) {
+        console.error('forever repair explicit sub failed', uid, e);
+      }
+      fixedUsers.push({ userId: uid, explicit: true, skipped: true, reason: 'no-forever-payment-found' });
+      continue;
+    }
+    try {
+      await db.ref('yookassa_payments/' + foreverHit.paymentId).update({
+        forever: true,
+        days: 0,
+        foreverRepairedAt: Date.now()
+      });
+      fixedPayments.push(foreverHit.paymentId);
+      const granted = await grantPaidDaysFromYooKassa(uid, 0, {
+        paymentId: foreverHit.paymentId,
+        amountRub: Number(foreverHit.row.amountRub) || FOREVER_PRICE_RUB,
+        forever: true
+      });
+      fixedUsers.push({
+        userId: uid,
+        paymentId: foreverHit.paymentId,
+        result: granted,
+        explicit: true,
+        via: 'rescanned'
+      });
+      seenUser[uid] = true;
+    } catch (e) {
+      fixedUsers.push({ userId: uid, explicit: true, error: String((e && e.message) || e) });
+    }
+  }
   const report = {
     at: Date.now(),
     status: 'done',
@@ -2447,7 +2514,7 @@ async function repairForeverYooKassaGrants() {
     users: fixedUsers
   };
   await metaRef.set(report);
-  console.log('forever yookassa repair done', report);
+  console.log('forever yookassa repair V2 done', report);
 }
 
 async function hideOldNonAutoReceiptPayments() {
