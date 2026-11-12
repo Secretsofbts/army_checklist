@@ -725,6 +725,21 @@ function paidExpiresAtFrom(fromMs, paidDays) {
   return moscowMidnightPlusDays(base, days + 1);
 }
 
+function moscowDateKey(ms) {
+  return new Date(ms).toLocaleDateString('en-CA', { timeZone: 'Europe/Moscow' });
+}
+
+// Сколько календарных дней доступа ещё есть, включая сегодня (МСК).
+function leftoverInclusiveDays(expiresAt, now) {
+  now = now || Date.now();
+  if (typeof expiresAt !== 'number' || expiresAt <= now) return 0;
+  const untilKey = moscowDateKey(expiresAt - 1);
+  const todayKey = moscowDateKey(now);
+  const until = new Date(untilKey + 'T12:00:00Z').getTime();
+  const today = new Date(todayKey + 'T12:00:00Z').getTime();
+  return Math.max(0, Math.round((until - today) / DAY_MS) + 1);
+}
+
 // Старым: один общий срок — N полных дней с завтра после якоря (день якоря не входит).
 function legacyTrialExpiresAt() {
   return moscowMidnightPlusDays(LEGACY_TRIAL_ANCHOR_AT, 1 + LEGACY_TRIAL_DAYS);
@@ -2155,9 +2170,11 @@ async function grantPaidDaysFromYooKassa(uid, days, meta) {
       }
     };
   } else {
-    paidDays = Math.max(1, parseInt(days, 10) || 30);
+    const purchasedDays = Math.max(1, parseInt(days, 10) || 30);
+    const leftover = leftoverInclusiveDays(prev.expiresAt, now);
+    paidDays = leftover + purchasedDays;
     const base = Math.max(now, typeof prev.expiresAt === 'number' ? prev.expiresAt : 0);
-    const expiresAt = paidExpiresAtFrom(base, paidDays);
+    const expiresAt = paidExpiresAtFrom(base, purchasedDays);
     entry = {
       active: true,
       trial: false,
@@ -2171,9 +2188,10 @@ async function grantPaidDaysFromYooKassa(uid, days, meta) {
       promoUsedAt: (prev && prev.promoUsedAt) || now,
       comebackUsed: prev.comebackUsed === true,
       comebackGrantedAt: prev.comebackGrantedAt || null,
+      lastStarsPayment: prev.lastStarsPayment || null,
       lastCardPayment: {
         at: now,
-        days: paidDays,
+        days: purchasedDays,
         amountRub: amountRub,
         paymentId: meta.paymentId || null
       }
@@ -2184,11 +2202,12 @@ async function grantPaidDaysFromYooKassa(uid, days, meta) {
     at: now,
     userId: uid,
     method: 'yookassa',
-    days: forever ? 0 : paidDays,
+    days: forever ? 0 : (entry.lastCardPayment && entry.lastCardPayment.days) || paidDays,
+    forever: forever,
     stars: 0,
     amountRub: amountRub,
     chargeId: meta.paymentId || null,
-    payload: forever ? 'yookassa:forever' : ('yookassa:' + paidDays),
+    payload: forever ? 'yookassa:forever' : ('yookassa:' + ((entry.lastCardPayment && entry.lastCardPayment.days) || paidDays)),
     test: false
   });
   try {
@@ -4296,9 +4315,11 @@ async function grantPaidDaysFromStars(uid, days, payment, opts) {
       }
     };
   } else {
-    paidDays = Math.max(1, parseInt(days, 10) || 30);
+    const purchasedDays = Math.max(1, parseInt(days, 10) || 30);
+    const leftover = leftoverInclusiveDays(prev.expiresAt, now);
+    paidDays = leftover + purchasedDays;
     const base = Math.max(now, typeof prev.expiresAt === 'number' ? prev.expiresAt : 0);
-    expiresAt = paidExpiresAtFrom(base, paidDays);
+    expiresAt = paidExpiresAtFrom(base, purchasedDays);
     entry = {
       active: true,
       trial: false,
@@ -4310,9 +4331,12 @@ async function grantPaidDaysFromStars(uid, days, payment, opts) {
       note: 'stars-paid',
       promoUsed: true,
       promoUsedAt: (prev && prev.promoUsedAt) || now,
+      comebackUsed: prev.comebackUsed === true,
+      comebackGrantedAt: prev.comebackGrantedAt || null,
+      lastCardPayment: prev.lastCardPayment || null,
       lastStarsPayment: {
         at: now,
-        days: paidDays,
+        days: purchasedDays,
         stars: payment && payment.total_amount,
         chargeId: payment && payment.telegram_payment_charge_id,
         payload: payment && payment.invoice_payload
@@ -4325,7 +4349,7 @@ async function grantPaidDaysFromStars(uid, days, payment, opts) {
     at: now,
     userId: uid,
     method: 'stars',
-    days: forever ? 0 : paidDays,
+    days: forever ? 0 : (entry.lastStarsPayment && entry.lastStarsPayment.days) || paidDays,
     forever: forever,
     stars: payment && payment.total_amount,
     amountRub: 0,
