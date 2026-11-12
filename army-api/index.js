@@ -4356,8 +4356,8 @@ app.listen(PORT, function () {
   applyForceTestAccountOnBoot().catch(function (e) {
     console.error('force test account boot failed', e);
   });
-  // Разово: paywall «без дней» — только если форс не new10/days3/paid1
-  if (FORCE_TEST_MODE === 'expired' || FORCE_TEST_MODE === 'off') {
+  // Разово: paywall «без дней» — только в режиме expired (не при обычном off)
+  if (FORCE_TEST_MODE === 'expired') {
     setTimeout(function () {
       expireTestAccountForPaywallPreview().catch(function (e) {
         console.error('test expired paywall preview failed', e);
