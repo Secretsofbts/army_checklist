@@ -957,7 +957,10 @@
             'd="M25 25C25 12 38 12 50 25C62 38 75 38 75 25C75 12 62 12 50 25C38 38 25 38 25 25"/>' +
             '</svg>';
         }
-        if (renewBtn) renewBtn.style.display = 'none';
+        if (renewBtn) {
+          renewBtn.style.display = '';
+          renewBtn.textContent = 'Оплата';
+        }
         return;
       }
       if (renewBtn) renewBtn.style.display = '';
