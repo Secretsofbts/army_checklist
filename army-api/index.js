@@ -49,13 +49,13 @@ const SUBSCRIPTION_LAUNCH_AT = Number(process.env.SUBSCRIPTION_LAUNCH_AT) ||
 // Якорь для старых: «завтра» считается от этого дня (7.11 вечер → старт 8.11).
 const LEGACY_TRIAL_ANCHOR_AT = Number(process.env.LEGACY_TRIAL_ANCHOR_AT) ||
   Date.parse('2026-11-07T21:00:00+03:00');
-// Цены тарифов (карта). Акция 100 ₽ / 30 дн. — один раз, окно акции 15 дней.
+// Цены тарифов (карта). Акция 100 ₽ / 30 дн. — один раз, окно акции 14 дней.
 const FULL_PRICE_RUB = 200;
 const PROMO_PRICE_RUB = 100;
 // Временный тест авточека: тестовый id платит акцию за 10 ₽
 const TEST_PROMO_PRICE_RUB = 10;
 const PROMO_ACCESS_DAYS = 30;
-const PROMO_DAYS = 15;
+const PROMO_DAYS = 14;
 const FOREVER_PRICE_RUB = 5000;
 const PLAN_PRICES = {
   30: 200,
@@ -63,7 +63,7 @@ const PLAN_PRICES = {
   90: 500,
   180: 1000
 };
-// Старт акции: сегодня вечером → завтра в счётчике ~14 дней из 15.
+// Старт акции: 11.11 вечером → окно 14 дней.
 const PROMO_COUNTDOWN_START_AT = Number(process.env.PROMO_COUNTDOWN_START_AT) ||
   Date.parse('2026-11-11T22:00:00+03:00');
 const PAYMENT_LIVE_AT = (function () {
@@ -4612,6 +4612,35 @@ async function sendForeverThanksToPaidUsersOnce() {
   console.log('forever thanks to paid users done', results);
 }
 
+/** Разово: дописать в user_registry двух бессрочных, если /register раньше тихо не сработал. */
+async function backfillForeverUsersRegistryOnce() {
+  const metaRef = db.ref('bot_meta/foreverUsersRegistryBackfillV1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('forever users registry backfill already done', metaSnap.val());
+    return;
+  }
+  const ids = ['1733095623', '5046274275'];
+  const results = [];
+  for (let i = 0; i < ids.length; i++) {
+    const uid = ids[i];
+    try {
+      const before = await db.ref('user_registry/' + uid).get();
+      const entry = await ensureUserRegistered(uid);
+      results.push({
+        userId: uid,
+        existed: !!(before.exists() && before.val() && before.val().number),
+        number: entry && entry.number ? entry.number : null
+      });
+    } catch (e) {
+      results.push({ userId: uid, error: String((e && e.message) || e) });
+      console.error('forever registry backfill failed', uid, e);
+    }
+  }
+  await metaRef.set({ at: Date.now(), results: results });
+  console.log('forever users registry backfill done', results);
+}
+
 /** Разово: на тесте показать paywall «дни закончились». */
 async function expireTestAccountForPaywallPreview() {
   const metaRef = db.ref('bot_meta/testExpiredPaywallPreviewV1');
@@ -4738,6 +4767,12 @@ app.listen(PORT, function () {
       console.error('forever thanks paid users failed', e);
     });
   }, 6000);
+  // Разово: дописать этих двоих в user_registry (если дырка после тихого /register)
+  setTimeout(function () {
+    backfillForeverUsersRegistryOnce().catch(function (e) {
+      console.error('forever registry backfill failed', e);
+    });
+  }, 6500);
   // Разово: превью текстов напоминаний на тестовый
   setTimeout(function () {
     sendOnedayRemindPreviewToTest().catch(function (e) {
