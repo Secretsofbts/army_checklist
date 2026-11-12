@@ -1891,6 +1891,11 @@ async function yookassaApi(method, path, body, idempotenceKey) {
 
 async function grantPaidDaysFromYooKassa(uid, days, meta) {
   meta = meta || {};
+  try {
+    await ensureUserRegistered(uid);
+  } catch (e) {
+    console.error('ensureUserRegistered on grant failed', uid, e);
+  }
   const ref = subscriptionRef(uid);
   const snap = await ref.get();
   const prev = snap.exists() ? (snap.val() || {}) : {};
@@ -2337,6 +2342,11 @@ app.post('/payment/yookassa/create', async function (req, res) {
   if (!yookassaReady()) return res.status(503).json({ error: 'yookassa-not-ready' });
   try {
     const uid = String(user.id);
+    try {
+      await ensureUserRegistered(uid);
+    } catch (regErr) {
+      console.error('ensureUserRegistered on pay create failed', uid, regErr);
+    }
     const subSnap = await subscriptionRef(uid).get();
     const subData = subSnap.exists() ? subSnap.val() : null;
     const price = pricingInfoForUser(subData, Date.now(), uid);
@@ -2873,21 +2883,29 @@ async function reconcileUserCount() {
   return { people: people, userCount: Math.max(cur, want), maxNum: maxNum };
 }
 
+/** Записать человека в user_registry, если ещё нет (оплата не должна оставлять «дыры»). */
+async function ensureUserRegistered(uid) {
+  const id = String(uid || '');
+  if (!/^\d+$/.test(id) || Number(id) <= 0) return null;
+  const ownRef = db.ref('user_registry/' + id);
+  const snap = await ownRef.get();
+  if (snap.exists() && snap.val() && snap.val().number) {
+    return snap.val();
+  }
+  const newNumber = await nextUserNumber();
+  const firstSeen = Date.now();
+  const entry = { number: newNumber, firstSeen: firstSeen };
+  await ownRef.set(entry);
+  return entry;
+}
+
 app.post('/register', async function (req, res) {
   const user = authUser(req);
   if (!user) return res.status(401).json({ error: 'auth' });
   const uid = String(user.id);
   try {
-    const ownRef = db.ref('user_registry/' + uid);
-    const snap = await ownRef.get();
-    if (snap.exists() && snap.val() && snap.val().number) {
-      return res.json(snap.val());
-    }
-    const newNumber = await nextUserNumber();
-    const firstSeen = Date.now();
-    const entry = { number: newNumber, firstSeen: firstSeen };
-    await ownRef.set(entry);
-    return res.json(entry);
+    const entry = await ensureUserRegistered(uid);
+    return res.json(entry || {});
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: 'register' });
