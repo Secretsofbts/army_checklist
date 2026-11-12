@@ -8,7 +8,7 @@
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script src="sync.js?v=153"></script>
-  <title>�����-����������</title>
+  <title>Админ-статистика</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
     * { box-sizing: border-box; }
@@ -66,62 +66,62 @@
 </head>
 <body>
   <div class="app">
-    <a class="back" href="statistics.html">< � ������ �������</a>
-    <h1>�����-����������</h1>
-    <p class="status" id="page-status">��������</p>
+    <a class="back" href="statistics.html">← В личный кабинет</a>
+    <h1>Админ-статистика</h1>
+    <p class="status" id="page-status">Загрузка…</p>
     <div id="admin-content" style="display:none;">
       <div class="block">
-        <h2>��������</h2>
+        <h2>Подписки</h2>
         <div class="table-wrap">
           <table class="stats" id="sub-table">
             <tbody>
-              <tr><th>� �������� ������</th><td id="sub-total">�</td></tr>
-              <tr><th>�������</th><td id="sub-trial">�</td></tr>
-              <tr><th>��������</th><td id="sub-paid">�</td></tr>
-              <tr><th>���������</th><td id="sub-forever">�</td></tr>
-              <tr><th>�������</th><td id="sub-expired">�</td></tr>
-              <tr><th>� �������</th><td id="sub-registered">�</td></tr>
+              <tr><th>С доступом сейчас</th><td id="sub-total">…</td></tr>
+              <tr><th>Пробный</th><td id="sub-trial">…</td></tr>
+              <tr><th>Оплатили</th><td id="sub-paid">…</td></tr>
+              <tr><th>Бессрочно</th><td id="sub-forever">…</td></tr>
+              <tr><th>Истекли</th><td id="sub-expired">…</td></tr>
+              <tr><th>В реестре</th><td id="sub-registered">…</td></tr>
             </tbody>
           </table>
         </div>
       </div>
 
       <div class="block">
-        <h2>������</h2>
+        <h2>Оплаты</h2>
         <div class="table-wrap">
           <table class="stats" id="pay-table">
             <thead>
               <tr>
-                <th>������</th>
-                <th>�����</th>
+                <th>Период</th>
+                <th>Карта</th>
                 <th>Stars</th>
-                <th>�����</th>
+                <th>Всего</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td class="left">�������</td>
-                <td class="num" id="pay-day-yookassa">�</td>
-                <td class="num" id="pay-day-starsPayments">�</td>
-                <td class="num" id="pay-day-payments">�</td>
+                <td class="left">Сегодня</td>
+                <td class="num" id="pay-day-yookassa">…</td>
+                <td class="num" id="pay-day-starsPayments">…</td>
+                <td class="num" id="pay-day-payments">…</td>
               </tr>
               <tr>
-                <td class="left">7 ����</td>
-                <td class="num" id="pay-week-yookassa">�</td>
-                <td class="num" id="pay-week-starsPayments">�</td>
-                <td class="num" id="pay-week-payments">�</td>
+                <td class="left">7 дней</td>
+                <td class="num" id="pay-week-yookassa">…</td>
+                <td class="num" id="pay-week-starsPayments">…</td>
+                <td class="num" id="pay-week-payments">…</td>
               </tr>
               <tr>
-                <td class="left">30 ����</td>
-                <td class="num" id="pay-month-yookassa">�</td>
-                <td class="num" id="pay-month-starsPayments">�</td>
-                <td class="num" id="pay-month-payments">�</td>
+                <td class="left">30 дней</td>
+                <td class="num" id="pay-month-yookassa">…</td>
+                <td class="num" id="pay-month-starsPayments">…</td>
+                <td class="num" id="pay-month-payments">…</td>
               </tr>
               <tr class="total">
-                <td class="left">�����</td>
-                <td class="num" id="pay-all-yookassa">�</td>
-                <td class="num" id="pay-all-starsPayments">�</td>
-                <td class="num" id="pay-all-payments">�</td>
+                <td class="left">Всего</td>
+                <td class="num" id="pay-all-yookassa">…</td>
+                <td class="num" id="pay-all-starsPayments">…</td>
+                <td class="num" id="pay-all-payments">…</td>
               </tr>
             </tbody>
           </table>
@@ -129,36 +129,36 @@
       </div>
 
       <div class="block">
-        <h2>������ � Stars</h2>
+        <h2>Деньги и Stars</h2>
         <div class="table-wrap">
           <table class="stats">
             <thead>
               <tr>
-                <th>������</th>
-                <th>?</th>
+                <th>Период</th>
+                <th>₽</th>
                 <th>Stars</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td class="left">�������</td>
-                <td class="num" id="money-day-rub">�</td>
-                <td class="num" id="money-day-stars">�</td>
+                <td class="left">Сегодня</td>
+                <td class="num" id="money-day-rub">…</td>
+                <td class="num" id="money-day-stars">…</td>
               </tr>
               <tr>
-                <td class="left">7 ����</td>
-                <td class="num" id="money-week-rub">�</td>
-                <td class="num" id="money-week-stars">�</td>
+                <td class="left">7 дней</td>
+                <td class="num" id="money-week-rub">…</td>
+                <td class="num" id="money-week-stars">…</td>
               </tr>
               <tr>
-                <td class="left">30 ����</td>
-                <td class="num" id="money-month-rub">�</td>
-                <td class="num" id="money-month-stars">�</td>
+                <td class="left">30 дней</td>
+                <td class="num" id="money-month-rub">…</td>
+                <td class="num" id="money-month-stars">…</td>
               </tr>
               <tr class="total">
-                <td class="left">�����</td>
-                <td class="num" id="money-all-rub">�</td>
-                <td class="num" id="money-all-stars">�</td>
+                <td class="left">Всего</td>
+                <td class="num" id="money-all-rub">…</td>
+                <td class="num" id="money-all-stars">…</td>
               </tr>
             </tbody>
           </table>
@@ -166,36 +166,36 @@
       </div>
 
       <div class="block">
-        <h2>������ � ������ ������</h2>
+        <h2>Бонусы и ручные выдачи</h2>
         <div class="table-wrap">
           <table class="stats">
             <thead>
               <tr>
-                <th>������</th>
-                <th>����</th>
-                <th>�������</th>
+                <th>Период</th>
+                <th>Друг</th>
+                <th>Вручную</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td class="left">�������</td>
-                <td class="num" id="bonus-day-ref">�</td>
-                <td class="num" id="bonus-day-manual">�</td>
+                <td class="left">Сегодня</td>
+                <td class="num" id="bonus-day-ref">…</td>
+                <td class="num" id="bonus-day-manual">…</td>
               </tr>
               <tr>
-                <td class="left">7 ����</td>
-                <td class="num" id="bonus-week-ref">�</td>
-                <td class="num" id="bonus-week-manual">�</td>
+                <td class="left">7 дней</td>
+                <td class="num" id="bonus-week-ref">…</td>
+                <td class="num" id="bonus-week-manual">…</td>
               </tr>
               <tr>
-                <td class="left">30 ����</td>
-                <td class="num" id="bonus-month-ref">�</td>
-                <td class="num" id="bonus-month-manual">�</td>
+                <td class="left">30 дней</td>
+                <td class="num" id="bonus-month-ref">…</td>
+                <td class="num" id="bonus-month-manual">…</td>
               </tr>
               <tr class="total">
-                <td class="left">�����</td>
-                <td class="num" id="bonus-all-ref">�</td>
-                <td class="num" id="bonus-all-manual">�</td>
+                <td class="left">Всего</td>
+                <td class="num" id="bonus-all-ref">…</td>
+                <td class="num" id="bonus-all-manual">…</td>
               </tr>
             </tbody>
           </table>
@@ -203,27 +203,27 @@
       </div>
 
       <div class="block">
-        <h2>������ (�� �����)</h2>
+        <h2>Тарифы (всё время)</h2>
         <div class="table-wrap">
           <table class="stats">
             <thead>
               <tr>
-                <th>����</th>
-                <th>�����</th>
+                <th>Срок</th>
+                <th>Оплат</th>
               </tr>
             </thead>
             <tbody id="tariff-body">
-              <tr><td class="left" colspan="2">�</td></tr>
+              <tr><td class="left" colspan="2">…</td></tr>
             </tbody>
           </table>
         </div>
         <p class="hint" id="tariff-hint"></p>
       </div>
 
-      <a class="btn" href="admin-receipts.html?v=1">���� �� ������� ></a>
-      <a class="btn secondary" href="payment.html?v=42">�������� ������</a>
+      <a class="btn" href="admin-receipts.html?v=1">Чеки по оплатам →</a>
+      <a class="btn secondary" href="payment.html?v=41">Страница оплаты</a>
     </div>
-    <div id="denied" class="denied" style="display:none;">��� �������� ������ ��� ��������������.</div>
+    <div id="denied" class="denied" style="display:none;">Эта страница только для администратора.</div>
   </div>
 
   <script>
@@ -247,7 +247,7 @@
 
     function setText(id, value) {
       var el = document.getElementById(id);
-      if (el) el.textContent = value == null || value === '' ? '�' : String(value);
+      if (el) el.textContent = value == null || value === '' ? '—' : String(value);
     }
 
     function n(v) {
@@ -255,7 +255,7 @@
     }
 
     function rub(v) {
-      return n(v).toLocaleString('ru-RU') + ' ?';
+      return n(v).toLocaleString('ru-RU') + ' ₽';
     }
 
     function fillPeriodRow(prefix, bucket) {
@@ -286,14 +286,14 @@
         return (parseInt(a, 10) || 0) - (parseInt(b, 10) || 0);
       });
       if (!keys.length) {
-        body.innerHTML = '<tr><td class="left" colspan="2">���� ���</td></tr>';
+        body.innerHTML = '<tr><td class="left" colspan="2">пока нет</td></tr>';
         if (hint) hint.textContent = '';
         return;
       }
       body.innerHTML = keys.map(function (k) {
         return (
           '<tr>' +
-            '<td class="left">' + k + ' ��.</td>' +
+            '<td class="left">' + k + ' дн.</td>' +
             '<td class="num">' + n(byDays[k]) + '</td>' +
           '</tr>'
         );
@@ -307,7 +307,7 @@
       var content = document.getElementById('admin-content');
       var denied = document.getElementById('denied');
       if (!api) {
-        if (statusEl) statusEl.textContent = '��� API';
+        if (statusEl) statusEl.textContent = 'Нет API';
         return;
       }
       fetch(api + '/subscription', { method: 'GET', headers: initHeaders() })
@@ -321,7 +321,7 @@
           }
           if (denied) denied.style.display = 'none';
           if (content) content.style.display = '';
-          if (statusEl) statusEl.textContent = '��������� ������ ���';
+          if (statusEl) statusEl.textContent = 'Обновлено только что';
           return Promise.all([
             fetch(api + '/admin/subscription-stats', { method: 'GET', headers: initHeaders() })
               .then(function (r) { return r.ok ? r.json() : null; }),
@@ -339,7 +339,7 @@
             setText('sub-paid', n(subData.paid));
             setText('sub-forever', n(subData.forever));
             setText('sub-expired', n(subData.expired));
-            setText('sub-registered', subData.registered != null ? n(subData.registered) : '�');
+            setText('sub-registered', subData.registered != null ? n(subData.registered) : '—');
           }
           if (payData) {
             var day = payData.day || {};
@@ -362,7 +362,7 @@
           }
         })
         .catch(function () {
-          if (statusEl) statusEl.textContent = '�� ������� ���������';
+          if (statusEl) statusEl.textContent = 'Не удалось загрузить';
         });
     }
 
