@@ -1177,6 +1177,7 @@ app.get('/subscription', async function (req, res) {
   if (!user) return res.status(401).json({ error: 'auth' });
   const uid = String(user.id);
   try {
+    rememberTelegramProfile(user).catch(function () {});
     // Тестовый аккаунт: превью режимов важнее admin/forever (иначе окошко новичка не видно)
     if (FORCE_TEST_IDS.indexOf(uid) !== -1 && FORCE_TEST_MODES[FORCE_TEST_MODE]) {
       const ref = subscriptionRef(uid);
@@ -1805,6 +1806,157 @@ app.get('/admin/check-access', async function (req, res) {
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: 'check-access' });
+  }
+});
+
+function addPayerRow(byUser, uid, extra) {
+  uid = String(uid || '').trim();
+  extra = extra || {};
+  if (!uid) return;
+  if (!byUser[uid]) {
+    byUser[uid] = {
+      userId: uid,
+      payments: 0,
+      amountRub: 0,
+      stars: 0,
+      lastAt: 0,
+      methods: {},
+      foreverPay: false
+    };
+  }
+  const row = byUser[uid];
+  row.payments += 1;
+  row.amountRub += Math.max(0, Number(extra.amountRub) || 0);
+  row.stars += Math.max(0, parseInt(extra.stars, 10) || 0);
+  const at = typeof extra.at === 'number' ? extra.at : 0;
+  if (at > row.lastAt) row.lastAt = at;
+  if (extra.method) row.methods[extra.method] = true;
+  if (extra.forever) row.foreverPay = true;
+}
+
+async function lookupTelegramChat(uid) {
+  try {
+    const data = await telegramApi('getChat', { chat_id: Number(uid) });
+    const chat = (data && data.result) || {};
+    return {
+      tgUsername: chat.username ? String(chat.username) : '',
+      tgFirstName: chat.first_name ? String(chat.first_name) : '',
+      tgLastName: chat.last_name ? String(chat.last_name) : ''
+    };
+  } catch (e) {
+    return null;
+  }
+}
+
+async function collectPaidPayers() {
+  const byUser = {};
+
+  const ykSnap = await db.ref('yookassa_payments').get();
+  if (ykSnap.exists()) {
+    const all = ykSnap.val() || {};
+    Object.keys(all).forEach(function (pid) {
+      const row = all[pid] || {};
+      if (!(row.processed && row.granted === true)) return;
+      const forever = row.forever === true || Number(row.amountRub) === FOREVER_PRICE_RUB;
+      addPayerRow(byUser, row.userId, {
+        at: row.processedAt || row.createdAt || 0,
+        method: 'yookassa',
+        amountRub: row.amountRub || 0,
+        forever: forever
+      });
+    });
+  }
+
+  const paySnap = await db.ref('payments').get();
+  if (paySnap.exists()) {
+    const all = paySnap.val() || {};
+    Object.keys(all).forEach(function (k) {
+      const row = all[k] || {};
+      if (isTestPayment(row)) return;
+      if (String(row.method) === 'manual') return;
+      if (String(row.method) === 'yookassa') return;
+      addPayerRow(byUser, row.userId, {
+        at: row.at || 0,
+        method: row.method,
+        amountRub: row.amountRub || 0,
+        stars: row.stars || 0,
+        forever: !!row.forever
+      });
+    });
+  }
+
+  const subSnap = await db.ref('subscriptions').get();
+  const subs = subSnap.exists() ? (subSnap.val() || {}) : {};
+  Object.keys(subs).forEach(function (uid) {
+    const last = subs[uid] && subs[uid].lastStarsPayment;
+    if (!last || typeof last.at !== 'number') return;
+    const payload = String(last.payload || '');
+    if (payload.indexOf('stars_test:') === 0) return;
+    const foreverStars = last.forever === true ||
+      payload.toLowerCase().indexOf('forever') !== -1 ||
+      Number(last.stars) === STARS_FOREVER;
+    addPayerRow(byUser, uid, {
+      at: last.at,
+      method: 'stars',
+      stars: last.stars || 0,
+      forever: foreverStars
+    });
+  });
+
+  const regSnap = await db.ref('user_registry').get();
+  const registry = regSnap.exists() ? (regSnap.val() || {}) : {};
+  const list = Object.keys(byUser).map(function (uid) {
+    const row = byUser[uid];
+    const reg = registry[uid] || {};
+    const sub = subs[uid] || {};
+    const methods = Object.keys(row.methods);
+    return {
+      userId: uid,
+      nickname: reg.nickname ? String(reg.nickname) : '',
+      tgUsername: reg.tgUsername ? String(reg.tgUsername) : '',
+      tgFirstName: reg.tgFirstName ? String(reg.tgFirstName) : '',
+      tgLastName: reg.tgLastName ? String(reg.tgLastName) : '',
+      payments: row.payments,
+      amountRub: row.amountRub,
+      stars: row.stars,
+      lastAt: row.lastAt,
+      methods: methods,
+      foreverPay: row.foreverPay || sub.forever === true,
+      accessForever: sub.forever === true
+    };
+  }).sort(function (a, b) {
+    return (b.lastAt || 0) - (a.lastAt || 0);
+  });
+
+  for (let i = 0; i < list.length; i++) {
+    const row = list[i];
+    if (row.tgUsername) continue;
+    const chat = await lookupTelegramChat(row.userId);
+    if (!chat) continue;
+    if (chat.tgUsername) row.tgUsername = chat.tgUsername;
+    if (chat.tgFirstName && !row.tgFirstName) row.tgFirstName = chat.tgFirstName;
+    if (chat.tgLastName && !row.tgLastName) row.tgLastName = chat.tgLastName;
+    const patch = { tgUpdatedAt: Date.now() };
+    if (chat.tgUsername) patch.tgUsername = chat.tgUsername;
+    if (chat.tgFirstName) patch.tgFirstName = chat.tgFirstName;
+    if (chat.tgLastName) patch.tgLastName = chat.tgLastName;
+    try {
+      await db.ref('user_registry/' + row.userId).update(patch);
+    } catch (e) {}
+  }
+
+  return list;
+}
+
+app.get('/admin/payers', async function (req, res) {
+  const user = authUser(req);
+  if (!user || !user.isAdmin) return res.status(403).json({ error: 'forbidden' });
+  try {
+    const payers = await collectPaidPayers();
+    return res.json({ ok: true, payers: payers });
+  } catch (e) {
+    console.error(e);
+    return res.status(500).json({ error: 'payers' });
   }
 });
 
@@ -2892,6 +3044,22 @@ async function reconcileUserCount() {
   return { people: people, userCount: Math.max(cur, want), maxNum: maxNum };
 }
 
+/** Имя и @username из Telegram — чтобы в админке можно было открыть человека. */
+async function rememberTelegramProfile(user) {
+  if (!user || user.id == null) return;
+  const uid = String(user.id);
+  if (!/^\d+$/.test(uid) || Number(uid) <= 0) return;
+  const patch = { tgUpdatedAt: Date.now() };
+  if (user.username) patch.tgUsername = String(user.username);
+  if (user.first_name) patch.tgFirstName = String(user.first_name);
+  if (user.last_name) patch.tgLastName = String(user.last_name);
+  try {
+    await db.ref('user_registry/' + uid).update(patch);
+  } catch (e) {
+    console.error('rememberTelegramProfile failed', uid, e);
+  }
+}
+
 /** Записать человека в user_registry, если ещё нет (оплата не должна оставлять «дыры»). */
 async function ensureUserRegistered(uid) {
   const id = String(uid || '');
@@ -2914,6 +3082,7 @@ app.post('/register', async function (req, res) {
   const uid = String(user.id);
   try {
     const entry = await ensureUserRegistered(uid);
+    rememberTelegramProfile(user).catch(function () {});
     return res.json(entry || {});
   } catch (e) {
     console.error(e);
@@ -3957,6 +4126,7 @@ async function handleBotMessage(msg) {
   try {
     if (msg.chat && msg.chat.type === 'private' && msg.from && msg.from.id) {
       markBotStarted(msg.from.id).catch(function () {});
+      rememberTelegramProfile(msg.from).catch(function () {});
     }
     if (await handleSupportFlow(msg)) return;
     if (await handleMenuCommands(msg)) return;

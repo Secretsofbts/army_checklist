@@ -580,7 +580,8 @@ registerUserIfNeeded();
   function applyBotActivateMenu(data) {
     const el = document.getElementById('menu-bot-activate');
     if (!el) return;
-    el.style.display = (data && data.botStarted) ? 'none' : '';
+    // Пока нет ответа — скрыт. Иначе на секунду вспыхивает ник бота у тех, кто уже нажал Start.
+    el.style.display = (data && data.botStarted === false) ? '' : 'none';
     if (!el.getAttribute('data-army-activate-bound')) {
       el.setAttribute('data-army-activate-bound', '1');
       el.addEventListener('click', armyActivateBotAndShowChat);

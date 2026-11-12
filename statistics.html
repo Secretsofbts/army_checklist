@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=155"></script>
+  <script src="sync.js?v=156"></script>
   <title>Личный кабинет</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -294,17 +294,11 @@
       <p style="font-size:12px; color:#888; margin:0 0 10px;">Админ (только вам)</p>
       <a href="admin-stats.html?v=1" style="display:block; text-align:center; text-decoration:none; border-radius:10px; padding:10px 12px; font-size:13px; font-weight:600; background:#9b7fd4; color:#fff; margin:0 0 8px;">Статистика подписок и оплат →</a>
       <a href="admin-receipts.html?v=5" style="display:block; text-align:center; text-decoration:none; border-radius:10px; padding:10px 12px; font-size:13px; font-weight:600; background:#f7f4fc; color:#5b4a7a; border:1px solid #e4dcf3; margin:0 0 8px;">Чеки по оплатам →</a>
-      <a href="admin-check-ids.html?v=1" style="display:block; text-align:center; text-decoration:none; border-radius:10px; padding:10px 12px; font-size:13px; font-weight:600; background:#f7f4fc; color:#5b4a7a; border:1px solid #e4dcf3;">Проверка id →</a>
+      <a href="admin-check-ids.html?v=1" style="display:block; text-align:center; text-decoration:none; border-radius:10px; padding:10px 12px; font-size:13px; font-weight:600; background:#f7f4fc; color:#5b4a7a; border:1px solid #e4dcf3; margin:0 0 8px;">Проверка id →</a>
+      <a href="admin-payers.html?v=1" style="display:block; text-align:center; text-decoration:none; border-radius:10px; padding:10px 12px; font-size:13px; font-weight:600; background:#f7f4fc; color:#5b4a7a; border:1px solid #e4dcf3;">Кто оплатил →</a>
     </div>
 
-    <div id="nickname-box" style="background:#f7f7fa; border-radius:12px; padding:14px; margin-bottom:14px;">
-      <p style="font-size:12px; color:#888; margin:0 0 8px;">Ваш ник</p>
-           <div style="display:flex; gap:8px;">
-        <input type="text" id="nickname-input" placeholder="Придумайте ник" maxlength="30" style="flex:1; min-width:0; box-sizing:border-box; border:1px solid #e0e0e0; border-radius:8px; padding:8px 10px; font-size:14px;">
-        <button id="nickname-save-btn" style="background:#9b7fd4; color:white; border:none; border-radius:8px; padding:8px 14px; font-size:13px; cursor:pointer;">Сохранить</button>
-      </div>
-      <p id="nickname-status" style="font-size:12px; color:#2e9e5b; margin:6px 0 0;"></p>
-    </div>
+    <div id="nickname-box" style="display:none; background:#f7f7fa; border-radius:12px; padding:14px; margin-bottom:14px;"></div>
 
        <div id="stats-content"><p class="empty-note">Загрузка...</p></div>
   </div>
@@ -479,7 +473,25 @@
     function showNicknameConfirmed(nickname) {
       const box = document.getElementById('nickname-box');
       if (!box) return;
-      box.innerHTML = '<p style="font-size:12px; color:#888; margin:0 0 4px;">Ваш ник</p><p style="font-size:15px; font-weight:600; color:#333; margin:0;">💜 ' + escapeNickHtml(nickname) + '</p>';
+      const html = '<p style="font-size:12px; color:#888; margin:0 0 4px;">Ваш ник</p><p style="font-size:15px; font-weight:600; color:#333; margin:0;">💜 ' + escapeNickHtml(nickname) + '</p>';
+      if (box.innerHTML !== html) box.innerHTML = html;
+      box.style.display = '';
+    }
+
+    function showNicknameForm() {
+      const box = document.getElementById('nickname-box');
+      if (!box) return;
+      if (!document.getElementById('nickname-save-btn')) {
+        box.innerHTML =
+          '<p style="font-size:12px; color:#888; margin:0 0 8px;">Ваш ник</p>' +
+          '<div style="display:flex; gap:8px;">' +
+            '<input type="text" id="nickname-input" placeholder="Придумайте ник" maxlength="30" style="flex:1; min-width:0; box-sizing:border-box; border:1px solid #e0e0e0; border-radius:8px; padding:8px 10px; font-size:14px;">' +
+            '<button id="nickname-save-btn" style="background:#9b7fd4; color:white; border:none; border-radius:8px; padding:8px 14px; font-size:13px; cursor:pointer;">Сохранить</button>' +
+          '</div>' +
+          '<p id="nickname-status" style="font-size:12px; color:#2e9e5b; margin:6px 0 0;"></p>';
+      }
+      box.style.display = '';
+      bindNicknameSave();
     }
 
     function bindNicknameSave() {
@@ -529,10 +541,7 @@
     try {
       const cachedNick = localStorage.getItem(nicknameCacheKey());
       if (cachedNick) showNicknameConfirmed(cachedNick);
-      else bindNicknameSave();
-    } catch (e) {
-      bindNicknameSave();
-    }
+    } catch (e) {}
 
     if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
       armyCloudFetch('user_registry/' + ARMY_USER_ID)
@@ -542,10 +551,18 @@
             try { localStorage.setItem(nicknameCacheKey(), entry.nickname); } catch (e) {}
             showNicknameConfirmed(entry.nickname);
           } else {
-            bindNicknameSave();
+            showNicknameForm();
           }
         })
-        .catch(() => { bindNicknameSave(); });
+        .catch(function () {
+          try {
+            if (!localStorage.getItem(nicknameCacheKey())) showNicknameForm();
+          } catch (e) {
+            showNicknameForm();
+          }
+        });
+    } else {
+      showNicknameForm();
     }
 
         function renderSectionsProgress() {

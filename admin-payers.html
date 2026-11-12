@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
+  <meta http-equiv="Expires" content="0">
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script src="sync.js?v=156"></script>
+  <title>Оплатившие</title>
+  <style>
+    body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
+    * { box-sizing: border-box; }
+    .app { background: white; border-radius: 16px; padding: 20px; width: 340px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+    .back { color: #888; text-decoration: none; font-size: 14px; display: inline-block; margin-bottom: 12px; }
+    h1 { font-size: 18px; margin: 0 0 8px; color: #2b2440; line-height: 1.35; }
+    .lead { font-size: 13px; color: #666; line-height: 1.45; margin: 0 0 14px; }
+    .status { font-size: 13px; color: #8a7aa8; margin: 0 0 12px; }
+    .row {
+      border: 1px solid #eee8f6; border-radius: 12px; padding: 12px; margin: 0 0 10px;
+      background: #faf8fd;
+    }
+    .name { font-size: 15px; font-weight: 700; color: #2b2440; margin: 0 0 4px; word-break: break-word; }
+    .meta { font-size: 12px; color: #5b4a7a; line-height: 1.45; margin: 0 0 3px; word-break: break-all; }
+    .links { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 8px; }
+    .links a, .links button {
+      display: inline-block; text-decoration: none; border: 1px solid #e4dcf3;
+      background: #efe8fa; color: #5b4a7a; border-radius: 10px;
+      padding: 7px 10px; font-size: 12px; font-weight: 600; cursor: pointer;
+    }
+    .denied { color: #b00020; font-size: 14px; line-height: 1.45; }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <a class="back" href="admin-stats.html?v=1">← К админ-статистике</a>
+    <a class="back" href="statistics.html" style="margin-left:8px;">Кабинет</a>
+    <h1>Кто оплатил</h1>
+    <p class="lead">Ник из чек-листа и ссылка в Telegram, если человек писал боту или заходил в приложение.</p>
+    <p class="status" id="page-status">Загрузка…</p>
+    <div id="list"></div>
+  </div>
+
+  <script>
+    if (window.Telegram && window.Telegram.WebApp) {
+      Telegram.WebApp.ready();
+      Telegram.WebApp.expand();
+    }
+
+    function apiBase() {
+      return String(window.ARMY_API_URL || '').replace(/\/$/, '');
+    }
+
+    function initHeaders() {
+      var h = {};
+      try {
+        var initData = (window.Telegram && Telegram.WebApp && Telegram.WebApp.initData) || '';
+        if (initData) h['X-Telegram-Init-Data'] = initData;
+      } catch (e) {}
+      return h;
+    }
+
+    function formatWhen(ms) {
+      if (!ms) return '—';
+      try { return new Date(ms).toLocaleString('ru-RU'); } catch (e) { return '—'; }
+    }
+
+    function escapeHtml(s) {
+      return String(s || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function openTelegram(u) {
+      var url = u.tgUsername ? ('https://t.me/' + u.tgUsername) : '';
+      if (!url) return;
+      try {
+        if (window.Telegram && Telegram.WebApp && typeof Telegram.WebApp.openTelegramLink === 'function') {
+          Telegram.WebApp.openTelegramLink(url);
+          return;
+        }
+      } catch (e) {}
+      window.open(url, '_blank');
+    }
+
+    function copyId(id) {
+      var text = String(id || '');
+      if (!text) return;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).catch(function () {});
+        return;
+      }
+      window.prompt('Скопируйте id', text);
+    }
+
+    function displayName(u) {
+      if (u.nickname) return u.nickname;
+      var tgName = [u.tgFirstName, u.tgLastName].filter(Boolean).join(' ');
+      if (tgName) return tgName;
+      if (u.tgUsername) return '@' + u.tgUsername;
+      return u.userId;
+    }
+
+    function paint(payers) {
+      var list = document.getElementById('list');
+      var statusEl = document.getElementById('page-status');
+      if (!list) return;
+      if (!payers || !payers.length) {
+        list.innerHTML = '<p class="meta">Пока нет оплат</p>';
+        if (statusEl) statusEl.textContent = '';
+        return;
+      }
+      if (statusEl) statusEl.textContent = 'Людей: ' + payers.length;
+      list.innerHTML = payers.map(function (u) {
+        var money = [];
+        if (u.amountRub) money.push((u.amountRub || 0) + ' ₽');
+        if (u.stars) money.push((u.stars || 0) + ' ⭐');
+        var method = (u.methods || []).join(', ') || 'оплата';
+        var tgLink = u.tgUsername
+          ? ('<button type="button" class="open-tg" data-user="' + escapeHtml(u.tgUsername) + '">Открыть @' + escapeHtml(u.tgUsername) + '</button>')
+          : '<span class="meta">@ника Telegram нет — откройте чат по id</span>';
+        return (
+          '<div class="row">' +
+            '<p class="name">' + escapeHtml(displayName(u)) + (u.accessForever || u.foreverPay ? ' · бессрок' : '') + '</p>' +
+            (u.nickname && u.tgUsername ? '<p class="meta">ник в чек-листе: ' + escapeHtml(u.nickname) + '</p>' : '') +
+            '<p class="meta">id: ' + escapeHtml(u.userId) + '</p>' +
+            '<p class="meta">' + escapeHtml(method) + (money.length ? ' · ' + money.join(' · ') : '') + '</p>' +
+            '<p class="meta">последняя оплата: ' + formatWhen(u.lastAt) + '</p>' +
+            '<div class="links">' +
+              tgLink +
+              '<button type="button" class="copy-id" data-id="' + escapeHtml(u.userId) + '">Скопировать id</button>' +
+            '</div>' +
+          '</div>'
+        );
+      }).join('');
+
+      list.querySelectorAll('.open-tg').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          openTelegram({ tgUsername: btn.getAttribute('data-user') });
+        });
+      });
+      list.querySelectorAll('.copy-id').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          copyId(btn.getAttribute('data-id'));
+          btn.textContent = 'Скопировано';
+          setTimeout(function () { btn.textContent = 'Скопировать id'; }, 1200);
+        });
+      });
+    }
+
+    function loadPayers() {
+      var api = apiBase();
+      var statusEl = document.getElementById('page-status');
+      if (!api) {
+        if (statusEl) statusEl.textContent = 'Нет API';
+        return;
+      }
+      fetch(api + '/subscription', { method: 'GET', headers: initHeaders() })
+        .then(function (res) { return res.ok ? res.json() : null; })
+        .then(function (sub) {
+          if (!sub || sub.status !== 'admin') {
+            document.getElementById('list').innerHTML =
+              '<p class="denied">Эта страница только для администратора.</p>';
+            if (statusEl) statusEl.textContent = '';
+            return null;
+          }
+          return fetch(api + '/admin/payers', { method: 'GET', headers: initHeaders() });
+        })
+        .then(function (res) {
+          if (!res) return null;
+          return res.ok ? res.json() : null;
+        })
+        .then(function (data) {
+          if (!data) return;
+          paint(data.payers || []);
+        })
+        .catch(function () {
+          if (statusEl) statusEl.textContent = 'Не удалось загрузить';
+        });
+    }
+
+    loadPayers();
+  </script>
+</body>
+</html>
