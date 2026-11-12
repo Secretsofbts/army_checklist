@@ -4586,6 +4586,32 @@ async function sendForeverThanksPreviewToTest() {
   }
 }
 
+/** Разово: бессрочное «спасибо» двум оплатившим — без строки чека (чек уже отдельно). */
+async function sendForeverThanksToPaidUsersOnce() {
+  const metaRef = db.ref('bot_meta/foreverThanksPaidUsersV1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('forever thanks to paid users already sent', metaSnap.val());
+    return;
+  }
+  const ids = ['1733095623', '5046274275'];
+  const results = [];
+  for (let i = 0; i < ids.length; i++) {
+    const uid = ids[i];
+    try {
+      const thanks = await sendPaidThanksToUser(uid, 'forever', null);
+      results.push({ userId: uid, ok: !!thanks.sent, detail: thanks });
+      if (!thanks.sent) console.error('forever thanks paid user failed', uid, thanks);
+    } catch (e) {
+      results.push({ userId: uid, ok: false, error: String((e && e.message) || e) });
+      console.error('forever thanks paid user error', uid, e);
+    }
+    await new Promise(function (resolve) { setTimeout(resolve, 80); });
+  }
+  await metaRef.set({ at: Date.now(), results: results });
+  console.log('forever thanks to paid users done', results);
+}
+
 /** Разово: на тесте показать paywall «дни закончились». */
 async function expireTestAccountForPaywallPreview() {
   const metaRef = db.ref('bot_meta/testExpiredPaywallPreviewV1');
@@ -4706,6 +4732,12 @@ app.listen(PORT, function () {
       console.error('forever thanks preview failed', e);
     });
   }, 5500);
+  // Разово: бессрочное «спасибо» 1733095623 и 5046274275 — без чека в конце
+  setTimeout(function () {
+    sendForeverThanksToPaidUsersOnce().catch(function (e) {
+      console.error('forever thanks paid users failed', e);
+    });
+  }, 6000);
   // Разово: превью текстов напоминаний на тестовый
   setTimeout(function () {
     sendOnedayRemindPreviewToTest().catch(function (e) {
