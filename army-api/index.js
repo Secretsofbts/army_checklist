@@ -2653,7 +2653,8 @@ app.post('/payment/yookassa/create', async function (req, res) {
     try {
       await telegramSendMessage(
         uid,
-        'Ссылка на оплату. Если в приложении белый экран — откройте отсюда 💜',
+        'Ссылка на оплату ЮKassa 💜\n\n' +
+          'Если страница белая (часто на iPhone): зажмите кнопку «Оплатить» и выберите «Открыть в Safari» или Chrome.',
         { text: 'Оплатить', url: confirmationUrl }
       );
     } catch (sendErr) {

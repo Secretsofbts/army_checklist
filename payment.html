@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=157"></script>
+  <script src="sync.js?v=158"></script>
   <title>Оплата подписки</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
@@ -360,10 +360,11 @@
     </div>
 
     <p class="plan-note" id="pay-status" style="margin:8px 0 0;"></p>
-    <p class="plan-note" id="pay-open-wrap" style="margin:8px 0 0; display:none;">
-      Если открылась белая страница — нажмите ещё раз:
-      <a href="#" id="pay-open-link" style="color:#7b5fb3;">открыть оплату</a>
-    </p>
+    <div id="pay-open-wrap" style="display:none; margin-top:10px;">
+      <button type="button" class="plan-btn is-copy" id="pay-open-btn">Открыть ЮKassa в браузере</button>
+      <button type="button" class="plan-btn is-copy" id="pay-copy-btn" style="margin-top:8px; background:#fff; color:#5b4a7a; border:1px solid #d9c8f0;">Скопировать ссылку</button>
+      <p class="plan-note" style="margin-top:8px;">На iPhone встроенный браузер Telegram часто показывает белый экран. Нажмите кнопку выше или зажмите ссылку в сообщении бота → «Открыть в Safari».</p>
+    </div>
 
     <p class="footer-note">
       Условия и реквизиты — в <a href="oferta.html">оферте</a>.
@@ -719,29 +720,61 @@
             }
             return;
           }
-          if (statusEl) statusEl.textContent = 'Ссылку на оплату отправили в чат с ботом. Если открылась белая страница — откройте её оттуда или кнопкой ниже.';
           var url = result.data.confirmationUrl;
+          var platform = '';
+          try {
+            platform = String((window.Telegram && Telegram.WebApp && Telegram.WebApp.platform) || '').toLowerCase();
+          } catch (ePlat) {}
+          var isIos = (platform === 'ios' || platform === 'macos');
+          if (statusEl) {
+            statusEl.textContent = isIos
+              ? 'Ссылку отправили в чат с ботом. На iPhone ЮKassa нужно открыть в Safari — кнопкой ниже.'
+              : 'Ссылку на оплату отправили в чат с ботом. Если экран белый — откройте кнопкой ниже или в Safari/Chrome.';
+          }
           var openWrap = document.getElementById('pay-open-wrap');
-          var openLink = document.getElementById('pay-open-link');
-          if (openLink) {
-            openLink.href = url;
-            openLink.onclick = function (ev) {
+          var openBtn = document.getElementById('pay-open-btn');
+          var copyBtn = document.getElementById('pay-copy-btn');
+          function openYooKassaInBrowser() {
+            try {
+              if (window.Telegram && Telegram.WebApp && Telegram.WebApp.openLink) {
+                Telegram.WebApp.openLink(url, { try_instant_view: false });
+                return;
+              }
+            } catch (e2) {}
+            try { window.open(url, '_blank'); } catch (e3) {}
+          }
+          if (openBtn) {
+            openBtn.onclick = function (ev) {
               ev.preventDefault();
+              openYooKassaInBrowser();
+            };
+          }
+          if (copyBtn) {
+            copyBtn.onclick = function () {
+              function done(ok) {
+                copyBtn.textContent = ok ? 'Ссылка скопирована' : 'Не скопировалось — откройте из чата с ботом';
+              }
               try {
-                if (window.Telegram && Telegram.WebApp && Telegram.WebApp.openLink) {
-                  Telegram.WebApp.openLink(url, { try_instant_view: false });
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                  navigator.clipboard.writeText(url).then(function () { done(true); }).catch(function () {
+                    try {
+                      var ta = document.createElement('textarea');
+                      ta.value = url;
+                      document.body.appendChild(ta);
+                      ta.select();
+                      done(document.execCommand('copy'));
+                      document.body.removeChild(ta);
+                    } catch (e4) { done(false); }
+                  });
                   return;
                 }
-              } catch (e2) {}
-              try { window.open(url, '_blank'); } catch (e3) {}
+              } catch (e5) {}
+              done(false);
             };
           }
           if (openWrap) openWrap.style.display = '';
-          try {
-            if (window.Telegram && Telegram.WebApp && Telegram.WebApp.openLink) {
-              Telegram.WebApp.openLink(url, { try_instant_view: false });
-            }
-          } catch (e) {}
+          // На iPhone автооткрытие во встроенном окне Telegram даёт белый экран ЮKassa.
+          if (!isIos) openYooKassaInBrowser();
           if (lastPayInfo) paintPricing(lastPayInfo);
         })
         .catch(function () {
