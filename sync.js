@@ -1643,24 +1643,38 @@ registerUserIfNeeded();
     return true;
   }
 
+  function favoriteLinesFromTextEl(textEl) {
+    const lines = [];
+    function addLine(s) {
+      const t = String(s || '').replace(/\s+/g, ' ').trim();
+      if (!t) return;
+      if (lines.indexOf(t) !== -1) return;
+      lines.push(t);
+    }
+    function walk(node) {
+      if (!node) return;
+      if (node.nodeType === 3) {
+        addLine(node.textContent);
+        return;
+      }
+      if (node.nodeType !== 1) return;
+      if (node.tagName === 'BR') return;
+      const kids = node.childNodes;
+      for (let i = 0; i < kids.length; i++) walk(kids[i]);
+    }
+    walk(textEl);
+    return lines;
+  }
+
   function favoriteMetaFromRow(row) {
     const id = row.dataset.id;
     let title = '';
     let sub = '';
     const textEl = row.querySelector('.text');
     if (textEl) {
-      const extra = textEl.querySelectorAll('.sub, span');
-      for (let i = 0; i < extra.length; i++) {
-        const t = String(extra[i].textContent || '').replace(/\s+/g, ' ').trim();
-        if (t) {
-          if (sub) sub += '\n';
-          sub += t;
-        }
-      }
-      const clone = textEl.cloneNode(true);
-      const drop = clone.querySelectorAll('.sub, span');
-      for (let i = 0; i < drop.length; i++) drop[i].remove();
-      title = truncateCheckTitle(clone.textContent || '');
+      const lines = favoriteLinesFromTextEl(textEl);
+      title = lines[0] || '';
+      if (lines.length > 1) sub = lines.slice(1).join('\n');
     }
     if (!title) title = titleFromChecklistRow(id) || prettyCheckId(id);
     const page = currentChecklistPageInfo() || {};
@@ -1851,31 +1865,53 @@ registerUserIfNeeded();
       html = '<p style="font-size:14px; color:#999; margin:0; line-height:1.4;">Ещё не выбрано</p>';
     } else {
       const title = escapeFavHtml(fav.title || prettyCheckId(fav.id));
-      const sub = escapeFavHtml(String(fav.sub || '').trim());
+      const rawSub = String(fav.sub || '')
+        .replace(/([^\s\n])(Год выпуска:)/g, '$1\n$2');
+      const subLines = [];
+      rawSub.split(/\n/).forEach(function (line) {
+        const t = line.replace(/\s+/g, ' ').trim();
+        if (!t) return;
+        if (subLines.indexOf(t) !== -1) return;
+        if (t === (fav.title || '').replace(/\s+/g, ' ').trim()) return;
+        subLines.push(t);
+      });
       const pageHref = fav.page && /^[a-z0-9._-]+\.html$/i.test(String(fav.page).split('?')[0]) ? String(fav.page) : '';
       const pageName = escapeFavHtml(fav.pageName || (pageHref ? pageHref.replace(/\.html$/i, '') : ''));
+      const actionCss =
+        'display:block; text-decoration:none; border:1px solid #eee8f6; background:#fff; border-radius:10px; padding:8px 10px; margin-top:8px;';
       let body =
-        '<p style="font-size:15px; font-weight:600; color:#2b2440; margin:0; line-height:1.35;">' + title + '</p>';
-      if (sub) {
+        '<p style="font-size:15px; font-weight:600; color:#2b2440; margin:0; line-height:1.35; padding-right:18px;">' + title + '</p>';
+      subLines.forEach(function (line) {
+        const isYear = /^Год выпуска:/i.test(line);
         body +=
-          '<p style="font-size:11px; color:#999; margin:4px 0 0; line-height:1.35; font-weight:400;">' +
-          sub.replace(/\n/g, '<br>') +
+          '<p style="font-size:' + (isYear ? '10px' : '11px') +
+          '; color:' + (isYear ? '#bbb' : '#999') +
+          '; margin:4px 0 0; line-height:1.35; font-weight:400;">' +
+          escapeFavHtml(line) +
           '</p>';
-      }
+      });
       if (pageHref && pageName) {
         body +=
-          '<p style="font-size:12px; color:#888; margin:10px 0 0; line-height:1.4;">Откуда: ' +
-          '<a href="' + pageHref + '" style="color:#7b5fb3; text-decoration:none;">' + pageName + '</a></p>';
+          '<a href="' + pageHref + '" style="' + actionCss + '">' +
+          '<span style="display:block; font-size:10px; color:#888; margin:0 0 2px;">Откуда</span>' +
+          '<span style="display:block; font-size:13px; font-weight:600; color:#2b2440; line-height:1.3;">' + pageName + '</span>' +
+          '</a>';
       } else if (pageName) {
         body +=
-          '<p style="font-size:12px; color:#888; margin:10px 0 0; line-height:1.4;">Откуда: ' + pageName + '</p>';
+          '<div style="' + actionCss + '">' +
+          '<span style="display:block; font-size:10px; color:#888; margin:0 0 2px;">Откуда</span>' +
+          '<span style="display:block; font-size:13px; font-weight:600; color:#2b2440; line-height:1.3;">' + pageName + '</span>' +
+          '</div>';
       }
       if (fav.link && !/\.html(\?|$)/i.test(fav.link)) {
         body +=
-          '<a href="' + escapeFavHtml(fav.link) + '" target="_blank" rel="noopener" style="display:inline-block; margin-top:10px; font-size:13px; color:#7b5fb3; text-decoration:none;">Открыть ролик 🔗</a>';
+          '<a href="' + escapeFavHtml(fav.link) + '" target="_blank" rel="noopener" style="' + actionCss + '">' +
+          '<span style="display:block; font-size:10px; color:#888; margin:0 0 2px;">Ссылка</span>' +
+          '<span style="display:block; font-size:13px; font-weight:600; color:#2b2440; line-height:1.3;">Открыть ролик</span>' +
+          '</a>';
       }
       html =
-        '<div style="min-width:0; padding-right:8px;">' + body + '</div>' +
+        '<div style="min-width:0;">' + body + '</div>' +
         '<button type="button" id="favorite-video-clear" aria-label="Убрать" style="position:absolute; top:6px; right:6px; width:28px; height:28px; border:none; background:none; color:#b8a9cc; font-size:18px; line-height:1; cursor:pointer; padding:0;">✕</button>';
     }
     if (box.innerHTML !== html) box.innerHTML = html;

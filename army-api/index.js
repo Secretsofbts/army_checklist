@@ -1435,8 +1435,13 @@ function isTestPayment(p) {
 
 function addPayToBucket(bucket, p) {
   if (!p || isTestPayment(p)) return;
+  const foreverPay = String(p.payload || '').toLowerCase().indexOf('forever') !== -1 ||
+    p.forever === true ||
+    (parseInt(p.days, 10) || 0) <= 0;
+  const d = foreverPay ? 'forever' : String(Math.max(1, parseInt(p.days, 10) || 30));
   if (String(p.method) === 'manual') {
     bucket.manual += 1;
+    bucket.byDays[d] = (bucket.byDays[d] || 0) + 1;
     return;
   }
   bucket.payments += 1;
@@ -1444,11 +1449,49 @@ function addPayToBucket(bucket, p) {
   else if (String(p.method) === 'stars') bucket.starsPayments += 1;
   bucket.stars += Math.max(0, parseInt(p.stars, 10) || 0);
   bucket.amountRub += Math.max(0, Number(p.amountRub) || 0);
-  const foreverPay = String(p.payload || '').indexOf('forever') !== -1 ||
-    p.forever === true ||
-    (parseInt(p.days, 10) || 0) <= 0;
-  const d = foreverPay ? 'forever' : String(Math.max(1, parseInt(p.days, 10) || 30));
   bucket.byDays[d] = (bucket.byDays[d] || 0) + 1;
+}
+
+async function fetchIncomingStarPayments() {
+  const out = [];
+  let offset = '';
+  for (let page = 0; page < 40; page++) {
+    const body = { limit: 100 };
+    if (offset) body.offset = offset;
+    const data = await telegramApi('getStarTransactions', body);
+    const result = (data && data.result) || {};
+    const txs = result.transactions || [];
+    txs.forEach(function (tx) {
+      const src = tx && tx.source;
+      if (!src || src.type !== 'user') return;
+      const payload = String(src.invoice_payload || '');
+      if (payload.indexOf('stars_test:') === 0) return;
+      const uid = src.user && src.user.id ? String(src.user.id) : '';
+      if (!uid) return;
+      const parsed = parseStarsPayload(payload);
+      if (parsed && parsed.test) return;
+      const forever = !!(parsed && parsed.forever);
+      out.push({
+        at: (Number(tx.date) || 0) * 1000,
+        userId: uid,
+        method: 'stars',
+        days: forever ? 0 : (parsed ? parsed.days : 0),
+        forever: forever,
+        stars: Math.max(0, parseInt(tx.amount, 10) || 0),
+        amountRub: 0,
+        chargeId: 'stx:' + String(tx.id || ''),
+        payload: payload || null,
+        test: false
+      });
+    });
+    if (result.next_offset) {
+      offset = String(result.next_offset);
+      continue;
+    }
+    if (txs.length < 100) break;
+    break;
+  }
+  return out;
 }
 
 async function collectPaymentStats() {
@@ -1473,6 +1516,17 @@ async function collectPaymentStats() {
     list.push(p);
   }
 
+  let usedStarTx = false;
+  try {
+    const starPays = await fetchIncomingStarPayments();
+    if (starPays && starPays.length) {
+      usedStarTx = true;
+      starPays.forEach(pushPay);
+    }
+  } catch (e) {
+    console.error('star transactions fetch failed', e);
+  }
+
   const paySnap = await db.ref('payments').get();
   if (paySnap.exists()) {
     const all = paySnap.val() || {};
@@ -1480,6 +1534,7 @@ async function collectPaymentStats() {
       const row = all[k];
       // Карты считаем только из yookassa_payments — иначе дубли от webhook/sync
       if (row && String(row.method) === 'yookassa') return;
+      if (usedStarTx && row && String(row.method) === 'stars') return;
       pushPay(row);
     });
   }
@@ -1513,10 +1568,10 @@ async function collectPaymentStats() {
 
   // Старые оплаты Stars, пока писался только lastStarsPayment
   const subSnap = await db.ref('subscriptions').get();
-  if (subSnap.exists()) {
-    const all = subSnap.val() || {};
-    Object.keys(all).forEach(function (uid) {
-      const last = all[uid] && all[uid].lastStarsPayment;
+  const subsAll = subSnap.exists() ? (subSnap.val() || {}) : {};
+  if (!usedStarTx) {
+    Object.keys(subsAll).forEach(function (uid) {
+      const last = subsAll[uid] && subsAll[uid].lastStarsPayment;
       if (!last || typeof last.at !== 'number') return;
       const payload = String(last.payload || '');
       const foreverStars = last.forever === true ||
@@ -1536,6 +1591,31 @@ async function collectPaymentStats() {
       });
     });
   }
+
+  const manualUsers = {};
+  list.forEach(function (p) {
+    if (p && String(p.method) === 'manual') manualUsers[String(p.userId)] = true;
+  });
+  Object.keys(subsAll).forEach(function (uid) {
+    if (manualUsers[uid]) return;
+    const d = subsAll[uid] || {};
+    const note = String(d.note || '');
+    const grantedBy = d.grantedBy ? String(d.grantedBy) : '';
+    const isEarlyDonate = note === 'early-donate-5000';
+    if (!grantedBy && !isEarlyDonate) return;
+    pushPay({
+      at: typeof d.updatedAt === 'number' ? d.updatedAt : (d.createdAt || 0),
+      userId: uid,
+      method: 'manual',
+      days: d.forever || isEarlyDonate ? 0 : (parseInt(d.paidDays, 10) || 30),
+      forever: !!(d.forever || isEarlyDonate),
+      stars: 0,
+      amountRub: 0,
+      chargeId: (isEarlyDonate ? 'early-donate:' : 'grantedBy:') + uid,
+      payload: grantedBy ? ('manual:' + grantedBy) : 'manual:early-donate',
+      test: false
+    });
+  });
 
   const day = emptyPayBucket();
   const week = emptyPayBucket();
@@ -3336,19 +3416,20 @@ app.post('/admin/grant', async function (req, res) {
       };
     }
     await ref.set(entry);
+    const thanksDays = forever ? 0 : (days || 30);
+    await logPaymentEvent({
+      at: now,
+      userId: targetId,
+      method: 'manual',
+      days: thanksDays,
+      forever: forever,
+      stars: 0,
+      amountRub: 0,
+      chargeId: 'manual:' + targetId + ':' + now,
+      payload: forever ? ('manual-forever:' + String(user.id)) : ('manual:' + String(user.id)),
+      test: false
+    });
     if (!forever) {
-      const thanksDays = days || 30;
-      await logPaymentEvent({
-        at: now,
-        userId: targetId,
-        method: 'manual',
-        days: thanksDays,
-        stars: 0,
-        amountRub: 0,
-        chargeId: null,
-        payload: 'manual:' + String(user.id),
-        test: false
-      });
       const thanks = await sendPaidThanksToUser(targetId, thanksDays);
       if (!thanks.sent) console.error('paid thanks failed', targetId, thanks);
       // Пауза, чтобы другу сначала дошла «оплата», и только потом «+30 бонус»
@@ -4659,6 +4740,19 @@ async function grantPaidDaysFromStars(uid, days, payment, opts) {
   const prev = snap.exists() ? (snap.val() || {}) : {};
   const now = Date.now();
   if (prev.forever) {
+    const payloadStr = payment && payment.invoice_payload ? String(payment.invoice_payload) : '';
+    await logPaymentEvent({
+      at: now,
+      userId: uid,
+      method: 'stars',
+      days: 0,
+      forever: true,
+      stars: payment && payment.total_amount,
+      amountRub: 0,
+      chargeId: payment && payment.telegram_payment_charge_id,
+      payload: payloadStr,
+      test: payloadStr.indexOf('stars_test:') === 0
+    });
     return { skipped: true, reason: 'forever' };
   }
   let entry;
