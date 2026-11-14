@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=164"></script>
+  <script src="sync.js?v=165"></script>
   <title>Оплата подписки</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
@@ -248,6 +248,7 @@
     .pay-method-ico.is-sbp { background: linear-gradient(135deg, #1ea4ff, #6b2cff 45%, #ff3d7a); }
     .pay-method-ico.is-card { background: #3b82f6; }
     .pay-method-ico.is-ym { background: #8b5cf6; font-size: 11px; }
+    .pay-method-ico.is-copy { background: #5b4a7a; font-size: 16px; }
     .pay-method-main { flex: 1; min-width: 0; }
     .pay-method-name {
       font-size: 14px;
@@ -401,6 +402,15 @@
         </span>
         <span class="pay-method-arrow">›</span>
       </button>
+      <button type="button" class="pay-method" data-method="copy">
+        <span class="pay-method-ico is-copy">⧉</span>
+        <span class="pay-method-main">
+          <span class="pay-method-name">Скопировать ссылку</span>
+          <span class="pay-method-note">Вставить в браузер вручную</span>
+        </span>
+        <span class="pay-method-arrow">›</span>
+      </button>
+      <p class="pay-sheet-lead" style="margin:4px 0 0;">Если проблемы с оплатой напрямую, например белый экран, скопируйте ссылку и попробуйте вставить её вручную в браузере.</p>
     </div>
   </div>
 
@@ -688,7 +698,27 @@
       sheet.setAttribute('aria-hidden', 'false');
     }
 
-    function startYooKassaPay(body, btn) {
+    function copyPayUrl(url, done) {
+      function finish(ok) { if (done) done(ok); }
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(url).then(function () { finish(true); }).catch(function () {
+            try {
+              var ta = document.createElement('textarea');
+              ta.value = url;
+              document.body.appendChild(ta);
+              ta.select();
+              finish(document.execCommand('copy'));
+              document.body.removeChild(ta);
+            } catch (e4) { finish(false); }
+          });
+          return;
+        }
+      } catch (e5) {}
+      finish(false);
+    }
+
+    function startYooKassaPay(body, btn, copyOnly) {
       var statusEl = document.getElementById('pay-status');
       var api = String(window.ARMY_API_URL || '').replace(/\/$/, '');
       if (!api) {
@@ -725,7 +755,11 @@
             return;
           }
           var url = result.data.confirmationUrl;
-          if (statusEl) statusEl.textContent = 'Открываем страницу оплаты…';
+          if (statusEl) {
+            statusEl.textContent = copyOnly
+              ? 'Ссылка скопирована. Вставьте её в браузер.'
+              : 'Открываем страницу оплаты…';
+          }
           var openWrap = document.getElementById('pay-open-wrap');
           var openBtn = document.getElementById('pay-open-btn');
           var copyBtn = document.getElementById('pay-copy-btn');
@@ -753,32 +787,26 @@
             copyBtn.style.color = '#5b4a7a';
             copyBtn.style.border = '1px solid #d9c8f0';
             copyBtn.onclick = function () {
-              function done(ok) {
+              copyPayUrl(url, function (ok) {
                 copyBtn.textContent = ok ? 'Ссылка скопирована' : 'Не скопировалось — откройте из чата с ботом';
-              }
-              try {
-                if (navigator.clipboard && navigator.clipboard.writeText) {
-                  navigator.clipboard.writeText(url).then(function () { done(true); }).catch(function () {
-                    try {
-                      var ta = document.createElement('textarea');
-                      ta.value = url;
-                      document.body.appendChild(ta);
-                      ta.select();
-                      done(document.execCommand('copy'));
-                      document.body.removeChild(ta);
-                    } catch (e4) { done(false); }
-                  });
-                  return;
-                }
-              } catch (e5) {}
-              done(false);
+              });
             };
           }
           if (openWrap) {
             openWrap.removeAttribute('data-paid-hide');
             openWrap.style.display = '';
           }
-          openYooKassaInBrowser();
+          if (copyOnly) {
+            copyPayUrl(url, function (ok) {
+              if (statusEl) {
+                statusEl.textContent = ok
+                  ? 'Ссылка скопирована. Вставьте её в браузер.'
+                  : 'Не скопировалось — ссылка есть в чате с ботом.';
+              }
+            });
+          } else {
+            openYooKassaInBrowser();
+          }
           if (lastPayInfo) paintPricing(lastPayInfo);
         })
         .catch(function () {
@@ -869,9 +897,10 @@
             if (!pendingPayBody) return;
             var body = {};
             Object.keys(pendingPayBody).forEach(function (k) { body[k] = pendingPayBody[k]; });
-            body.method = method;
+            var copyOnly = method === 'copy';
+            if (!copyOnly) body.method = method;
             var payBtn = pendingPayBtn;
-            startYooKassaPay(body, payBtn);
+            startYooKassaPay(body, payBtn, copyOnly);
           });
         });
       }
