@@ -1645,7 +1645,24 @@ registerUserIfNeeded();
 
   function favoriteMetaFromRow(row) {
     const id = row.dataset.id;
-    const title = titleFromChecklistRow(id) || prettyCheckId(id);
+    let title = '';
+    let sub = '';
+    const textEl = row.querySelector('.text');
+    if (textEl) {
+      const extra = textEl.querySelectorAll('.sub, span');
+      for (let i = 0; i < extra.length; i++) {
+        const t = String(extra[i].textContent || '').replace(/\s+/g, ' ').trim();
+        if (t) {
+          if (sub) sub += '\n';
+          sub += t;
+        }
+      }
+      const clone = textEl.cloneNode(true);
+      const drop = clone.querySelectorAll('.sub, span');
+      for (let i = 0; i < drop.length; i++) drop[i].remove();
+      title = truncateCheckTitle(clone.textContent || '');
+    }
+    if (!title) title = titleFromChecklistRow(id) || prettyCheckId(id);
     const page = currentChecklistPageInfo() || {};
     let link = '';
     const anchors = row.querySelectorAll('a[href]');
@@ -1659,6 +1676,7 @@ registerUserIfNeeded();
     return {
       id: id,
       title: title,
+      sub: sub,
       page: page.href || '',
       pageName: page.name || '',
       link: link
@@ -1830,28 +1848,39 @@ registerUserIfNeeded();
     const fav = getFavoriteVideo();
     let html;
     if (!fav) {
-      html =
-        '<p style="font-size:12px; color:#888; margin:0 0 6px;">Любимое видео</p>' +
-        '<p style="font-size:14px; color:#999; margin:0; line-height:1.4;">Ещё не выбрано. На странице с роликом зажмите название — так оно станет любимым.</p>';
+      html = '<p style="font-size:14px; color:#999; margin:0; line-height:1.4;">Ещё не выбрано</p>';
     } else {
       const title = escapeFavHtml(fav.title || prettyCheckId(fav.id));
+      const sub = escapeFavHtml(String(fav.sub || '').trim());
       const pageHref = fav.page && /^[a-z0-9._-]+\.html$/i.test(String(fav.page).split('?')[0]) ? String(fav.page) : '';
-      const titleHtml = pageHref
-        ? ('<a href="' + pageHref + '" style="color:#2b2440; text-decoration:none; font-weight:600;">⭐ ' + title + '</a>')
-        : ('<span style="font-weight:600; color:#2b2440;">⭐ ' + title + '</span>');
-      let extra = '';
+      const pageName = escapeFavHtml(fav.pageName || (pageHref ? pageHref.replace(/\.html$/i, '') : ''));
+      let body =
+        '<p style="font-size:15px; font-weight:600; color:#2b2440; margin:0; line-height:1.35;">' + title + '</p>';
+      if (sub) {
+        body +=
+          '<p style="font-size:11px; color:#999; margin:4px 0 0; line-height:1.35; font-weight:400;">' +
+          sub.replace(/\n/g, '<br>') +
+          '</p>';
+      }
+      if (pageHref && pageName) {
+        body +=
+          '<p style="font-size:12px; color:#888; margin:10px 0 0; line-height:1.4;">Откуда: ' +
+          '<a href="' + pageHref + '" style="color:#7b5fb3; text-decoration:none;">' + pageName + '</a></p>';
+      } else if (pageName) {
+        body +=
+          '<p style="font-size:12px; color:#888; margin:10px 0 0; line-height:1.4;">Откуда: ' + pageName + '</p>';
+      }
       if (fav.link && !/\.html(\?|$)/i.test(fav.link)) {
-        extra =
-          '<a href="' + escapeFavHtml(fav.link) + '" target="_blank" rel="noopener" style="display:inline-block; margin-top:8px; font-size:13px; color:#7b5fb3; text-decoration:none;">Открыть ролик 🔗</a>';
+        body +=
+          '<a href="' + escapeFavHtml(fav.link) + '" target="_blank" rel="noopener" style="display:inline-block; margin-top:10px; font-size:13px; color:#7b5fb3; text-decoration:none;">Открыть ролик 🔗</a>';
       }
       html =
-        '<p style="font-size:12px; color:#888; margin:0 0 6px;">Любимое видео</p>' +
-        '<p style="font-size:15px; margin:0; line-height:1.35;">' + titleHtml + '</p>' +
-        extra +
-        '<button type="button" id="favorite-video-clear" style="margin-top:10px; background:none; border:none; padding:0; font-size:12px; color:#8a7aa8; cursor:pointer;">Убрать</button>';
+        '<div style="min-width:0; padding-right:8px;">' + body + '</div>' +
+        '<button type="button" id="favorite-video-clear" aria-label="Убрать" style="position:absolute; top:6px; right:6px; width:28px; height:28px; border:none; background:none; color:#b8a9cc; font-size:18px; line-height:1; cursor:pointer; padding:0;">✕</button>';
     }
     if (box.innerHTML !== html) box.innerHTML = html;
     box.style.display = '';
+    box.style.position = 'relative';
     const clearBtn = document.getElementById('favorite-video-clear');
     if (clearBtn && clearBtn.dataset.bound !== '1') {
       clearBtn.dataset.bound = '1';
