@@ -1614,6 +1614,33 @@ registerUserIfNeeded();
     }
   }
 
+  function normalizeFavoriteItem(v) {
+    if (!v || typeof v !== 'object' || !v.id) return null;
+    return v;
+  }
+
+  function getFavoriteVideos() {
+    try {
+      const raw = localStorage.getItem('progress:favoriteVideos');
+      if (raw && raw !== 'null') {
+        const arr = JSON.parse(raw);
+        if (Array.isArray(arr)) {
+          const out = [];
+          const seen = {};
+          arr.forEach(function (v) {
+            const item = normalizeFavoriteItem(v);
+            if (!item || seen[item.id]) return;
+            seen[item.id] = true;
+            out.push(item);
+          });
+          return out;
+        }
+      }
+    } catch (e) {}
+    const one = getFavoriteVideo();
+    return one ? [one] : [];
+  }
+
   function getFavoriteVideo() {
     try {
       const raw = localStorage.getItem('progress:favoriteVideo');
@@ -1626,10 +1653,22 @@ registerUserIfNeeded();
     }
   }
 
-  function setFavoriteVideo(info) {
-    setProgress('favoriteVideo', info || null);
+  function saveFavoriteVideos(list) {
+    const next = Array.isArray(list) ? list.filter(normalizeFavoriteItem).slice(0, 80) : [];
+    setProgress('favoriteVideos', next);
+    setProgress('favoriteVideo', next[0] || null);
     paintFavoriteMarks();
     paintFavoriteVideoCabinet();
+  }
+
+  function setFavoriteVideo(info) {
+    if (!info) {
+      saveFavoriteVideos([]);
+      return;
+    }
+    saveFavoriteVideos([info].concat(getFavoriteVideos().filter(function (v) {
+      return v.id !== info.id;
+    })));
   }
 
   function canFavoriteRow(row) {
@@ -1699,10 +1738,12 @@ registerUserIfNeeded();
 
   function toggleFavoriteFromRow(row) {
     if (!canFavoriteRow(row)) return false;
-    const cur = getFavoriteVideo();
     const meta = favoriteMetaFromRow(row);
-    if (cur && cur.id === meta.id) setFavoriteVideo(null);
-    else setFavoriteVideo(meta);
+    const list = getFavoriteVideos();
+    const idx = list.findIndex(function (v) { return String(v.id) === String(meta.id); });
+    if (idx >= 0) list.splice(idx, 1);
+    else list.unshift(meta);
+    saveFavoriteVideos(list);
     try {
       if (window.Telegram && Telegram.WebApp && Telegram.WebApp.HapticFeedback) {
         Telegram.WebApp.HapticFeedback.impactOccurred('light');
@@ -1827,14 +1868,16 @@ registerUserIfNeeded();
       for (let i = 0; i < leftoverBtns.length; i++) leftoverBtns[i].remove();
       const dots = document.querySelectorAll('.army-fav-dot');
       for (let d = 0; d < dots.length; d++) dots[d].remove();
-      const fav = getFavoriteVideo();
-      const favId = fav && fav.id ? String(fav.id) : '';
-      if (!favId) return;
+      const favIds = {};
+      getFavoriteVideos().forEach(function (v) {
+        if (v && v.id) favIds[String(v.id)] = true;
+      });
+      if (!Object.keys(favIds).length) return;
       const rows = document.querySelectorAll('[data-id]');
       for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
         if (!canFavoriteRow(row)) continue;
-        if (String(row.dataset.id) !== favId) continue;
+        if (!favIds[String(row.dataset.id)]) continue;
         const host = favoriteStarHost(row);
         if (!host) continue;
         host.classList.add('army-fav-host');
@@ -1843,7 +1886,6 @@ registerUserIfNeeded();
         dot.setAttribute('aria-hidden', 'true');
         dot.textContent = '★';
         host.appendChild(dot);
-        break;
       }
     } catch (e) {}
   }
@@ -1856,70 +1898,82 @@ registerUserIfNeeded();
       .replace(/"/g, '&quot;');
   }
 
+  function favoriteCardHtml(fav) {
+    const title = escapeFavHtml(fav.title || prettyCheckId(fav.id));
+    const rawSub = String(fav.sub || '')
+      .replace(/([^\s\n])(Год выпуска:)/g, '$1\n$2');
+    const subLines = [];
+    rawSub.split(/\n/).forEach(function (line) {
+      const t = line.replace(/\s+/g, ' ').trim();
+      if (!t) return;
+      if (subLines.indexOf(t) !== -1) return;
+      if (t === (fav.title || '').replace(/\s+/g, ' ').trim()) return;
+      subLines.push(t);
+    });
+    const pageHref = fav.page && /^[a-z0-9._-]+\.html$/i.test(String(fav.page).split('?')[0]) ? String(fav.page) : '';
+    const pageName = escapeFavHtml(fav.pageName || (pageHref ? pageHref.replace(/\.html$/i, '') : ''));
+    const actionCss =
+      'display:block; text-decoration:none; border:1px solid #e4dcf3; background:#fff; border-radius:10px; padding:8px 10px; margin-top:8px;';
+    let body =
+      '<p style="font-size:15px; font-weight:600; color:#2b2440; margin:0; line-height:1.35; padding-right:28px;">' + title + '</p>';
+    subLines.forEach(function (line) {
+      const isYear = /^Год выпуска:/i.test(line);
+      body +=
+        '<p style="font-size:' + (isYear ? '10px' : '11px') +
+        '; color:' + (isYear ? '#bbb' : '#999') +
+        '; margin:4px 0 0; line-height:1.35; font-weight:400;">' +
+        escapeFavHtml(line) +
+        '</p>';
+    });
+    if (pageHref && pageName) {
+      body +=
+        '<a href="' + pageHref + '" style="' + actionCss + '">' +
+        '<span style="display:block; font-size:10px; color:#888; margin:0 0 2px;">Откуда</span>' +
+        '<span style="display:block; font-size:13px; font-weight:600; color:#2b2440; line-height:1.3;">' + pageName + '</span>' +
+        '</a>';
+    } else if (pageName) {
+      body +=
+        '<div style="' + actionCss + '">' +
+        '<span style="display:block; font-size:10px; color:#888; margin:0 0 2px;">Откуда</span>' +
+        '<span style="display:block; font-size:13px; font-weight:600; color:#2b2440; line-height:1.3;">' + pageName + '</span>' +
+        '</div>';
+    }
+    const hasVideoLink = !!(fav.link && !/\.html(\?|$)/i.test(fav.link));
+    const fid = escapeFavHtml(fav.id);
+    return (
+      '<div class="fav-card" data-fav-id="' + fid + '" style="position:relative; background:#f3eef9; border-radius:12px; padding:14px 36px 14px 14px; margin:0 0 10px;">' +
+        '<div style="min-width:0;">' + body + '</div>' +
+        '<button type="button" class="favorite-video-clear" data-fav-id="' + fid + '" aria-label="Убрать" style="position:absolute; top:4px; right:4px; width:28px; height:28px; border:none; background:none; color:#b8a9cc; font-size:18px; line-height:1; cursor:pointer; padding:0;">✕</button>' +
+        (hasVideoLink
+          ? ('<a href="' + escapeFavHtml(fav.link) + '" target="_blank" rel="noopener" aria-label="Открыть ролик" style="position:absolute; top:30px; right:4px; width:28px; height:28px; display:flex; align-items:center; justify-content:center; text-decoration:none; font-size:16px; line-height:1;">🔗</a>')
+          : '') +
+      '</div>'
+    );
+  }
+
   function paintFavoriteVideoCabinet() {
     const box = document.getElementById('favorite-video-box');
     if (!box) return;
-    const fav = getFavoriteVideo();
-    let html;
-    if (!fav) {
-      html = '<p style="font-size:14px; color:#999; margin:0; line-height:1.4;">Ещё не выбрано</p>';
-    } else {
-      const title = escapeFavHtml(fav.title || prettyCheckId(fav.id));
-      const rawSub = String(fav.sub || '')
-        .replace(/([^\s\n])(Год выпуска:)/g, '$1\n$2');
-      const subLines = [];
-      rawSub.split(/\n/).forEach(function (line) {
-        const t = line.replace(/\s+/g, ' ').trim();
-        if (!t) return;
-        if (subLines.indexOf(t) !== -1) return;
-        if (t === (fav.title || '').replace(/\s+/g, ' ').trim()) return;
-        subLines.push(t);
-      });
-      const pageHref = fav.page && /^[a-z0-9._-]+\.html$/i.test(String(fav.page).split('?')[0]) ? String(fav.page) : '';
-      const pageName = escapeFavHtml(fav.pageName || (pageHref ? pageHref.replace(/\.html$/i, '') : ''));
-      const actionCss =
-        'display:block; text-decoration:none; border:1px solid #e4dcf3; background:#fff; border-radius:10px; padding:8px 10px; margin-top:8px;';
-      let body =
-        '<p style="font-size:15px; font-weight:600; color:#2b2440; margin:0; line-height:1.35; padding-right:28px;">' + title + '</p>';
-      subLines.forEach(function (line) {
-        const isYear = /^Год выпуска:/i.test(line);
-        body +=
-          '<p style="font-size:' + (isYear ? '10px' : '11px') +
-          '; color:' + (isYear ? '#bbb' : '#999') +
-          '; margin:4px 0 0; line-height:1.35; font-weight:400;">' +
-          escapeFavHtml(line) +
-          '</p>';
-      });
-      if (pageHref && pageName) {
-        body +=
-          '<a href="' + pageHref + '" style="' + actionCss + '">' +
-          '<span style="display:block; font-size:10px; color:#888; margin:0 0 2px;">Откуда</span>' +
-          '<span style="display:block; font-size:13px; font-weight:600; color:#2b2440; line-height:1.3;">' + pageName + '</span>' +
-          '</a>';
-      } else if (pageName) {
-        body +=
-          '<div style="' + actionCss + '">' +
-          '<span style="display:block; font-size:10px; color:#888; margin:0 0 2px;">Откуда</span>' +
-          '<span style="display:block; font-size:13px; font-weight:600; color:#2b2440; line-height:1.3;">' + pageName + '</span>' +
-          '</div>';
-      }
-      const hasVideoLink = !!(fav.link && !/\.html(\?|$)/i.test(fav.link));
-      html =
-        '<div style="min-width:0;">' + body + '</div>' +
-        '<button type="button" id="favorite-video-clear" aria-label="Убрать" style="position:absolute; top:4px; right:4px; width:28px; height:28px; border:none; background:none; color:#b8a9cc; font-size:18px; line-height:1; cursor:pointer; padding:0;">✕</button>' +
-        (hasVideoLink
-          ? ('<a href="' + escapeFavHtml(fav.link) + '" target="_blank" rel="noopener" aria-label="Открыть ролик" style="position:absolute; top:30px; right:4px; width:28px; height:28px; display:flex; align-items:center; justify-content:center; text-decoration:none; font-size:16px; line-height:1;">🔗</a>')
-          : '');
-    }
+    const list = getFavoriteVideos();
+    const html = list.length
+      ? list.map(favoriteCardHtml).join('')
+      : '<p style="font-size:14px; color:#999; margin:0; line-height:1.4;">Ещё не выбрано</p>';
     if (box.innerHTML !== html) box.innerHTML = html;
     box.style.display = '';
     box.style.position = 'relative';
-    box.style.background = '#f3eef9';
-    const clearBtn = document.getElementById('favorite-video-clear');
-    if (clearBtn && clearBtn.dataset.bound !== '1') {
-      clearBtn.dataset.bound = '1';
-      clearBtn.addEventListener('click', function () {
-        setFavoriteVideo(null);
+    box.style.background = 'transparent';
+    box.style.padding = '0';
+    const clears = box.querySelectorAll('.favorite-video-clear');
+    for (let i = 0; i < clears.length; i++) {
+      const btn = clears[i];
+      if (btn.dataset.bound === '1') continue;
+      btn.dataset.bound = '1';
+      btn.addEventListener('click', function () {
+        const id = String(btn.getAttribute('data-fav-id') || '');
+        if (!id) return;
+        saveFavoriteVideos(getFavoriteVideos().filter(function (v) {
+          return String(v.id) !== id;
+        }));
       });
     }
   }
@@ -1964,6 +2018,9 @@ registerUserIfNeeded();
         paintRewatchBadges();
         if (data['progress:favoriteVideo'] !== undefined) {
           localStorage.setItem('progress:favoriteVideo', JSON.stringify(data['progress:favoriteVideo']));
+        }
+        if (data['progress:favoriteVideos'] !== undefined) {
+          localStorage.setItem('progress:favoriteVideos', JSON.stringify(data['progress:favoriteVideos']));
         }
         paintFavoriteMarks();
         paintFavoriteVideoCabinet();
