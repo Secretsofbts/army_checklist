@@ -260,15 +260,25 @@ function pricingInfoForUser(data, now, uid) {
   // Окно акции на экране: только пока акция идёт и человек ещё не платил
   const showPromo = !!(base.promo && !used);
   const promoPrice = promoPriceForUser(uid);
-  return Object.assign({}, base, {
+  const out = Object.assign({}, base, {
     promo: showPromo,
     promoDaysLeft: showPromo ? base.promoDaysLeft : 0,
     promoUsed: used,
     promoPriceRub: promoPrice,
     // priceRub — цена акции, если она доступна; иначе обычные 30 дней
     priceRub: showPromo ? promoPrice : FULL_PRICE_RUB,
-    oldPriceRub: showPromo ? FULL_PRICE_RUB : null
+    oldPriceRub: showPromo ? FULL_PRICE_RUB : null,
+    testPayUi: isForceTestUser(uid)
   });
+  // Тестовый аккаунт: месяц (30 дней) за 10 ₽ — чтобы проверить ЮKassa и подсказки
+  if (isForceTestUser(uid)) {
+    out.promo = false;
+    out.promoDaysLeft = 0;
+    out.plans = Object.assign({}, PLAN_PRICES, { 30: TEST_PROMO_PRICE_RUB });
+    out.priceRub = TEST_PROMO_PRICE_RUB;
+    out.oldPriceRub = FULL_PRICE_RUB;
+  }
+  return out;
 }
 
 function resolveYooKassaPlan(body, priceInfo) {
@@ -302,13 +312,14 @@ function resolveYooKassaPlan(body, priceInfo) {
     };
   }
   const days = parseInt(body.days, 10);
-  if (!PLAN_PRICES[days]) {
+  const plans = (priceInfo && priceInfo.plans) || PLAN_PRICES;
+  if (plans[days] == null && PLAN_PRICES[days] == null) {
     return { error: 'bad-plan' };
   }
   return {
     forever: false,
     days: days,
-    amountRub: PLAN_PRICES[days],
+    amountRub: plans[days] != null ? plans[days] : PLAN_PRICES[days],
     promo: false,
     label: days + ' дн.'
   };
@@ -659,6 +670,7 @@ function attachPricingFields(out, price) {
   out.plans = price.plans;
   out.foreverPriceRub = price.foreverPriceRub;
   out.paymentLive = !!price.paymentLive;
+  out.testPayUi = !!price.testPayUi;
   return out;
 }
 
