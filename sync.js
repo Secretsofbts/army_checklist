@@ -34,6 +34,15 @@
   }
   // Только Telegram Mini App: в обычном браузере чек-лист не открываем
   const ARMY_OUTSIDE_TELEGRAM = !telegramInitData();
+  function armyWriteTelegramOnlyGate(html) {
+    try {
+      document.open();
+      document.write(html);
+      document.close();
+    } catch (e) {
+      try { document.documentElement.innerHTML = html; } catch (e2) {}
+    }
+  }
   function armyShowTelegramOnlyGate() {
     var html =
       '<!DOCTYPE html><html lang="ru"><head><meta charset="UTF-8">' +
@@ -50,13 +59,21 @@
       '<a href="' + ARMY_BOT_OPEN_URL + '" style="display:block;text-decoration:none;border-radius:12px;' +
       'padding:12px 14px;font-size:15px;font-weight:700;background:#9b7fd4;color:#fff;">' +
       'Открыть в Telegram</a></div></body></html>';
+    var platform = '';
     try {
-      document.open();
-      document.write(html);
-      document.close();
-    } catch (e) {
-      try { document.documentElement.innerHTML = html; } catch (e2) {}
+      var tg = window.Telegram && window.Telegram.WebApp;
+      if (tg && typeof tg.ready === 'function') tg.ready();
+      platform = String((tg && tg.platform) || '').toLowerCase();
+    } catch (e) {}
+    // Mini App иногда отдаёт initData чуть позже скрипта. document.write в этот момент
+    // оставляет белый экран (часто на странице оплаты / startapp).
+    if (platform && platform !== 'unknown') {
+      setTimeout(function () {
+        if (!telegramInitData()) armyWriteTelegramOnlyGate(html);
+      }, 800);
+      return;
     }
+    armyWriteTelegramOnlyGate(html);
   }
   if (ARMY_OUTSIDE_TELEGRAM) {
     if (document.readyState === 'loading') {
@@ -731,6 +748,18 @@ registerUserIfNeeded();
       file === 'admin-receipts.html' || file === 'admin-stats.html';
   }
 
+  function armyPayPageHref() {
+    const file = 'payment.html?v=45';
+    try {
+      const path = String((location && location.pathname) || '');
+      const last = (path.split('/').pop() || '');
+      if (path.endsWith('/')) return path + file;
+      if (/\.html$/i.test(last)) return path.replace(/[^/]+$/, file);
+      if (path) return path.replace(/\/?$/, '/') + file;
+    } catch (e) {}
+    return file;
+  }
+
   function showSubscriptionPaywall(info) {
     info = info || {};
     if (armyIsAlwaysOpenPage()) return;
@@ -782,7 +811,7 @@ registerUserIfNeeded();
     ].join(';');
 
     const payLink = document.createElement('a');
-    payLink.href = 'payment.html?v=44';
+    payLink.href = armyPayPageHref();
     payLink.textContent = 'Перейти к оплате';
     payLink.style.cssText = [
       'display:block', 'width:100%', 'box-sizing:border-box',
@@ -2277,7 +2306,8 @@ function getCombinedYearStats(yearKey) {
       try { sessionStorage.setItem('armyStartLanded', param); } catch (e) {}
       return;
     }
-    if (!isArmyHomePage()) return;
+    var forcePayOrCabinet = (target === 'payment.html' || target === 'statistics.html' || target === 'referral.html');
+    if (!isArmyHomePage() && !forcePayOrCabinet) return;
     let landed = '';
     try { landed = sessionStorage.getItem('armyStartLanded') || ''; } catch (e) {}
     if (landed === param) return;

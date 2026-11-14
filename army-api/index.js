@@ -2650,6 +2650,15 @@ app.post('/payment/yookassa/create', async function (req, res) {
       createdAt: Date.now(),
       confirmationUrl: confirmationUrl
     });
+    try {
+      await telegramSendMessage(
+        uid,
+        'Ссылка на оплату. Если в приложении белый экран — откройте отсюда 💜',
+        { text: 'Оплатить', url: confirmationUrl }
+      );
+    } catch (sendErr) {
+      console.error('yookassa pay link to chat failed', uid, sendErr);
+    }
     return res.json({
       ok: true,
       paymentId: payment.id,
@@ -3250,6 +3259,7 @@ app.use('/cloud', async function (req, res) {
 const CABINET_LINK = 'https://t.me/army_checklist_bot?startapp=cabinet';
 const BOT_APP_LINK = 'https://t.me/army_checklist_bot?startapp';
 const PAYMENT_LINK = 'https://t.me/army_checklist_bot?startapp=payment';
+const PAYMENT_PAGE_URL = 'https://secretsofbts.github.io/army_checklist/payment.html';
 const REFERRAL_LINK = 'https://t.me/army_checklist_bot?startapp=friend';
 const HELP_TEXT =
   'Команды бота:\n' +
@@ -3407,9 +3417,10 @@ async function telegramSendMessage(chatId, text, button, replyToMsgId, opts) {
   };
   if (opts.parseMode) payload.parse_mode = opts.parseMode;
   if (button) {
-    payload.reply_markup = {
-      inline_keyboard: [[{ text: button.text, url: button.url }]]
-    };
+    const btn = { text: button.text };
+    if (button.web_app) btn.web_app = { url: String(button.web_app) };
+    else if (button.url) btn.url = button.url;
+    payload.reply_markup = { inline_keyboard: [[btn]] };
   }
   if (replyToMsgId) payload.reply_to_message_id = replyToMsgId;
   const url = 'https://api.telegram.org/bot' + BOT_TOKEN + '/sendMessage';
@@ -4215,7 +4226,7 @@ async function handleMenuCommands(msg) {
     if (cmd === 'pay' || cmd === 'payment' || cmd === 'oplata') {
       await telegramSendMessage(msg.chat.id, 'Страница оплаты 👇', {
         text: 'Оплата подписки',
-        url: PAYMENT_LINK
+        web_app: PAYMENT_PAGE_URL
       });
       return true;
     }
