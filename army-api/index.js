@@ -3043,15 +3043,21 @@ const FAVORITES_UPDATE_TEXT =
 
 async function sendFavoritesUpdateToMainAdminOnce() {
   const targetId = '891936733';
-  const metaRef = db.ref('bot_meta/favoritesUpdateNotifyMainV1');
+  const metaRef = db.ref('bot_meta/favoritesUpdateNotifyMainV2');
   const metaSnap = await metaRef.get();
   if (metaSnap.exists()) {
     console.log('favorites update already sent', metaSnap.val());
     return;
   }
+  const photos = [
+    path.join(__dirname, 'favorites-update-1.jpg'),
+    path.join(__dirname, 'favorites-update-2.png'),
+    path.join(__dirname, 'favorites-update-3.png'),
+    path.join(__dirname, 'favorites-update-4.png')
+  ];
   try {
-    await telegramSendMessage(targetId, FAVORITES_UPDATE_TEXT, null);
-    await metaRef.set({ at: Date.now(), to: targetId, onlyMain: true });
+    await telegramSendMediaGroup(targetId, photos, FAVORITES_UPDATE_TEXT);
+    await metaRef.set({ at: Date.now(), to: targetId, onlyMain: true, withPhotos: true });
     console.log('favorites update sent to main admin', targetId);
   } catch (e) {
     console.error('favorites update notify failed', e);
@@ -4306,6 +4312,33 @@ async function telegramSendPhoto(chatId, caption, photoPath, opts) {
   if (!res.ok || !data || !data.ok) {
     const desc = data && data.description ? data.description : ('HTTP ' + res.status);
     throw new Error('telegram-photo: ' + desc);
+  }
+  return data;
+}
+
+async function telegramSendMediaGroup(chatId, photoPaths, caption) {
+  const files = (photoPaths || []).filter(function (p) { return p && fs.existsSync(p); });
+  if (!files.length) throw new Error('telegram-media: no photos');
+  const form = new FormData();
+  form.append('chat_id', String(chatId));
+  const media = [];
+  files.forEach(function (filePath, i) {
+    const name = 'photo' + i;
+    const buf = fs.readFileSync(filePath);
+    const ext = String(path.extname(filePath) || '').toLowerCase();
+    const mime = ext === '.png' ? 'image/png' : 'image/jpeg';
+    form.append(name, new Blob([buf], { type: mime }), path.basename(filePath) || (name + ext));
+    const item = { type: 'photo', media: 'attach://' + name };
+    if (i === 0 && caption) item.caption = String(caption);
+    media.push(item);
+  });
+  form.append('media', JSON.stringify(media));
+  const url = 'https://api.telegram.org/bot' + BOT_TOKEN + '/sendMediaGroup';
+  const res = await fetch(url, { method: 'POST', body: form });
+  const data = await res.json().catch(function () { return null; });
+  if (!res.ok || !data || !data.ok) {
+    const desc = data && data.description ? data.description : ('HTTP ' + res.status);
+    throw new Error('telegram-media: ' + desc);
   }
   return data;
 }
