@@ -3041,25 +3041,80 @@ const FAVORITES_UPDATE_TEXT =
   'Чтобы добавить ролик, зажмите текст пункта (не галочку: долгое нажатие на неё по-прежнему считает повторный просмотр). У ссылки в уголке появится фиолетовая звёздочка — значит, выпуск в избранном.\n\n' +
   'Внутри раздела будут название, ссылка на список, откуда ролик, и ссылка на само видео.';
 
-async function sendFavoritesUpdateToMainAdminOnce() {
-  const targetId = '891936733';
-  const metaRef = db.ref('bot_meta/favoritesUpdateNotifyMainV4');
+async function broadcastFavoritesUpdateOnce() {
+  const metaRef = db.ref('bot_meta/favoritesUpdateBroadcastV1');
   const metaSnap = await metaRef.get();
-  if (metaSnap.exists()) {
-    console.log('favorites update already sent', metaSnap.val());
+  const prev = metaSnap.exists() ? (metaSnap.val() || {}) : {};
+  if (prev.status === 'done') {
+    console.log('favorites update broadcast already done', prev);
     return;
   }
-  try {
-    await telegramSendPhoto(
-      targetId,
-      FAVORITES_UPDATE_TEXT,
-      path.join(__dirname, 'favorites-update.jpg')
-    );
-    await metaRef.set({ at: Date.now(), to: targetId, onlyMain: true, withPhoto: true });
-    console.log('favorites update sent to main admin', targetId);
-  } catch (e) {
-    console.error('favorites update notify failed', e);
+  const photo = path.join(__dirname, 'favorites-update.jpg');
+  if (!fs.existsSync(photo)) {
+    console.error('favorites update photo missing', photo);
+    return;
   }
+  const ids = {};
+  try {
+    const regSnap = await db.ref('user_registry').get();
+    const regs = regSnap.exists() ? (regSnap.val() || {}) : {};
+    Object.keys(regs).forEach(function (uid) {
+      if (uid) ids[String(uid)] = true;
+    });
+  } catch (e) {
+    console.error('favorites update registry read failed', e);
+  }
+  try {
+    const subSnap = await db.ref('subscriptions').get();
+    const subs = subSnap.exists() ? (subSnap.val() || {}) : {};
+    Object.keys(subs).forEach(function (uid) {
+      if (uid) ids[String(uid)] = true;
+    });
+  } catch (e) {
+    console.error('favorites update subscriptions read failed', e);
+  }
+  const list = Object.keys(ids);
+  let sent = parseInt(prev.sent, 10) || 0;
+  let failed = parseInt(prev.failed, 10) || 0;
+  let start = parseInt(prev.nextIndex, 10) || 0;
+  if (start < 0) start = 0;
+  await metaRef.set({
+    status: 'running',
+    at: Date.now(),
+    total: list.length,
+    nextIndex: start,
+    sent: sent,
+    failed: failed
+  });
+  for (let i = start; i < list.length; i++) {
+    try {
+      await telegramSendPhoto(list[i], FAVORITES_UPDATE_TEXT, photo);
+      sent += 1;
+    } catch (e) {
+      failed += 1;
+    }
+    if (i % 20 === 0) {
+      try {
+        await metaRef.set({
+          status: 'running',
+          at: Date.now(),
+          total: list.length,
+          nextIndex: i + 1,
+          sent: sent,
+          failed: failed
+        });
+      } catch (saveErr) {}
+    }
+    await new Promise(function (resolve) { setTimeout(resolve, 50); });
+  }
+  await metaRef.set({
+    status: 'done',
+    at: Date.now(),
+    total: list.length,
+    sent: sent,
+    failed: failed
+  });
+  console.log('favorites update broadcast done', { sent: sent, failed: failed, total: list.length });
 }
 
 async function grantSilentPlus3DaysOnce() {
@@ -5670,8 +5725,8 @@ app.listen(PORT, function () {
     });
   }, 8500);
   setTimeout(function () {
-    sendFavoritesUpdateToMainAdminOnce().catch(function (e) {
-      console.error('favorites update notify failed', e);
+    broadcastFavoritesUpdateOnce().catch(function (e) {
+      console.error('favorites update broadcast failed', e);
     });
   }, 9000);
   // Разово: превью текстов напоминаний на тестовый
