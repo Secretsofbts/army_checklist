@@ -2477,6 +2477,8 @@ function yookassaPendingRef(uid) {
   return db.ref('yookassa_pending/' + String(uid || ''));
 }
 
+const YOOKASSA_PAY_LINK_TTL_MS = 10 * 60 * 1000;
+
 async function removeYooKassaPayLinkMessage(row, opts) {
   opts = opts || {};
   const chatId = row && (row.payLinkChatId || row.userId);
@@ -2486,6 +2488,7 @@ async function removeYooKassaPayLinkMessage(row, opts) {
     await telegramApi('deleteMessage', { chat_id: chatId, message_id: mid });
     return true;
   } catch (e) {
+    if (opts.silent) return false;
     try {
       await telegramApi('editMessageText', {
         chat_id: chatId,
@@ -2499,6 +2502,33 @@ async function removeYooKassaPayLinkMessage(row, opts) {
     } catch (e2) {
       console.error('yookassa pay link hide failed', chatId, mid, e2);
       return false;
+    }
+  }
+}
+
+async function sweepExpiredYooKassaPayLinks() {
+  const snap = await db.ref('yookassa_pending').get();
+  if (!snap.exists()) return;
+  const all = snap.val() || {};
+  const now = Date.now();
+  const uids = Object.keys(all);
+  for (let i = 0; i < uids.length; i++) {
+    const uid = uids[i];
+    const row = all[uid] || {};
+    const at = Number(row.at) || 0;
+    if (!at || (now - at) < YOOKASSA_PAY_LINK_TTL_MS) continue;
+    try {
+      await removeYooKassaPayLinkMessage(row, { silent: true });
+      const paymentId = String(row.paymentId || '');
+      if (paymentId) {
+        await db.ref('yookassa_payments/' + paymentId).update({
+          payLinkRemoved: true,
+          payLinkRemovedAt: now
+        });
+      }
+      await yookassaPendingRef(uid).remove();
+    } catch (e) {
+      console.error('yookassa pay link ttl sweep failed', uid, e);
     }
   }
 }
@@ -4188,6 +4218,11 @@ app.get('/cron/oneday-reminders', async function (req, res) {
 var lastRemindCronDateKey = '';
 function scheduleSubscriptionReminders() {
   setInterval(async function () {
+    try {
+      await sweepExpiredYooKassaPayLinks();
+    } catch (e) {
+      console.error('yookassa pay link ttl error', e);
+    }
     try {
       const parts = moscowParts(Date.now());
       // 12:00 по Москве: и «последний день», и «подписка закончилась»

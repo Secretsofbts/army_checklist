@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=162"></script>
+  <script src="sync.js?v=163"></script>
   <title>Оплата подписки</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
@@ -361,8 +361,9 @@
 
     <p class="plan-note" id="pay-status" style="margin:8px 0 0;"></p>
     <div id="pay-open-wrap" style="display:none; margin-top:10px;">
-      <button type="button" class="plan-btn is-copy" id="pay-open-btn">Открыть ЮKassa в браузере</button>
-      <button type="button" class="plan-btn is-copy" id="pay-copy-btn" style="margin-top:8px; background:#fff; color:#5b4a7a; border:1px solid #d9c8f0;">Скопировать ссылку</button>
+      <button type="button" class="plan-btn" id="pay-open-btn" disabled>Открыть ЮKassa в браузере</button>
+      <button type="button" class="plan-btn" id="pay-copy-btn" disabled style="margin-top:8px;">Скопировать ссылку</button>
+      <p class="plan-note" style="margin-top:8px;">Эти кнопки станут активны после выбора тарифа. Если ЮKassa не открывается напрямую, попробуйте открыть её в браузере вручную.</p>
     </div>
 
     <p class="footer-note">
@@ -593,12 +594,9 @@
         if (loadingEl) loadingEl.hidden = true;
         if (plansWrap) plansWrap.hidden = false;
       }
-      // На тестовом сразу видно подсказки ЮKassa (у остальных — после «Оплатить»)
-      if (info.testPayUi) {
-        var hintWrap = document.getElementById('pay-open-wrap');
-        if (hintWrap && hintWrap.getAttribute('data-paid-hide') !== '1') {
-          hintWrap.style.display = '';
-        }
+      var hintWrap = document.getElementById('pay-open-wrap');
+      if (hintWrap && pricingKnown && hintWrap.getAttribute('data-paid-hide') !== '1') {
+        hintWrap.style.display = '';
       }
     }
 
@@ -741,12 +739,19 @@
             try { window.open(url, '_blank'); } catch (e3) {}
           }
           if (openBtn) {
+            openBtn.disabled = false;
+            openBtn.className = 'plan-btn is-copy';
             openBtn.onclick = function (ev) {
               ev.preventDefault();
               openYooKassaInBrowser();
             };
           }
           if (copyBtn) {
+            copyBtn.disabled = false;
+            copyBtn.className = 'plan-btn is-copy';
+            copyBtn.style.background = '#fff';
+            copyBtn.style.color = '#5b4a7a';
+            copyBtn.style.border = '1px solid #d9c8f0';
             copyBtn.onclick = function () {
               function done(ok) {
                 copyBtn.textContent = ok ? 'Ссылка скопирована' : 'Не скопировалось — откройте из чата с ботом';
