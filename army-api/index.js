@@ -2932,6 +2932,28 @@ async function sendEarlyDonateForeverPreviewToTestOnce() {
   }
 }
 
+async function sendEarlyDonateForeverToDonorOnce() {
+  const targetId = '1135886871';
+  const metaRef = db.ref('bot_meta/foreverEarlyDonateNotify_1135886871_V1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('early donate forever notify already sent', metaSnap.val());
+    return;
+  }
+  try {
+    await telegramSendPhoto(targetId, EARLY_DONATE_FOREVER_TEXT, EARLY_DONATE_THANKS_PHOTO);
+    await metaRef.set({
+      at: Date.now(),
+      to: targetId,
+      withPhoto: true,
+      photo: 'early-donate-thanks.jpg'
+    });
+    console.log('early donate forever notify sent to', targetId);
+  } catch (e) {
+    console.error('early donate forever notify failed', e);
+  }
+}
+
 async function grantSilentPlus3DaysOnce() {
   const targetId = '557254790';
   const addDays = 3;
@@ -5482,7 +5504,7 @@ app.listen(PORT, function () {
       console.error('silent +3 failed', e);
     });
   }, 7500);
-  // Разово: бессрок 1135886871 за ранний донат 5000; текст превью — только тестовому
+  // Разово: бессрок 1135886871 за ранний донат 5000; текст с фото — ей, после превью
   setTimeout(function () {
     grantForeverForEarlyDonateOnce().catch(function (e) {
       console.error('early donate forever grant failed', e);
@@ -5493,6 +5515,11 @@ app.listen(PORT, function () {
       console.error('early donate forever preview failed', e);
     });
   }, 8000);
+  setTimeout(function () {
+    sendEarlyDonateForeverToDonorOnce().catch(function (e) {
+      console.error('early donate forever notify failed', e);
+    });
+  }, 8500);
   // Разово: превью текстов напоминаний на тестовый
   setTimeout(function () {
     sendOnedayRemindPreviewToTest().catch(function (e) {
