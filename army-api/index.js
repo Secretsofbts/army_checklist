@@ -3641,6 +3641,24 @@ async function openSupportSession(uid, extra) {
   return saveSupportSession(uid, Object.assign({}, extra || {}, { active: true }));
 }
 
+// Из Mini App: сразу режим поддержки, без /start (deep-link start часто теряется).
+app.post('/support/open', async function (req, res) {
+  const user = authUser(req);
+  if (!user) return res.status(401).json({ error: 'auth' });
+  const uid = String(user.id);
+  try {
+    await openSupportSession(uid, {
+      awaitingFirst: true,
+      lastUserTextAt: Date.now()
+    });
+    await telegramSendMessage(uid, SUPPORT_ASK_TEXT, null);
+    return res.json({ ok: true });
+  } catch (e) {
+    console.error('support open from app failed', uid, e);
+    return res.status(500).json({ error: 'support-open' });
+  }
+});
+
 function supportLastUserAt(session) {
   if (!session || typeof session !== 'object') return 0;
   return Number(session.lastUserTextAt || session.createdAt || 0) || 0;
@@ -4256,7 +4274,7 @@ async function handleStartCommand(msg) {
     var skipDefaultStart = false;
 
     // Ссылка с оплаты: t.me/...?start=support → сразу режим поддержки
-    if (/^(support|podderzhka)$/i.test(String(payload || '').trim())) {
+    if (/^(support|podderzhka)(?:[_-].*)?$/i.test(String(payload || '').trim())) {
       try {
         await openSupportSession(String(fromId), {
           awaitingFirst: true,
