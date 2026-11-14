@@ -3447,7 +3447,7 @@ function isBotCommandText(text) {
   return /^\/[a-zA-Zа-яА-ЯёЁ_]+/.test(String(text || '').trim());
 }
 
-const SUPPORT_IDLE_MS = 60 * 60 * 1000; // час без сообщений от пользователя → диалог закрывается
+const SUPPORT_IDLE_MS = 3 * 60 * 60 * 1000; // 3 часа без сообщений от пользователя → диалог закрывается
 
 function supportSessionRef(uid) {
   return db.ref('support_sessions/' + uid);
@@ -3477,7 +3477,7 @@ function supportLastUserAt(session) {
   return Number(session.lastUserTextAt || session.createdAt || 0) || 0;
 }
 
-// Если пользователь молчит час — закрываем. Ответы админа таймер не продлевают.
+// Если пользователь молчит 3 часа — закрываем. Ответы админа таймер не продлевают.
 // Возвращает { live, justClosed }.
 async function ensureSupportSessionLive(uid, session) {
   if (!session || !session.active) return { live: null, justClosed: false };
@@ -3764,7 +3764,7 @@ async function handleAdminSupportReply(msg) {
 
   await telegramSendMessage(userId, 'Ответ поддержки:\n\n' + answer, null);
 
-  // Ответ админа не продлевает час ожидания и не открывает диалог заново
+  // Ответ админа не продлевает ожидание и не открывает диалог заново
   const sessionSnap = await supportSessionRef(userId).get();
   const session = sessionSnap.exists() ? (sessionSnap.val() || {}) : {};
   const ensured = await ensureSupportSessionLive(userId, session);
