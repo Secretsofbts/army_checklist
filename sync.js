@@ -1878,7 +1878,7 @@ registerUserIfNeeded();
       const pageHref = fav.page && /^[a-z0-9._-]+\.html$/i.test(String(fav.page).split('?')[0]) ? String(fav.page) : '';
       const pageName = escapeFavHtml(fav.pageName || (pageHref ? pageHref.replace(/\.html$/i, '') : ''));
       const actionCss =
-        'display:block; text-decoration:none; border:1px solid #e4dcf3; background:#f3eef9; border-radius:10px; padding:8px 10px; margin-top:8px;';
+        'display:block; text-decoration:none; border:1px solid #e4dcf3; background:#fff; border-radius:10px; padding:8px 10px; margin-top:8px;';
       let body =
         '<p style="font-size:15px; font-weight:600; color:#2b2440; margin:0; line-height:1.35; padding-right:28px;">' + title + '</p>';
       subLines.forEach(function (line) {
@@ -1914,6 +1914,7 @@ registerUserIfNeeded();
     if (box.innerHTML !== html) box.innerHTML = html;
     box.style.display = '';
     box.style.position = 'relative';
+    box.style.background = '#f3eef9';
     const clearBtn = document.getElementById('favorite-video-clear');
     if (clearBtn && clearBtn.dataset.bound !== '1') {
       clearBtn.dataset.bound = '1';
