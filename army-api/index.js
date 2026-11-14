@@ -2473,7 +2473,12 @@ async function issueMoyNalogReceiptForPayment(meta) {
   return { ok: true, printUrl: printUrl, receiptId: receiptId, sentTg: sentTg };
 }
 
-async function removeYooKassaPayLinkMessage(row) {
+function yookassaPendingRef(uid) {
+  return db.ref('yookassa_pending/' + String(uid || ''));
+}
+
+async function removeYooKassaPayLinkMessage(row, opts) {
+  opts = opts || {};
   const chatId = row && (row.payLinkChatId || row.userId);
   const mid = row && row.payLinkMessageId;
   if (!chatId || !mid) return false;
@@ -2485,7 +2490,9 @@ async function removeYooKassaPayLinkMessage(row) {
       await telegramApi('editMessageText', {
         chat_id: chatId,
         message_id: mid,
-        text: 'Оплата прошла, эта ссылка больше не нужна 💜',
+        text: opts.replaced
+          ? 'Этот счёт отменён. Если нужна оплата — откройте новую ссылку 💜'
+          : 'Оплата прошла, эта ссылка больше не нужна 💜',
         reply_markup: { inline_keyboard: [] }
       });
       return true;
@@ -2496,11 +2503,54 @@ async function removeYooKassaPayLinkMessage(row) {
   }
 }
 
-async function hideYooKassaPayLinkIfNeeded(lockRef, prev) {
-  if (!prev || !prev.payLinkMessageId || prev.payLinkRemoved) return;
-  const ok = await removeYooKassaPayLinkMessage(prev);
-  if (ok) {
-    await lockRef.update({ payLinkRemoved: true, payLinkRemovedAt: Date.now() });
+async function expirePreviousYooKassaInvoice(uid) {
+  uid = String(uid || '');
+  if (!uid) return;
+  const pendRef = yookassaPendingRef(uid);
+  const snap = await pendRef.get();
+  if (!snap.exists()) return;
+  const prev = snap.val() || {};
+  const paymentId = String(prev.paymentId || '');
+  await removeYooKassaPayLinkMessage(prev, { replaced: true });
+  if (paymentId) {
+    try {
+      await yookassaApi('POST', '/payments/' + paymentId + '/cancel', {}, crypto.randomUUID());
+    } catch (e) {
+      console.error('yookassa cancel previous failed', paymentId, e && e.data ? e.data : e);
+    }
+    try {
+      await db.ref('yookassa_payments/' + paymentId).update({
+        status: 'canceled',
+        payLinkRemoved: true,
+        payLinkRemovedAt: Date.now(),
+        replacedAt: Date.now()
+      });
+    } catch (e2) {}
+  }
+  await pendRef.remove();
+}
+
+async function hideYooKassaPayLinkIfNeeded(lockRef, prev, paymentId) {
+  if (prev && prev.payLinkMessageId && !prev.payLinkRemoved) {
+    const ok = await removeYooKassaPayLinkMessage(prev);
+    if (ok) {
+      await lockRef.update({ payLinkRemoved: true, payLinkRemovedAt: Date.now() });
+    }
+  }
+  const uid = String((prev && (prev.userId || prev.payLinkChatId)) || '');
+  if (!uid || !paymentId) return;
+  try {
+    const pendSnap = await yookassaPendingRef(uid).get();
+    if (!pendSnap.exists()) return;
+    const pend = pendSnap.val() || {};
+    if (String(pend.paymentId) === String(paymentId)) {
+      if (pend.payLinkMessageId && (!prev || !prev.payLinkMessageId)) {
+        await removeYooKassaPayLinkMessage(pend);
+      }
+      await yookassaPendingRef(uid).remove();
+    }
+  } catch (e) {
+    console.error('yookassa pending clear failed', uid, paymentId, e);
   }
 }
 
@@ -2516,7 +2566,7 @@ async function processYooKassaSucceededPayment(payment, opts) {
   const lockSnap = await lockRef.get();
   const prev = lockSnap.exists() ? (lockSnap.val() || {}) : {};
   try {
-    await hideYooKassaPayLinkIfNeeded(lockRef, prev);
+    await hideYooKassaPayLinkIfNeeded(lockRef, prev, paymentId);
   } catch (hideErr) {
     console.error('yookassa pay link hide error', paymentId, hideErr);
   }
@@ -2681,6 +2731,12 @@ app.post('/payment/yookassa/create', async function (req, res) {
       body.payment_method_data = { type: paymentMethod };
     }
 
+    try {
+      await expirePreviousYooKassaInvoice(uid);
+    } catch (expireErr) {
+      console.error('yookassa expire previous failed', uid, expireErr);
+    }
+
     const idempotenceKey = crypto.randomUUID();
     const payment = await yookassaApi('POST', '/payments', body, idempotenceKey);
     const confirmationUrl = payment && payment.confirmation && payment.confirmation.confirmation_url;
@@ -2698,6 +2754,7 @@ app.post('/payment/yookassa/create', async function (req, res) {
       createdAt: Date.now(),
       confirmationUrl: confirmationUrl
     });
+    let payLinkMessageId = null;
     try {
       const sentPayMsg = await telegramSendMessage(
         uid,
@@ -2705,7 +2762,7 @@ app.post('/payment/yookassa/create', async function (req, res) {
           'Если страница белая (часто на iPhone): зажмите кнопку «Оплатить» и выберите «Открыть в Safari» или Chrome.',
         { text: 'Оплатить', url: confirmationUrl }
       );
-      const payLinkMessageId = sentPayMsg && sentPayMsg.result && sentPayMsg.result.message_id;
+      payLinkMessageId = sentPayMsg && sentPayMsg.result && sentPayMsg.result.message_id;
       if (payLinkMessageId) {
         await db.ref('yookassa_payments/' + payment.id).update({
           payLinkChatId: uid,
@@ -2715,6 +2772,12 @@ app.post('/payment/yookassa/create', async function (req, res) {
     } catch (sendErr) {
       console.error('yookassa pay link to chat failed', uid, sendErr);
     }
+    await yookassaPendingRef(uid).set({
+      paymentId: payment.id,
+      payLinkChatId: uid,
+      payLinkMessageId: payLinkMessageId || null,
+      at: Date.now()
+    });
     return res.json({
       ok: true,
       paymentId: payment.id,
