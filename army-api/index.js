@@ -3034,6 +3034,30 @@ async function sendEarlyDonateForeverToDonorOnce() {
   }
 }
 
+const FAVORITES_UPDATE_TEXT =
+  'Обновление!!!\n\n' +
+  'Появилась возможность отметки любимых видео, может кому-то понадобиться\n\n' +
+  'Сам раздел находится в основом меню (под фиолетовым сердечком на главной странице)\n\n' +
+  'Добавить видео в любимые можно долгим нажатием на текст пункта (не на чек бокс - нажатие на него все еще означает повторный просмотр). После этого у пункта добавляется фиолетовая звездочка в уголке. Значит видео находится в вашем избранном, так вы можете помечать свои любимые выпуски, чтобы потом было легче искать для пересмотра\n\n' +
+  'Внутри "Любимых видео" будет название, ссылка на сам раздел и ссылка на видео';
+
+async function sendFavoritesUpdateToMainAdminOnce() {
+  const targetId = '891936733';
+  const metaRef = db.ref('bot_meta/favoritesUpdateNotifyMainV1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('favorites update already sent', metaSnap.val());
+    return;
+  }
+  try {
+    await telegramSendMessage(targetId, FAVORITES_UPDATE_TEXT, null);
+    await metaRef.set({ at: Date.now(), to: targetId, onlyMain: true });
+    console.log('favorites update sent to main admin', targetId);
+  } catch (e) {
+    console.error('favorites update notify failed', e);
+  }
+}
+
 async function grantSilentPlus3DaysOnce() {
   const targetId = '557254790';
   const addDays = 3;
@@ -5614,6 +5638,11 @@ app.listen(PORT, function () {
       console.error('early donate forever notify failed', e);
     });
   }, 8500);
+  setTimeout(function () {
+    sendFavoritesUpdateToMainAdminOnce().catch(function (e) {
+      console.error('favorites update notify failed', e);
+    });
+  }, 9000);
   // Разово: превью текстов напоминаний на тестовый
   setTimeout(function () {
     sendOnedayRemindPreviewToTest().catch(function (e) {
