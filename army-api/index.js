@@ -3504,11 +3504,11 @@ const TRIAL5_ANNOUNCE_TEXT =
   'У вас осталось 5 дней пробного периода доступа к чек-листу, чтобы ознакомиться и решить нужен ли он вам в будущем\n\n' +
   'Более подробная информация написана на канале 💜';
 const SUPPORT_ASK_TEXT =
-  'Напишите ваш вопрос — я передам его в поддержку.\n\nМожно продолжать переписку здесь: ваши сообщения и ответы поддержки будут в этом боте 💜';
+  'Напишите ваш вопрос — я передам его в поддержку.\n\nМожно текстом, фото или файлом. Переписка здесь: ваши сообщения и ответы поддержки будут в этом боте 💜';
 const SUPPORT_SENT_TEXT =
   'Сообщение отправлено в поддержку. Можно писать дальше сюда же — это диалог. Ответ придёт в этот бот 💜';
 const SUPPORT_EMPTY_TEXT =
-  'Пожалуйста, напишите вопрос текстом.';
+  'Пожалуйста, напишите вопрос текстом или пришлите фото / файл.';
 const SUPPORT_CLOSED_TEXT =
   'Диалог с поддержкой закрыт — долго не было сообщений, поэтому новые сообщения сюда больше не доходят.\n\n' +
   'Чтобы написать снова, отправьте /support или слово «поддержка».';
@@ -3659,6 +3659,29 @@ async function telegramSendMessage(chatId, text, button, replyToMsgId, opts) {
   return data;
 }
 
+function supportMediaKind(msg) {
+  if (!msg) return null;
+  if (msg.photo) return 'фото';
+  if (msg.document) return 'файл';
+  if (msg.video) return 'видео';
+  if (msg.video_note) return 'кружок';
+  if (msg.voice) return 'голосовое';
+  if (msg.audio) return 'аудио';
+  if (msg.sticker) return 'стикер';
+  if (msg.animation) return 'GIF';
+  return null;
+}
+
+async function telegramCopyMessage(toChatId, fromChatId, messageId, replyToMsgId) {
+  const body = {
+    chat_id: String(toChatId),
+    from_chat_id: String(fromChatId),
+    message_id: Number(messageId)
+  };
+  if (replyToMsgId) body.reply_to_message_id = Number(replyToMsgId);
+  return telegramApi('copyMessage', body);
+}
+
 function isAdminTelegramId(id) {
   return ADMIN_IDS.indexOf(String(id)) !== -1;
 }
@@ -3751,12 +3774,16 @@ async function deliverSupportMessage(fromUser, questionText, options) {
   const name = [fromUser.first_name, fromUser.last_name].filter(Boolean).join(' ') || 'без имени';
   const uname = fromUser.username ? '@' + fromUser.username : 'нет username';
   const isFollowUp = !!options.followUp;
+  const userMsg = options.userMsg || null;
+  const mediaKind = supportMediaKind(userMsg);
+  const textPart = String(questionText || '').trim();
+  const shownText = textPart || (mediaKind ? '[' + mediaKind + ']' : '(без текста)');
   const body =
     (isFollowUp ? '💬 Продолжение диалога\n' : '🆘 Сообщение в поддержку\n') +
     'От: ' + name + ' (' + uname + ')\n' +
     'id: ' + uid + '\n\n' +
-    questionText +
-    '\n\n↳ Ответьте reply на это сообщение — текст уйдёт человеку. Диалог можно продолжать.';
+    shownText +
+    '\n\n↳ Ответьте reply на это сообщение — текст, фото или файл уйдёт человеку. Диалог можно продолжать.';
 
   const admins = ADMIN_IDS.length ? ADMIN_IDS : [];
   if (!admins.length) throw new Error('no-admin');
@@ -3782,6 +3809,27 @@ async function deliverSupportMessage(fromUser, questionText, options) {
         userName: name,
         at: Date.now()
       });
+    }
+    if (userMsg && userMsg.message_id && mediaKind) {
+      try {
+        const copied = await telegramCopyMessage(
+          adminId,
+          userMsg.chat && userMsg.chat.id ? userMsg.chat.id : uid,
+          userMsg.message_id,
+          msgId || null
+        );
+        const copyId = copied && copied.result && copied.result.message_id;
+        if (copyId) {
+          nextLast[adminId] = copyId;
+          await supportTicketRef(adminId, copyId).set({
+            userId: uid,
+            userName: name,
+            at: Date.now()
+          });
+        }
+      } catch (copyErr) {
+        console.error('support copy to admin failed', uid, adminId, copyErr);
+      }
     }
   }
 
@@ -3955,13 +4003,14 @@ async function handleAdminSupportReply(msg) {
   const userId = String(ticket.userId || '');
   if (!userId) return false;
 
+  const mediaKind = supportMediaKind(msg);
   let answer = String(msg.text || msg.caption || '').trim();
-  if (!answer) {
-    await telegramSendMessage(msg.chat.id, 'Ответ пока только текстом — напишите текст reply-ем.', null);
+  if (!answer && !mediaKind) {
+    await telegramSendMessage(msg.chat.id, 'Напишите текст reply-ем или пришлите фото / файл.', null);
     return true;
   }
 
-  const starsCmd = parseStarsAdminCommand(answer);
+  const starsCmd = parseStarsAdminCommand(String(msg.text || '').trim());
   if (starsCmd) {
     if (starsCmd.help) {
       await telegramSendMessage(msg.chat.id, starsCmd.text, null);
@@ -4009,7 +4058,22 @@ async function handleAdminSupportReply(msg) {
     return true;
   }
 
-  await telegramSendMessage(userId, 'Ответ поддержки:\n\n' + answer, null);
+  if (mediaKind) {
+    try {
+      await telegramSendMessage(userId, 'Ответ поддержки:', null);
+      await telegramCopyMessage(userId, msg.chat.id, msg.message_id);
+    } catch (copyErr) {
+      console.error('support copy to user failed', userId, copyErr);
+      await telegramSendMessage(
+        msg.chat.id,
+        'Не удалось переслать вложение человеку. Попробуйте ещё раз или напишите текстом.',
+        null
+      );
+      return true;
+    }
+  } else {
+    await telegramSendMessage(userId, 'Ответ поддержки:\n\n' + answer, null);
+  }
 
   // Ответ админа не продлевает ожидание и не открывает диалог заново
   const sessionSnap = await supportSessionRef(userId).get();
@@ -4062,11 +4126,12 @@ async function handleSupportFlow(msg) {
   const sessionSnap = await supportSessionRef(uid).get();
   if (!sessionSnap.exists()) return false;
   const ensured = await ensureSupportSessionLive(uid, sessionSnap.val() || {});
+  const mediaKind = supportMediaKind(msg);
   if (!ensured.live) {
     // Команды бота (кроме support) не трогаем — пусть обработает /start и т.д.
     if (isBotCommandText(text) && !parseSupportCommand(text)) return false;
     const stray = text.trim() || String(msg.caption || '').trim();
-    if (!stray) return false;
+    if (!stray && !mediaKind) return false;
     try {
       await telegramSendMessage(msg.chat.id, SUPPORT_CLOSED_TEXT, null);
     } catch (e) {
@@ -4081,7 +4146,7 @@ async function handleSupportFlow(msg) {
   if (isBotCommandText(text) && !parseSupportCommand(text)) return false;
 
   const question = text.trim() || String(msg.caption || '').trim();
-  if (!question) {
+  if (!question && !mediaKind) {
     if (live.awaitingFirst) {
       await telegramSendMessage(msg.chat.id, SUPPORT_EMPTY_TEXT, null);
       return true;
@@ -4090,7 +4155,7 @@ async function handleSupportFlow(msg) {
   }
 
   const wasAwaiting = !!live.awaitingFirst;
-  await deliverSupportMessage(msg.from, question, { followUp: !wasAwaiting });
+  await deliverSupportMessage(msg.from, question, { followUp: !wasAwaiting, userMsg: msg });
   if (wasAwaiting) await telegramSendMessage(msg.chat.id, SUPPORT_SENT_TEXT, null);
   return true;
 }
