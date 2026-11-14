@@ -2916,7 +2916,7 @@ const EARLY_DONATE_FOREVER_TEXT =
   'Спасибо, что поддержали проект ещё в самом начале 🫶';
 
 async function sendEarlyDonateForeverPreviewToTestOnce() {
-  const metaRef = db.ref('bot_meta/foreverEarlyDonatePreviewTestV1');
+  const metaRef = db.ref('bot_meta/foreverEarlyDonatePreviewTestV3');
   const metaSnap = await metaRef.get();
   if (metaSnap.exists()) {
     console.log('early donate forever preview already sent', metaSnap.val());
@@ -2924,8 +2924,8 @@ async function sendEarlyDonateForeverPreviewToTestOnce() {
   }
   const testId = FORCE_TEST_IDS[0] || '2055929706';
   try {
-    await telegramSendMessage(testId, EARLY_DONATE_FOREVER_TEXT, null);
-    await metaRef.set({ at: Date.now(), to: testId });
+    await telegramSendPhoto(testId, EARLY_DONATE_FOREVER_TEXT, EARLY_DONATE_THANKS_PHOTO);
+    await metaRef.set({ at: Date.now(), to: testId, withPhoto: true, photo: 'early-donate-thanks.jpg' });
     console.log('early donate forever preview sent to', testId);
   } catch (e) {
     console.error('early donate forever preview failed', e);
@@ -3522,6 +3522,7 @@ const EXPIRED_REMIND_TEXT =
   'Продлить количество дней всегда можно <a href="' + PAYMENT_LINK + '">в приложении</a> 💜';
 const PAID_THANKS_PHOTO = path.join(__dirname, 'sub-extended.jpg');
 const FOREVER_THANKS_PHOTO = path.join(__dirname, 'forever-thanks.jpg');
+const EARLY_DONATE_THANKS_PHOTO = path.join(__dirname, 'early-donate-thanks.jpg');
 const ONEDAY_REMIND_PHOTO = path.join(__dirname, 'oneday-remind.jpg');
 const EXPIRED_REMIND_PHOTO = path.join(__dirname, 'expired-remind.jpg');
 const REFERRAL_INVITE_PHOTO = path.join(__dirname, 'referral-invite.jpg');
