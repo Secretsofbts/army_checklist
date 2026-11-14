@@ -1878,9 +1878,9 @@ registerUserIfNeeded();
       const pageHref = fav.page && /^[a-z0-9._-]+\.html$/i.test(String(fav.page).split('?')[0]) ? String(fav.page) : '';
       const pageName = escapeFavHtml(fav.pageName || (pageHref ? pageHref.replace(/\.html$/i, '') : ''));
       const actionCss =
-        'display:block; text-decoration:none; border:1px solid #eee8f6; background:#fff; border-radius:10px; padding:8px 10px; margin-top:8px;';
+        'display:block; text-decoration:none; border:1px solid #e4dcf3; background:#f3eef9; border-radius:10px; padding:8px 10px; margin-top:8px;';
       let body =
-        '<p style="font-size:15px; font-weight:600; color:#2b2440; margin:0; line-height:1.35; padding-right:18px;">' + title + '</p>';
+        '<p style="font-size:15px; font-weight:600; color:#2b2440; margin:0; line-height:1.35; padding-right:28px;">' + title + '</p>';
       subLines.forEach(function (line) {
         const isYear = /^Год выпуска:/i.test(line);
         body +=
@@ -1903,16 +1903,13 @@ registerUserIfNeeded();
           '<span style="display:block; font-size:13px; font-weight:600; color:#2b2440; line-height:1.3;">' + pageName + '</span>' +
           '</div>';
       }
-      if (fav.link && !/\.html(\?|$)/i.test(fav.link)) {
-        body +=
-          '<a href="' + escapeFavHtml(fav.link) + '" target="_blank" rel="noopener" style="' + actionCss + '">' +
-          '<span style="display:block; font-size:10px; color:#888; margin:0 0 2px;">Ссылка</span>' +
-          '<span style="display:block; font-size:13px; font-weight:600; color:#2b2440; line-height:1.3;">Открыть ролик</span>' +
-          '</a>';
-      }
+      const hasVideoLink = !!(fav.link && !/\.html(\?|$)/i.test(fav.link));
       html =
         '<div style="min-width:0;">' + body + '</div>' +
-        '<button type="button" id="favorite-video-clear" aria-label="Убрать" style="position:absolute; top:6px; right:6px; width:28px; height:28px; border:none; background:none; color:#b8a9cc; font-size:18px; line-height:1; cursor:pointer; padding:0;">✕</button>';
+        '<button type="button" id="favorite-video-clear" aria-label="Убрать" style="position:absolute; top:4px; right:4px; width:28px; height:28px; border:none; background:none; color:#b8a9cc; font-size:18px; line-height:1; cursor:pointer; padding:0;">✕</button>' +
+        (hasVideoLink
+          ? ('<a href="' + escapeFavHtml(fav.link) + '" target="_blank" rel="noopener" aria-label="Открыть ролик" style="position:absolute; top:30px; right:4px; width:28px; height:28px; display:flex; align-items:center; justify-content:center; text-decoration:none; font-size:16px; line-height:1;">🔗</a>')
+          : '');
     }
     if (box.innerHTML !== html) box.innerHTML = html;
     box.style.display = '';
