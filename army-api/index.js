@@ -2461,6 +2461,37 @@ async function issueMoyNalogReceiptForPayment(meta) {
   return { ok: true, printUrl: printUrl, receiptId: receiptId, sentTg: sentTg };
 }
 
+async function removeYooKassaPayLinkMessage(row) {
+  const chatId = row && (row.payLinkChatId || row.userId);
+  const mid = row && row.payLinkMessageId;
+  if (!chatId || !mid) return false;
+  try {
+    await telegramApi('deleteMessage', { chat_id: chatId, message_id: mid });
+    return true;
+  } catch (e) {
+    try {
+      await telegramApi('editMessageText', {
+        chat_id: chatId,
+        message_id: mid,
+        text: 'Оплата прошла, эта ссылка больше не нужна 💜',
+        reply_markup: { inline_keyboard: [] }
+      });
+      return true;
+    } catch (e2) {
+      console.error('yookassa pay link hide failed', chatId, mid, e2);
+      return false;
+    }
+  }
+}
+
+async function hideYooKassaPayLinkIfNeeded(lockRef, prev) {
+  if (!prev || !prev.payLinkMessageId || prev.payLinkRemoved) return;
+  const ok = await removeYooKassaPayLinkMessage(prev);
+  if (ok) {
+    await lockRef.update({ payLinkRemoved: true, payLinkRemovedAt: Date.now() });
+  }
+}
+
 async function processYooKassaSucceededPayment(payment, opts) {
   opts = opts || {};
   if (!payment || payment.status !== 'succeeded') {
@@ -2472,6 +2503,11 @@ async function processYooKassaSucceededPayment(payment, opts) {
   const lockRef = db.ref('yookassa_payments/' + paymentId);
   const lockSnap = await lockRef.get();
   const prev = lockSnap.exists() ? (lockSnap.val() || {}) : {};
+  try {
+    await hideYooKassaPayLinkIfNeeded(lockRef, prev);
+  } catch (hideErr) {
+    console.error('yookassa pay link hide error', paymentId, hideErr);
+  }
   const meta = payment.metadata || {};
   const uid = String(meta.userId || prev.userId || '');
   const amountRub = Math.round(Number((payment.amount && payment.amount.value) || meta.amountRub || prev.amountRub || 0));
@@ -2651,12 +2687,19 @@ app.post('/payment/yookassa/create', async function (req, res) {
       confirmationUrl: confirmationUrl
     });
     try {
-      await telegramSendMessage(
+      const sentPayMsg = await telegramSendMessage(
         uid,
         'Ссылка на оплату ЮKassa 💜\n\n' +
           'Если страница белая (часто на iPhone): зажмите кнопку «Оплатить» и выберите «Открыть в Safari» или Chrome.',
         { text: 'Оплатить', url: confirmationUrl }
       );
+      const payLinkMessageId = sentPayMsg && sentPayMsg.result && sentPayMsg.result.message_id;
+      if (payLinkMessageId) {
+        await db.ref('yookassa_payments/' + payment.id).update({
+          payLinkChatId: uid,
+          payLinkMessageId: payLinkMessageId
+        });
+      }
     } catch (sendErr) {
       console.error('yookassa pay link to chat failed', uid, sendErr);
     }

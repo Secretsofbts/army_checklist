@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=158"></script>
+  <script src="sync.js?v=159"></script>
   <title>Оплата подписки</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
@@ -783,6 +783,11 @@
         });
     }
 
+    function hidePayOpenUi() {
+      var openWrap = document.getElementById('pay-open-wrap');
+      if (openWrap) openWrap.style.display = 'none';
+    }
+
     function syncYooKassaPayments(doneMsg) {
       var api = String(window.ARMY_API_URL || '').replace(/\/$/, '');
       var statusEl = document.getElementById('pay-status');
@@ -813,6 +818,7 @@
             });
           }
           if (granted) {
+            hidePayOpenUi();
             if (statusEl) statusEl.textContent = doneMsg || 'Оплата найдена, доступ обновлён 💜';
             var ok = document.getElementById('pay-success');
             if (ok) ok.style.display = '';
@@ -886,10 +892,24 @@
         var q = new URLSearchParams(window.location.search || '');
         if (q.get('paid') === '1') {
           paidReturn = true;
+          hidePayOpenUi();
           var ok = document.getElementById('pay-success');
           if (ok) ok.style.display = '';
         }
       } catch (e) {}
+      function checkBackFromPay() {
+        var wrap = document.getElementById('pay-open-wrap');
+        if (!wrap || wrap.style.display === 'none') return;
+        syncYooKassaPayments('');
+      }
+      document.addEventListener('visibilitychange', function () {
+        if (document.visibilityState === 'visible') checkBackFromPay();
+      });
+      try {
+        if (window.Telegram && Telegram.WebApp && typeof Telegram.WebApp.onEvent === 'function') {
+          Telegram.WebApp.onEvent('activated', checkBackFromPay);
+        }
+      } catch (e2) {}
       syncYooKassaPayments(paidReturn ? 'Ищем вашу оплату…' : '');
     })();
 
