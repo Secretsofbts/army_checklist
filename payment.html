@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=161"></script>
+  <script src="sync.js?v=162"></script>
   <title>Оплата подписки</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
@@ -727,16 +727,7 @@
             return;
           }
           var url = result.data.confirmationUrl;
-          var platform = '';
-          try {
-            platform = String((window.Telegram && Telegram.WebApp && Telegram.WebApp.platform) || '').toLowerCase();
-          } catch (ePlat) {}
-          var isIos = (platform === 'ios' || platform === 'macos');
-          var isTestUi = !!(lastPayInfo && lastPayInfo.testPayUi);
-          var skipAutoOpen = isIos || isTestUi;
-          if (statusEl) {
-            statusEl.textContent = 'Ссылку отправили в чат с ботом. Если страница не открылась — кнопкой ниже.';
-          }
+          if (statusEl) statusEl.textContent = 'Открываем страницу оплаты…';
           var openWrap = document.getElementById('pay-open-wrap');
           var openBtn = document.getElementById('pay-open-btn');
           var copyBtn = document.getElementById('pay-copy-btn');
@@ -782,8 +773,7 @@
             openWrap.removeAttribute('data-paid-hide');
             openWrap.style.display = '';
           }
-          // На iPhone и на тестовом не открываем ЮKassa сами — иначе белый экран, подсказки не видно.
-          if (!skipAutoOpen) openYooKassaInBrowser();
+          openYooKassaInBrowser();
           if (lastPayInfo) paintPricing(lastPayInfo);
         })
         .catch(function () {

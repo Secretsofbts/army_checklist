@@ -2754,30 +2754,13 @@ app.post('/payment/yookassa/create', async function (req, res) {
       createdAt: Date.now(),
       confirmationUrl: confirmationUrl
     });
-    let payLinkMessageId = null;
-    try {
-      const sentPayMsg = await telegramSendMessage(
-        uid,
-        'Ссылка на оплату ЮKassa 💜',
-        { text: 'Оплатить', url: confirmationUrl }
-      );
-      payLinkMessageId = sentPayMsg && sentPayMsg.result && sentPayMsg.result.message_id;
-      if (payLinkMessageId) {
-        await db.ref('yookassa_payments/' + payment.id).update({
-          payLinkChatId: uid,
-          payLinkMessageId: payLinkMessageId
-        });
-      }
-    } catch (sendErr) {
-      console.error('yookassa pay link to chat failed', uid, sendErr);
-    }
     await yookassaPendingRef(uid).set({
       paymentId: payment.id,
       payLinkChatId: uid,
-      payLinkMessageId: payLinkMessageId || null,
+      payLinkMessageId: null,
       at: Date.now()
     });
-    return res.json({
+    res.json({
       ok: true,
       paymentId: payment.id,
       confirmationUrl: confirmationUrl,
@@ -2787,6 +2770,26 @@ app.post('/payment/yookassa/create', async function (req, res) {
       promo: !!plan.promo,
       method: paymentMethod || null
     });
+    try {
+      const sentPayMsg = await telegramSendMessage(
+        uid,
+        'Ссылка на оплату ЮKassa 💜',
+        { text: 'Оплатить', url: confirmationUrl }
+      );
+      const payLinkMessageId = sentPayMsg && sentPayMsg.result && sentPayMsg.result.message_id;
+      if (payLinkMessageId) {
+        await db.ref('yookassa_payments/' + payment.id).update({
+          payLinkChatId: uid,
+          payLinkMessageId: payLinkMessageId
+        });
+        await yookassaPendingRef(uid).update({
+          payLinkMessageId: payLinkMessageId
+        });
+      }
+    } catch (sendErr) {
+      console.error('yookassa pay link to chat failed', uid, sendErr);
+    }
+    return;
   } catch (e) {
     console.error('yookassa create failed', e && e.data ? e.data : e);
     return res.status(500).json({

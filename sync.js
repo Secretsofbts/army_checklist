@@ -749,7 +749,7 @@ registerUserIfNeeded();
   }
 
   function armyPayPageHref() {
-    const file = 'payment.html?v=49';
+    const file = 'payment.html?v=50';
     try {
       const path = String((location && location.pathname) || '');
       const last = (path.split('/').pop() || '');
