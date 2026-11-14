@@ -217,7 +217,7 @@
             </tbody>
           </table>
         </div>
-        <p class="hint">Только оплатившие с доступом сейчас (без пробного).</p>
+        <p class="hint">Сколько дней осталось у оплативших сейчас (без пробного).</p>
       </div>
 
       <div class="block">
@@ -299,15 +299,29 @@
 
     function tariffLabel(key) {
       if (key === 'forever') return 'Бессрочно';
-      if (key === 'other') return 'Другое';
       return key + ' дн.';
     }
 
-    function paintTariffTable(bodyId, source, emptyText) {
+    function activeTariffLabel(key) {
+      var labels = {
+        d0_10: 'от 0 до 10',
+        d10_20: 'от 10 до 20',
+        d20_30: 'от 20 до 30',
+        d30_60: 'от 30 до 60',
+        d60_90: 'от 60 до 90',
+        d90_180: 'от 90 до 180',
+        d180p: 'от 180 и более',
+        forever: 'Бессрочно'
+      };
+      return labels[key] || key;
+    }
+
+    function paintTariffTable(bodyId, source, emptyText, order, labelFn) {
       var body = document.getElementById(bodyId);
       if (!body) return;
       source = source || {};
-      var order = ['30', '60', '90', '180', 'forever'];
+      order = order || ['30', '60', '90', '180', 'forever'];
+      labelFn = labelFn || tariffLabel;
       var keys = order.slice();
       Object.keys(source).forEach(function (k) {
         if (keys.indexOf(k) === -1 && n(source[k]) > 0) keys.push(k);
@@ -315,7 +329,7 @@
       var rows = keys.map(function (k) {
         return (
           '<tr>' +
-            '<td class="left">' + tariffLabel(k) + '</td>' +
+            '<td class="left">' + labelFn(k) + '</td>' +
             '<td class="num">' + n(source[k]) + '</td>' +
           '</tr>'
         );
@@ -331,7 +345,13 @@
     }
 
     function paintActiveTariffs(byTariff) {
-      paintTariffTable('tariff-active-body', byTariff, 'пока нет');
+      paintTariffTable(
+        'tariff-active-body',
+        byTariff,
+        'пока нет',
+        ['d0_10', 'd10_20', 'd20_30', 'd30_60', 'd60_90', 'd90_180', 'd180p', 'forever'],
+        activeTariffLabel
+      );
     }
 
     function loadAll() {

@@ -1615,14 +1615,16 @@ async function collectSubscriptionStats() {
   let paid = 0;
   let forever = 0;
   let expired = 0;
-  // Активные оплаченные по сроку тарифа (сейчас)
+  // Активные оплаченные: сколько дней осталось сейчас
   const byTariff = {
-    '30': 0,
-    '60': 0,
-    '90': 0,
-    '180': 0,
-    forever: 0,
-    other: 0
+    d0_10: 0,
+    d10_20: 0,
+    d20_30: 0,
+    d30_60: 0,
+    d60_90: 0,
+    d90_180: 0,
+    d180p: 0,
+    forever: 0
   };
 
   const foreverSet = {};
@@ -1648,9 +1650,14 @@ async function collectSubscriptionStats() {
         return;
       }
       paid += 1;
-      const days = Math.max(0, parseInt(d.paidDays, 10) || 0);
-      if (byTariff[String(days)] != null) byTariff[String(days)] += 1;
-      else byTariff.other += 1;
+      const left = leftoverInclusiveDays(d.expiresAt, now);
+      if (left <= 10) byTariff.d0_10 += 1;
+      else if (left <= 20) byTariff.d10_20 += 1;
+      else if (left <= 30) byTariff.d20_30 += 1;
+      else if (left <= 60) byTariff.d30_60 += 1;
+      else if (left <= 90) byTariff.d60_90 += 1;
+      else if (left <= 180) byTariff.d90_180 += 1;
+      else byTariff.d180p += 1;
       return;
     }
     expired += 1;
