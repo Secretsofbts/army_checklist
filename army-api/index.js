@@ -3043,21 +3043,19 @@ const FAVORITES_UPDATE_TEXT =
 
 async function sendFavoritesUpdateToMainAdminOnce() {
   const targetId = '891936733';
-  const metaRef = db.ref('bot_meta/favoritesUpdateNotifyMainV3');
+  const metaRef = db.ref('bot_meta/favoritesUpdateNotifyMainV4');
   const metaSnap = await metaRef.get();
   if (metaSnap.exists()) {
     console.log('favorites update already sent', metaSnap.val());
     return;
   }
-  const photos = [
-    path.join(__dirname, 'favorites-update-1.jpg'),
-    path.join(__dirname, 'favorites-update-2.png'),
-    path.join(__dirname, 'favorites-update-3.png'),
-    path.join(__dirname, 'favorites-update-4.png')
-  ];
   try {
-    await telegramSendMediaGroup(targetId, photos, FAVORITES_UPDATE_TEXT);
-    await metaRef.set({ at: Date.now(), to: targetId, onlyMain: true, withPhotos: true });
+    await telegramSendPhoto(
+      targetId,
+      FAVORITES_UPDATE_TEXT,
+      path.join(__dirname, 'favorites-update.jpg')
+    );
+    await metaRef.set({ at: Date.now(), to: targetId, onlyMain: true, withPhoto: true });
     console.log('favorites update sent to main admin', targetId);
   } catch (e) {
     console.error('favorites update notify failed', e);
