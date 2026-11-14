@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=165"></script>
+  <script src="sync.js?v=166"></script>
   <title>Оплата подписки</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
@@ -361,11 +361,6 @@
     </div>
 
     <p class="plan-note" id="pay-status" style="margin:8px 0 0;"></p>
-    <div id="pay-open-wrap" style="display:none; margin-top:10px;">
-      <button type="button" class="plan-btn" id="pay-open-btn" disabled>Открыть ЮKassa в браузере</button>
-      <button type="button" class="plan-btn" id="pay-copy-btn" disabled style="margin-top:8px;">Скопировать ссылку</button>
-      <p class="plan-note" style="margin-top:8px;">Эти кнопки станут активны после выбора тарифа. Если ЮKassa не открывается, попробуйте открыть её в браузере вручную.</p>
-    </div>
 
     <p class="footer-note">
       Условия и реквизиты — в <a href="oferta.html">оферте</a>.
@@ -604,10 +599,6 @@
         if (loadingEl) loadingEl.hidden = true;
         if (plansWrap) plansWrap.hidden = false;
       }
-      var hintWrap = document.getElementById('pay-open-wrap');
-      if (hintWrap && pricingKnown && hintWrap.getAttribute('data-paid-hide') !== '1') {
-        hintWrap.style.display = '';
-      }
     }
 
     function loadPricing() {
@@ -698,6 +689,8 @@
       sheet.setAttribute('aria-hidden', 'false');
     }
 
+    var payAttemptOpen = false;
+
     function copyPayUrl(url, done) {
       function finish(ok) { if (done) done(ok); }
       try {
@@ -755,14 +748,12 @@
             return;
           }
           var url = result.data.confirmationUrl;
+          payAttemptOpen = true;
           if (statusEl) {
             statusEl.textContent = copyOnly
               ? 'Ссылка скопирована. Вставьте её в браузер.'
               : 'Открываем страницу оплаты…';
           }
-          var openWrap = document.getElementById('pay-open-wrap');
-          var openBtn = document.getElementById('pay-open-btn');
-          var copyBtn = document.getElementById('pay-copy-btn');
           function openYooKassaInBrowser() {
             try {
               if (window.Telegram && Telegram.WebApp && Telegram.WebApp.openLink) {
@@ -771,30 +762,6 @@
               }
             } catch (e2) {}
             try { window.open(url, '_blank'); } catch (e3) {}
-          }
-          if (openBtn) {
-            openBtn.disabled = false;
-            openBtn.className = 'plan-btn is-copy';
-            openBtn.onclick = function (ev) {
-              ev.preventDefault();
-              openYooKassaInBrowser();
-            };
-          }
-          if (copyBtn) {
-            copyBtn.disabled = false;
-            copyBtn.className = 'plan-btn is-copy';
-            copyBtn.style.background = '#fff';
-            copyBtn.style.color = '#5b4a7a';
-            copyBtn.style.border = '1px solid #d9c8f0';
-            copyBtn.onclick = function () {
-              copyPayUrl(url, function (ok) {
-                copyBtn.textContent = ok ? 'Ссылка скопирована' : 'Не скопировалось — откройте из чата с ботом';
-              });
-            };
-          }
-          if (openWrap) {
-            openWrap.removeAttribute('data-paid-hide');
-            openWrap.style.display = '';
           }
           if (copyOnly) {
             copyPayUrl(url, function (ok) {
@@ -816,11 +783,7 @@
     }
 
     function hidePayOpenUi() {
-      var openWrap = document.getElementById('pay-open-wrap');
-      if (openWrap) {
-        openWrap.style.display = 'none';
-        openWrap.setAttribute('data-paid-hide', '1');
-      }
+      payAttemptOpen = false;
     }
 
     function syncYooKassaPayments(doneMsg) {
@@ -934,8 +897,7 @@
         }
       } catch (e) {}
       function checkBackFromPay() {
-        var wrap = document.getElementById('pay-open-wrap');
-        if (!wrap || wrap.style.display === 'none') return;
+        if (!payAttemptOpen) return;
         syncYooKassaPayments('');
       }
       document.addEventListener('visibilitychange', function () {
