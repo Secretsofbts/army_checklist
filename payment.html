@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=166"></script>
+  <script src="sync.js?v=167"></script>
   <title>Оплата подписки</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
@@ -219,6 +219,7 @@
       color: #8a7aa8;
       line-height: 1.4;
     }
+    .pay-sheet-lead a { color: #7b5fb3; text-decoration: underline; }
     .pay-method {
       width: 100%;
       display: flex;
@@ -406,6 +407,7 @@
         <span class="pay-method-arrow">›</span>
       </button>
       <p class="pay-sheet-lead" style="margin:4px 0 0;">Если проблемы с оплатой напрямую, например белый экран, скопируйте ссылку и попробуйте вставить её вручную в браузере.</p>
+      <p class="pay-sheet-lead" style="margin:8px 0 0;">При проблемах оплаты, пожалуйста, пишите в <a href="https://t.me/army_checklist_bot?start=support" id="pay-support-link">поддержку</a>.</p>
     </div>
   </div>
 
@@ -870,11 +872,7 @@
     })();
 
     (function setupBotStartLink() {
-      var link = document.getElementById('bot-start-link');
-      if (!link) return;
-      var url = 'https://t.me/army_checklist_bot?start=check';
-      link.addEventListener('click', function (e) {
-        e.preventDefault();
+      function openTg(url) {
         try {
           if (window.Telegram && Telegram.WebApp && Telegram.WebApp.openTelegramLink) {
             Telegram.WebApp.openTelegramLink(url);
@@ -882,7 +880,22 @@
           }
         } catch (err) {}
         window.location.href = url;
-      });
+      }
+      var checkLink = document.getElementById('bot-start-link');
+      if (checkLink) {
+        checkLink.addEventListener('click', function (e) {
+          e.preventDefault();
+          openTg('https://t.me/army_checklist_bot?start=check');
+        });
+      }
+      var supportLink = document.getElementById('pay-support-link');
+      if (supportLink) {
+        supportLink.addEventListener('click', function (e) {
+          e.preventDefault();
+          e.stopPropagation();
+          openTg('https://t.me/army_checklist_bot?start=support');
+        });
+      }
     })();
 
     (function setupReturn() {
