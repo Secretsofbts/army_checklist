@@ -1774,21 +1774,44 @@ registerUserIfNeeded();
     }, true);
   }
 
+  function favoriteStarHost(row) {
+    if (!row) return null;
+    const iconLink = row.querySelector('a.link');
+    if (iconLink) return iconLink;
+    const anchors = row.querySelectorAll('a[href]');
+    for (let i = 0; i < anchors.length; i++) {
+      const href = String(anchors[i].getAttribute('href') || '');
+      if (!href || href === '#') continue;
+      if (/\.html(\?|$)/i.test(href)) continue;
+      return anchors[i];
+    }
+    return row.querySelector('.text') || row;
+  }
+
   function paintFavoriteMarks() {
     try {
       if (!document.body) return;
-      const leftover = document.querySelectorAll('button.army-fav');
-      for (let i = 0; i < leftover.length; i++) leftover[i].remove();
+      const leftoverBtns = document.querySelectorAll('button.army-fav');
+      for (let i = 0; i < leftoverBtns.length; i++) leftoverBtns[i].remove();
+      const dots = document.querySelectorAll('.army-fav-dot');
+      for (let d = 0; d < dots.length; d++) dots[d].remove();
       const fav = getFavoriteVideo();
       const favId = fav && fav.id ? String(fav.id) : '';
+      if (!favId) return;
       const rows = document.querySelectorAll('[data-id]');
       for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
         if (!canFavoriteRow(row)) continue;
-        const on = !!(favId && String(row.dataset.id) === favId);
-        if (row.classList.contains('army-is-fav') !== on) {
-          row.classList.toggle('army-is-fav', on);
-        }
+        if (String(row.dataset.id) !== favId) continue;
+        const host = favoriteStarHost(row);
+        if (!host) continue;
+        host.classList.add('army-fav-host');
+        const dot = document.createElement('span');
+        dot.className = 'army-fav-dot';
+        dot.setAttribute('aria-hidden', 'true');
+        dot.textContent = '★';
+        host.appendChild(dot);
+        break;
       }
     } catch (e) {}
   }
@@ -1842,7 +1865,7 @@ registerUserIfNeeded();
     if (document.getElementById('army-fav-css')) return;
     const css = document.createElement('style');
     css.id = 'army-fav-css';
-    css.textContent = '[data-id].army-fav-flash{outline:2px solid #d4a017;outline-offset:2px;border-radius:10px;}[data-id].army-is-fav{box-shadow:inset 3px 0 0 #d4a017;}button.army-fav{display:none !important;}';
+    css.textContent = '[data-id].army-fav-flash{outline:2px solid #9b7fd4;outline-offset:2px;border-radius:10px;}.army-fav-host{position:relative;overflow:visible;}span.army-fav-dot{position:absolute;right:-5px;top:-6px;font-size:8px;line-height:1;color:#9b7fd4;pointer-events:none;z-index:6;}button.army-fav{display:none !important;}';
     const host = document.head || document.documentElement;
     if (host) host.appendChild(css);
     else document.addEventListener('DOMContentLoaded', function () { document.head.appendChild(css); });
