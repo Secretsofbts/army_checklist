@@ -2758,8 +2758,7 @@ app.post('/payment/yookassa/create', async function (req, res) {
     try {
       const sentPayMsg = await telegramSendMessage(
         uid,
-        'Ссылка на оплату ЮKassa 💜\n\n' +
-          'Если страница белая (часто на iPhone): зажмите кнопку «Оплатить» и выберите «Открыть в Safari» или Chrome.',
+        'Ссылка на оплату ЮKassa 💜',
         { text: 'Оплатить', url: confirmationUrl }
       );
       payLinkMessageId = sentPayMsg && sentPayMsg.result && sentPayMsg.result.message_id;

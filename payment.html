@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=160"></script>
+  <script src="sync.js?v=161"></script>
   <title>Оплата подписки</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
@@ -363,7 +363,6 @@
     <div id="pay-open-wrap" style="display:none; margin-top:10px;">
       <button type="button" class="plan-btn is-copy" id="pay-open-btn">Открыть ЮKassa в браузере</button>
       <button type="button" class="plan-btn is-copy" id="pay-copy-btn" style="margin-top:8px; background:#fff; color:#5b4a7a; border:1px solid #d9c8f0;">Скопировать ссылку</button>
-      <p class="plan-note" style="margin-top:8px;">На iPhone встроенный браузер Telegram часто показывает белый экран. Нажмите кнопку выше или зажмите ссылку в сообщении бота → «Открыть в Safari».</p>
     </div>
 
     <p class="footer-note">
@@ -736,9 +735,7 @@
           var isTestUi = !!(lastPayInfo && lastPayInfo.testPayUi);
           var skipAutoOpen = isIos || isTestUi;
           if (statusEl) {
-            statusEl.textContent = skipAutoOpen
-              ? 'Ссылку отправили в чат с ботом. ЮKassa откройте кнопкой ниже (на iPhone — в Safari).'
-              : 'Ссылку на оплату отправили в чат с ботом. Если экран белый — откройте кнопкой ниже или в Safari/Chrome.';
+            statusEl.textContent = 'Ссылку отправили в чат с ботом. Если страница не открылась — кнопкой ниже.';
           }
           var openWrap = document.getElementById('pay-open-wrap');
           var openBtn = document.getElementById('pay-open-btn');
