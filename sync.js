@@ -1941,7 +1941,7 @@ registerUserIfNeeded();
     const hasVideoLink = !!(fav.link && !/\.html(\?|$)/i.test(fav.link));
     const fid = escapeFavHtml(fav.id);
     return (
-      '<div class="fav-card" data-fav-id="' + fid + '" style="position:relative; background:#f3eef9; border-radius:12px; padding:14px 36px 14px 14px; margin:0 0 10px;">' +
+      '<div class="fav-card" data-fav-id="' + fid + '" style="position:relative; background:#faf8fd; border:1px solid #eee8f6; border-radius:12px; padding:14px 36px 14px 14px; margin:0 0 10px;">' +
         '<div style="min-width:0;">' + body + '</div>' +
         '<button type="button" class="favorite-video-clear" data-fav-id="' + fid + '" aria-label="Убрать" style="position:absolute; top:4px; right:4px; width:28px; height:28px; border:none; background:none; color:#b8a9cc; font-size:18px; line-height:1; cursor:pointer; padding:0;">✕</button>' +
         (hasVideoLink
