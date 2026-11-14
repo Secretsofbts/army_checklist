@@ -13,7 +13,7 @@ const ADMIN_IDS = String(process.env.ADMIN_TELEGRAM_IDS || '891936733')
   .map(function (s) { return s.trim(); })
   .filter(Boolean);
 // Бессрочный доступ без прав админа (подруги и исключения).
-const FOREVER_IDS = String(process.env.FOREVER_TELEGRAM_IDS || '163381553,591051945,1018991144,5107937805,299076099')
+const FOREVER_IDS = String(process.env.FOREVER_TELEGRAM_IDS || '163381553,591051945,1018991144,5107937805,299076099,1135886871')
   .split(',')
   .map(function (s) { return s.trim(); })
   .filter(Boolean);
@@ -2873,6 +2873,65 @@ async function syncRecentYooKassaPayments(limit) {
  * Разово: +30 дней первому оплатившему (6921049406).
  */
 /** Разово: +3 дня 557254790 без сообщения в Telegram. */
+async function grantForeverForEarlyDonateOnce() {
+  const targetId = '1135886871';
+  const metaRef = db.ref('bot_meta/foreverEarlyDonate_1135886871_V1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('early donate forever already done', metaSnap.val());
+    return;
+  }
+  try {
+    await ensureUserRegistered(targetId);
+  } catch (regErr) {
+    console.error('early donate forever register failed', targetId, regErr);
+  }
+  const ref = subscriptionRef(targetId);
+  const snap = await ref.get();
+  const prev = snap.exists() ? (snap.val() || {}) : {};
+  const now = Date.now();
+  if (prev.forever === true) {
+    await metaRef.set({ at: now, to: targetId, skipped: true, reason: 'already-forever' });
+    console.log('early donate forever skipped, already forever', targetId);
+    return;
+  }
+  await ref.set({
+    active: true,
+    trial: false,
+    forever: true,
+    expiresAt: null,
+    paidDays: null,
+    createdAt: prev.createdAt || now,
+    updatedAt: now,
+    note: 'early-donate-5000',
+    promoUsed: true,
+    promoUsedAt: prev.promoUsedAt || now
+  });
+  await metaRef.set({ at: now, to: targetId, note: 'early-donate-5000', notify: false });
+  console.log('early donate forever granted', targetId);
+}
+
+const EARLY_DONATE_FOREVER_TEXT =
+  'У вас бесконечный доступ к чек-листу — в счёт поддержки донатом 💜\n\n' +
+  'Спасибо, что поддержали проект ещё в самом начале 🫶';
+
+async function sendEarlyDonateForeverPreviewToTestOnce() {
+  const metaRef = db.ref('bot_meta/foreverEarlyDonatePreviewTestV1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('early donate forever preview already sent', metaSnap.val());
+    return;
+  }
+  const testId = FORCE_TEST_IDS[0] || '2055929706';
+  try {
+    await telegramSendMessage(testId, EARLY_DONATE_FOREVER_TEXT, null);
+    await metaRef.set({ at: Date.now(), to: testId });
+    console.log('early donate forever preview sent to', testId);
+  } catch (e) {
+    console.error('early donate forever preview failed', e);
+  }
+}
+
 async function grantSilentPlus3DaysOnce() {
   const targetId = '557254790';
   const addDays = 3;
@@ -5357,6 +5416,17 @@ app.listen(PORT, function () {
       console.error('silent +3 failed', e);
     });
   }, 7500);
+  // Разово: бессрок 1135886871 за ранний донат 5000; текст превью — только тестовому
+  setTimeout(function () {
+    grantForeverForEarlyDonateOnce().catch(function (e) {
+      console.error('early donate forever grant failed', e);
+    });
+  }, 7800);
+  setTimeout(function () {
+    sendEarlyDonateForeverPreviewToTestOnce().catch(function (e) {
+      console.error('early donate forever preview failed', e);
+    });
+  }, 8000);
   // Разово: превью текстов напоминаний на тестовый
   setTimeout(function () {
     sendOnedayRemindPreviewToTest().catch(function (e) {
