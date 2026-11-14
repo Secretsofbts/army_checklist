@@ -1559,10 +1559,14 @@ registerUserIfNeeded();
     css.textContent = 'input[type=checkbox]{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}input[type=checkbox].army-rewatch{outline:2px solid #9b7fd4;outline-offset:2px;}[data-id]{overflow:visible;}.army-check-hit{position:relative;display:inline-block;flex-shrink:0;width:18px;height:18px;vertical-align:middle;overflow:visible;}.army-check-hit input[type=checkbox]{margin:0;}.army-rewatch-n{position:absolute;right:-7px;top:-9px;left:auto;font-size:8px;font-weight:700;color:#888 !important;line-height:1;padding:0;background:transparent;cursor:pointer;-webkit-user-select:none;user-select:none;z-index:5;}';
     document.head.appendChild(css);
     paintRewatchBadges();
+    paintFavoriteStars();
     let paintTimer = null;
     const obs = new MutationObserver(function () {
       clearTimeout(paintTimer);
-      paintTimer = setTimeout(paintRewatchBadges, 80);
+      paintTimer = setTimeout(function () {
+        paintRewatchBadges();
+        paintFavoriteStars();
+      }, 80);
     });
     if (document.body) obs.observe(document.body, { childList: true, subtree: true });
   }
@@ -1591,6 +1595,8 @@ registerUserIfNeeded();
   function setupCheckActivityUi() {
     setupCheckboxRewatchHold();
     backfillMissingCheckTitles();
+    paintFavoriteStars();
+    paintFavoriteVideoCabinet();
   }
 
   if (document.readyState === 'loading') {
@@ -1606,6 +1612,154 @@ registerUserIfNeeded();
       saveToCloudWithRetry(`users/${ARMY_USER_ID}/${fullKey}`, value);
     }
   }
+
+  function getFavoriteVideo() {
+    try {
+      const raw = localStorage.getItem('progress:favoriteVideo');
+      if (!raw || raw === 'null') return null;
+      const v = JSON.parse(raw);
+      if (!v || typeof v !== 'object' || !v.id) return null;
+      return v;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function setFavoriteVideo(info) {
+    setProgress('favoriteVideo', info || null);
+    paintFavoriteStars();
+    paintFavoriteVideoCabinet();
+  }
+
+  function canFavoriteRow(row) {
+    if (!row || !row.dataset || !row.dataset.id) return false;
+    if (row.classList.contains('navlink') || row.tagName === 'A') return false;
+    const id = String(row.dataset.id || '');
+    if (id.indexOf('video-') !== 0 && id.indexOf('noline-') !== 0) return false;
+    const box = row.querySelector('input[type="checkbox"]');
+    if (!box || box.disabled) return false;
+    if (box.style.pointerEvents === 'none') return false;
+    return true;
+  }
+
+  function favoriteMetaFromRow(row) {
+    const id = row.dataset.id;
+    const title = titleFromChecklistRow(id) || prettyCheckId(id);
+    const page = currentChecklistPageInfo() || {};
+    let link = '';
+    const anchors = row.querySelectorAll('a[href]');
+    for (let i = 0; i < anchors.length; i++) {
+      const href = String(anchors[i].getAttribute('href') || '');
+      if (!href || href === '#') continue;
+      if (/\.html(\?|$)/i.test(href)) continue;
+      link = href;
+      break;
+    }
+    return {
+      id: id,
+      title: title,
+      page: page.href || '',
+      pageName: page.name || '',
+      link: link
+    };
+  }
+
+  function paintFavoriteStars() {
+    try {
+      if (!document.body) return;
+      const fav = getFavoriteVideo();
+      const favId = fav && fav.id ? String(fav.id) : '';
+      const rows = document.querySelectorAll('[data-id]');
+      for (let i = 0; i < rows.length; i++) {
+        const row = rows[i];
+        if (!canFavoriteRow(row)) continue;
+        let btn = row.querySelector('button.army-fav');
+        if (!btn) {
+          btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'army-fav';
+          btn.setAttribute('aria-label', 'Любимое видео');
+          btn.addEventListener('click', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            const host = btn.closest('[data-id]');
+            if (!host || !canFavoriteRow(host)) return;
+            const cur = getFavoriteVideo();
+            const meta = favoriteMetaFromRow(host);
+            if (cur && cur.id === meta.id) setFavoriteVideo(null);
+            else setFavoriteVideo(meta);
+            try {
+              if (window.Telegram && Telegram.WebApp && Telegram.WebApp.HapticFeedback) {
+                Telegram.WebApp.HapticFeedback.impactOccurred('light');
+              }
+            } catch (err) {}
+          });
+          const linkEl = row.querySelector('a.link');
+          if (linkEl) row.insertBefore(btn, linkEl);
+          else row.appendChild(btn);
+        }
+        const on = favId && String(row.dataset.id) === favId;
+        btn.classList.toggle('is-on', on);
+        const next = on ? '⭐' : '☆';
+        if (btn.textContent !== next) btn.textContent = next;
+      }
+    } catch (e) {}
+  }
+
+  function escapeFavHtml(s) {
+    return String(s || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+
+  function paintFavoriteVideoCabinet() {
+    const box = document.getElementById('favorite-video-box');
+    if (!box) return;
+    const fav = getFavoriteVideo();
+    let html;
+    if (!fav) {
+      html =
+        '<p style="font-size:12px; color:#888; margin:0 0 6px;">Любимое видео</p>' +
+        '<p style="font-size:14px; color:#999; margin:0; line-height:1.4;">Ещё не выбрано. На странице с роликом нажмите ☆ справа от названия.</p>';
+    } else {
+      const title = escapeFavHtml(fav.title || prettyCheckId(fav.id));
+      const pageHref = fav.page && /^[a-z0-9._-]+\.html$/i.test(String(fav.page).split('?')[0]) ? String(fav.page) : '';
+      const titleHtml = pageHref
+        ? ('<a href="' + pageHref + '" style="color:#2b2440; text-decoration:none; font-weight:600;">⭐ ' + title + '</a>')
+        : ('<span style="font-weight:600; color:#2b2440;">⭐ ' + title + '</span>');
+      let extra = '';
+      if (fav.link && !/\.html(\?|$)/i.test(fav.link)) {
+        extra =
+          '<a href="' + escapeFavHtml(fav.link) + '" target="_blank" rel="noopener" style="display:inline-block; margin-top:8px; font-size:13px; color:#7b5fb3; text-decoration:none;">Открыть ролик 🔗</a>';
+      }
+      html =
+        '<p style="font-size:12px; color:#888; margin:0 0 6px;">Любимое видео</p>' +
+        '<p style="font-size:15px; margin:0; line-height:1.35;">' + titleHtml + '</p>' +
+        extra +
+        '<button type="button" id="favorite-video-clear" style="margin-top:10px; background:none; border:none; padding:0; font-size:12px; color:#8a7aa8; cursor:pointer;">Убрать</button>';
+    }
+    if (box.innerHTML !== html) box.innerHTML = html;
+    box.style.display = '';
+    const clearBtn = document.getElementById('favorite-video-clear');
+    if (clearBtn && clearBtn.dataset.bound !== '1') {
+      clearBtn.dataset.bound = '1';
+      clearBtn.addEventListener('click', function () {
+        setFavoriteVideo(null);
+      });
+    }
+  }
+
+  (function injectFavoriteStarCss() {
+    if (document.getElementById('army-fav-css')) return;
+    const css = document.createElement('style');
+    css.id = 'army-fav-css';
+    css.textContent = 'button.army-fav{flex-shrink:0;border:none;background:transparent;padding:0 2px;margin:0;font-size:15px;line-height:1;cursor:pointer;color:#c4b8dc;}button.army-fav.is-on{color:#d4a017;}';
+    const host = document.head || document.documentElement;
+    if (host) host.appendChild(css);
+    else document.addEventListener('DOMContentLoaded', function () { document.head.appendChild(css); });
+  })();
 
   // Подтягивает облачные данные и обновляет чекбоксы на странице (без задержки экрана)
   function syncChecklistFromCloud(onChanged) {
@@ -1635,6 +1789,11 @@ registerUserIfNeeded();
           }
         });
         paintRewatchBadges();
+        if (data['progress:favoriteVideo'] !== undefined) {
+          localStorage.setItem('progress:favoriteVideo', JSON.stringify(data['progress:favoriteVideo']));
+        }
+        paintFavoriteStars();
+        paintFavoriteVideoCabinet();
         if (changed && onChanged) onChanged();
       })
       .catch(() => {});
@@ -1666,6 +1825,8 @@ registerUserIfNeeded();
           }
         });
         paintRewatchBadges();
+        paintFavoriteStars();
+        paintFavoriteVideoCabinet();
         if (callback) callback();
       })
       .catch(() => {});
@@ -1693,6 +1854,8 @@ registerUserIfNeeded();
           }
         });
         paintRewatchBadges();
+        paintFavoriteStars();
+        paintFavoriteVideoCabinet();
         if (callback) callback();
       })
       .catch(() => { if (callback) callback(); });
