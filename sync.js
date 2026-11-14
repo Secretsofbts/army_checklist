@@ -1559,13 +1559,13 @@ registerUserIfNeeded();
     css.textContent = 'input[type=checkbox]{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none;}input[type=checkbox].army-rewatch{outline:2px solid #9b7fd4;outline-offset:2px;}[data-id]{overflow:visible;}.army-check-hit{position:relative;display:inline-block;flex-shrink:0;width:18px;height:18px;vertical-align:middle;overflow:visible;}.army-check-hit input[type=checkbox]{margin:0;}.army-rewatch-n{position:absolute;right:-7px;top:-9px;left:auto;font-size:8px;font-weight:700;color:#888 !important;line-height:1;padding:0;background:transparent;cursor:pointer;-webkit-user-select:none;user-select:none;z-index:5;}';
     document.head.appendChild(css);
     paintRewatchBadges();
-    paintFavoriteStars();
+    paintFavoriteMarks();
     let paintTimer = null;
     const obs = new MutationObserver(function () {
       clearTimeout(paintTimer);
       paintTimer = setTimeout(function () {
         paintRewatchBadges();
-        paintFavoriteStars();
+        paintFavoriteMarks();
       }, 80);
     });
     if (document.body) obs.observe(document.body, { childList: true, subtree: true });
@@ -1594,8 +1594,9 @@ registerUserIfNeeded();
 
   function setupCheckActivityUi() {
     setupCheckboxRewatchHold();
+    setupFavoriteRowHold();
     backfillMissingCheckTitles();
-    paintFavoriteStars();
+    paintFavoriteMarks();
     paintFavoriteVideoCabinet();
   }
 
@@ -1627,7 +1628,7 @@ registerUserIfNeeded();
 
   function setFavoriteVideo(info) {
     setProgress('favoriteVideo', info || null);
-    paintFavoriteStars();
+    paintFavoriteMarks();
     paintFavoriteVideoCabinet();
   }
 
@@ -1664,44 +1665,130 @@ registerUserIfNeeded();
     };
   }
 
-  function paintFavoriteStars() {
+  function toggleFavoriteFromRow(row) {
+    if (!canFavoriteRow(row)) return false;
+    const cur = getFavoriteVideo();
+    const meta = favoriteMetaFromRow(row);
+    if (cur && cur.id === meta.id) setFavoriteVideo(null);
+    else setFavoriteVideo(meta);
+    try {
+      if (window.Telegram && Telegram.WebApp && Telegram.WebApp.HapticFeedback) {
+        Telegram.WebApp.HapticFeedback.impactOccurred('light');
+      }
+    } catch (err) {}
+    row.classList.add('army-fav-flash');
+    setTimeout(function () { row.classList.remove('army-fav-flash'); }, 700);
+    return true;
+  }
+
+  function setupFavoriteRowHold() {
+    const HOLD_MS = 500;
+    let timer = null;
+    let startX = 0;
+    let startY = 0;
+    let holdRow = null;
+    let suppressClick = false;
+
+    function point(e) {
+      if (e.touches && e.touches[0]) return e.touches[0];
+      if (e.changedTouches && e.changedTouches[0]) return e.changedTouches[0];
+      return e;
+    }
+
+    function rowFromEvent(e) {
+      const t = e.target;
+      if (!t || !t.closest) return null;
+      if (t.closest('input[type="checkbox"]') || t.closest('.army-check-hit') || t.closest('.army-rewatch-n')) {
+        return null;
+      }
+      const row = t.closest('[data-id]');
+      if (!canFavoriteRow(row)) return null;
+      return row;
+    }
+
+    function clearTimer() {
+      if (timer) {
+        clearTimeout(timer);
+        timer = null;
+      }
+    }
+
+    function cancelHold() {
+      clearTimer();
+      if (!suppressClick) holdRow = null;
+    }
+
+    function onDown(e) {
+      const row = rowFromEvent(e);
+      if (!row) return;
+      if (e.pointerType === 'mouse' && typeof e.button === 'number' && e.button !== 0) return;
+      const p = point(e);
+      startX = p.clientX;
+      startY = p.clientY;
+      holdRow = row;
+      suppressClick = false;
+      clearTimer();
+      timer = setTimeout(function () {
+        timer = null;
+        if (!holdRow) return;
+        suppressClick = true;
+        toggleFavoriteFromRow(holdRow);
+      }, HOLD_MS);
+    }
+
+    function onMove(e) {
+      if (!holdRow || suppressClick) return;
+      const p = point(e);
+      if (Math.abs(p.clientX - startX) > 14 || Math.abs(p.clientY - startY) > 14) cancelHold();
+    }
+
+    function onUp(e) {
+      clearTimer();
+      if (suppressClick) {
+        if (e.cancelable) e.preventDefault();
+        setTimeout(function () {
+          suppressClick = false;
+          holdRow = null;
+        }, 400);
+      } else {
+        holdRow = null;
+      }
+    }
+
+    document.addEventListener('pointerdown', onDown, true);
+    document.addEventListener('pointermove', onMove, true);
+    document.addEventListener('pointerup', onUp, true);
+    document.addEventListener('pointercancel', cancelHold, true);
+    document.addEventListener('touchend', function (e) {
+      if (!suppressClick) return;
+      if (e.cancelable) e.preventDefault();
+    }, { capture: true, passive: false });
+    document.addEventListener('click', function (e) {
+      if (!suppressClick) return;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+    }, true);
+    document.addEventListener('contextmenu', function (e) {
+      const row = rowFromEvent(e);
+      if (row) e.preventDefault();
+    }, true);
+  }
+
+  function paintFavoriteMarks() {
     try {
       if (!document.body) return;
+      const leftover = document.querySelectorAll('button.army-fav');
+      for (let i = 0; i < leftover.length; i++) leftover[i].remove();
       const fav = getFavoriteVideo();
       const favId = fav && fav.id ? String(fav.id) : '';
       const rows = document.querySelectorAll('[data-id]');
       for (let i = 0; i < rows.length; i++) {
         const row = rows[i];
         if (!canFavoriteRow(row)) continue;
-        let btn = row.querySelector('button.army-fav');
-        if (!btn) {
-          btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = 'army-fav';
-          btn.setAttribute('aria-label', 'Любимое видео');
-          btn.addEventListener('click', function (e) {
-            e.preventDefault();
-            e.stopPropagation();
-            const host = btn.closest('[data-id]');
-            if (!host || !canFavoriteRow(host)) return;
-            const cur = getFavoriteVideo();
-            const meta = favoriteMetaFromRow(host);
-            if (cur && cur.id === meta.id) setFavoriteVideo(null);
-            else setFavoriteVideo(meta);
-            try {
-              if (window.Telegram && Telegram.WebApp && Telegram.WebApp.HapticFeedback) {
-                Telegram.WebApp.HapticFeedback.impactOccurred('light');
-              }
-            } catch (err) {}
-          });
-          const linkEl = row.querySelector('a.link');
-          if (linkEl) row.insertBefore(btn, linkEl);
-          else row.appendChild(btn);
+        const on = !!(favId && String(row.dataset.id) === favId);
+        if (row.classList.contains('army-is-fav') !== on) {
+          row.classList.toggle('army-is-fav', on);
         }
-        const on = favId && String(row.dataset.id) === favId;
-        btn.classList.toggle('is-on', on);
-        const next = on ? '⭐' : '☆';
-        if (btn.textContent !== next) btn.textContent = next;
       }
     } catch (e) {}
   }
@@ -1722,7 +1809,7 @@ registerUserIfNeeded();
     if (!fav) {
       html =
         '<p style="font-size:12px; color:#888; margin:0 0 6px;">Любимое видео</p>' +
-        '<p style="font-size:14px; color:#999; margin:0; line-height:1.4;">Ещё не выбрано. На странице с роликом нажмите ☆ справа от названия.</p>';
+        '<p style="font-size:14px; color:#999; margin:0; line-height:1.4;">Ещё не выбрано. На странице с роликом зажмите название — так оно станет любимым.</p>';
     } else {
       const title = escapeFavHtml(fav.title || prettyCheckId(fav.id));
       const pageHref = fav.page && /^[a-z0-9._-]+\.html$/i.test(String(fav.page).split('?')[0]) ? String(fav.page) : '';
@@ -1755,7 +1842,7 @@ registerUserIfNeeded();
     if (document.getElementById('army-fav-css')) return;
     const css = document.createElement('style');
     css.id = 'army-fav-css';
-    css.textContent = 'button.army-fav{flex-shrink:0;border:none;background:transparent;padding:0 2px;margin:0;font-size:15px;line-height:1;cursor:pointer;color:#c4b8dc;}button.army-fav.is-on{color:#d4a017;}';
+    css.textContent = '[data-id].army-fav-flash{outline:2px solid #d4a017;outline-offset:2px;border-radius:10px;}[data-id].army-is-fav{box-shadow:inset 3px 0 0 #d4a017;}button.army-fav{display:none !important;}';
     const host = document.head || document.documentElement;
     if (host) host.appendChild(css);
     else document.addEventListener('DOMContentLoaded', function () { document.head.appendChild(css); });
@@ -1792,7 +1879,7 @@ registerUserIfNeeded();
         if (data['progress:favoriteVideo'] !== undefined) {
           localStorage.setItem('progress:favoriteVideo', JSON.stringify(data['progress:favoriteVideo']));
         }
-        paintFavoriteStars();
+        paintFavoriteMarks();
         paintFavoriteVideoCabinet();
         if (changed && onChanged) onChanged();
       })
@@ -1825,7 +1912,7 @@ registerUserIfNeeded();
           }
         });
         paintRewatchBadges();
-        paintFavoriteStars();
+        paintFavoriteMarks();
         paintFavoriteVideoCabinet();
         if (callback) callback();
       })
@@ -1854,7 +1941,7 @@ registerUserIfNeeded();
           }
         });
         paintRewatchBadges();
-        paintFavoriteStars();
+        paintFavoriteMarks();
         paintFavoriteVideoCabinet();
         if (callback) callback();
       })
