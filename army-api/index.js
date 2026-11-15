@@ -3118,11 +3118,13 @@ async function broadcastFavoritesUpdateOnce() {
 }
 
 const SUPPORT_PHOTO_FIX_TEXT =
-  'Извините, вчера выяснилось, что в поддержку не приходили сообщения с фото и приложениями. Поэтому если вы мне что-то писали такое и не получили ответа, то повторите. Уже все починила сердечко';
+  'Извините, вчера выяснилось, что в поддержку не доходили сообщения с фото и файлами.\n\n' +
+  'Если вы такое писали и не получили ответа — пожалуйста, отправьте ещё раз.\n\n' +
+  'Уже всё починила 💜';
 
 async function sendSupportPhotoFixToMainOnce() {
   const targetId = '891936733';
-  const metaRef = db.ref('bot_meta/supportPhotoFixNotifyMainV1');
+  const metaRef = db.ref('bot_meta/supportPhotoFixNotifyMainV2');
   const metaSnap = await metaRef.get();
   if (metaSnap.exists()) {
     console.log('support photo fix already sent', metaSnap.val());
