@@ -3122,25 +3122,80 @@ const SUPPORT_PHOTO_FIX_TEXT =
   'Если вы такое писали и не получили ответа — пожалуйста, отправьте ещё раз.\n\n' +
   'Уже всё починила 💜';
 
-async function sendSupportPhotoFixToMainOnce() {
-  const targetId = '891936733';
-  const metaRef = db.ref('bot_meta/supportPhotoFixNotifyMainV2');
+async function broadcastSupportPhotoFixOnce() {
+  const metaRef = db.ref('bot_meta/supportPhotoFixBroadcastV1');
   const metaSnap = await metaRef.get();
-  if (metaSnap.exists()) {
-    console.log('support photo fix already sent', metaSnap.val());
+  const prev = metaSnap.exists() ? (metaSnap.val() || {}) : {};
+  if (prev.status === 'done') {
+    console.log('support photo fix broadcast already done', prev);
     return;
   }
-  try {
-    await telegramSendPhoto(
-      targetId,
-      SUPPORT_PHOTO_FIX_TEXT,
-      path.join(__dirname, 'support-photo-fix.jpg')
-    );
-    await metaRef.set({ at: Date.now(), to: targetId, onlyMain: true, withPhoto: true });
-    console.log('support photo fix sent to main admin', targetId);
-  } catch (e) {
-    console.error('support photo fix notify failed', e);
+  const photo = path.join(__dirname, 'support-photo-fix.jpg');
+  if (!fs.existsSync(photo)) {
+    console.error('support photo fix photo missing', photo);
+    return;
   }
+  const ids = {};
+  try {
+    const regSnap = await db.ref('user_registry').get();
+    const regs = regSnap.exists() ? (regSnap.val() || {}) : {};
+    Object.keys(regs).forEach(function (uid) {
+      if (uid) ids[String(uid)] = true;
+    });
+  } catch (e) {
+    console.error('support photo fix registry read failed', e);
+  }
+  try {
+    const subSnap = await db.ref('subscriptions').get();
+    const subs = subSnap.exists() ? (subSnap.val() || {}) : {};
+    Object.keys(subs).forEach(function (uid) {
+      if (uid) ids[String(uid)] = true;
+    });
+  } catch (e) {
+    console.error('support photo fix subscriptions read failed', e);
+  }
+  const list = Object.keys(ids);
+  let sent = parseInt(prev.sent, 10) || 0;
+  let failed = parseInt(prev.failed, 10) || 0;
+  let start = parseInt(prev.nextIndex, 10) || 0;
+  if (start < 0) start = 0;
+  await metaRef.set({
+    status: 'running',
+    at: Date.now(),
+    total: list.length,
+    nextIndex: start,
+    sent: sent,
+    failed: failed
+  });
+  for (let i = start; i < list.length; i++) {
+    try {
+      await telegramSendPhoto(list[i], SUPPORT_PHOTO_FIX_TEXT, photo);
+      sent += 1;
+    } catch (e) {
+      failed += 1;
+    }
+    if (i % 20 === 0) {
+      try {
+        await metaRef.set({
+          status: 'running',
+          at: Date.now(),
+          total: list.length,
+          nextIndex: i + 1,
+          sent: sent,
+          failed: failed
+        });
+      } catch (saveErr) {}
+    }
+    await new Promise(function (resolve) { setTimeout(resolve, 50); });
+  }
+  await metaRef.set({
+    status: 'done',
+    at: Date.now(),
+    total: list.length,
+    sent: sent,
+    failed: failed
+  });
+  console.log('support photo fix broadcast done', { sent: sent, failed: failed, total: list.length });
 }
 
 async function grantSilentPlus3DaysOnce() {
@@ -5756,8 +5811,8 @@ app.listen(PORT, function () {
     });
   }, 9000);
   setTimeout(function () {
-    sendSupportPhotoFixToMainOnce().catch(function (e) {
-      console.error('support photo fix notify failed', e);
+    broadcastSupportPhotoFixOnce().catch(function (e) {
+      console.error('support photo fix broadcast failed', e);
     });
   }, 9200);
   // Разово: превью текстов напоминаний на тестовый
