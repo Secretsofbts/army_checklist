@@ -3117,6 +3117,30 @@ async function broadcastFavoritesUpdateOnce() {
   console.log('favorites update broadcast done', { sent: sent, failed: failed, total: list.length });
 }
 
+const SUPPORT_PHOTO_FIX_TEXT =
+  'Извините, вчера выяснилось, что в поддержку не приходили сообщения с фото и приложениями. Поэтому если вы мне что-то писали такое и не получили ответа, то повторите. Уже все починила сердечко';
+
+async function sendSupportPhotoFixToMainOnce() {
+  const targetId = '891936733';
+  const metaRef = db.ref('bot_meta/supportPhotoFixNotifyMainV1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('support photo fix already sent', metaSnap.val());
+    return;
+  }
+  try {
+    await telegramSendPhoto(
+      targetId,
+      SUPPORT_PHOTO_FIX_TEXT,
+      path.join(__dirname, 'support-photo-fix.jpg')
+    );
+    await metaRef.set({ at: Date.now(), to: targetId, onlyMain: true, withPhoto: true });
+    console.log('support photo fix sent to main admin', targetId);
+  } catch (e) {
+    console.error('support photo fix notify failed', e);
+  }
+}
+
 async function grantSilentPlus3DaysOnce() {
   const targetId = '557254790';
   const addDays = 3;
@@ -5729,6 +5753,11 @@ app.listen(PORT, function () {
       console.error('favorites update broadcast failed', e);
     });
   }, 9000);
+  setTimeout(function () {
+    sendSupportPhotoFixToMainOnce().catch(function (e) {
+      console.error('support photo fix notify failed', e);
+    });
+  }, 9200);
   // Разово: превью текстов напоминаний на тестовый
   setTimeout(function () {
     sendOnedayRemindPreviewToTest().catch(function (e) {
