@@ -363,6 +363,15 @@
         });
     }
 
+    function firebaseGet(path, query) {
+      var base = String(window.FIREBASE_URL || 'https://army-checklist-default-rtdb.firebaseio.com').replace(/\/$/, '');
+      var clean = String(path || '').replace(/^\/+/, '').replace(/\.json$/, '');
+      var q = query ? ('?' + query) : '';
+      return fetch(base + '/' + clean + '.json' + q)
+        .then(function (res) { return res.ok ? res.json() : null; })
+        .catch(function () { return null; });
+    }
+
     function renderStats() {
       const contentEl = document.getElementById('stats-content');
       let myNumber = localStorage.getItem('userNumber_' + ARMY_USER_ID);
@@ -370,7 +379,7 @@
 
       function paintPeople(totalUsers) {
           contentEl.innerHTML = '';
-          totalUsers = Math.max(parseInt(totalUsers, 10) || 0, parseInt(myNumber, 10) || 0);
+          totalUsers = parseInt(totalUsers, 10) || 0;
 
           if (myNumber) {
             const badge = getBadge(parseInt(myNumber));
@@ -381,7 +390,10 @@
 
             const comboCard = document.createElement('div');
             comboCard.className = 'stat-card';
-            comboCard.innerHTML = '<div class="stat-number">№ ' + myNumber + '</div><div class="stat-label">Вы ' + myNumber + '-й из ' + totalUsers + ' пользовател' + (totalUsers == 1 ? 'я' : 'ей') + '</div>';
+            var peopleLabel = (totalUsers >= 2)
+              ? ('Вы ' + myNumber + '-й из ' + totalUsers + ' пользовател' + (totalUsers == 1 ? 'я' : 'ей'))
+              : ('Ваш номер в чек-листе');
+            comboCard.innerHTML = '<div class="stat-number">№ ' + myNumber + '</div><div class="stat-label">' + peopleLabel + '</div>';
             contentEl.appendChild(comboCard);
           } else {
             const totalCard = document.createElement('div');
@@ -424,32 +436,37 @@
           }
       }
 
+      function applyOwnEntry(entry) {
+        if (!entry || typeof entry !== 'object' || entry.error) return;
+        if (entry.number) {
+          myNumber = entry.number;
+          localStorage.setItem('userNumber_' + ARMY_USER_ID, myNumber);
+        }
+        if (entry.firstSeen) {
+          myFirstSeen = entry.firstSeen;
+          localStorage.setItem('userFirstSeen_' + ARMY_USER_ID, myFirstSeen);
+        }
+      }
+
       function loadOwnThenCount() {
-        const ownP = (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID)
-          ? armyCloudFetch('user_registry/' + ARMY_USER_ID)
-              .then(res => res.json())
-              .then(entry => {
-                if (entry && typeof entry === 'object' && !entry.error) {
-                  if (entry.number) {
-                    myNumber = entry.number;
-                    localStorage.setItem('userNumber_' + ARMY_USER_ID, myNumber);
-                  }
-                  if (entry.firstSeen) {
-                    myFirstSeen = entry.firstSeen;
-                    localStorage.setItem('userFirstSeen_' + ARMY_USER_ID, myFirstSeen);
-                  }
-                }
-              })
-              .catch(function () {})
+        const uid = (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) ? String(ARMY_USER_ID) : '';
+        const ownP = uid
+          ? firebaseGet('user_registry/' + uid).then(function (entry) {
+              applyOwnEntry(entry);
+            })
           : Promise.resolve();
-        const countP = armyCloudFetch('user_count')
-          .then(res => res.json())
-          .then(function (c) { return parseInt(c, 10) || 0; })
-          .catch(function () { return 0; });
+        const countP = firebaseGet('user_count').then(function (c) {
+          var n = parseInt(c, 10) || 0;
+          if (n > 0) return n;
+          return firebaseGet('user_registry', 'shallow=true').then(function (obj) {
+            if (!obj || typeof obj !== 'object' || obj.error) return 0;
+            return Object.keys(obj).filter(function (k) { return /^\d+$/.test(k); }).length;
+          });
+        });
         Promise.all([ownP, countP]).then(function (parts) {
           paintPeople(parts[1]);
         }).catch(function () {
-          paintPeople(myNumber || 0);
+          paintPeople(0);
         });
       }
 
@@ -1045,16 +1062,28 @@
       }
 
       function fromFirebase() {
-        if (typeof armyFetchSubscriptionFallback !== 'function') {
-          doneOne();
-          return;
-        }
+        if (typeof armyFetchSubscriptionFallback !== 'function') return;
         pending += 1;
         armyFetchSubscriptionFallback().then(function (fb) {
           if (fb) useData(fb, false);
           doneOne();
         }).catch(function () { doneOne(); });
       }
+
+      pending += 1;
+      firebaseGet('subscriptions/' + ARMY_USER_ID).then(function (row) {
+        if (row && typeof row === 'object' && !row.error) {
+          var exp = typeof row.expiresAt === 'number' ? row.expiresAt : 0;
+          useData({
+            ok: !!(row.forever || exp > Date.now()),
+            forever: !!row.forever,
+            expiresAt: exp || null,
+            trial: !!row.trial,
+            status: row.forever ? 'forever' : (exp > Date.now() ? (row.trial ? 'trial' : 'paid') : 'expired')
+          }, false);
+        }
+        doneOne();
+      }).catch(function () { doneOne(); });
 
       fromFirebase();
 
