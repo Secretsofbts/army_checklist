@@ -3295,7 +3295,7 @@ async function grantSilentPlus200DaysOnce() {
 
 async function sendPaidThanksReceiptPreviewToMainOnce() {
   const targetId = '891936733';
-  const metaRef = db.ref('bot_meta/paidThanksReceiptPreviewMain_201roeqawi_V2');
+  const metaRef = db.ref('bot_meta/paidThanksReceiptPreviewMain_201roeqawi_V3');
   const metaSnap = await metaRef.get();
   if (metaSnap.exists()) {
     console.log('paid thanks receipt preview already sent', metaSnap.val());
@@ -3303,12 +3303,12 @@ async function sendPaidThanksReceiptPreviewToMainOnce() {
   }
   const receiptUrl = 'https://lknpd.nalog.ru/api/v1/receipt/324107085372/201roeqawi/print';
   try {
-    const thanks = await sendPaidThanksToUser(targetId, 180, receiptUrl);
+    const thanks = await sendPaidThanksToUser(targetId, 200, receiptUrl);
     if (!thanks.sent) throw new Error(thanks.error || 'thanks-failed');
     await metaRef.set({
       at: Date.now(),
       to: targetId,
-      days: 180,
+      days: 200,
       receipt: '201roeqawi',
       receiptUrl: receiptUrl,
       onlyMain: true
