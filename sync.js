@@ -82,33 +82,113 @@
       armyShowTelegramOnlyGate();
     }
   }
+  function armyFirebaseJsonUrl(path) {
+    const clean = String(path || '').replace(/^\/+/, '').replace(/\.json$/, '');
+    return FIREBASE_URL + '/' + clean + '.json';
+  }
+
+  function armyFetchWithTimeout(url, options, timeoutMs) {
+    options = options || {};
+    timeoutMs = timeoutMs || 8000;
+    if (typeof AbortController === 'undefined') {
+      return Promise.race([
+        fetch(url, options),
+        new Promise(function (_, reject) {
+          setTimeout(function () { reject(new Error('timeout')); }, timeoutMs);
+        })
+      ]);
+    }
+    var ctrl = new AbortController();
+    var timer = setTimeout(function () {
+      try { ctrl.abort(); } catch (e) {}
+    }, timeoutMs);
+    var req = {};
+    Object.keys(options).forEach(function (k) { req[k] = options[k]; });
+    req.signal = ctrl.signal;
+    return fetch(url, req).then(function (res) {
+      clearTimeout(timer);
+      return res;
+    }, function (err) {
+      clearTimeout(timer);
+      throw err;
+    });
+  }
+
   function armyCloudFetch(path, options) {
     if (ARMY_OUTSIDE_TELEGRAM) {
       return Promise.reject(new Error('telegram-only'));
     }
     options = options || {};
     const clean = String(path || '').replace(/^\/+/, '').replace(/\.json$/, '');
+    const fbUrl = armyFirebaseJsonUrl(clean);
+    function toFirebase() {
+      return fetch(fbUrl, options);
+    }
     const api = String(ARMY_API_URL || '').replace(/\/$/, '');
     if (!api) {
-      return fetch(FIREBASE_URL + '/' + clean + '.json', options);
+      return toFirebase();
     }
     const headers = Object.assign({}, options.headers || {});
     headers['X-Telegram-Init-Data'] = telegramInitData();
     if (options.body != null && !headers['Content-Type'] && !headers['content-type']) {
       headers['Content-Type'] = 'application/json';
     }
-    return fetch(api + '/cloud/' + clean, Object.assign({}, options, { headers: headers }));
+    return armyFetchWithTimeout(api + '/cloud/' + clean, Object.assign({}, options, { headers: headers }), 8000)
+      .then(function (res) {
+        if (res && res.ok) return res;
+        return toFirebase();
+      })
+      .catch(function () {
+        return toFirebase();
+      });
   }
   window.armyCloudFetch = armyCloudFetch;
   window.FIREBASE_URL = FIREBASE_URL;
   window.ARMY_API_URL = ARMY_API_URL;
   window.telegramInitData = telegramInitData;
   window.ARMY_OUTSIDE_TELEGRAM = ARMY_OUTSIDE_TELEGRAM;
+  window.armyFetchWithTimeout = armyFetchWithTimeout;
   var STAT_CHECKBOX_IDS = {};
   let ARMY_USER_ID = null;
   if (!ARMY_OUTSIDE_TELEGRAM && window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
     ARMY_USER_ID = window.Telegram.WebApp.initDataUnsafe.user.id;
   }
+
+  function armySubscriptionFromRow(d) {
+    d = d || {};
+    if (d.forever === true) {
+      return { ok: true, forever: true, status: 'forever', expiresAt: null, trial: false };
+    }
+    var exp = typeof d.expiresAt === 'number' ? d.expiresAt : 0;
+    if (exp > Date.now()) {
+      return {
+        ok: true,
+        forever: false,
+        expiresAt: exp,
+        trial: !!d.trial,
+        status: d.trial ? 'trial' : 'paid'
+      };
+    }
+    return {
+      ok: false,
+      forever: false,
+      expiresAt: exp || null,
+      trial: !!d.trial,
+      status: 'expired'
+    };
+  }
+
+  function armyFetchSubscriptionFallback() {
+    if (!ARMY_USER_ID) return Promise.resolve(null);
+    return fetch(armyFirebaseJsonUrl('subscriptions/' + ARMY_USER_ID))
+      .then(function (res) { return res.ok ? res.json() : null; })
+      .then(function (row) {
+        if (!row || typeof row !== 'object') return null;
+        return armySubscriptionFromRow(row);
+      })
+      .catch(function () { return null; });
+  }
+  window.armyFetchSubscriptionFallback = armyFetchSubscriptionFallback;
 
   // Галочки и прогресс на одном телефоне не должны смешиваться между аккаунтами Telegram.
   // В облаке ключи как раньше (video-..., progress:...), в localStorage — с префиксом id пользователя.
@@ -749,7 +829,7 @@ registerUserIfNeeded();
   }
 
   function armyPayPageHref() {
-    const file = 'payment.html?v=56';
+    const file = 'payment.html?v=58';
     try {
       const path = String((location && location.pathname) || '');
       const last = (path.split('/').pop() || '');
@@ -860,29 +940,38 @@ registerUserIfNeeded();
     }
     // Если доступ уже подтверждён кэшем — страницу не блокируем, только тихо обновляем.
 
-    fetch(api + '/subscription', {
+    function applyFetched(data) {
+      if (!data || typeof data !== 'object') return;
+      if (alwaysOpen) {
+        writeSubscriptionCache(data);
+        applyBotActivateMenu(data);
+        if (data && data.ok && data.trial) maybeShowTrialWelcome(data);
+        return;
+      }
+      applySubscriptionResult(data);
+    }
+
+    armyFetchWithTimeout(api + '/subscription', {
       method: 'GET',
       headers: {
         'X-Telegram-Init-Data': telegramInitData()
       }
-    })
+    }, 8000)
       .then(function (res) {
         if (res.status === 404) return null;
         if (!res.ok) return null;
         return res.json();
       })
       .then(function (data) {
-        if (!data || typeof data !== 'object') return;
-        if (alwaysOpen) {
-          writeSubscriptionCache(data);
-          applyBotActivateMenu(data);
-          // Окошко новичка можно показать и на payment/referral
-          if (data && data.ok && data.trial) maybeShowTrialWelcome(data);
+        if (data && typeof data === 'object') {
+          applyFetched(data);
           return;
         }
-        applySubscriptionResult(data);
+        armyFetchSubscriptionFallback().then(applyFetched);
       })
-      .catch(function () {});
+      .catch(function () {
+        armyFetchSubscriptionFallback().then(applyFetched);
+      });
   }
   checkSubscriptionAccess();
 

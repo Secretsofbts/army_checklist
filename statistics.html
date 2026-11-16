@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=178"></script>
+  <script src="sync.js?v=181"></script>
   <title>Личный кабинет</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -286,7 +286,7 @@
           </div>
           <div id="sub-forever-wrap" style="display:none;"></div>
         </div>
-        <a id="sub-renew-btn" href="payment.html?v=57" style="flex-shrink:0; display:none; text-decoration:none; border-radius:10px; padding:10px 12px; font-size:13px; font-weight:600; background:#9b7fd4; color:#fff;">Продлить</a>
+        <a id="sub-renew-btn" href="payment.html?v=58" style="flex-shrink:0; display:none; text-decoration:none; border-radius:10px; padding:10px 12px; font-size:13px; font-weight:600; background:#9b7fd4; color:#fff;">Продлить</a>
       </div>
     </div>
 
@@ -1007,7 +1007,7 @@
 
     function loadSubscription() {
       const api = String(window.ARMY_API_URL || '').replace(/\/$/, '');
-      if (!api || !ARMY_USER_ID || typeof telegramInitData !== 'function') {
+      if (!ARMY_USER_ID) {
         paintSubscription(null);
         return;
       }
@@ -1017,52 +1017,61 @@
           if (cached) paintSubscription(cached);
         }
       } catch (e) {}
-      fetch(api + '/subscription', {
-        method: 'GET',
-        headers: { 'X-Telegram-Init-Data': telegramInitData() }
-      })
+
+      function useData(data) {
+        if (data && typeof writeSubscriptionCache === 'function') {
+          try { writeSubscriptionCache(data); } catch (e) {}
+        }
+        paintSubscription(data);
+        if (data && data.status === 'admin') showAdminHub();
+      }
+
+      function fromFirebase() {
+        if (typeof armyFetchSubscriptionFallback !== 'function') {
+          useData(null);
+          return;
+        }
+        armyFetchSubscriptionFallback().then(function (fb) {
+          if (fb) useData(fb);
+          else if (!(typeof readSubscriptionCache === 'function' && readSubscriptionCache())) useData(null);
+        });
+      }
+
+      if (!api || typeof telegramInitData !== 'function') {
+        fromFirebase();
+        return;
+      }
+
+      var subFetch = (typeof armyFetchWithTimeout === 'function')
+        ? armyFetchWithTimeout(api + '/subscription', {
+            method: 'GET',
+            headers: { 'X-Telegram-Init-Data': telegramInitData() }
+          }, 8000)
+        : fetch(api + '/subscription', {
+            method: 'GET',
+            headers: { 'X-Telegram-Init-Data': telegramInitData() }
+          });
+      subFetch
         .then(function (res) { return res.ok ? res.json() : null; })
         .then(function (data) {
-          if (data && typeof writeSubscriptionCache === 'function') {
-            try { writeSubscriptionCache(data); } catch (e) {}
+          if (data && typeof data === 'object') {
+            useData(data);
+            try {
+              fetch(api + '/payment/yookassa/sync', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'X-Telegram-Init-Data': telegramInitData()
+                },
+                body: '{}'
+              }).catch(function () {});
+            } catch (e) {}
+            return;
           }
-          paintSubscription(data);
-          if (data && data.status === 'admin') showAdminHub();
-          // Догонка ЮKassa, если webhook не успел начислить дни
-          try {
-            fetch(api + '/payment/yookassa/sync', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-                'X-Telegram-Init-Data': telegramInitData()
-              },
-              body: '{}'
-            })
-              .then(function (res) { return res.ok ? res.json() : null; })
-              .then(function (syncData) {
-                if (!syncData) return;
-                var got = false;
-                if (syncData.recent && syncData.recent.results) {
-                  syncData.recent.results.forEach(function (r) { if (r && r.granted) got = true; });
-                }
-                if (got) {
-                  fetch(api + '/subscription', {
-                    method: 'GET',
-                    headers: { 'X-Telegram-Init-Data': telegramInitData() }
-                  })
-                    .then(function (res2) { return res2.ok ? res2.json() : null; })
-                    .then(function (data2) {
-                      if (data2) paintSubscription(data2);
-                    })
-                    .catch(function () {});
-                }
-              })
-              .catch(function () {});
-          } catch (e) {}
+          fromFirebase();
         })
         .catch(function () {
-          if (typeof readSubscriptionCache === 'function' && readSubscriptionCache()) return;
-          paintSubscription(null);
+          fromFirebase();
         });
     }
 

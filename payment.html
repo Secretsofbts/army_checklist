@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=178"></script>
+  <script src="sync.js?v=181"></script>
   <title>Оплата подписки</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; margin: 0; }
@@ -292,8 +292,8 @@
     <div class="notice" id="pay-notice" style="display:none;">Оплата пока что настраивается</div>
     <div class="notice" id="pay-success" style="display:none; background:#e3f7e9; color:#2e9e5b;">Можно закрыть эту страницу, обновить приложение и зайти в чек-лист 💜</div>
 
-    <p id="pay-plans-loading">…</p>
-    <div id="pay-plans" hidden>
+    <p id="pay-plans-loading" hidden>…</p>
+    <div id="pay-plans">
     <div class="plan is-promo" id="plan-promo" style="display:none;">
       <div class="plan-top">
         <div class="plan-title">Акция</div>
@@ -634,22 +634,47 @@
       return new Promise(function (resolve) {
         function tick() {
           var d = telegramInitData();
-          if (d || tries >= 15) {
+          if (d || tries >= 8) {
             resolve(d);
             return;
           }
           tries += 1;
-          setTimeout(tick, 150);
+          setTimeout(tick, 100);
         }
         tick();
       });
     }
 
+    function fetchWithTimeout(url, opts, timeoutMs) {
+      opts = opts || {};
+      timeoutMs = timeoutMs || 8000;
+      if (typeof AbortController === 'undefined') {
+        return Promise.race([
+          fetch(url, opts),
+          waitMs(timeoutMs).then(function () { return Promise.reject(new Error('timeout')); })
+        ]);
+      }
+      var ctrl = new AbortController();
+      var timer = setTimeout(function () {
+        try { ctrl.abort(); } catch (e) {}
+      }, timeoutMs);
+      var req = {};
+      Object.keys(opts).forEach(function (k) { req[k] = opts[k]; });
+      req.signal = ctrl.signal;
+      return fetch(url, req).then(function (res) {
+        clearTimeout(timer);
+        return res;
+      }, function (err) {
+        clearTimeout(timer);
+        throw err;
+      });
+    }
+
     function fetchJsonRetry(url, opts, attempts, delayMs) {
-      attempts = attempts || 6;
-      delayMs = delayMs == null ? 2000 : delayMs;
+      attempts = attempts || 3;
+      delayMs = delayMs == null ? 1200 : delayMs;
       function once(left) {
-        return fetch(url, opts).then(function (res) {
+        return fetchWithTimeout(url, opts, 8000).then(function (res) {
           if (!res.ok) {
             if (left > 1) return waitMs(delayMs).then(function () { return once(left - 1); });
             return { ok: false, data: null };
@@ -706,7 +731,7 @@
         var headers = {};
         if (initData) headers['X-Telegram-Init-Data'] = initData;
 
-        fetchJsonRetry(api + '/payment/yookassa/status', {}, 6, 2000)
+        fetchJsonRetry(api + '/payment/yookassa/status', {}, 3, 1200)
           .then(function (result) {
             if (result.ok && result.data) {
               liveReady = !!(result.data.ready || result.data.paymentLive);
@@ -719,11 +744,19 @@
             tryPaintFinal();
           });
 
-        fetchJsonRetry(api + '/subscription', { method: 'GET', headers: headers }, 6, 2000)
+        fetchJsonRetry(api + '/subscription', { method: 'GET', headers: headers }, 3, 1200)
           .then(function (result) {
             subData = (result.ok && result.data) ? result.data : null;
-            subFetched = true;
-            tryPaintFinal();
+            if (subData || typeof armyFetchSubscriptionFallback !== 'function') {
+              subFetched = true;
+              tryPaintFinal();
+              return;
+            }
+            armyFetchSubscriptionFallback().then(function (fb) {
+              subData = fb;
+              subFetched = true;
+              tryPaintFinal();
+            });
           });
       });
     }
