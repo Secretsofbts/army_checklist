@@ -80,10 +80,12 @@
               <tr><th>Оплатили</th><td id="sub-paid">…</td></tr>
               <tr><th>Бессрочно</th><td id="sub-forever">…</td></tr>
               <tr><th>Истекли</th><td id="sub-expired">…</td></tr>
+              <tr><th>В реестре, без подписки</th><td id="sub-nosub">…</td></tr>
               <tr><th>В реестре</th><td id="sub-registered">…</td></tr>
             </tbody>
           </table>
         </div>
+        <p class="hint">С доступом = пробный + оплатили + бессрочно. В реестре ≈ доступ + истекли + без подписки. «Оплатили» — карта, Stars и ручная выдача, даже если в базе ещё стоял пробный флаг.</p>
       </div>
 
       <div class="block">
@@ -392,6 +394,7 @@
             setText('sub-paid', n(subData.paid));
             setText('sub-forever', n(subData.forever));
             setText('sub-expired', n(subData.expired));
+            setText('sub-nosub', n(subData.noSub));
             setText('sub-registered', subData.registered != null ? n(subData.registered) : '—');
             paintActiveTariffs(subData.byTariff);
           }

@@ -1508,7 +1508,6 @@ async function collectPaymentStats() {
   function pushPay(p) {
     if (!p || !p.userId) return;
     if (isTestPayment(p)) return;
-    if (String(p.chargeId || '').indexOf('silent200:') === 0) return;
     const method = String(p.method || 'unknown');
     // Карты: один платёж ЮKassa = один chargeId, без дублей от webhook/sync
     const charge = p.chargeId ? ('c:' + method + ':' + p.chargeId) : null;
@@ -1606,7 +1605,6 @@ async function collectPaymentStats() {
     const grantedBy = d.grantedBy ? String(d.grantedBy) : '';
     const isEarlyDonate = note === 'early-donate-5000';
     if (!grantedBy && !isEarlyDonate) return;
-    if (grantedBy === 'silent-200') return;
     pushPay({
       at: typeof d.updatedAt === 'number' ? d.updatedAt : (d.createdAt || 0),
       userId: uid,
@@ -1689,22 +1687,42 @@ async function collectPaymentStats() {
   };
 }
 
+function subscriptionLooksPaid(d) {
+  if (!d || typeof d !== 'object') return false;
+  if (d.trial === false) return true;
+  if (d.lastStarsPayment) return true;
+  if (d.grantedBy) return true;
+  if (d.lastYookassaPayment || d.lastYooKassaPayment) return true;
+  const note = String(d.note || '').toLowerCase();
+  if (note.indexOf('yookassa') !== -1) return true;
+  if (note.indexOf('stars') !== -1) return true;
+  if (note.indexOf('manual') !== -1) return true;
+  if (note === 'early-donate-5000') return true;
+  return false;
+}
+
 async function collectSubscriptionStats() {
   const now = Date.now();
   const snap = await db.ref('subscriptions').get();
   const all = snap.exists() ? snap.val() : {};
   const regSnap = await db.ref('user_registry').get();
   const registry = regSnap.exists() ? (regSnap.val() || {}) : {};
-  let registered = Object.keys(registry).length;
-  FORCE_TEST_IDS.forEach(function (id) {
-    if (registry[id]) registered -= 1;
+  const foreverSet = {};
+  ADMIN_IDS.concat(FOREVER_IDS).forEach(function (id) {
+    if (id) foreverSet[String(id)] = true;
   });
-  const counted = {};
+
+  const ids = {};
+  Object.keys(registry).forEach(function (id) { ids[id] = true; });
+  Object.keys(all).forEach(function (id) { ids[id] = true; });
+  Object.keys(foreverSet).forEach(function (id) { ids[id] = true; });
+
+  let registered = 0;
   let trial = 0;
   let paid = 0;
   let forever = 0;
   let expired = 0;
-  // Активные оплаченные: сколько дней осталось сейчас
+  let noSub = 0;
   const byTariff = {
     d0_10: 0,
     d10_20: 0,
@@ -1716,26 +1734,26 @@ async function collectSubscriptionStats() {
     forever: 0
   };
 
-  const foreverSet = {};
-  ADMIN_IDS.concat(FOREVER_IDS).forEach(function (id) {
-    if (id) foreverSet[String(id)] = true;
-  });
-
-  Object.keys(all).forEach(function (uid) {
+  Object.keys(ids).forEach(function (uid) {
+    if (isForceTestUser(uid)) return;
     const d = all[uid] || {};
     const note = String(d.note || '');
-    // Тестовые превью 2-й страницы и тестовый аккаунт в общую статистику не мешаем
     if (note.indexOf('force-') === 0) return;
-    if (isForceTestUser(uid)) return;
-    counted[uid] = true;
-    // В списке бессрочных / админ — всегда «бессрочно», даже если в базе ещё старый trial
-    if (d.forever || foreverSet[uid]) {
+    const inRegistry = !!registry[uid];
+    if (inRegistry) registered += 1;
+
+    if (d.forever === true || foreverSet[uid]) {
       forever += 1;
       byTariff.forever += 1;
       return;
     }
+    const hasSub = !!all[uid];
+    if (!hasSub) {
+      noSub += 1;
+      return;
+    }
     if (typeof d.expiresAt === 'number' && d.expiresAt > now) {
-      if (d.trial) {
+      if (d.trial === true && !subscriptionLooksPaid(d)) {
         trial += 1;
         return;
       }
@@ -1753,13 +1771,6 @@ async function collectSubscriptionStats() {
     expired += 1;
   });
 
-  Object.keys(foreverSet).forEach(function (id) {
-    if (counted[id]) return;
-    counted[id] = true;
-    forever += 1;
-    byTariff.forever += 1;
-  });
-
   return {
     registered: registered,
     total: trial + paid + forever,
@@ -1767,6 +1778,7 @@ async function collectSubscriptionStats() {
     paid: paid,
     forever: forever,
     expired: expired,
+    noSub: noSub,
     byTariff: byTariff
   };
 }
@@ -2062,7 +2074,6 @@ async function collectPaidPayers() {
     Object.keys(all).forEach(function (k) {
       const row = all[k] || {};
       if (isTestPayment(row)) return;
-      if (String(row.chargeId || '').indexOf('silent200:') === 0) return;
       if (String(row.method) === 'manual') return;
       if (String(row.method) === 'yookassa') return;
       pushOnce(row.userId, {
@@ -3283,6 +3294,30 @@ async function grantSilentPlus200DaysOnce() {
     notify: false
   });
   console.log('silent +200 done', targetId, result);
+}
+
+async function recordSilent200ManualStatOnce() {
+  const targetId = '936898446';
+  const metaRef = db.ref('bot_meta/silent200ManualStat_V1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('silent 200 manual stat already recorded', metaSnap.val());
+    return;
+  }
+  await logPaymentEvent({
+    at: Date.parse('2026-11-16T15:18:27+03:00'),
+    userId: targetId,
+    method: 'manual',
+    days: 200,
+    forever: false,
+    stars: 0,
+    amountRub: 0,
+    chargeId: 'silent200:' + targetId,
+    payload: 'manual-silent',
+    test: false
+  });
+  await metaRef.set({ at: Date.now(), to: targetId, days: 200 });
+  console.log('silent 200 manual stat recorded', targetId);
 }
 
 async function recordNalogPaid1000Once() {
@@ -5986,6 +6021,11 @@ app.listen(PORT, function () {
       console.error('nalog 1000 record failed', e);
     });
   }, 7650);
+  setTimeout(function () {
+    recordSilent200ManualStatOnce().catch(function (e) {
+      console.error('silent 200 manual stat failed', e);
+    });
+  }, 7660);
   setTimeout(function () {
     sendPaidThanksReceiptPreviewToMainOnce().catch(function (e) {
       console.error('paid thanks receipt preview failed', e);
