@@ -1024,9 +1024,12 @@
       } catch (e) {}
 
       var paintedOk = false;
+      var gotApi = false;
       var pending = 0;
-      function useData(data) {
+      function useData(data, fromApi) {
         if (!data || typeof data !== 'object' || data.error) return;
+        if (!fromApi && gotApi) return;
+        if (fromApi) gotApi = true;
         paintedOk = true;
         if (typeof writeSubscriptionCache === 'function') {
           try { writeSubscriptionCache(data); } catch (e) {}
@@ -1048,7 +1051,7 @@
         }
         pending += 1;
         armyFetchSubscriptionFallback().then(function (fb) {
-          if (fb) useData(fb);
+          if (fb) useData(fb, false);
           doneOne();
         }).catch(function () { doneOne(); });
       }
@@ -1070,7 +1073,7 @@
       subFetch
         .then(function (res) { return res.ok ? res.json() : null; })
         .then(function (data) {
-          if (data && typeof data === 'object') useData(data);
+          if (data && typeof data === 'object') useData(data, true);
           doneOne();
         })
         .catch(function () { doneOne(); });
