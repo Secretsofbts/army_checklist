@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=181"></script>
+  <script src="sync.js?v=182"></script>
   <title>Личный кабинет</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -368,32 +368,9 @@
       let myNumber = localStorage.getItem('userNumber_' + ARMY_USER_ID);
       let myFirstSeen = localStorage.getItem('userFirstSeen_' + ARMY_USER_ID);
 
-      if (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) {
-        armyCloudFetch('user_registry/' + ARMY_USER_ID)
-          .then(res => res.json())
-          .then(entry => {
-            if (entry) {
-              if (entry.number) {
-                myNumber = entry.number;
-                localStorage.setItem('userNumber_' + ARMY_USER_ID, myNumber);
-              }
-              if (entry.firstSeen) {
-                myFirstSeen = entry.firstSeen;
-                localStorage.setItem('userFirstSeen_' + ARMY_USER_ID, myFirstSeen);
-              }
-            }
-          })
-          .catch(() => {});
-      }
-
-      // Считаем реальных людей в реестре (не табло user_count — оно могло отставать)
-      armyCloudFetch('user_registry')
-        .then(res => res.json())
-        .then(registry => {
+      function paintPeople(totalUsers) {
           contentEl.innerHTML = '';
-          const totalUsers = registry && typeof registry === 'object'
-            ? Object.keys(registry).length
-            : 0;
+          totalUsers = Math.max(parseInt(totalUsers, 10) || 0, parseInt(myNumber, 10) || 0);
 
           if (myNumber) {
             const badge = getBadge(parseInt(myNumber));
@@ -424,7 +401,7 @@
             contentEl.appendChild(dateCard);
           }
 
-                   const showDonateBadge = () => {
+          const showDonateBadge = () => {
             const donateBadge = document.createElement('div');
             donateBadge.className = 'badge-card';
             donateBadge.style.background = 'linear-gradient(135deg, #fff3cd, #f7f7fa)';
@@ -445,10 +422,38 @@
               })
               .catch(() => {});
           }
-        })
-        .catch(() => {
-          contentEl.innerHTML = '<p class="empty-note">Не удалось загрузить статистику</p>';
+      }
+
+      function loadOwnThenCount() {
+        const ownP = (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID)
+          ? armyCloudFetch('user_registry/' + ARMY_USER_ID)
+              .then(res => res.json())
+              .then(entry => {
+                if (entry && typeof entry === 'object' && !entry.error) {
+                  if (entry.number) {
+                    myNumber = entry.number;
+                    localStorage.setItem('userNumber_' + ARMY_USER_ID, myNumber);
+                  }
+                  if (entry.firstSeen) {
+                    myFirstSeen = entry.firstSeen;
+                    localStorage.setItem('userFirstSeen_' + ARMY_USER_ID, myFirstSeen);
+                  }
+                }
+              })
+              .catch(function () {})
+          : Promise.resolve();
+        const countP = armyCloudFetch('user_count')
+          .then(res => res.json())
+          .then(function (c) { return parseInt(c, 10) || 0; })
+          .catch(function () { return 0; });
+        Promise.all([ownP, countP]).then(function (parts) {
+          paintPeople(parts[1]);
+        }).catch(function () {
+          paintPeople(myNumber || 0);
         });
+      }
+
+      loadOwnThenCount();
     }
 
     function pluralDays(n) {
@@ -1018,30 +1023,41 @@
         }
       } catch (e) {}
 
+      var paintedOk = false;
+      var pending = 0;
       function useData(data) {
-        if (data && typeof writeSubscriptionCache === 'function') {
+        if (!data || typeof data !== 'object' || data.error) return;
+        paintedOk = true;
+        if (typeof writeSubscriptionCache === 'function') {
           try { writeSubscriptionCache(data); } catch (e) {}
         }
         paintSubscription(data);
-        if (data && data.status === 'admin') showAdminHub();
+        if (data.status === 'admin') showAdminHub();
+      }
+      function doneOne() {
+        pending -= 1;
+        if (pending > 0 || paintedOk) return;
+        if (typeof readSubscriptionCache === 'function' && readSubscriptionCache()) return;
+        paintSubscription(null);
       }
 
       function fromFirebase() {
         if (typeof armyFetchSubscriptionFallback !== 'function') {
-          useData(null);
+          doneOne();
           return;
         }
+        pending += 1;
         armyFetchSubscriptionFallback().then(function (fb) {
           if (fb) useData(fb);
-          else if (!(typeof readSubscriptionCache === 'function' && readSubscriptionCache())) useData(null);
-        });
+          doneOne();
+        }).catch(function () { doneOne(); });
       }
 
-      if (!api || typeof telegramInitData !== 'function') {
-        fromFirebase();
-        return;
-      }
+      fromFirebase();
 
+      if (!api || typeof telegramInitData !== 'function') return;
+
+      pending += 1;
       var subFetch = (typeof armyFetchWithTimeout === 'function')
         ? armyFetchWithTimeout(api + '/subscription', {
             method: 'GET',
@@ -1054,25 +1070,10 @@
       subFetch
         .then(function (res) { return res.ok ? res.json() : null; })
         .then(function (data) {
-          if (data && typeof data === 'object') {
-            useData(data);
-            try {
-              fetch(api + '/payment/yookassa/sync', {
-                method: 'POST',
-                headers: {
-                  'Content-Type': 'application/json',
-                  'X-Telegram-Init-Data': telegramInitData()
-                },
-                body: '{}'
-              }).catch(function () {});
-            } catch (e) {}
-            return;
-          }
-          fromFirebase();
+          if (data && typeof data === 'object') useData(data);
+          doneOne();
         })
-        .catch(function () {
-          fromFirebase();
-        });
+        .catch(function () { doneOne(); });
     }
 
     loadSubscription();

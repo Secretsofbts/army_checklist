@@ -476,6 +476,7 @@ function pathAllowed(user, method, path) {
   }
   if (parts[0] === 'user_registry' && parts.length === 1 && method === 'GET') return true;
   if (parts[0] === 'user_count' && parts.length === 1 && method === 'GET') return true;
+  if (parts[0] === 'subscriptions' && parts[1] === uid && parts.length === 2 && method === 'GET') return true;
   if (parts[0] === 'qa' || parts[0] === 'suggestions') {
     if (method === 'GET' || method === 'POST') return true;
     if (method === 'PUT' || method === 'PATCH' || method === 'DELETE') return !!user.isAdmin;

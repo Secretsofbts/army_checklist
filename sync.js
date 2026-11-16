@@ -156,6 +156,7 @@
 
   function armySubscriptionFromRow(d) {
     d = d || {};
+    if (d.error) return null;
     if (d.forever === true) {
       return { ok: true, forever: true, status: 'forever', expiresAt: null, trial: false };
     }
@@ -180,11 +181,19 @@
 
   function armyFetchSubscriptionFallback() {
     if (!ARMY_USER_ID) return Promise.resolve(null);
+    function parseRow(row) {
+      if (!row || typeof row !== 'object' || row.error) return null;
+      return armySubscriptionFromRow(row);
+    }
     return fetch(armyFirebaseJsonUrl('subscriptions/' + ARMY_USER_ID))
       .then(function (res) { return res.ok ? res.json() : null; })
       .then(function (row) {
-        if (!row || typeof row !== 'object') return null;
-        return armySubscriptionFromRow(row);
+        var parsed = parseRow(row);
+        if (parsed) return parsed;
+        return armyCloudFetch('subscriptions/' + ARMY_USER_ID)
+          .then(function (res2) { return res2 && res2.json ? res2.json() : null; })
+          .then(parseRow)
+          .catch(function () { return null; });
       })
       .catch(function () { return null; });
   }
