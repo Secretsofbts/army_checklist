@@ -3324,6 +3324,20 @@ async function recordSilent200ManualStatOnce() {
   console.log('manual 180 stat recorded', targetId);
 }
 
+async function recordSilent3ManualStatOnce() {
+  const metaRef = db.ref('bot_meta/silent3ManualStat_V2');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('silent 3 not in tariffs', metaSnap.val());
+    return;
+  }
+  try {
+    await db.ref('payments/silent3:557254790').remove();
+  } catch (e) {}
+  await metaRef.set({ at: Date.now(), skipTariff: true, reason: 'plus3-not-a-plan' });
+  console.log('silent 3 payment stat skipped');
+}
+
 async function recordNalogPaid1000Once() {
   const paymentId = 'nalog-201roeqawi';
   const userId = '936898446';
@@ -6072,6 +6086,11 @@ app.listen(PORT, function () {
       console.error('silent 200 manual stat failed', e);
     });
   }, 7660);
+  setTimeout(function () {
+    recordSilent3ManualStatOnce().catch(function (e) {
+      console.error('silent 3 manual stat failed', e);
+    });
+  }, 7670);
   setTimeout(function () {
     backfillExpiredSubsForRegistryOnce().catch(function (e) {
       console.error('expired no-sub backfill failed', e);
