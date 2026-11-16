@@ -537,7 +537,49 @@ async function clearBotStarted(uid) {
   }
 }
 
+async function syncAccessToRegistry(uid, sub) {
+  uid = String(uid || '');
+  if (!/^\d+$/.test(uid)) return;
+  sub = sub || {};
+  const patch = {
+    accessExpiresAt: typeof sub.expiresAt === 'number' ? sub.expiresAt : null,
+    accessForever: sub.forever === true,
+    accessTrial: sub.trial === true,
+    accessUpdatedAt: Date.now()
+  };
+  try {
+    const countSnap = await db.ref('user_count').get();
+    const people = Number(countSnap.val()) || 0;
+    if (people > 0) patch.peopleCount = people;
+  } catch (e) {}
+  try {
+    await db.ref('user_registry/' + uid).update(patch);
+  } catch (e) {
+    console.error('syncAccessToRegistry failed', uid, e);
+  }
+}
+
+async function copyAccessToRegistryForPayerOnce() {
+  const uid = '936898446';
+  const metaRef = db.ref('bot_meta/copyAccessRegistry_936898446_V1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('copy access registry already done', metaSnap.val());
+    return;
+  }
+  const subSnap = await subscriptionRef(uid).get();
+  const sub = subSnap.exists() ? (subSnap.val() || {}) : {};
+  await syncAccessToRegistry(uid, sub);
+  await metaRef.set({
+    at: Date.now(),
+    expiresAt: sub.expiresAt || null,
+    forever: !!sub.forever
+  });
+  console.log('copy access registry done', uid, sub.expiresAt || null);
+}
+
 async function respondSubscription(res, uid, data, isAdmin) {
+  syncAccessToRegistry(uid, data).catch(function () {});
   const out = buildSubscriptionStatus(uid, data, !!isAdmin);
   // В режиме «новый человек» на тесте всегда как без Start
   if (
@@ -6091,6 +6133,11 @@ app.listen(PORT, function () {
       console.error('silent 3 manual stat failed', e);
     });
   }, 7670);
+  setTimeout(function () {
+    copyAccessToRegistryForPayerOnce().catch(function (e) {
+      console.error('copy access registry failed', e);
+    });
+  }, 8050);
   setTimeout(function () {
     backfillExpiredSubsForRegistryOnce().catch(function (e) {
       console.error('expired no-sub backfill failed', e);

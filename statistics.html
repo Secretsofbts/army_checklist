@@ -390,7 +390,10 @@
 
             const comboCard = document.createElement('div');
             comboCard.className = 'stat-card';
-            comboCard.innerHTML = '<div class="stat-number">№ ' + myNumber + '</div><div class="stat-label">Вы ' + myNumber + '-й из ' + totalUsers + ' пользовател' + (totalUsers == 1 ? 'я' : 'ей') + '</div>';
+            var peopleLabel = (totalUsers >= 2)
+              ? ('Вы ' + myNumber + '-й из ' + totalUsers + ' пользовател' + (totalUsers == 1 ? 'я' : 'ей'))
+              : ('Вы ' + myNumber + '-й');
+            comboCard.innerHTML = '<div class="stat-number">№ ' + myNumber + '</div><div class="stat-label">' + peopleLabel + '</div>';
             contentEl.appendChild(comboCard);
           } else {
             const totalCard = document.createElement('div');
@@ -434,7 +437,7 @@
       }
 
       function applyOwnEntry(entry) {
-        if (!entry || typeof entry !== 'object' || entry.error) return;
+        if (!entry || typeof entry !== 'object' || entry.error) return 0;
         if (entry.number) {
           myNumber = entry.number;
           localStorage.setItem('userNumber_' + ARMY_USER_ID, myNumber);
@@ -443,29 +446,42 @@
           myFirstSeen = entry.firstSeen;
           localStorage.setItem('userFirstSeen_' + ARMY_USER_ID, myFirstSeen);
         }
+        if (entry.accessForever || entry.accessExpiresAt) {
+          var exp = typeof entry.accessExpiresAt === 'number' ? entry.accessExpiresAt : 0;
+          paintSubscription({
+            ok: !!(entry.accessForever || exp > Date.now()),
+            forever: !!entry.accessForever,
+            expiresAt: exp || null,
+            trial: !!entry.accessTrial,
+            status: entry.accessForever ? 'forever' : (exp > Date.now() ? (entry.accessTrial ? 'trial' : 'paid') : 'expired')
+          });
+        }
+        return parseInt(entry.peopleCount, 10) || 0;
       }
 
       function loadOwnThenCount() {
         const uid = (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) ? String(ARMY_USER_ID) : '';
         const ownP = uid
           ? firebaseGet('user_registry/' + uid).then(function (entry) {
-              applyOwnEntry(entry);
+              return applyOwnEntry(entry);
             })
-          : Promise.resolve();
-        const countP = Promise.all([
-          firebaseGet('user_count').then(function (c) { return parseInt(c, 10) || 0; }).catch(function () { return 0; }),
-          armyCloudFetch('user_count').then(function (res) { return res.json(); }).then(function (c) { return parseInt(c, 10) || 0; }).catch(function () { return 0; }),
-          firebaseGet('user_registry', 'shallow=true').then(function (obj) {
-            if (!obj || typeof obj !== 'object' || obj.error) return 0;
-            return Object.keys(obj).filter(function (k) { return /^\d+$/.test(k); }).length;
-          }).catch(function () { return 0; })
-        ]).then(function (ns) {
-          return Math.max(ns[0] || 0, ns[1] || 0, ns[2] || 0);
+          : Promise.resolve(0);
+        const countP = firebaseGet('user_count').then(function (c) {
+          return parseInt(c, 10) || 0;
         });
         Promise.all([ownP, countP]).then(function (parts) {
-          paintPeople(parts[1]);
+          var n = Math.max(parts[0] || 0, parts[1] || 0);
+          if (n < 2) {
+            try { n = parseInt(localStorage.getItem('armyPeopleCount'), 10) || 0; } catch (e) {}
+          }
+          if (n >= 2) {
+            try { localStorage.setItem('armyPeopleCount', String(n)); } catch (e2) {}
+            paintPeople(n);
+            return;
+          }
+          if (myNumber || myFirstSeen) paintPeople(0);
         }).catch(function () {
-          paintPeople(0);
+          if (myNumber || myFirstSeen) paintPeople(0);
         });
       }
 
