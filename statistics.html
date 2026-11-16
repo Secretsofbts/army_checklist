@@ -390,10 +390,7 @@
 
             const comboCard = document.createElement('div');
             comboCard.className = 'stat-card';
-            var peopleLabel = (totalUsers >= 2)
-              ? ('Вы ' + myNumber + '-й из ' + totalUsers + ' пользовател' + (totalUsers == 1 ? 'я' : 'ей'))
-              : ('Ваш номер в чек-листе');
-            comboCard.innerHTML = '<div class="stat-number">№ ' + myNumber + '</div><div class="stat-label">' + peopleLabel + '</div>';
+            comboCard.innerHTML = '<div class="stat-number">№ ' + myNumber + '</div><div class="stat-label">Вы ' + myNumber + '-й из ' + totalUsers + ' пользовател' + (totalUsers == 1 ? 'я' : 'ей') + '</div>';
             contentEl.appendChild(comboCard);
           } else {
             const totalCard = document.createElement('div');
@@ -455,13 +452,15 @@
               applyOwnEntry(entry);
             })
           : Promise.resolve();
-        const countP = firebaseGet('user_count').then(function (c) {
-          var n = parseInt(c, 10) || 0;
-          if (n > 0) return n;
-          return firebaseGet('user_registry', 'shallow=true').then(function (obj) {
+        const countP = Promise.all([
+          firebaseGet('user_count').then(function (c) { return parseInt(c, 10) || 0; }).catch(function () { return 0; }),
+          armyCloudFetch('user_count').then(function (res) { return res.json(); }).then(function (c) { return parseInt(c, 10) || 0; }).catch(function () { return 0; }),
+          firebaseGet('user_registry', 'shallow=true').then(function (obj) {
             if (!obj || typeof obj !== 'object' || obj.error) return 0;
             return Object.keys(obj).filter(function (k) { return /^\d+$/.test(k); }).length;
-          });
+          }).catch(function () { return 0; })
+        ]).then(function (ns) {
+          return Math.max(ns[0] || 0, ns[1] || 0, ns[2] || 0);
         });
         Promise.all([ownP, countP]).then(function (parts) {
           paintPeople(parts[1]);
