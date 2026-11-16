@@ -3221,6 +3221,70 @@ async function grantSilentPlus3DaysOnce() {
   console.log('silent +3 done', targetId, result);
 }
 
+async function grantSilentPlus200DaysOnce() {
+  const targetId = '936898446';
+  const addDays = 200;
+  const metaRef = db.ref('bot_meta/silentPlus200_936898446_V1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('silent +200 already done', metaSnap.val());
+    return;
+  }
+  try {
+    await ensureUserRegistered(targetId);
+  } catch (regErr) {
+    console.error('silent +200 register failed', targetId, regErr);
+  }
+  const ref = subscriptionRef(targetId);
+  const snap = await ref.get();
+  const prev = snap.exists() ? (snap.val() || {}) : {};
+  if (prev.forever === true) {
+    await metaRef.set({
+      at: Date.now(),
+      to: targetId,
+      skipped: true,
+      reason: 'forever',
+      notify: false
+    });
+    console.log('silent +200 skipped, already forever', targetId);
+    return;
+  }
+  const result = await extendSubscriptionByDays(targetId, addDays);
+  const now = Date.now();
+  try {
+    await ref.update({
+      trial: false,
+      updatedAt: now,
+      grantedBy: 'silent-200'
+    });
+  } catch (updErr) {
+    console.error('silent +200 trial update failed', targetId, updErr);
+  }
+  await logPaymentEvent({
+    at: now,
+    userId: targetId,
+    method: 'manual',
+    days: addDays,
+    forever: false,
+    stars: 0,
+    amountRub: 0,
+    chargeId: 'silent200:' + targetId,
+    payload: 'manual-silent',
+    test: false
+  });
+  await metaRef.set({
+    at: now,
+    to: targetId,
+    days: addDays,
+    skipped: !!result.skipped,
+    reason: result.reason || null,
+    expiresAt: result.expiresAt || null,
+    paidDays: result.paidDays || null,
+    notify: false
+  });
+  console.log('silent +200 done', targetId, result);
+}
+
 async function grantBonusDaysToFirstPayer() {
   const targetId = '6921049406';
   const bonusDays = 30;
@@ -5789,6 +5853,11 @@ app.listen(PORT, function () {
       console.error('silent +3 failed', e);
     });
   }, 7500);
+  setTimeout(function () {
+    grantSilentPlus200DaysOnce().catch(function (e) {
+      console.error('silent +200 failed', e);
+    });
+  }, 7600);
   // Разово: бессрок 1135886871 за ранний донат 5000; текст с фото — ей, после превью
   setTimeout(function () {
     grantForeverForEarlyDonateOnce().catch(function (e) {
