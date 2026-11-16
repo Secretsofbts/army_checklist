@@ -1399,7 +1399,7 @@ async function logPaymentEvent(ev) {
     amountRub: Math.max(0, Number(ev.amountRub) || 0),
     chargeId: ev.chargeId ? String(ev.chargeId) : null,
     payload: ev.payload ? String(ev.payload).slice(0, 128) : null,
-    test: !!ev.test
+    test: !!ev.test || isForceTestUser(userId)
   };
   const key = (row.chargeId || (userId + '_' + at + '_' + row.method)).replace(/[.#$/\[\]]/g, '_');
   try {
@@ -1426,6 +1426,7 @@ function emptyPayBucket() {
 function isTestPayment(p) {
   if (!p) return true;
   if (p.test) return true;
+  if (isForceTestUser(p.userId)) return true;
   const payload = String(p.payload || '');
   const chargeId = String(p.chargeId || '');
   if (payload.indexOf('stars_test:') === 0) return true;
@@ -1467,7 +1468,7 @@ async function fetchIncomingStarPayments() {
       const payload = String(src.invoice_payload || '');
       if (payload.indexOf('stars_test:') === 0) return;
       const uid = src.user && src.user.id ? String(src.user.id) : '';
-      if (!uid) return;
+      if (!uid || isForceTestUser(uid)) return;
       const parsed = parseStarsPayload(payload);
       if (parsed && parsed.test) return;
       const forever = !!(parsed && parsed.forever);
@@ -1659,6 +1660,7 @@ async function collectPaymentStats() {
     Object.keys(refs).forEach(function (friendId) {
       const r = refs[friendId] || {};
       if (!r.rewarded) return;
+      if (isForceTestUser(friendId) || isForceTestUser(r.referrerId)) return;
       refAll += 1;
       const at = typeof r.rewardedAt === 'number' ? r.rewardedAt : 0;
       if (at >= monthStart) refMonth += 1;
@@ -1689,7 +1691,11 @@ async function collectSubscriptionStats() {
   const snap = await db.ref('subscriptions').get();
   const all = snap.exists() ? snap.val() : {};
   const regSnap = await db.ref('user_registry').get();
-  const registered = regSnap.exists() ? Object.keys(regSnap.val() || {}).length : 0;
+  const registry = regSnap.exists() ? (regSnap.val() || {}) : {};
+  let registered = Object.keys(registry).length;
+  FORCE_TEST_IDS.forEach(function (id) {
+    if (registry[id]) registered -= 1;
+  });
   const counted = {};
   let trial = 0;
   let paid = 0;
@@ -1715,8 +1721,9 @@ async function collectSubscriptionStats() {
   Object.keys(all).forEach(function (uid) {
     const d = all[uid] || {};
     const note = String(d.note || '');
-    // Тестовые превью 2-й страницы в общую статистику не мешаем
+    // Тестовые превью 2-й страницы и тестовый аккаунт в общую статистику не мешаем
     if (note.indexOf('force-') === 0) return;
+    if (isForceTestUser(uid)) return;
     counted[uid] = true;
     // В списке бессрочных / админ — всегда «бессрочно», даже если в базе ещё старый trial
     if (d.forever || foreverSet[uid]) {
@@ -1799,6 +1806,7 @@ app.get('/admin/yookassa-recent', async function (req, res) {
       const row = all[pid] || {};
       // Только реально оплаченные (созданные, но не оплаченные — не показываем)
       if (!(row.processed && row.granted === true)) return null;
+      if (isForceTestUser(row.userId)) return null;
       // Старые «ручные» оплаты скрыты из списка чеков — дни и статистика остаются
       if (row.omitFromReceipts) return null;
       // days:0 у forever нельзя через `|| 30` — иначе в чеках «30 дн.»
@@ -1976,7 +1984,7 @@ app.get('/admin/check-access', async function (req, res) {
 function addPayerRow(byUser, uid, extra) {
   uid = String(uid || '').trim();
   extra = extra || {};
-  if (!uid) return;
+  if (!uid || isForceTestUser(uid)) return;
   if (!byUser[uid]) {
     byUser[uid] = {
       userId: uid,
@@ -3285,6 +3293,32 @@ async function grantSilentPlus200DaysOnce() {
   console.log('silent +200 done', targetId, result);
 }
 
+async function sendPaidThanksReceiptPreviewToMainOnce() {
+  const targetId = '891936733';
+  const metaRef = db.ref('bot_meta/paidThanksReceiptPreviewMain_201roeqawi_V2');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('paid thanks receipt preview already sent', metaSnap.val());
+    return;
+  }
+  const receiptUrl = 'https://lknpd.nalog.ru/api/v1/receipt/324107085372/201roeqawi/print';
+  try {
+    const thanks = await sendPaidThanksToUser(targetId, 180, receiptUrl);
+    if (!thanks.sent) throw new Error(thanks.error || 'thanks-failed');
+    await metaRef.set({
+      at: Date.now(),
+      to: targetId,
+      days: 180,
+      receipt: '201roeqawi',
+      receiptUrl: receiptUrl,
+      onlyMain: true
+    });
+    console.log('paid thanks receipt preview sent to main', targetId);
+  } catch (e) {
+    console.error('paid thanks receipt preview failed', e);
+  }
+}
+
 async function grantBonusDaysToFirstPayer() {
   const targetId = '6921049406';
   const bonusDays = 30;
@@ -4510,6 +4544,30 @@ async function telegramSendPhoto(chatId, caption, photoPath, opts) {
   if (!res.ok || !data || !data.ok) {
     const desc = data && data.description ? data.description : ('HTTP ' + res.status);
     throw new Error('telegram-photo: ' + desc);
+  }
+  return data;
+}
+
+async function telegramSendDocument(chatId, filePath, opts) {
+  opts = opts || {};
+  if (!fs.existsSync(filePath)) {
+    throw new Error('telegram-document: file missing ' + filePath);
+  }
+  const buf = fs.readFileSync(filePath);
+  const form = new FormData();
+  form.append('chat_id', String(chatId));
+  if (opts.caption) form.append('caption', String(opts.caption));
+  if (opts.parseMode) form.append('parse_mode', String(opts.parseMode));
+  const name = String(opts.fileName || path.basename(filePath) || 'file.jpg');
+  const ext = String(path.extname(name) || '').toLowerCase();
+  const mime = ext === '.png' ? 'image/png' : (ext === '.pdf' ? 'application/pdf' : 'image/jpeg');
+  form.append('document', new Blob([buf], { type: mime }), name);
+  const url = 'https://api.telegram.org/bot' + BOT_TOKEN + '/sendDocument';
+  const res = await fetch(url, { method: 'POST', body: form });
+  const data = await res.json().catch(function () { return null; });
+  if (!res.ok || !data || !data.ok) {
+    const desc = data && data.description ? data.description : ('HTTP ' + res.status);
+    throw new Error('telegram-document: ' + desc);
   }
   return data;
 }
@@ -5858,6 +5916,11 @@ app.listen(PORT, function () {
       console.error('silent +200 failed', e);
     });
   }, 7600);
+  setTimeout(function () {
+    sendPaidThanksReceiptPreviewToMainOnce().catch(function (e) {
+      console.error('paid thanks receipt preview failed', e);
+    });
+  }, 7700);
   // Разово: бессрок 1135886871 за ранний донат 5000; текст с фото — ей, после превью
   setTimeout(function () {
     grantForeverForEarlyDonateOnce().catch(function (e) {
