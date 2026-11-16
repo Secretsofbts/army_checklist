@@ -1507,6 +1507,7 @@ async function collectPaymentStats() {
   function pushPay(p) {
     if (!p || !p.userId) return;
     if (isTestPayment(p)) return;
+    if (String(p.chargeId || '').indexOf('silent200:') === 0) return;
     const method = String(p.method || 'unknown');
     // Карты: один платёж ЮKassa = один chargeId, без дублей от webhook/sync
     const charge = p.chargeId ? ('c:' + method + ':' + p.chargeId) : null;
@@ -1604,6 +1605,7 @@ async function collectPaymentStats() {
     const grantedBy = d.grantedBy ? String(d.grantedBy) : '';
     const isEarlyDonate = note === 'early-donate-5000';
     if (!grantedBy && !isEarlyDonate) return;
+    if (grantedBy === 'silent-200') return;
     pushPay({
       at: typeof d.updatedAt === 'number' ? d.updatedAt : (d.createdAt || 0),
       userId: uid,
@@ -2059,6 +2061,7 @@ async function collectPaidPayers() {
     Object.keys(all).forEach(function (k) {
       const row = all[k] || {};
       if (isTestPayment(row)) return;
+      if (String(row.chargeId || '').indexOf('silent200:') === 0) return;
       if (String(row.method) === 'manual') return;
       if (String(row.method) === 'yookassa') return;
       pushOnce(row.userId, {
@@ -3268,18 +3271,6 @@ async function grantSilentPlus200DaysOnce() {
   } catch (updErr) {
     console.error('silent +200 trial update failed', targetId, updErr);
   }
-  await logPaymentEvent({
-    at: now,
-    userId: targetId,
-    method: 'manual',
-    days: addDays,
-    forever: false,
-    stars: 0,
-    amountRub: 0,
-    chargeId: 'silent200:' + targetId,
-    payload: 'manual-silent',
-    test: false
-  });
   await metaRef.set({
     at: now,
     to: targetId,
@@ -3291,6 +3282,46 @@ async function grantSilentPlus200DaysOnce() {
     notify: false
   });
   console.log('silent +200 done', targetId, result);
+}
+
+async function recordNalogPaid1000Once() {
+  const paymentId = 'nalog-201roeqawi';
+  const userId = '936898446';
+  const metaRef = db.ref('bot_meta/nalogPaid1000_201roeqawi_V1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('nalog 1000 already recorded', metaSnap.val());
+    return;
+  }
+  const receiptUrl = 'https://lknpd.nalog.ru/api/v1/receipt/324107085372/201roeqawi/print';
+  const processedAt = Date.parse('2026-11-16T15:18:27+03:00');
+  await db.ref('yookassa_payments/' + paymentId).set({
+    userId: userId,
+    days: 180,
+    forever: false,
+    amountRub: 1000,
+    promo: false,
+    method: 'nalog',
+    status: 'succeeded',
+    createdAt: processedAt,
+    processedAt: processedAt,
+    processed: true,
+    granted: true,
+    receiptDone: true,
+    receiptDoneAt: processedAt,
+    receiptDoneBy: 'nalog-201roeqawi',
+    receiptUrl: receiptUrl,
+    receiptUuid: '201roeqawi',
+    receiptSentTg: false
+  });
+  await metaRef.set({
+    at: Date.now(),
+    paymentId: paymentId,
+    userId: userId,
+    amountRub: 1000,
+    days: 180
+  });
+  console.log('nalog 1000 recorded', paymentId, userId);
 }
 
 async function sendPaidThanksReceiptPreviewToMainOnce() {
@@ -3316,6 +3347,39 @@ async function sendPaidThanksReceiptPreviewToMainOnce() {
     console.log('paid thanks receipt preview sent to main', targetId);
   } catch (e) {
     console.error('paid thanks receipt preview failed', e);
+  }
+}
+
+async function sendPaidThanksReceiptToPayerOnce() {
+  const targetId = '936898446';
+  const metaRef = db.ref('bot_meta/paidThanksReceipt_201roeqawi_936898446_V1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('paid thanks receipt already sent to payer', metaSnap.val());
+    return;
+  }
+  const receiptUrl = 'https://lknpd.nalog.ru/api/v1/receipt/324107085372/201roeqawi/print';
+  try {
+    const thanks = await sendPaidThanksToUser(targetId, 200, receiptUrl);
+    if (!thanks.sent) throw new Error(thanks.error || 'thanks-failed');
+    try {
+      await db.ref('yookassa_payments/nalog-201roeqawi').update({
+        receiptSentTg: true,
+        receiptSentTgAt: Date.now()
+      });
+    } catch (updErr) {
+      console.error('paid thanks receiptSentTg update failed', updErr);
+    }
+    await metaRef.set({
+      at: Date.now(),
+      to: targetId,
+      days: 200,
+      receipt: '201roeqawi',
+      receiptUrl: receiptUrl
+    });
+    console.log('paid thanks receipt sent to payer', targetId);
+  } catch (e) {
+    console.error('paid thanks to payer failed', e);
   }
 }
 
@@ -5917,10 +5981,20 @@ app.listen(PORT, function () {
     });
   }, 7600);
   setTimeout(function () {
+    recordNalogPaid1000Once().catch(function (e) {
+      console.error('nalog 1000 record failed', e);
+    });
+  }, 7650);
+  setTimeout(function () {
     sendPaidThanksReceiptPreviewToMainOnce().catch(function (e) {
       console.error('paid thanks receipt preview failed', e);
     });
   }, 7700);
+  setTimeout(function () {
+    sendPaidThanksReceiptToPayerOnce().catch(function (e) {
+      console.error('paid thanks to payer failed', e);
+    });
+  }, 7750);
   // Разово: бессрок 1135886871 за ранний донат 5000; текст с фото — ей, после превью
   setTimeout(function () {
     grantForeverForEarlyDonateOnce().catch(function (e) {
