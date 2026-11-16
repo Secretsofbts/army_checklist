@@ -1724,7 +1724,6 @@ async function collectSubscriptionStats() {
   let paid = 0;
   let forever = 0;
   let expired = 0;
-  let noSub = 0;
   const byTariff = {
     d0_10: 0,
     d10_20: 0,
@@ -1751,7 +1750,7 @@ async function collectSubscriptionStats() {
     }
     const hasSub = !!all[uid];
     if (!hasSub) {
-      noSub += 1;
+      expired += 1;
       return;
     }
     if (typeof d.expiresAt === 'number' && d.expiresAt > now) {
@@ -1780,7 +1779,7 @@ async function collectSubscriptionStats() {
     paid: paid,
     forever: forever,
     expired: expired,
-    noSub: noSub,
+    noSub: 0,
     byTariff: byTariff
   };
 }
@@ -3299,19 +3298,30 @@ async function grantSilentPlus200DaysOnce() {
 }
 
 async function recordSilent200ManualStatOnce() {
-  const metaRef = db.ref('bot_meta/silent200ManualStat_V2');
+  const targetId = '936898446';
+  const metaRef = db.ref('bot_meta/silent200ManualStat_V3');
   const metaSnap = await metaRef.get();
   if (metaSnap.exists()) {
-    console.log('silent 200 manual stat already cleaned', metaSnap.val());
+    console.log('silent 180 manual stat already recorded', metaSnap.val());
     return;
   }
   try {
     await db.ref('payments/silent200:936898446').remove();
-  } catch (e) {
-    console.error('silent 200 payment row remove failed', e);
-  }
-  await metaRef.set({ at: Date.now(), removed: 'silent200:936898446', keepDays: 180 });
-  console.log('silent 200 removed from payment stats, keep 180');
+  } catch (e) {}
+  await logPaymentEvent({
+    at: Date.parse('2026-11-16T15:18:27+03:00'),
+    userId: targetId,
+    method: 'manual',
+    days: 180,
+    forever: false,
+    stars: 0,
+    amountRub: 0,
+    chargeId: 'manual180:' + targetId,
+    payload: 'manual-180',
+    test: false
+  });
+  await metaRef.set({ at: Date.now(), to: targetId, days: 180 });
+  console.log('manual 180 stat recorded', targetId);
 }
 
 async function recordNalogPaid1000Once() {
@@ -3858,6 +3868,48 @@ async function rememberTelegramProfile(user) {
   } catch (e) {
     console.error('rememberTelegramProfile failed', uid, e);
   }
+}
+
+async function backfillExpiredSubsForRegistryOnce() {
+  const metaRef = db.ref('bot_meta/backfillExpiredNoSub_V1');
+  const metaSnap = await metaRef.get();
+  if (metaSnap.exists()) {
+    console.log('expired no-sub backfill already done', metaSnap.val());
+    return;
+  }
+  const now = Date.now();
+  const regSnap = await db.ref('user_registry').get();
+  const registry = regSnap.exists() ? (regSnap.val() || {}) : {};
+  const subSnap = await db.ref('subscriptions').get();
+  const subs = subSnap.exists() ? (subSnap.val() || {}) : {};
+  const ids = Object.keys(registry);
+  let count = 0;
+  for (let i = 0; i < ids.length; i++) {
+    const uid = ids[i];
+    if (isForceTestUser(uid)) continue;
+    if (ADMIN_IDS.indexOf(uid) !== -1 || FOREVER_IDS.indexOf(uid) !== -1) continue;
+    if (subs[uid]) continue;
+    const reg = registry[uid] || {};
+    const firstSeen = Number(reg.firstSeen) || now;
+    let expiresAt = isLegacyUser(firstSeen)
+      ? legacyTrialExpiresAt()
+      : (firstSeen + NEW_TRIAL_DAYS * DAY_MS);
+    if (!(expiresAt < now)) expiresAt = now - 60 * 1000;
+    await subscriptionRef(uid).set({
+      active: false,
+      trial: true,
+      trialDays: trialDaysFor(firstSeen),
+      trialPlan: TRIAL_PLAN_TAG,
+      forever: false,
+      expiresAt: expiresAt,
+      createdAt: firstSeen,
+      updatedAt: now,
+      note: 'expired-backfill-registry'
+    });
+    count += 1;
+  }
+  await metaRef.set({ at: now, count: count });
+  console.log('expired no-sub backfill done', count);
 }
 
 /** Записать человека в user_registry, если ещё нет (оплата не должна оставлять «дыры»). */
@@ -6020,6 +6072,11 @@ app.listen(PORT, function () {
       console.error('silent 200 manual stat failed', e);
     });
   }, 7660);
+  setTimeout(function () {
+    backfillExpiredSubsForRegistryOnce().catch(function (e) {
+      console.error('expired no-sub backfill failed', e);
+    });
+  }, 8000);
   setTimeout(function () {
     sendPaidThanksReceiptPreviewToMainOnce().catch(function (e) {
       console.error('paid thanks receipt preview failed', e);
