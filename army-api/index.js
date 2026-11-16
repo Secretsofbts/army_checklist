@@ -1508,6 +1508,7 @@ async function collectPaymentStats() {
   function pushPay(p) {
     if (!p || !p.userId) return;
     if (isTestPayment(p)) return;
+    if (String(p.chargeId || '').indexOf('silent200:') === 0) return;
     const method = String(p.method || 'unknown');
     // Карты: один платёж ЮKassa = один chargeId, без дублей от webhook/sync
     const charge = p.chargeId ? ('c:' + method + ':' + p.chargeId) : null;
@@ -1605,6 +1606,7 @@ async function collectPaymentStats() {
     const grantedBy = d.grantedBy ? String(d.grantedBy) : '';
     const isEarlyDonate = note === 'early-donate-5000';
     if (!grantedBy && !isEarlyDonate) return;
+    if (grantedBy === 'silent-200') return;
     pushPay({
       at: typeof d.updatedAt === 'number' ? d.updatedAt : (d.createdAt || 0),
       userId: uid,
@@ -3297,27 +3299,19 @@ async function grantSilentPlus200DaysOnce() {
 }
 
 async function recordSilent200ManualStatOnce() {
-  const targetId = '936898446';
-  const metaRef = db.ref('bot_meta/silent200ManualStat_V1');
+  const metaRef = db.ref('bot_meta/silent200ManualStat_V2');
   const metaSnap = await metaRef.get();
   if (metaSnap.exists()) {
-    console.log('silent 200 manual stat already recorded', metaSnap.val());
+    console.log('silent 200 manual stat already cleaned', metaSnap.val());
     return;
   }
-  await logPaymentEvent({
-    at: Date.parse('2026-11-16T15:18:27+03:00'),
-    userId: targetId,
-    method: 'manual',
-    days: 200,
-    forever: false,
-    stars: 0,
-    amountRub: 0,
-    chargeId: 'silent200:' + targetId,
-    payload: 'manual-silent',
-    test: false
-  });
-  await metaRef.set({ at: Date.now(), to: targetId, days: 200 });
-  console.log('silent 200 manual stat recorded', targetId);
+  try {
+    await db.ref('payments/silent200:936898446').remove();
+  } catch (e) {
+    console.error('silent 200 payment row remove failed', e);
+  }
+  await metaRef.set({ at: Date.now(), removed: 'silent200:936898446', keepDays: 180 });
+  console.log('silent 200 removed from payment stats, keep 180');
 }
 
 async function recordNalogPaid1000Once() {
