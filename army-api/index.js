@@ -4049,7 +4049,6 @@ const HELP_TEXT =
   'Команды бота:\n' +
   '/app — открыть чек-лист\n' +
   '/cabinet — личный кабинет\n' +
-  '/pay — страница оплаты\n' +
   '/friend — акция «Приведи друга»\n' +
   '/support — написать в поддержку\n' +
   '/help — это меню\n\n' +
@@ -5125,7 +5124,7 @@ async function handleMenuCommands(msg) {
       return true;
     }
   }
-  const m = text.match(/^\/(help|menu|app|checklist|cabinet|kabinet|pay|payment|oplata|friend|referral|invite)(?:@\w+)?(?:\s|$)/i);
+  const m = text.match(/^\/(help|menu|app|checklist|cabinet|kabinet|friend|referral|invite)(?:@\w+)?(?:\s|$)/i);
   if (!m) return false;
   const cmd = String(m[1] || '').toLowerCase();
   try {
@@ -5144,13 +5143,6 @@ async function handleMenuCommands(msg) {
       await telegramSendMessage(msg.chat.id, 'Личный кабинет 👇', {
         text: 'Личный кабинет',
         url: CABINET_LINK
-      });
-      return true;
-    }
-    if (cmd === 'pay' || cmd === 'payment' || cmd === 'oplata') {
-      await telegramSendMessage(msg.chat.id, 'Страница оплаты 👇', {
-        text: 'Оплата подписки',
-        web_app: PAYMENT_PAGE_URL
       });
       return true;
     }
@@ -5538,7 +5530,6 @@ async function ensureBotCommands() {
     { command: 'start', description: 'Как открыть приложение' },
     { command: 'app', description: 'Открыть чек-лист' },
     { command: 'cabinet', description: 'Личный кабинет' },
-    { command: 'pay', description: 'Оплата подписки' },
     { command: 'friend', description: 'Акция «Приведи друга»' },
     { command: 'support', description: 'Написать в поддержку' },
     { command: 'help', description: 'Список всех команд' }
