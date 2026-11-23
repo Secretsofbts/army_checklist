@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=183"></script>
+  <script src="sync.js?v=185"></script>
   <title>Tour ARIRANG</title>
   <style>
     body {
@@ -92,6 +92,9 @@
         { text: "D-2", sub: "от 02.09.2026", link: "https://t.me/violent_arhive/5612" },
         { text: "D-3", sub: "от 05.09.2026", link: "https://t.me/violent_arhive/5619" },
         { text: "D-4", sub: "от 06.09.2026", link: "https://t.me/violent_arhive/5622" }
+      ]},
+      { city: "Kaohsiung", items: [
+        { text: "D-1", sub: "от 21.11.2026", link: "https://t.me/violent_arhive/5730" }
       ]}
     ];
 
@@ -103,9 +106,9 @@
       listEl.appendChild(cityTitle);
 
             block.items.forEach((item) => {
+        const id = 'video-' + item.link.split('/').pop();
         const row = document.createElement('div');
         row.className = 'row';
-        const id = 'video-' + item.link.split('/').pop();
         row.dataset.id = id;
 
         const box = document.createElement('input');

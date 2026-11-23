@@ -7,7 +7,7 @@
   <meta http-equiv="Pragma" content="no-cache">
   <meta http-equiv="Expires" content="0">
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="sync.js?v=183"></script>
+  <script src="sync.js?v=185"></script>
   <title>Личный кабинет</title>
   <style>
     body { background: #f2f0f7; font-family: Arial, sans-serif; display: flex; justify-content: center; padding: 20px; }
@@ -372,14 +372,56 @@
         .catch(function () { return null; });
     }
 
+    function parsePeopleCount(v) {
+      if (typeof v === 'number' && isFinite(v)) return Math.max(0, Math.floor(v));
+      if (typeof v === 'string' && /^\d+$/.test(String(v).trim())) return parseInt(v, 10) || 0;
+      return 0;
+    }
+
+    function readCachedPeople() {
+      try { return parsePeopleCount(localStorage.getItem('armyPeopleCount')); } catch (e) { return 0; }
+    }
+
+    function jsonIfOk(res) {
+      if (!res || !res.ok) return Promise.resolve(null);
+      return res.json().catch(function () { return null; });
+    }
+
+    function fetchPeopleCount() {
+      var cloud = (typeof armyCloudFetch === 'function')
+        ? armyCloudFetch('user_count').then(jsonIfOk).then(parsePeopleCount).catch(function () { return 0; })
+        : Promise.resolve(0);
+      return cloud.then(function (n) {
+        if (n >= 2) return n;
+        return firebaseGet('user_count').then(parsePeopleCount).then(function (n2) {
+          return Math.max(n, n2);
+        });
+      });
+    }
+
+    function fetchOwnRegistry(uid) {
+      if (!uid) return Promise.resolve(null);
+      var cloud = (typeof armyCloudFetch === 'function')
+        ? armyCloudFetch('user_registry/' + uid).then(jsonIfOk).catch(function () { return null; })
+        : Promise.resolve(null);
+      return cloud.then(function (entry) {
+        if (entry && typeof entry === 'object' && !entry.error) return entry;
+        return firebaseGet('user_registry/' + uid);
+      });
+    }
+
     function renderStats() {
       const contentEl = document.getElementById('stats-content');
       let myNumber = localStorage.getItem('userNumber_' + ARMY_USER_ID);
       let myFirstSeen = localStorage.getItem('userFirstSeen_' + ARMY_USER_ID);
 
       function paintPeople(totalUsers) {
-          contentEl.innerHTML = '';
           totalUsers = parseInt(totalUsers, 10) || 0;
+          var num = parseInt(myNumber, 10) || 0;
+          if (num > totalUsers) totalUsers = num;
+          if (contentEl.getAttribute('data-people') === String(totalUsers) && contentEl.querySelector('.stat-card')) return;
+          contentEl.setAttribute('data-people', String(totalUsers));
+          contentEl.innerHTML = '';
 
           if (myNumber) {
             const badge = getBadge(parseInt(myNumber));
@@ -461,27 +503,37 @@
 
       function loadOwnThenCount() {
         const uid = (typeof ARMY_USER_ID !== 'undefined' && ARMY_USER_ID) ? String(ARMY_USER_ID) : '';
-        const ownP = uid
-          ? firebaseGet('user_registry/' + uid).then(function (entry) {
-              return applyOwnEntry(entry);
-            })
-          : Promise.resolve(0);
-        const countP = firebaseGet('user_count').then(function (c) {
-          return parseInt(c, 10) || 0;
-        });
-        Promise.all([ownP, countP]).then(function (parts) {
-          var n = Math.max(parts[0] || 0, parts[1] || 0);
-          if (n < 2) {
-            try { n = parseInt(localStorage.getItem('armyPeopleCount'), 10) || 0; } catch (e) {}
-          }
+        var cached = readCachedPeople();
+        if (cached >= 2 && (myNumber || myFirstSeen)) paintPeople(cached);
+
+        const ownP = fetchOwnRegistry(uid).then(function (entry) {
+          return applyOwnEntry(entry);
+        }).catch(function () { return 0; });
+        const countP = fetchPeopleCount();
+
+        function finish(n) {
+          n = Math.max(parsePeopleCount(n), readCachedPeople());
           if (n >= 2) {
             try { localStorage.setItem('armyPeopleCount', String(n)); } catch (e2) {}
             paintPeople(n);
             return;
           }
           if (myNumber || myFirstSeen) paintPeople(0);
+        }
+
+        Promise.all([ownP, countP]).then(function (parts) {
+          var n = Math.max(parts[0] || 0, parts[1] || 0);
+          if (n >= 2) {
+            finish(n);
+            return;
+          }
+          setTimeout(function () {
+            fetchPeopleCount().then(function (n2) {
+              finish(Math.max(n, n2));
+            }).catch(function () { finish(n); });
+          }, 1500);
         }).catch(function () {
-          if (myNumber || myFirstSeen) paintPeople(0);
+          finish(0);
         });
       }
 

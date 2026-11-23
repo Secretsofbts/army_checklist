@@ -3991,7 +3991,12 @@ app.post('/register', async function (req, res) {
   try {
     const entry = await ensureUserRegistered(uid);
     rememberTelegramProfile(user).catch(function () {});
-    return res.json(entry || {});
+    let people = 0;
+    try {
+      const countSnap = await db.ref('user_count').get();
+      people = Number(countSnap.val()) || 0;
+    } catch (e2) {}
+    return res.json(Object.assign({}, entry || {}, { peopleCount: people }));
   } catch (e) {
     console.error(e);
     return res.status(500).json({ error: 'register' });
